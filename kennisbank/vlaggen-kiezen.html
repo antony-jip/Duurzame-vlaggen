@@ -223,7 +223,54 @@
         .kiezen-types-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* Inline CTA Strip */
+        .kiezen-cta-strip {
+            background: var(--color-terracotta);
+            padding: var(--space-lg) var(--space-xl);
+            text-align: center;
+        }
+
+        .kiezen-cta-strip-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .kiezen-cta-strip p {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-white);
+            margin: 0;
+        }
+
+        .kiezen-cta-strip .btn-white {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 16px 32px;
+            background: var(--color-white);
+            color: var(--color-terracotta);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .kiezen-cta-strip .btn-white:hover {
+            background: var(--color-forest);
+            color: white !important;
+            transform: translateY(-2px);
         }
 
         .kiezen-type-card {
@@ -975,6 +1022,14 @@
                 Van mastvlaggen tot beachflags: ontdek welk type vlag het beste past bij jouw situatie,
                 en maak een duurzame keuze zonder concessies aan kwaliteit.
             </p>
+            <div style="margin-top: var(--space-lg);">
+                <a href="/bestel/" class="btn-primary">
+                    Bekijk ons assortiment
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -1037,6 +1092,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- INLINE CTA STRIP -->
+    <div class="kiezen-cta-strip">
+        <div class="kiezen-cta-strip-container">
+            <p>Weet je welke vlag je nodig hebt?</p>
+            <a href="/bestel/" class="btn-white">
+                Direct bestellen
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
     </div>
 

@@ -538,8 +538,55 @@
         .csrd-solution-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
             margin-top: var(--space-2xl);
+        }
+
+        /* Inline CTA Strip */
+        .csrd-cta-strip {
+            background: var(--color-terracotta);
+            padding: var(--space-lg) var(--space-xl);
+            text-align: center;
+        }
+
+        .csrd-cta-strip-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .csrd-cta-strip p {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-white);
+            margin: 0;
+        }
+
+        .csrd-cta-strip .btn-white {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 16px 32px;
+            background: var(--color-white);
+            color: var(--color-terracotta);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .csrd-cta-strip .btn-white:hover {
+            background: var(--color-forest);
+            color: white !important;
+            transform: translateY(-2px);
         }
 
         .csrd-solution-card {
@@ -1039,6 +1086,14 @@
                         <span>OEKO-TEX ECO PASSPORT gecertificeerd</span>
                     </div>
                 </div>
+                <div style="margin-top: var(--space-lg);">
+                    <a href="/bestel/" class="btn-primary">
+                        Direct bestellen
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
             <div class="csrd-hero-visual">
                 <div class="csrd-hero-image">
@@ -1189,6 +1244,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- INLINE CTA STRIP -->
+    <div class="csrd-cta-strip">
+        <div class="csrd-cta-strip-container">
+            <p>Klaar om CSRD-compliant te worden?</p>
+            <a href="/bestel/" class="btn-white">
+                Bestel direct
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
     </div>
 

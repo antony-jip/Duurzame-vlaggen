@@ -315,7 +315,54 @@
         .micro-problem-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* Inline CTA Strip */
+        .micro-cta-strip {
+            background: var(--color-forest);
+            padding: var(--space-lg) var(--space-xl);
+            text-align: center;
+        }
+
+        .micro-cta-strip-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .micro-cta-strip p {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-white);
+            margin: 0;
+        }
+
+        .micro-cta-strip .btn-white {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 16px 32px;
+            background: var(--color-white);
+            color: var(--color-forest);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .micro-cta-strip .btn-white:hover {
+            background: var(--color-terracotta);
+            color: white !important;
+            transform: translateY(-2px);
         }
 
         .micro-problem-card {
@@ -1099,6 +1146,14 @@
                     Traditionele polyester vlaggen zijn een onzichtbare bron van plastic vervuiling.
                     Ontdek hoe microplastics vrijkomen en waarom Flag-Ciclo de oplossing biedt.
                 </p>
+                <div style="margin-top: var(--space-md);">
+                    <a href="/bestel/" class="btn-primary">
+                        Bestel microplastic-vrije vlaggen
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
             <div class="micro-hero-visual">
                 <div class="micro-hero-image">
@@ -1165,6 +1220,19 @@
                     <p>Microplastics breken niet biologisch af. Ze fragmenteren alleen in steeds kleinere deeltjes en blijven 500+ jaar in het milieu.</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- INLINE CTA STRIP -->
+    <div class="micro-cta-strip">
+        <div class="micro-cta-strip-container">
+            <p>Stop de microplastic-vervuiling</p>
+            <a href="/bestel/" class="btn-white">
+                Bestel Flag-Ciclo vlaggen
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
     </div>
 
@@ -1507,14 +1575,14 @@
                 microplastic-vervuiling. Bereken je besparing in onze calculator.
             </p>
             <div class="micro-cta-buttons">
-                <a href="/bereken-besparing/" class="btn-primary">
-                    Bereken je besparing
+                <a href="/bestel/" class="btn-primary">
+                    Bestel nu
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </a>
-                <a href="/kennis/flag-ciclo-technologie/" class="btn-secondary">
-                    Lees over de technologie
+                <a href="/bereken-besparing/" class="btn-secondary">
+                    Bereken je besparing
                 </a>
             </div>
         </div>

@@ -3,10 +3,10 @@
 <section class="kennis-hub" aria-labelledby="kennis-hub-title">
     <style>
         /* ========================================
-           KENNISBANK HUB - COMPLETE STYLES
+           KENNISBANK HUB - COMPLETE STYLES V2
+           Full-width boxes, more CTAs
            ======================================== */
 
-        /* CSS Variables */
         .kennis-hub {
             --color-forest: #2C5F4F;
             --color-terracotta: #C66B4E;
@@ -22,19 +22,10 @@
             --font-heading: 'Sora', sans-serif;
             --font-body: 'Manrope', sans-serif;
 
-            --space-xs: 8px;
-            --space-sm: 16px;
-            --space-md: 24px;
-            --space-lg: 32px;
-            --space-xl: 48px;
-            --space-2xl: 64px;
-            --space-3xl: 96px;
-
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 14px;
             --radius-xl: 20px;
-            --radius-2xl: 28px;
 
             font-family: var(--font-body);
             color: var(--color-charcoal);
@@ -42,18 +33,8 @@
             overflow-x: hidden;
         }
 
-        /* Reset & Base */
-        .kennis-hub * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .kennis-hub img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
+        .kennis-hub * { margin: 0; padding: 0; box-sizing: border-box; }
+        .kennis-hub img { max-width: 100%; height: auto; display: block; }
 
         /* ========================================
            HERO SECTION
@@ -61,31 +42,24 @@
         .kennis-hero {
             position: relative;
             background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
-            padding: var(--space-3xl) var(--space-lg);
+            padding: 80px 24px;
             overflow: hidden;
         }
 
         .kennis-hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background:
                 radial-gradient(circle at 20% 80%, rgba(198, 107, 78, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(92, 138, 157, 0.15) 0%, transparent 50%);
             pointer-events: none;
         }
 
-        /* Tech Grid Background */
         .kennis-hero::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -94,7 +68,7 @@
         }
 
         .kennis-hero-container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -104,16 +78,16 @@
         .kennis-hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 8px;
             background: rgba(164, 107, 74, 0.2);
             border: 1px solid rgba(164, 107, 74, 0.4);
-            padding: var(--space-xs) var(--space-sm);
+            padding: 8px 16px;
             border-radius: 50px;
             font-family: var(--font-eyebrow);
             font-size: 13px;
             font-weight: 700;
             color: #e8c4a8;
-            margin-bottom: var(--space-md);
+            margin-bottom: 24px;
             animation: float 3s ease-in-out infinite;
         }
 
@@ -122,23 +96,14 @@
             50% { transform: translateY(-5px); }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .kennis-hero-badge svg {
-            width: 16px;
-            height: 16px;
-            animation: pulse 2s ease-in-out infinite;
-        }
+        .kennis-hero-badge svg { width: 16px; height: 16px; }
 
         .kennis-hero h1 {
             font-family: var(--font-heading);
             font-weight: 800;
             font-size: clamp(36px, 6vw, 64px);
             color: var(--color-white);
-            margin-bottom: var(--space-md);
+            margin-bottom: 20px;
             line-height: 1.1;
         }
 
@@ -150,26 +115,29 @@
         }
 
         .kennis-hero-subtitle {
-            font-family: var(--font-body);
             font-size: clamp(16px, 2vw, 20px);
             color: rgba(255,255,255,0.85);
             max-width: 700px;
-            margin: 0 auto var(--space-xl);
+            margin: 0 auto 32px;
             line-height: 1.7;
         }
 
-        /* Stats Bar */
+        .kennis-hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
         .kennis-stats {
             display: flex;
             justify-content: center;
-            gap: var(--space-xl);
+            gap: 48px;
             flex-wrap: wrap;
-            margin-top: var(--space-xl);
         }
 
-        .kennis-stat {
-            text-align: center;
-        }
+        .kennis-stat { text-align: center; }
 
         .kennis-stat-value {
             font-family: var(--font-heading);
@@ -180,98 +148,86 @@
         }
 
         .kennis-stat-label {
-            font-family: var(--font-body);
             font-size: 14px;
             color: rgba(255,255,255,0.7);
-            margin-top: var(--space-xs);
+            margin-top: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         /* ========================================
-           CATEGORY CARDS SECTION
+           FULL-WIDTH CARDS GRID - NO GAPS
            ======================================== */
-        .kennis-categories {
-            padding: var(--space-3xl) var(--space-lg);
+        .kennis-cards-section {
             background: var(--color-off-white);
         }
 
-        .kennis-categories-container {
-            max-width: 1200px;
+        .kennis-cards-header {
+            text-align: center;
+            padding: 64px 24px 48px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
-        .kennis-section-header {
-            text-align: center;
-            margin-bottom: var(--space-2xl);
-        }
-
-        .kennis-section-header h2 {
+        .kennis-cards-header h2 {
             font-family: var(--font-heading);
             font-weight: 700;
             font-size: clamp(28px, 4vw, 42px);
             color: var(--color-charcoal);
-            margin-bottom: var(--space-sm);
+            margin-bottom: 16px;
         }
 
-        .kennis-section-header p {
-            font-family: var(--font-body);
+        .kennis-cards-header p {
             font-size: 18px;
             color: var(--color-stone);
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .kennis-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .kennis-card {
-            background: var(--color-white);
-            border-radius: var(--radius-xl);
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 0;
-            transform: translateY(30px);
             text-decoration: none;
             display: block;
+            min-height: 400px;
         }
 
-        .kennis-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .kennis-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(44, 95, 79, 0.15);
-        }
-
-        .kennis-card-image {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .kennis-card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .kennis-card-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
             transition: transform 0.6s ease;
         }
 
-        .kennis-card:hover .kennis-card-image img {
-            transform: scale(1.08);
+        .kennis-card:hover .kennis-card-bg { transform: scale(1.08); }
+
+        .kennis-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+            transition: background 0.3s ease;
+        }
+
+        .kennis-card:hover .kennis-card-overlay {
+            background: linear-gradient(to top, rgba(44,95,79,0.95) 0%, rgba(44,95,79,0.6) 50%, rgba(44,95,79,0.3) 100%);
+        }
+
+        .kennis-card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 32px;
+            z-index: 1;
         }
 
         .kennis-card-badge {
-            position: absolute;
-            top: var(--space-sm);
-            left: var(--space-sm);
-            background: var(--color-forest);
+            display: inline-block;
+            background: var(--color-terracotta);
             color: var(--color-white);
             padding: 6px 12px;
             border-radius: 50px;
@@ -280,193 +236,178 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        .kennis-card-badge.badge-csrd {
-            background: var(--color-forest);
-        }
-
-        .kennis-card-badge.badge-tech {
-            background: var(--color-sage-blue);
-        }
-
-        .kennis-card-badge.badge-impact {
-            background: var(--color-terracotta);
-        }
-
-        .kennis-card-badge.badge-guide {
-            background: var(--color-sage-purple);
-        }
-
-        .kennis-card-content {
-            padding: var(--space-lg);
+            margin-bottom: 16px;
         }
 
         .kennis-card h3 {
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: 22px;
-            color: var(--color-charcoal);
-            margin-bottom: var(--space-sm);
-            transition: color 0.3s ease;
-        }
-
-        .kennis-card:hover h3 {
-            color: var(--color-forest);
+            font-size: 24px;
+            color: var(--color-white);
+            margin-bottom: 12px;
         }
 
         .kennis-card p {
-            font-family: var(--font-body);
             font-size: 15px;
-            color: var(--color-stone);
+            color: rgba(255,255,255,0.85);
             line-height: 1.6;
-            margin-bottom: var(--space-md);
+            margin-bottom: 16px;
         }
 
         .kennis-card-link {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 8px;
             font-family: var(--font-heading);
             font-weight: 700;
             font-size: 14px;
-            color: var(--color-forest);
-            text-decoration: none;
+            color: var(--color-white);
             transition: gap 0.3s ease;
         }
 
-        .kennis-card:hover .kennis-card-link {
-            gap: var(--space-sm);
+        .kennis-card:hover .kennis-card-link { gap: 16px; }
+        .kennis-card-link svg { width: 16px; height: 16px; }
+
+        /* ========================================
+           INLINE CTA STRIP
+           ======================================== */
+        .kennis-inline-cta {
+            background: var(--color-terracotta);
+            padding: 48px 24px;
+            text-align: center;
         }
 
-        .kennis-card-link svg {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.3s ease;
+        .kennis-inline-cta-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            flex-wrap: wrap;
         }
 
-        .kennis-card:hover .kennis-card-link svg {
-            transform: translateX(4px);
+        .kennis-inline-cta h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--color-white);
+        }
+
+        .kennis-inline-cta p {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
         }
 
         /* ========================================
-           FEATURED TOPICS SECTION
+           FEATURED FULL-WIDTH
            ======================================== */
         .kennis-featured {
-            padding: var(--space-3xl) var(--space-lg);
-            background: var(--color-white);
-        }
-
-        .kennis-featured-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .kennis-featured-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            margin-top: var(--space-2xl);
         }
 
         .kennis-featured-main {
             position: relative;
-            border-radius: var(--radius-2xl);
-            overflow: hidden;
             min-height: 500px;
+            overflow: hidden;
         }
 
-        .kennis-featured-main img {
+        .kennis-featured-main-bg {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
         }
 
         .kennis-featured-main-overlay {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: var(--space-xl);
-            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+            inset: 0;
+            background: linear-gradient(135deg, rgba(44,95,79,0.95) 0%, rgba(44,95,79,0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 64px;
         }
 
         .kennis-featured-main h3 {
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: clamp(24px, 3vw, 32px);
+            font-size: clamp(28px, 3vw, 36px);
             color: var(--color-white);
-            margin-bottom: var(--space-sm);
+            margin-bottom: 16px;
         }
 
         .kennis-featured-main p {
-            font-family: var(--font-body);
-            font-size: 16px;
-            color: rgba(255,255,255,0.85);
-            margin-bottom: var(--space-md);
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
             max-width: 500px;
+            line-height: 1.7;
         }
 
         .kennis-featured-sidebar {
             display: flex;
             flex-direction: column;
-            gap: var(--space-md);
         }
 
         .kennis-featured-small {
+            flex: 1;
             display: flex;
-            gap: var(--space-md);
-            padding: var(--space-md);
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
             background: var(--color-off-white);
-            border-radius: var(--radius-lg);
-            transition: all 0.3s ease;
             text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
+
+        .kennis-featured-small:last-child { border-bottom: none; }
 
         .kennis-featured-small:hover {
             background: var(--color-white);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transform: translateX(5px);
+            padding-left: 40px;
         }
 
-        .kennis-featured-small-image {
-            width: 100px;
-            height: 100px;
-            border-radius: var(--radius-md);
-            overflow: hidden;
+        .kennis-featured-small-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--color-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
 
-        .kennis-featured-small-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .kennis-featured-small-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-white);
         }
 
-        .kennis-featured-small-content h4 {
+        .kennis-featured-small h4 {
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             color: var(--color-charcoal);
-            margin-bottom: var(--space-xs);
+            margin-bottom: 4px;
         }
 
-        .kennis-featured-small-content p {
-            font-family: var(--font-body);
+        .kennis-featured-small p {
             font-size: 14px;
             color: var(--color-stone);
             line-height: 1.5;
         }
 
         /* ========================================
-           CTA SECTION
+           FINAL CTA SECTION
            ======================================== */
         .kennis-cta {
-            padding: var(--space-3xl) var(--space-lg);
             background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            padding: 96px 24px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
@@ -485,7 +426,6 @@
         .kennis-cta-container {
             max-width: 800px;
             margin: 0 auto;
-            text-align: center;
             position: relative;
             z-index: 1;
         }
@@ -495,31 +435,29 @@
             font-weight: 700;
             font-size: clamp(28px, 4vw, 42px);
             color: var(--color-white);
-            margin-bottom: var(--space-md);
+            margin-bottom: 16px;
         }
 
         .kennis-cta p {
-            font-family: var(--font-body);
             font-size: 18px;
             color: rgba(255,255,255,0.85);
-            margin-bottom: var(--space-xl);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 40px;
         }
 
         .kennis-cta-buttons {
             display: flex;
-            gap: var(--space-md);
+            gap: 16px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
-        /* Buttons */
+        /* ========================================
+           BUTTONS
+           ======================================== */
         .btn-primary {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 8px;
             font-family: var(--font-heading);
             font-weight: 800;
             font-size: 15px;
@@ -546,9 +484,7 @@
             transition: left 0.5s ease;
         }
 
-        .btn-primary:hover::before {
-            left: 100%;
-        }
+        .btn-primary:hover::before { left: 100%; }
 
         .btn-primary:hover {
             background: #d87a5e;
@@ -560,7 +496,7 @@
         .btn-secondary {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 8px;
             font-family: var(--font-heading);
             font-weight: 800;
             font-size: 15px;
@@ -581,89 +517,54 @@
             transform: translateY(-3px);
         }
 
+        .btn-white {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 18px 32px;
+            background: var(--color-white);
+            color: var(--color-terracotta);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-white:hover {
+            background: var(--color-off-white);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: var(--color-terracotta) !important;
+        }
+
         /* ========================================
            RESPONSIVE
            ======================================== */
-        @media (max-width: 968px) {
-            .kennis-featured-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .kennis-featured-main {
-                min-height: 400px;
-            }
-
-            .kennis-stats {
-                gap: var(--space-lg);
-            }
+        @media (max-width: 1024px) {
+            .kennis-cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .kennis-featured { grid-template-columns: 1fr; }
+            .kennis-featured-main { min-height: 400px; }
         }
 
         @media (max-width: 768px) {
-            .kennis-hero {
-                padding: var(--space-2xl) var(--space-md);
-            }
-
-            .kennis-categories {
-                padding: var(--space-2xl) var(--space-md);
-            }
-
-            .kennis-cards-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .kennis-featured-small {
-                flex-direction: column;
-            }
-
-            .kennis-featured-small-image {
-                width: 100%;
-                height: 150px;
-            }
-
-            .kennis-cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                max-width: 300px;
-                justify-content: center;
-            }
+            .kennis-cards-grid { grid-template-columns: 1fr; }
+            .kennis-card { min-height: 350px; }
+            .kennis-inline-cta-container { flex-direction: column; text-align: center; }
+            .kennis-featured-main-overlay { padding: 32px; }
+            .kennis-cta-buttons { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-secondary { width: 100%; max-width: 300px; justify-content: center; }
         }
-
-        /* ========================================
-           ANIMATIONS
-           ======================================== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-        .delay-6 { animation-delay: 0.6s; }
     </style>
 
     <!-- HERO SECTION -->
     <div class="kennis-hero">
         <div class="kennis-hero-container">
             <div class="kennis-hero-badge">
-                <svg viewBox="0 0 24 24" fill="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
                 Kennisbank Duurzame Vlaggen
@@ -673,6 +574,17 @@
                 Van CSRD-compliance tot microplastics: ontdek hoe Flag-Ciclo technologie
                 jouw organisatie helpt verduurzamen met meetbare resultaten.
             </p>
+            <div class="kennis-hero-cta">
+                <a href="/bestel/" class="btn-primary">
+                    Bekijk alle vlaggen
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/bereken-besparing/" class="btn-secondary">
+                    Bereken je besparing
+                </a>
+            </div>
             <div class="kennis-stats">
                 <div class="kennis-stat">
                     <div class="kennis-stat-value" data-count="96">0</div>
@@ -683,287 +595,233 @@
                     <div class="kennis-stat-label">% Microplastics</div>
                 </div>
                 <div class="kennis-stat">
-                    <div class="kennis-stat-value" data-count="7">0</div>
-                    <div class="kennis-stat-label">Kennisartikelen</div>
+                    <div class="kennis-stat-value" data-count="3">0</div>
+                    <div class="kennis-stat-label">Werkdagen levering</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CATEGORY CARDS SECTION -->
-    <div class="kennis-categories">
-        <div class="kennis-categories-container">
-            <div class="kennis-section-header">
-                <h2>Verdiep je in duurzame vlaggen</h2>
-                <p>Kies een onderwerp en ontdek alles wat je moet weten over biologisch afbreekbare vlaggen.</p>
-            </div>
-            <div class="kennis-cards-grid">
-                <!-- CSRD Card -->
-                <a href="/kennis/csrd-compliance/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/2C5F4F/FFFFFF?text=CSRD+Compliance+Dashboard"
-                             alt="CSRD compliance dashboard met duurzaamheidsmetrics"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-csrd">CSRD</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>CSRD-Compliance</h3>
-                        <p>Leer hoe biologisch afbreekbare vlaggen bijdragen aan je ESRS E2-5 rapportage en microplastic-reductiedoelen.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Flag-Ciclo Card -->
-                <a href="/kennis/flag-ciclo-technologie/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/5C8A9D/FFFFFF?text=Flag-Ciclo+Technology"
-                             alt="Flag-Ciclo technologie moleculaire structuur"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-tech">Technologie</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>Flag-Ciclo Technologie</h3>
-                        <p>Ontdek hoe onze gepatenteerde technologie polyester biologisch afbreekbaar maakt zonder kwaliteitsverlies.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Microplastics Card -->
-                <a href="/kennis/microplastics/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/C66B4E/FFFFFF?text=Microplastics+Problem"
-                             alt="Microplastics probleem visualisatie"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-impact">Impact</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>Microplastics Probleem</h3>
-                        <p>Begrijp waarom traditionele vlaggen een microplastic-bron zijn en hoe Flag-Ciclo dit probleem oplost.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Vlaggen Kiezen Card -->
-                <a href="/kennis/vlaggen-kiezen/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/8B7BA8/FFFFFF?text=Vlaggen+Keuzegids"
-                             alt="Verschillende vlagtypen voor bedrijven"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-guide">Keuzegids</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>De Juiste Vlag Kiezen</h3>
-                        <p>Complete gids voor het kiezen van de perfecte biologisch afbreekbare vlag voor jouw situatie.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Voor Gemeenten Card -->
-                <a href="/kennis/voor-gemeenten/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/2C5F4F/FFFFFF?text=Gemeenten+Duurzaamheid"
-                             alt="Gemeentehuis met duurzame vlaggen"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-csrd">Overheid</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>Voor Gemeenten</h3>
-                        <p>Hoe gemeenten met Flag-Ciclo vlaggen hun duurzaamheidsdoelen behalen en het goede voorbeeld geven.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Voor Evenementen Card -->
-                <a href="/kennis/voor-evenementen/" class="kennis-card">
-                    <div class="kennis-card-image">
-                        <img src="https://placehold.co/600x400/5C8A9D/FFFFFF?text=Evenementen+Vlaggen"
-                             alt="Festivalbanner met duurzame vlaggen"
-                             width="600" height="400" loading="lazy">
-                        <span class="kennis-card-badge badge-tech">Evenementen</span>
-                    </div>
-                    <div class="kennis-card-content">
-                        <h3>Voor Evenementen</h3>
-                        <p>Maak je festival of event duurzamer met biologisch afbreekbare vlaggen en banners.</p>
-                        <span class="kennis-card-link">
-                            Lees meer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-            </div>
+    <!-- CATEGORY CARDS - FULL WIDTH NO GAPS -->
+    <div class="kennis-cards-section">
+        <div class="kennis-cards-header">
+            <h2>Verdiep je in duurzame vlaggen</h2>
+            <p>Kies een onderwerp en ontdek alles wat je moet weten over biologisch afbreekbare vlaggen.</p>
+        </div>
+        <div class="kennis-cards-grid">
+            <a href="/kennis/csrd-compliance/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/2C5F4F/FFFFFF?text=CSRD+Compliance');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge">CSRD</span>
+                    <h3>CSRD-Compliance</h3>
+                    <p>Leer hoe biologisch afbreekbare vlaggen bijdragen aan je ESRS E2-5 rapportage.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <a href="/kennis/flag-ciclo-technologie/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/5C8A9D/FFFFFF?text=Flag-Ciclo+Tech');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge" style="background: var(--color-sage-blue);">Technologie</span>
+                    <h3>Flag-Ciclo Technologie</h3>
+                    <p>Ontdek hoe onze gepatenteerde technologie polyester biologisch afbreekbaar maakt.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <a href="/kennis/microplastics/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/C66B4E/FFFFFF?text=Microplastics');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge">Impact</span>
+                    <h3>Microplastics Probleem</h3>
+                    <p>Begrijp waarom traditionele vlaggen een microplastic-bron zijn.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <a href="/kennis/vlaggen-kiezen/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/8B7BA8/FFFFFF?text=Vlaggen+Kiezen');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge" style="background: var(--color-sage-purple);">Keuzegids</span>
+                    <h3>De Juiste Vlag Kiezen</h3>
+                    <p>Complete gids voor het kiezen van de perfecte biologisch afbreekbare vlag.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <a href="/kennis/voor-gemeenten/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/2C5F4F/FFFFFF?text=Voor+Gemeenten');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge">Overheid</span>
+                    <h3>Voor Gemeenten</h3>
+                    <p>Hoe gemeenten met Flag-Ciclo vlaggen hun duurzaamheidsdoelen behalen.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <a href="/kennis/voor-evenementen/" class="kennis-card">
+                <div class="kennis-card-bg" style="background-image: url('https://placehold.co/800x600/5C8A9D/FFFFFF?text=Evenementen');"></div>
+                <div class="kennis-card-overlay"></div>
+                <div class="kennis-card-content">
+                    <span class="kennis-card-badge" style="background: var(--color-sage-blue);">Evenementen</span>
+                    <h3>Voor Evenementen</h3>
+                    <p>Maak je festival of event duurzamer met biologisch afbreekbare vlaggen.</p>
+                    <span class="kennis-card-link">
+                        Lees meer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
         </div>
     </div>
 
-    <!-- FEATURED SECTION -->
+    <!-- INLINE CTA STRIP -->
+    <div class="kennis-inline-cta">
+        <div class="kennis-inline-cta-container">
+            <div>
+                <h3>Direct aan de slag met duurzame vlaggen?</h3>
+                <p>Bekijk ons complete assortiment biologisch afbreekbare vlaggen</p>
+            </div>
+            <a href="/bestel/" class="btn-white">
+                Bekijk producten
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- FEATURED SECTION - FULL WIDTH -->
     <div class="kennis-featured">
-        <div class="kennis-featured-container">
-            <div class="kennis-section-header">
-                <h2>Uitgelichte onderwerpen</h2>
-                <p>De meest gelezen artikelen uit onze kennisbank</p>
-            </div>
-            <div class="kennis-featured-grid">
-                <a href="/kennis/faq/" class="kennis-featured-main">
-                    <img src="https://placehold.co/800x600/2C5F4F/FFFFFF?text=FAQ+Duurzame+Vlaggen"
-                         alt="Veelgestelde vragen over biologisch afbreekbare vlaggen"
-                         width="800" height="600" loading="lazy">
-                    <div class="kennis-featured-main-overlay">
-                        <h3>Veelgestelde Vragen</h3>
-                        <p>Antwoorden op de meest gestelde vragen over biologisch afbreekbare vlaggen, Flag-Ciclo technologie en CSRD-compliance.</p>
-                        <span class="kennis-card-link" style="color: white;">
-                            Bekijk alle FAQ's
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: white;">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
+        <div class="kennis-featured-main">
+            <div class="kennis-featured-main-bg" style="background-image: url('https://placehold.co/800x600/2C5F4F/FFFFFF?text=FAQ+Duurzame+Vlaggen');"></div>
+            <div class="kennis-featured-main-overlay">
+                <h3>Veelgestelde Vragen</h3>
+                <p>Antwoorden op de meest gestelde vragen over biologisch afbreekbare vlaggen, Flag-Ciclo technologie en CSRD-compliance.</p>
+                <a href="/kennis/faq/" class="btn-primary">
+                    Bekijk alle FAQ's
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
                 </a>
-                <div class="kennis-featured-sidebar">
-                    <a href="/kennis/csrd-compliance/" class="kennis-featured-small">
-                        <div class="kennis-featured-small-image">
-                            <img src="https://placehold.co/200x200/C66B4E/FFFFFF?text=ESRS+E2-5"
-                                 alt="ESRS E2-5 rapportage"
-                                 width="200" height="200" loading="lazy">
-                        </div>
-                        <div class="kennis-featured-small-content">
-                            <h4>ESRS E2-5 Rapportage</h4>
-                            <p>Hoe Flag-Ciclo vlaggen meetbaar bijdragen aan je microplastic-rapportage.</p>
-                        </div>
-                    </a>
-                    <a href="/kennis/flag-ciclo-technologie/" class="kennis-featured-small">
-                        <div class="kennis-featured-small-image">
-                            <img src="https://placehold.co/200x200/5C8A9D/FFFFFF?text=Certificaten"
-                                 alt="OEKO-TEX certificering"
-                                 width="200" height="200" loading="lazy">
-                        </div>
-                        <div class="kennis-featured-small-content">
-                            <h4>Certificeringen uitgelegd</h4>
-                            <p>OEKO-TEX, REACH en ASTM-testen: wat betekenen ze precies?</p>
-                        </div>
-                    </a>
-                    <a href="/kennis/microplastics/" class="kennis-featured-small">
-                        <div class="kennis-featured-small-image">
-                            <img src="https://placehold.co/200x200/2C5F4F/FFFFFF?text=96%25"
-                                 alt="96% biologisch afbreekbaar"
-                                 width="200" height="200" loading="lazy">
-                        </div>
-                        <div class="kennis-featured-small-content">
-                            <h4>96% Afbraak in 2-3 jaar</h4>
-                            <p>De wetenschap achter volledige biologische afbraak zonder microplastics.</p>
-                        </div>
-                    </a>
-                    <a href="/kennis/vlaggen-kiezen/" class="kennis-featured-small">
-                        <div class="kennis-featured-small-image">
-                            <img src="https://placehold.co/200x200/8B7BA8/FFFFFF?text=Mastvlaggen"
-                                 alt="Mastvlaggen selectie"
-                                 width="200" height="200" loading="lazy">
-                        </div>
-                        <div class="kennis-featured-small-content">
-                            <h4>Mastvlaggen vs Baniervlaggen</h4>
-                            <p>Welk type vlag past het beste bij jouw toepassing?</p>
-                        </div>
-                    </a>
-                </div>
             </div>
+        </div>
+        <div class="kennis-featured-sidebar">
+            <a href="/kennis/csrd-compliance/" class="kennis-featured-small">
+                <div class="kennis-featured-small-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>ESRS E2-5 Rapportage</h4>
+                    <p>Hoe Flag-Ciclo vlaggen meetbaar bijdragen aan je microplastic-rapportage.</p>
+                </div>
+            </a>
+            <a href="/kennis/flag-ciclo-technologie/" class="kennis-featured-small">
+                <div class="kennis-featured-small-icon" style="background: var(--color-sage-blue);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="7"/>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>Certificeringen uitgelegd</h4>
+                    <p>OEKO-TEX, REACH en ASTM-testen: wat betekenen ze precies?</p>
+                </div>
+            </a>
+            <a href="/kennis/microplastics/" class="kennis-featured-small">
+                <div class="kennis-featured-small-icon" style="background: var(--color-terracotta);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4>96% Afbraak in 2-3 jaar</h4>
+                    <p>De wetenschap achter volledige biologische afbraak zonder microplastics.</p>
+                </div>
+            </a>
+            <a href="/bestel/" class="kennis-featured-small" style="background: var(--color-forest);">
+                <div class="kennis-featured-small-icon" style="background: var(--color-white);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-forest)" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4 style="color: white;">Direct bestellen</h4>
+                    <p style="color: rgba(255,255,255,0.85);">Bekijk ons assortiment en bestel je duurzame vlaggen.</p>
+                </div>
+            </a>
         </div>
     </div>
 
-    <!-- CTA SECTION -->
+    <!-- FINAL CTA SECTION -->
     <div class="kennis-cta">
         <div class="kennis-cta-container">
             <h2>Klaar om te verduurzamen?</h2>
             <p>Bereken hoeveel microplastics jouw organisatie kan besparen door over te stappen op Flag-Ciclo vlaggen.</p>
             <div class="kennis-cta-buttons">
-                <a href="/bereken-besparing/" class="btn-primary">
-                    Bereken je besparing
+                <a href="/bestel/" class="btn-primary">
+                    Bekijk alle vlaggen
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </a>
-                <a href="/bestel/" class="btn-secondary">
-                    Bekijk producten
+                <a href="/bereken-besparing/" class="btn-secondary">
+                    Bereken je besparing
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript for Animations -->
+    <!-- JavaScript -->
     <script>
         (function() {
-            // Animated Counter
-            function animateCounter(element, target, duration = 2000) {
+            function animateCounter(el, target, duration = 2000) {
                 let start = 0;
                 const increment = target / (duration / 16);
                 const timer = setInterval(() => {
                     start += increment;
                     if (start >= target) {
-                        element.textContent = target;
+                        el.textContent = target;
                         clearInterval(timer);
                     } else {
-                        element.textContent = Math.floor(start);
+                        el.textContent = Math.floor(start);
                     }
                 }, 16);
             }
 
-            // Intersection Observer for Cards
-            const cards = document.querySelectorAll('.kennis-card');
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const cardObserver = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('visible');
-                        }, index * 100);
-                        cardObserver.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            cards.forEach(card => cardObserver.observe(card));
-
-            // Counter Animation on Scroll
             const stats = document.querySelectorAll('.kennis-stat-value');
-            const statsObserver = new IntersectionObserver((entries) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const target = parseInt(entry.target.dataset.count);
                         animateCounter(entry.target, target);
-                        statsObserver.unobserve(entry.target);
+                        observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.5 });
 
-            stats.forEach(stat => statsObserver.observe(stat));
+            stats.forEach(stat => observer.observe(stat));
         })();
     </script>
 </section>
