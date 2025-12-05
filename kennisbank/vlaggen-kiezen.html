@@ -1,0 +1,1503 @@
+<!-- COMPONENT: Vlaggen Kiezen Knowledge Page -->
+<!-- URL: /kennis/vlaggen-kiezen/ -->
+<section class="kiezen-knowledge" aria-labelledby="kiezen-knowledge-title">
+    <style>
+        /* ========================================
+           VLAGGEN KIEZEN PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .kiezen-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .kiezen-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .kiezen-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .kiezen-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .kiezen-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .kiezen-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .kiezen-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .kiezen-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .kiezen-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .kiezen-hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-sage-purple) 0%, #6b5b8a 50%, #4a3d6a 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        .kiezen-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(44, 95, 79, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .kiezen-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .kiezen-hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .kiezen-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+        }
+
+        .kiezen-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .kiezen-hero h1 span {
+            background: linear-gradient(135deg, var(--color-terracotta), #ffa07a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kiezen-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           FLAG TYPES SECTION
+           ======================================== */
+        .kiezen-types {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .kiezen-types-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .kiezen-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .kiezen-section-badge {
+            display: inline-block;
+            background: var(--color-sage-purple);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .kiezen-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .kiezen-section-header p {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--color-stone);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .kiezen-types-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .kiezen-type-card {
+            background: var(--color-off-white);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .kiezen-type-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .kiezen-type-card:hover {
+            background: var(--color-white);
+            box-shadow: 0 25px 60px rgba(139, 123, 168, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .kiezen-type-image {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .kiezen-type-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .kiezen-type-card:hover .kiezen-type-image img {
+            transform: scale(1.08);
+        }
+
+        .kiezen-type-badge {
+            position: absolute;
+            top: var(--space-sm);
+            left: var(--space-sm);
+            background: var(--color-forest);
+            color: var(--color-white);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .kiezen-type-content {
+            padding: var(--space-lg);
+        }
+
+        .kiezen-type-content h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .kiezen-type-content p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+
+        .kiezen-type-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .kiezen-type-spec {
+            background: var(--color-white);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-forest);
+        }
+
+        .kiezen-type-card:hover .kiezen-type-spec {
+            background: var(--color-off-white);
+        }
+
+        /* ========================================
+           DECISION HELPER SECTION
+           ======================================== */
+        .kiezen-decision {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .kiezen-decision-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .kiezen-decision-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            margin-top: var(--space-2xl);
+        }
+
+        .kiezen-decision-card {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-xl);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .kiezen-decision-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .kiezen-decision-card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .kiezen-decision-card h3 svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-sage-purple);
+        }
+
+        .kiezen-decision-options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .kiezen-decision-option {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            background: var(--color-off-white);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .kiezen-decision-option:hover {
+            background: rgba(139, 123, 168, 0.1);
+            transform: translateX(5px);
+        }
+
+        .kiezen-decision-option-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-sage-purple);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kiezen-decision-option-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-white);
+        }
+
+        .kiezen-decision-option h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--color-charcoal);
+            margin-bottom: 4px;
+        }
+
+        .kiezen-decision-option p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            line-height: 1.5;
+        }
+
+        .kiezen-decision-option .recommendation {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--color-forest);
+            margin-top: var(--space-xs);
+            display: inline-block;
+        }
+
+        /* ========================================
+           SIZE GUIDE SECTION
+           ======================================== */
+        .kiezen-sizes {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .kiezen-sizes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .kiezen-sizes-table-wrapper {
+            margin-top: var(--space-2xl);
+            overflow-x: auto;
+        }
+
+        .kiezen-sizes-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .kiezen-sizes-table th {
+            background: var(--color-forest);
+            color: var(--color-white);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: var(--space-md);
+            text-align: left;
+        }
+
+        .kiezen-sizes-table td {
+            padding: var(--space-md);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-charcoal);
+            border-bottom: 1px solid var(--color-off-white);
+        }
+
+        .kiezen-sizes-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .kiezen-sizes-table tr:hover td {
+            background: var(--color-off-white);
+        }
+
+        .kiezen-sizes-table .highlight {
+            background: rgba(44, 95, 79, 0.08);
+        }
+
+        .kiezen-sizes-table .size-badge {
+            display: inline-block;
+            background: var(--color-sage-purple);
+            color: var(--color-white);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ========================================
+           PRINTING OPTIONS SECTION
+           ======================================== */
+        .kiezen-printing {
+            padding: var(--space-3xl) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-sage-purple) 0%, #6b5b8a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kiezen-printing::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .kiezen-printing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kiezen-printing .kiezen-section-header h2 {
+            color: var(--color-white);
+        }
+
+        .kiezen-printing .kiezen-section-header p {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .kiezen-printing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .kiezen-printing-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .kiezen-printing-card:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-8px);
+        }
+
+        .kiezen-printing-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--color-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+        }
+
+        .kiezen-printing-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-sage-purple);
+        }
+
+        .kiezen-printing-card h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-white);
+            margin-bottom: var(--space-xs);
+        }
+
+        .kiezen-printing-card p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           CHECKLIST SECTION
+           ======================================== */
+        .kiezen-checklist {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .kiezen-checklist-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .kiezen-checklist-items {
+            margin-top: var(--space-2xl);
+            display: grid;
+            gap: var(--space-md);
+        }
+
+        .kiezen-checklist-item {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+        }
+
+        .kiezen-checklist-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(139, 123, 168, 0.15);
+        }
+
+        .kiezen-checklist-number {
+            width: 40px;
+            height: 40px;
+            background: var(--color-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--color-white);
+            flex-shrink: 0;
+        }
+
+        .kiezen-checklist-content h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .kiezen-checklist-content p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           FAQ SECTION
+           ======================================== */
+        .kiezen-faq {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .kiezen-faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .kiezen-faq-list {
+            margin-top: var(--space-2xl);
+        }
+
+        .kiezen-faq-item {
+            background: var(--color-off-white);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .kiezen-faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .kiezen-faq-question:hover {
+            color: var(--color-sage-purple);
+        }
+
+        .kiezen-faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-sage-purple);
+            transition: transform 0.3s ease;
+        }
+
+        .kiezen-faq-item.active .kiezen-faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .kiezen-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .kiezen-faq-item.active .kiezen-faq-answer {
+            max-height: 500px;
+        }
+
+        .kiezen-faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .kiezen-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .kiezen-cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kiezen-cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139,123,168,0.3) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .kiezen-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .kiezen-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: var(--space-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kiezen-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-sage-blue);
+            border-color: var(--color-sage-blue);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .kiezen-types-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kiezen-decision-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kiezen-printing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kiezen-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .kiezen-printing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kiezen-sizes-table {
+                font-size: 14px;
+            }
+
+            .kiezen-sizes-table th,
+            .kiezen-sizes-table td {
+                padding: var(--space-sm);
+            }
+
+            .kiezen-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Welk type vlag is het beste voor mijn situatie?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Voor permanente plaatsing aan een gebouw zijn mastvlaggen ideaal. Baniervlaggen zijn perfect voor evenementen en tijdelijke promoties. Beachflags werken uitstekend voor beurzen en winkelpui. Alle types zijn beschikbaar in biologisch afbreekbaar Flag-Ciclo materiaal."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Welke maat vlag heb ik nodig?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "De juiste maat hangt af van de masthoogte en zichtbaarheid. Voor een 6m mast adviseren we 100x150cm. Voor 8m masten 150x225cm en voor 10m+ masten 200x300cm of groter. Neem contact op voor persoonlijk advies."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoelang gaat een Flag-Ciclo vlag mee?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen gaan 3-4 maanden mee bij intensief buitengebruik, gelijk aan traditionele polyester vlaggen. De UV-bestendigheid is 2 jaar. Na afdanking breekt de vlag af in 2-3 jaar zonder microplastics."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kan ik mijn eigen ontwerp laten drukken?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, we drukken jouw ontwerp in full-color sublimatie. Dit zorgt voor levendige, doordrukende kleuren die ook aan de achterkant zichtbaar zijn. Lever je ontwerp aan als PDF of AI bestand met minimaal 150 DPI."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="kiezen-breadcrumb">
+        <div class="kiezen-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>De Juiste Vlag Kiezen</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="kiezen-hero">
+        <div class="kiezen-hero-container">
+            <div class="kiezen-hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Keuzegids
+            </div>
+            <h1 id="kiezen-knowledge-title">De juiste <span>biologisch afbreekbare</span> vlag kiezen</h1>
+            <p class="kiezen-hero-subtitle">
+                Van mastvlaggen tot beachflags: ontdek welk type vlag het beste past bij jouw situatie,
+                en maak een duurzame keuze zonder concessies aan kwaliteit.
+            </p>
+        </div>
+    </div>
+
+    <!-- FLAG TYPES SECTION -->
+    <div class="kiezen-types">
+        <div class="kiezen-types-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge">Vlagtypen</span>
+                <h2>Welk type vlag past bij jou?</h2>
+                <p>Elk type vlag heeft zijn eigen voordelen. Ontdek welke het beste past bij jouw situatie.</p>
+            </div>
+            <div class="kiezen-types-grid">
+                <div class="kiezen-type-card">
+                    <div class="kiezen-type-image">
+                        <img src="https://placehold.co/600x440/2C5F4F/FFFFFF?text=Mastvlag+aan+kantoor"
+                             alt="Biologisch afbreekbare mastvlag aan modern kantoorgebouw"
+                             width="600" height="440" loading="lazy">
+                        <span class="kiezen-type-badge">Populair</span>
+                    </div>
+                    <div class="kiezen-type-content">
+                        <h3>Mastvlaggen</h3>
+                        <p>De klassieke keuze voor bedrijven, gemeenten en instellingen. Perfect voor permanente plaatsing aan gevels of vrijstaande masten.</p>
+                        <div class="kiezen-type-specs">
+                            <span class="kiezen-type-spec">70x100cm - 400x600cm</span>
+                            <span class="kiezen-type-spec">Horizontaal</span>
+                            <span class="kiezen-type-spec">Mastbevestiging</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-type-card">
+                    <div class="kiezen-type-image">
+                        <img src="https://placehold.co/600x440/5C8A9D/FFFFFF?text=Baniervlag+event"
+                             alt="Biologisch afbreekbare baniervlag bij evenement"
+                             width="600" height="440" loading="lazy">
+                    </div>
+                    <div class="kiezen-type-content">
+                        <h3>Baniervlaggen</h3>
+                        <p>Verticale vlaggen ideaal voor evenementen, winkelstraten en tijdelijke promoties. Opvallend en windbestendig.</p>
+                        <div class="kiezen-type-specs">
+                            <span class="kiezen-type-spec">60x200cm - 120x400cm</span>
+                            <span class="kiezen-type-spec">Verticaal</span>
+                            <span class="kiezen-type-spec">Banierarm</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-type-card">
+                    <div class="kiezen-type-image">
+                        <img src="https://placehold.co/600x440/8B7BA8/FFFFFF?text=Beachflag+beurs"
+                             alt="Biologisch afbreekbare beachflag op beurs"
+                             width="600" height="440" loading="lazy">
+                    </div>
+                    <div class="kiezen-type-content">
+                        <h3>Beachflags</h3>
+                        <p>Flexibele vlaggen voor beurzen, winkelpui en outdoor promoties. Licht, draagbaar en direct inzetbaar.</p>
+                        <div class="kiezen-type-specs">
+                            <span class="kiezen-type-spec">S / M / L / XL</span>
+                            <span class="kiezen-type-spec">Drop / Veer / Haai</span>
+                            <span class="kiezen-type-spec">Met voet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DECISION HELPER SECTION -->
+    <div class="kiezen-decision">
+        <div class="kiezen-decision-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge">Hulp bij kiezen</span>
+                <h2>Wat is je situatie?</h2>
+                <p>Beantwoord deze vragen om te ontdekken welk type vlag het beste bij je past.</p>
+            </div>
+            <div class="kiezen-decision-grid">
+                <div class="kiezen-decision-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        Hoe lang hang je de vlag?
+                    </h3>
+                    <div class="kiezen-decision-options">
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Permanent (jaar rond)</h4>
+                                <p>Bedrijfsgevel, gemeentehuis, school</p>
+                                <span class="recommendation">→ Mastvlag aanbevolen</span>
+                            </div>
+                        </div>
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Tijdelijk (dagen/weken)</h4>
+                                <p>Evenement, actie, seizoensgebonden</p>
+                                <span class="recommendation">→ Baniervlag of Beachflag</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-decision-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        Waar plaats je de vlag?
+                    </h3>
+                    <div class="kiezen-decision-options">
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Aan gebouw of mast</h4>
+                                <p>Vaste locatie met montage</p>
+                                <span class="recommendation">→ Mastvlag aanbevolen</span>
+                            </div>
+                        </div>
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Vrij te plaatsen</h4>
+                                <p>Beurs, stoep, event terrein</p>
+                                <span class="recommendation">→ Beachflag aanbevolen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-decision-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Wat is het doel?
+                    </h3>
+                    <div class="kiezen-decision-options">
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Branding / Representatie</h4>
+                                <p>Logo, identiteit uitstralen</p>
+                                <span class="recommendation">→ Mastvlag met logo</span>
+                            </div>
+                        </div>
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Promotie / Actie</h4>
+                                <p>Aanbieding, evenement aankondigen</p>
+                                <span class="recommendation">→ Baniervlag of Beachflag</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-decision-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                        Heb je al montage?
+                    </h3>
+                    <div class="kiezen-decision-options">
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Ja, bestaande mast</h4>
+                                <p>Alleen nieuwe vlag nodig</p>
+                                <span class="recommendation">→ Passende mastvlag</span>
+                            </div>
+                        </div>
+                        <div class="kiezen-decision-option">
+                            <div class="kiezen-decision-option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Nee, geen montage</h4>
+                                <p>Compleet systeem nodig</p>
+                                <span class="recommendation">→ Beachflag met voet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIZE GUIDE SECTION -->
+    <div class="kiezen-sizes">
+        <div class="kiezen-sizes-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge">Maattabel</span>
+                <h2>Welke maat past bij jouw mast?</h2>
+                <p>Kies de juiste vlaggrootte op basis van je masthoogte voor optimale zichtbaarheid.</p>
+            </div>
+            <div class="kiezen-sizes-table-wrapper">
+                <table class="kiezen-sizes-table">
+                    <thead>
+                        <tr>
+                            <th>Masthoogte</th>
+                            <th>Aanbevolen vlagmaat</th>
+                            <th>Toepassing</th>
+                            <th>Zichtbaarheid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4-5 meter</td>
+                            <td>70x100 cm</td>
+                            <td>Woning, kleine winkel</td>
+                            <td><span class="size-badge">10-20m</span></td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>6 meter</td>
+                            <td>100x150 cm</td>
+                            <td>Kantoor, winkel, horeca</td>
+                            <td><span class="size-badge">20-40m</span></td>
+                        </tr>
+                        <tr>
+                            <td>7-8 meter</td>
+                            <td>150x225 cm</td>
+                            <td>Bedrijfspand, showroom</td>
+                            <td><span class="size-badge">40-60m</span></td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>10 meter</td>
+                            <td>200x300 cm</td>
+                            <td>Industrieterrein, gemeente</td>
+                            <td><span class="size-badge">60-100m</span></td>
+                        </tr>
+                        <tr>
+                            <td>12+ meter</td>
+                            <td>300x450 cm of groter</td>
+                            <td>Hoofdkantoor, haven, stadion</td>
+                            <td><span class="size-badge">100m+</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINTING OPTIONS -->
+    <div class="kiezen-printing">
+        <div class="kiezen-printing-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge" style="background: var(--color-white); color: var(--color-sage-purple);">Bedrukking</span>
+                <h2>Jouw ontwerp op Flag-Ciclo</h2>
+                <p>Full-color sublimatie voor levendige, duurzame prints.</p>
+            </div>
+            <div class="kiezen-printing-grid">
+                <div class="kiezen-printing-card">
+                    <div class="kiezen-printing-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h4>Sublimatie druk</h4>
+                    <p>Kleuren dringen diep in de vezel voor levendige, blijvende prints die niet afbladderen.</p>
+                </div>
+                <div class="kiezen-printing-card">
+                    <div class="kiezen-printing-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="13.5" cy="6.5" r="2.5"/>
+                            <circle cx="19" cy="17" r="2"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="12" cy="19" r="2"/>
+                        </svg>
+                    </div>
+                    <h4>Full-color CMYK</h4>
+                    <p>Onbeperkte kleuren, kleurverlopen en fotos. Geen beperkingen in je ontwerp.</p>
+                </div>
+                <div class="kiezen-printing-card">
+                    <div class="kiezen-printing-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <h4>Doordruk</h4>
+                    <p>Print is aan beide zijden zichtbaar. Ideaal voor vlaggen die van alle kanten bekeken worden.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKLIST SECTION -->
+    <div class="kiezen-checklist">
+        <div class="kiezen-checklist-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge">Checklist</span>
+                <h2>5 stappen naar de perfecte vlag</h2>
+                <p>Volg deze checklist voor een weloverwogen keuze.</p>
+            </div>
+            <div class="kiezen-checklist-items">
+                <div class="kiezen-checklist-item">
+                    <div class="kiezen-checklist-number">1</div>
+                    <div class="kiezen-checklist-content">
+                        <h4>Bepaal het type vlag</h4>
+                        <p>Mastvlag voor permanente plaatsing, baniervlag voor evenementen, beachflag voor flexibele inzet.</p>
+                    </div>
+                </div>
+                <div class="kiezen-checklist-item">
+                    <div class="kiezen-checklist-number">2</div>
+                    <div class="kiezen-checklist-content">
+                        <h4>Meet je mast of ruimte</h4>
+                        <p>Kies de juiste vlaggrootte op basis van je masthoogte of beschikbare ruimte. Zie onze maattabel hierboven.</p>
+                    </div>
+                </div>
+                <div class="kiezen-checklist-item">
+                    <div class="kiezen-checklist-number">3</div>
+                    <div class="kiezen-checklist-content">
+                        <h4>Bereid je ontwerp voor</h4>
+                        <p>Lever je ontwerp aan als PDF of AI met minimaal 150 DPI. Houd rekening met een snijmarge van 2cm.</p>
+                    </div>
+                </div>
+                <div class="kiezen-checklist-item">
+                    <div class="kiezen-checklist-number">4</div>
+                    <div class="kiezen-checklist-content">
+                        <h4>Kies de confectie</h4>
+                        <p>Standaard met koord en lus, of met karabijnhaken voor snelle bevestiging. Verstevigde zoom voor winderige locaties.</p>
+                    </div>
+                </div>
+                <div class="kiezen-checklist-item">
+                    <div class="kiezen-checklist-number">5</div>
+                    <div class="kiezen-checklist-content">
+                        <h4>Bestel en geniet van duurzaamheid</h4>
+                        <p>Ontvang je Flag-Ciclo vlag binnen ~3 werkdagen. 96% biologisch afbreekbaar, 0% microplastics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="kiezen-faq">
+        <div class="kiezen-faq-container">
+            <div class="kiezen-section-header">
+                <span class="kiezen-section-badge">FAQ</span>
+                <h2>Veelgestelde vragen over vlaggen kiezen</h2>
+                <p>Antwoorden op de meest gestelde vragen.</p>
+            </div>
+            <div class="kiezen-faq-list">
+                <div class="kiezen-faq-item">
+                    <button class="kiezen-faq-question" aria-expanded="false">
+                        Welk type vlag is het beste voor mijn situatie?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="kiezen-faq-answer">
+                        <div class="kiezen-faq-answer-content">
+                            Voor permanente plaatsing aan een gebouw zijn mastvlaggen ideaal. Baniervlaggen zijn perfect
+                            voor evenementen en tijdelijke promoties. Beachflags werken uitstekend voor beurzen en winkelpui.
+                            Alle types zijn beschikbaar in biologisch afbreekbaar Flag-Ciclo materiaal.
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-faq-item">
+                    <button class="kiezen-faq-question" aria-expanded="false">
+                        Welke maat vlag heb ik nodig?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="kiezen-faq-answer">
+                        <div class="kiezen-faq-answer-content">
+                            De juiste maat hangt af van de masthoogte en gewenste zichtbaarheid. Voor een 6m mast adviseren
+                            we 100x150cm. Voor 8m masten 150x225cm en voor 10m+ masten 200x300cm of groter. Neem contact op
+                            voor persoonlijk advies.
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-faq-item">
+                    <button class="kiezen-faq-question" aria-expanded="false">
+                        Hoelang gaat een Flag-Ciclo vlag mee?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="kiezen-faq-answer">
+                        <div class="kiezen-faq-answer-content">
+                            Flag-Ciclo vlaggen gaan 3-4 maanden mee bij intensief buitengebruik, gelijk aan traditionele
+                            polyester vlaggen. De UV-bestendigheid is 2 jaar. Na afdanking breekt de vlag af in 2-3 jaar
+                            zonder microplastics achter te laten.
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-faq-item">
+                    <button class="kiezen-faq-question" aria-expanded="false">
+                        Kan ik mijn eigen ontwerp laten drukken?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="kiezen-faq-answer">
+                        <div class="kiezen-faq-answer-content">
+                            Ja, we drukken jouw ontwerp in full-color sublimatie. Dit zorgt voor levendige, doordrukende
+                            kleuren die ook aan de achterkant zichtbaar zijn. Lever je ontwerp aan als PDF of AI bestand
+                            met minimaal 150 DPI.
+                        </div>
+                    </div>
+                </div>
+                <div class="kiezen-faq-item">
+                    <button class="kiezen-faq-question" aria-expanded="false">
+                        Wat kost een Flag-Ciclo vlag?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="kiezen-faq-answer">
+                        <div class="kiezen-faq-answer-content">
+                            Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele polyester vlaggen.
+                            De exacte prijs hangt af van het type, de maat en oplage. Vraag een offerte aan voor een
+                            prijsopgave op maat.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="kiezen-cta">
+        <div class="kiezen-cta-container">
+            <h2>Klaar om de juiste vlag te kiezen?</h2>
+            <p>
+                Bekijk ons assortiment en vind de perfecte biologisch afbreekbare vlag voor jouw situatie.
+                Persoonlijk advies? Neem contact op.
+            </p>
+            <div class="kiezen-cta-buttons">
+                <a href="/bestel/" class="btn-primary">
+                    Bekijk alle vlaggen
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/contact/" class="btn-secondary">
+                    Vraag advies aan
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.kiezen-faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.kiezen-faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Type Cards Animation
+            const typeCards = document.querySelectorAll('.kiezen-type-card');
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            typeCards.forEach(card => cardObserver.observe(card));
+        })();
+    </script>
+</section>

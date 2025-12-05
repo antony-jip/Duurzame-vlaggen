@@ -1,0 +1,1375 @@
+<!-- COMPONENT: Voor Evenementen Knowledge Page -->
+<!-- URL: /kennis/voor-evenementen/ -->
+<section class="event-knowledge" aria-labelledby="event-knowledge-title">
+    <style>
+        /* ========================================
+           VOOR EVENEMENTEN PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .event-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .event-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .event-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .event-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .event-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .event-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .event-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .event-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .event-hero {
+            position: relative;
+            background: linear-gradient(135deg, #1a2a4a 0%, #2a3a5a 50%, var(--color-sage-blue) 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        /* Festival Lights Effect */
+        .event-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(198, 107, 78, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 123, 168, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 50% 50%, rgba(92, 138, 157, 0.2) 0%, transparent 40%);
+            animation: lights 10s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes lights {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .event-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .event-hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .event-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(198, 107, 78, 0.3);
+            border: 1px solid rgba(198, 107, 78, 0.5);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffd4c4;
+            margin-bottom: var(--space-md);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(198, 107, 78, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(198, 107, 78, 0); }
+        }
+
+        .event-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 58px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .event-hero h1 span {
+            background: linear-gradient(135deg, var(--color-terracotta), #ffa07a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .event-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto var(--space-xl);
+            line-height: 1.7;
+        }
+
+        .event-hero-image {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+        }
+
+        /* ========================================
+           EVENT TYPES SECTION
+           ======================================== */
+        .event-types {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .event-types-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .event-section-badge {
+            display: inline-block;
+            background: var(--color-sage-blue);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .event-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .event-section-header p {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--color-stone);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .event-types-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .event-type-card {
+            background: var(--color-off-white);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .event-type-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .event-type-card:hover {
+            background: var(--color-white);
+            box-shadow: 0 25px 60px rgba(92, 138, 157, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .event-type-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .event-type-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .event-type-card:hover .event-type-image img {
+            transform: scale(1.08);
+        }
+
+        .event-type-content {
+            padding: var(--space-lg);
+        }
+
+        .event-type-content h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .event-type-content p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+
+        .event-type-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .event-type-tag {
+            background: var(--color-sage-blue);
+            color: var(--color-white);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ========================================
+           BENEFITS SECTION
+           ======================================== */
+        .event-benefits {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .event-benefits-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .event-benefit-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .event-benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .event-benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-sage-blue), #7fb3c7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+        }
+
+        .event-benefit-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-white);
+        }
+
+        .event-benefit-card h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .event-benefit-card p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           SUSTAINABILITY STORY SECTION
+           ======================================== */
+        .event-story {
+            padding: var(--space-3xl) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-story::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(198,107,78,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .event-story-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .event-story-content h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+        }
+
+        .event-story-content p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.8;
+            margin-bottom: var(--space-md);
+        }
+
+        .event-story-stats {
+            display: flex;
+            gap: var(--space-xl);
+            margin-top: var(--space-lg);
+        }
+
+        .event-story-stat {
+            text-align: center;
+        }
+
+        .event-story-stat-value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 42px;
+            color: var(--color-terracotta);
+            line-height: 1;
+        }
+
+        .event-story-stat-label {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+        }
+
+        .event-story-image {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        /* ========================================
+           PRODUCTS SECTION
+           ======================================== */
+        .event-products {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .event-products-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-top: var(--space-2xl);
+        }
+
+        .event-product-card {
+            background: var(--color-off-white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .event-product-card:hover {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .event-product-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .event-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .event-product-card:hover .event-product-image img {
+            transform: scale(1.05);
+        }
+
+        .event-product-content {
+            padding: var(--space-lg);
+        }
+
+        .event-product-content h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .event-product-content p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            line-height: 1.5;
+            margin-bottom: var(--space-md);
+        }
+
+        .event-product-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .event-product-feature {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--font-heading);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-forest);
+        }
+
+        .event-product-feature svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ========================================
+           CERTIFICATIONS SECTION
+           ======================================== */
+        .event-certs {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .event-certs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .event-certs-grid {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+            margin-top: var(--space-2xl);
+        }
+
+        .event-cert {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .event-cert-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--color-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .event-cert:hover .event-cert-icon {
+            transform: scale(1.1);
+        }
+
+        .event-cert-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--color-forest);
+        }
+
+        .event-cert-label {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--color-charcoal);
+        }
+
+        /* ========================================
+           FAQ SECTION
+           ======================================== */
+        .event-faq {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .event-faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .event-faq-list {
+            margin-top: var(--space-2xl);
+        }
+
+        .event-faq-item {
+            background: var(--color-off-white);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .event-faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .event-faq-question:hover {
+            color: var(--color-sage-blue);
+        }
+
+        .event-faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-sage-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .event-faq-item.active .event-faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .event-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .event-faq-item.active .event-faq-answer {
+            max-height: 500px;
+        }
+
+        .event-faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .event-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .event-cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-sage-blue) 0%, #3d6d7d 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .event-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: var(--space-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .event-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-forest);
+            border-color: var(--color-forest);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .event-types-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .event-story-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .event-story-stats {
+                justify-content: center;
+            }
+
+            .event-products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .event-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .event-benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-story-stats {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .event-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Zijn biologisch afbreekbare vlaggen geschikt voor outdoor evenementen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, Flag-Ciclo vlaggen zijn ontworpen voor buitengebruik. Ze hebben dezelfde UV-bestendigheid (2 jaar) en levensduur (3-4 maanden) als traditionele polyester vlaggen. Perfect voor festivals, beurzen en sportevenementen."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kunnen we de vlaggen laten bedrukken met ons evenementlogo?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Zeker. Alle Flag-Ciclo vlaggen worden full-color bedrukt met sublimatie. Je festival-logo, sponsorlogo's en artwork komen er levendig op. De kleuren zijn doordrukken dus ook aan de achterkant zichtbaar."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Wat gebeurt er met de vlaggen na het evenement?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Als de vlaggen niet meer herbruikbaar zijn, breken ze biologisch af. 96% lost op in 2-3 jaar, ongeacht of ze in de grond, compost, stortplaats of zelfs zeewater terechtkomen. Er blijven 0% microplastics achter."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoeveel kosten Flag-Ciclo vlaggen voor evenementen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele vlaggen. Voor grote evenementen met hoge aantallen zijn speciale tarieven beschikbaar. De duurzame uitstraling naar bezoekers is de minimale meerprijs meer dan waard."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="event-breadcrumb">
+        <div class="event-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>Voor Evenementen</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="event-hero">
+        <div class="event-hero-container">
+            <div class="event-hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                Voor Evenementen
+            </div>
+            <h1 id="event-knowledge-title">Duurzame vlaggen voor <span>festivals en events</span></h1>
+            <p class="event-hero-subtitle">
+                Maak je evenement duurzamer met biologisch afbreekbare vlaggen en banners.
+                Dezelfde impact, zero footprint achteraf.
+            </p>
+            <div class="event-hero-image">
+                <img src="https://placehold.co/900x450/5C8A9D/FFFFFF?text=Festival+met+duurzame+vlaggen+en+banners"
+                     alt="Muziekfestival met biologisch afbreekbare vlaggen en beachflags"
+                     width="900" height="450">
+            </div>
+        </div>
+    </div>
+
+    <!-- EVENT TYPES SECTION -->
+    <div class="event-types">
+        <div class="event-types-container">
+            <div class="event-section-header">
+                <span class="event-section-badge">Toepassingen</span>
+                <h2>Voor elk type evenement</h2>
+                <p>Van intieme beurzen tot grote festivals: Flag-Ciclo past bij elke schaal.</p>
+            </div>
+            <div class="event-types-grid">
+                <div class="event-type-card">
+                    <div class="event-type-image">
+                        <img src="https://placehold.co/600x400/C66B4E/FFFFFF?text=Muziekfestival+vlaggen"
+                             alt="Beachflags en banners op muziekfestival"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-type-content">
+                        <h3>Festivals & Concerten</h3>
+                        <p>Van intieme podia tot grote festivalterreinen. Beachflags markeren entrees, food courts en sponsorzones.</p>
+                        <div class="event-type-tags">
+                            <span class="event-type-tag">Beachflags</span>
+                            <span class="event-type-tag">Banners</span>
+                            <span class="event-type-tag">Grote aantallen</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <div class="event-type-image">
+                        <img src="https://placehold.co/600x400/2C5F4F/FFFFFF?text=Beurs+standvlaggen"
+                             alt="Beursstand met duurzame vlaggen"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-type-content">
+                        <h3>Beurzen & Vakdagen</h3>
+                        <p>Professionele uitstraling met een duurzaam verhaal. Perfect voor stands die duurzaamheid willen uitdragen.</p>
+                        <div class="event-type-tags">
+                            <span class="event-type-tag">Beachflags</span>
+                            <span class="event-type-tag">Roll-up banners</span>
+                            <span class="event-type-tag">Custom print</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <div class="event-type-image">
+                        <img src="https://placehold.co/600x400/8B7BA8/FFFFFF?text=Sportevenement+vlaggen"
+                             alt="Sportevenement met finish-banners"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-type-content">
+                        <h3>Sportevenementen</h3>
+                        <p>Marathons, triathlons, wielerwedstrijden. Finish-banners en routemarkeringen die geen spoor achterlaten.</p>
+                        <div class="event-type-tags">
+                            <span class="event-type-tag">Banners</span>
+                            <span class="event-type-tag">Mastvlaggen</span>
+                            <span class="event-type-tag">Sponsoring</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BENEFITS SECTION -->
+    <div class="event-benefits">
+        <div class="event-benefits-container">
+            <div class="event-section-header">
+                <span class="event-section-badge">Voordelen</span>
+                <h2>Waarom evenementen kiezen voor Flag-Ciclo</h2>
+                <p>Vier redenen waarom duurzame vlaggen perfect passen bij events.</p>
+            </div>
+            <div class="event-benefits-grid">
+                <div class="event-benefit-card">
+                    <div class="event-benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h4>Duurzaam imago</h4>
+                    <p>Laat bezoekers zien dat je evenement duurzaamheid serieus neemt.</p>
+                </div>
+                <div class="event-benefit-card">
+                    <div class="event-benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h4>Snelle levering</h4>
+                    <p>~3 werkdagen levertijd. Spoedleveringen mogelijk voor last-minute events.</p>
+                </div>
+                <div class="event-benefit-card">
+                    <div class="event-benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <h4>Full-color print</h4>
+                    <p>Alle kleuren en artwork mogelijk. Sponsorlogo's komen er levendig op.</p>
+                </div>
+                <div class="event-benefit-card">
+                    <div class="event-benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <h4>Zero waste</h4>
+                    <p>Na het event breken de vlaggen volledig af. 0% microplastics achterblijven.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUSTAINABILITY STORY -->
+    <div class="event-story">
+        <div class="event-story-container">
+            <div class="event-story-content">
+                <h2>Een verhaal dat bezoekers raakt</h2>
+                <p>
+                    Evenementbezoekers zijn steeds bewuster. Ze waarderen organisaties die duurzaamheid
+                    concreet maken. Flag-Ciclo vlaggen geven je een authentiek verhaal om te vertellen.
+                </p>
+                <p>
+                    Communiceer op je website, in de programmaboekjes of via social media dat je vlaggen
+                    biologisch afbreekbaar zijn. Bezoekers onthouden dat je net dat stapje verder gaat.
+                </p>
+                <div class="event-story-stats">
+                    <div class="event-story-stat">
+                        <div class="event-story-stat-value">96%</div>
+                        <div class="event-story-stat-label">Biologisch afbreekbaar</div>
+                    </div>
+                    <div class="event-story-stat">
+                        <div class="event-story-stat-value">0%</div>
+                        <div class="event-story-stat-label">Microplastics</div>
+                    </div>
+                    <div class="event-story-stat">
+                        <div class="event-story-stat-value">2-3</div>
+                        <div class="event-story-stat-label">Jaar tot afbraak</div>
+                    </div>
+                </div>
+            </div>
+            <div class="event-story-image">
+                <img src="https://placehold.co/600x500/2C5F4F/FFFFFF?text=Duurzaam+festival+terrein"
+                     alt="Festivalterrein met biologisch afbreekbare decoratie"
+                     width="600" height="500" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCTS SECTION -->
+    <div class="event-products">
+        <div class="event-products-container">
+            <div class="event-section-header">
+                <span class="event-section-badge">Producten</span>
+                <h2>Populair voor evenementen</h2>
+                <p>De meest gevraagde Flag-Ciclo producten voor events.</p>
+            </div>
+            <div class="event-products-grid">
+                <div class="event-product-card">
+                    <div class="event-product-image">
+                        <img src="https://placehold.co/600x400/5C8A9D/FFFFFF?text=Beachflags+event"
+                             alt="Beachflags in verschillende vormen"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-product-content">
+                        <h4>Beachflags</h4>
+                        <p>Flexibele vlaggen met grondpen of zware voet. Ideaal voor entrees, food courts en sponsorzones.</p>
+                        <div class="event-product-features">
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Drop / Veer / Haai
+                            </span>
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                S tot XL
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="event-product-card">
+                    <div class="event-product-image">
+                        <img src="https://placehold.co/600x400/C66B4E/FFFFFF?text=Event+banners"
+                             alt="Grote event banners"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-product-content">
+                        <h4>Banners & Spandoeken</h4>
+                        <p>Grote prints voor finish-lijnen, podia-achtergronden en terreinafzettingen.</p>
+                        <div class="event-product-features">
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Tot 5m breed
+                            </span>
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Dubbelzijdig
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="event-product-card">
+                    <div class="event-product-image">
+                        <img src="https://placehold.co/600x400/2C5F4F/FFFFFF?text=Baniervlaggen+event"
+                             alt="Baniervlaggen voor evenementen"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="event-product-content">
+                        <h4>Baniervlaggen</h4>
+                        <p>Verticale vlaggen voor lantaarnpalen, hekwerken en toegangswegen.</p>
+                        <div class="event-product-features">
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                60x200 tot 120x400cm
+                            </span>
+                            <span class="event-product-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Windbestendig
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CERTIFICATIONS -->
+    <div class="event-certs">
+        <div class="event-certs-container">
+            <div class="event-section-header">
+                <span class="event-section-badge">Gecertificeerd</span>
+                <h2>Betrouwbaar en getest</h2>
+                <p>Flag-Ciclo vlaggen voldoen aan internationale kwaliteits- en duurzaamheidsnormen.</p>
+            </div>
+            <div class="event-certs-grid">
+                <div class="event-cert">
+                    <div class="event-cert-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="7"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                        </svg>
+                    </div>
+                    <span class="event-cert-label">OEKO-TEX ECO PASSPORT</span>
+                </div>
+                <div class="event-cert">
+                    <div class="event-cert-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <span class="event-cert-label">REACH Compliant</span>
+                </div>
+                <div class="event-cert">
+                    <div class="event-cert-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <span class="event-cert-label">ASTM Getest</span>
+                </div>
+                <div class="event-cert">
+                    <div class="event-cert-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <span class="event-cert-label">CiCLO Licensed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="event-faq">
+        <div class="event-faq-container">
+            <div class="event-section-header">
+                <span class="event-section-badge">FAQ</span>
+                <h2>Veelgestelde vragen over evenementvlaggen</h2>
+                <p>Antwoorden op vragen die we vaak van event-organisatoren ontvangen.</p>
+            </div>
+            <div class="event-faq-list">
+                <div class="event-faq-item">
+                    <button class="event-faq-question" aria-expanded="false">
+                        Zijn de vlaggen geschikt voor outdoor evenementen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="event-faq-answer">
+                        <div class="event-faq-answer-content">
+                            Ja, Flag-Ciclo vlaggen zijn ontworpen voor buitengebruik. Ze hebben dezelfde UV-bestendigheid
+                            (2 jaar) en levensduur (3-4 maanden) als traditionele polyester vlaggen. Perfect voor festivals,
+                            beurzen en sportevenementen.
+                        </div>
+                    </div>
+                </div>
+                <div class="event-faq-item">
+                    <button class="event-faq-question" aria-expanded="false">
+                        Kunnen we de vlaggen bedrukken met ons logo?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="event-faq-answer">
+                        <div class="event-faq-answer-content">
+                            Zeker. Alle Flag-Ciclo vlaggen worden full-color bedrukt met sublimatie. Je festival-logo,
+                            sponsorlogo's en artwork komen er levendig op. De kleuren zijn doordrukken dus ook aan de
+                            achterkant zichtbaar.
+                        </div>
+                    </div>
+                </div>
+                <div class="event-faq-item">
+                    <button class="event-faq-question" aria-expanded="false">
+                        Wat gebeurt er met de vlaggen na het evenement?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="event-faq-answer">
+                        <div class="event-faq-answer-content">
+                            Als de vlaggen niet meer herbruikbaar zijn, breken ze biologisch af. 96% lost op in 2-3 jaar,
+                            ongeacht of ze in de grond, compost, stortplaats of zelfs zeewater terechtkomen. Er blijven
+                            0% microplastics achter.
+                        </div>
+                    </div>
+                </div>
+                <div class="event-faq-item">
+                    <button class="event-faq-question" aria-expanded="false">
+                        Hoeveel kosten Flag-Ciclo vlaggen voor evenementen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="event-faq-answer">
+                        <div class="event-faq-answer-content">
+                            Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele vlaggen. Voor grote
+                            evenementen met hoge aantallen zijn speciale tarieven beschikbaar. De duurzame uitstraling
+                            naar bezoekers is de minimale meerprijs meer dan waard.
+                        </div>
+                    </div>
+                </div>
+                <div class="event-faq-item">
+                    <button class="event-faq-question" aria-expanded="false">
+                        Hoe snel kunnen jullie leveren?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="event-faq-answer">
+                        <div class="event-faq-answer-content">
+                            Standaard levertijd is ~3 werkdagen. Voor evenementen die snel naderen zijn spoedleveringen
+                            mogelijk. Neem contact op om de mogelijkheden te bespreken. We begrijpen dat event-deadlines
+                            cruciaal zijn.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="event-cta">
+        <div class="event-cta-container">
+            <h2>Maak je evenement duurzamer</h2>
+            <p>
+                Vraag een vrijblijvende offerte aan voor je festival, beurs of sportevenement.
+                Speciale tarieven voor grote aantallen.
+            </p>
+            <div class="event-cta-buttons">
+                <a href="/voor-evenementen/" class="btn-primary">
+                    Vraag offerte aan
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/bestel/" class="btn-secondary">
+                    Bekijk producten
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.event-faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.event-faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Type Cards Animation
+            const typeCards = document.querySelectorAll('.event-type-card');
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            typeCards.forEach(card => cardObserver.observe(card));
+        })();
+    </script>
+</section>

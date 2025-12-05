@@ -1,0 +1,1461 @@
+<!-- COMPONENT: Voor Gemeenten Knowledge Page -->
+<!-- URL: /kennis/voor-gemeenten/ -->
+<section class="gemeente-knowledge" aria-labelledby="gemeente-knowledge-title">
+    <style>
+        /* ========================================
+           VOOR GEMEENTEN PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .gemeente-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gemeente-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .gemeente-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .gemeente-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .gemeente-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gemeente-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .gemeente-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .gemeente-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .gemeente-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .gemeente-hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        .gemeente-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(92, 138, 157, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(198, 107, 78, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .gemeente-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .gemeente-hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .gemeente-hero-content {
+            opacity: 0;
+            animation: fadeInLeft 0.8s ease forwards;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .gemeente-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(164, 107, 74, 0.2);
+            border: 1px solid rgba(164, 107, 74, 0.4);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: #e8c4a8;
+            margin-bottom: var(--space-md);
+        }
+
+        .gemeente-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .gemeente-hero h1 span {
+            background: linear-gradient(135deg, var(--color-sage-blue), #7fb3c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gemeente-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            margin-bottom: var(--space-lg);
+        }
+
+        .gemeente-hero-stats {
+            display: flex;
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .gemeente-hero-stat {
+            text-align: center;
+        }
+
+        .gemeente-hero-stat-value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 36px;
+            color: var(--color-white);
+            line-height: 1;
+        }
+
+        .gemeente-hero-stat-label {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+        }
+
+        .gemeente-hero-visual {
+            opacity: 0;
+            animation: fadeInRight 0.8s ease 0.3s forwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .gemeente-hero-image {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        /* ========================================
+           WHY SECTION
+           ======================================== */
+        .gemeente-why {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .gemeente-why-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gemeente-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .gemeente-section-badge {
+            display: inline-block;
+            background: var(--color-forest);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .gemeente-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .gemeente-section-header p {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--color-stone);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .gemeente-why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .gemeente-why-card {
+            background: var(--color-off-white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .gemeente-why-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gemeente-why-card:hover {
+            background: var(--color-white);
+            box-shadow: 0 25px 60px rgba(44, 95, 79, 0.15);
+            transform: translateY(-10px);
+        }
+
+        .gemeente-why-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--color-forest), #3d7a66);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            transition: transform 0.3s ease;
+        }
+
+        .gemeente-why-card:hover .gemeente-why-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .gemeente-why-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--color-white);
+        }
+
+        .gemeente-why-card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .gemeente-why-card p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           USE CASES SECTION
+           ======================================== */
+        .gemeente-cases {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .gemeente-cases-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gemeente-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+            margin-top: var(--space-2xl);
+        }
+
+        .gemeente-case-card {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .gemeente-case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        }
+
+        .gemeente-case-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .gemeente-case-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gemeente-case-card:hover .gemeente-case-image img {
+            transform: scale(1.08);
+        }
+
+        .gemeente-case-content {
+            padding: var(--space-lg);
+        }
+
+        .gemeente-case-content h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .gemeente-case-content p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+
+        .gemeente-case-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .gemeente-case-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--color-off-white);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-forest);
+        }
+
+        .gemeente-case-feature svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ========================================
+           SUSTAINABILITY GOALS SECTION
+           ======================================== */
+        .gemeente-goals {
+            padding: var(--space-3xl) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gemeente-goals::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(92,138,157,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .gemeente-goals-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gemeente-goals .gemeente-section-header h2 {
+            color: var(--color-white);
+        }
+
+        .gemeente-goals .gemeente-section-header p {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .gemeente-goals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .gemeente-goal-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .gemeente-goal-card:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-8px);
+        }
+
+        .gemeente-goal-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--color-sage-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-sm);
+        }
+
+        .gemeente-goal-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-white);
+        }
+
+        .gemeente-goal-card h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--color-white);
+            margin-bottom: var(--space-xs);
+        }
+
+        .gemeente-goal-card p {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           PROCESS SECTION
+           ======================================== */
+        .gemeente-process {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .gemeente-process-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gemeente-process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+            position: relative;
+        }
+
+        .gemeente-process-steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-forest), var(--color-sage-blue));
+            z-index: 0;
+        }
+
+        .gemeente-process-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gemeente-process-number {
+            width: 80px;
+            height: 80px;
+            background: var(--color-white);
+            border: 4px solid var(--color-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--color-forest);
+            transition: all 0.3s ease;
+        }
+
+        .gemeente-process-step:hover .gemeente-process-number {
+            background: var(--color-forest);
+            color: var(--color-white);
+            transform: scale(1.1);
+        }
+
+        .gemeente-process-step h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .gemeente-process-step p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           TESTIMONIAL SECTION
+           ======================================== */
+        .gemeente-testimonial {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .gemeente-testimonial-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .gemeente-testimonial-quote {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+
+        .gemeente-testimonial-quote::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: var(--space-xl);
+            font-family: var(--font-heading);
+            font-size: 120px;
+            font-weight: 800;
+            color: var(--color-forest);
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .gemeente-testimonial-text {
+            font-family: var(--font-body);
+            font-size: 20px;
+            color: var(--color-charcoal);
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .gemeente-testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+
+        .gemeente-testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--color-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gemeente-testimonial-avatar svg {
+            width: 30px;
+            height: 30px;
+            color: var(--color-white);
+        }
+
+        .gemeente-testimonial-info h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+        }
+
+        .gemeente-testimonial-info p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        /* ========================================
+           FAQ SECTION
+           ======================================== */
+        .gemeente-faq {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .gemeente-faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .gemeente-faq-list {
+            margin-top: var(--space-2xl);
+        }
+
+        .gemeente-faq-item {
+            background: var(--color-off-white);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .gemeente-faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .gemeente-faq-question:hover {
+            color: var(--color-forest);
+        }
+
+        .gemeente-faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-forest);
+            transition: transform 0.3s ease;
+        }
+
+        .gemeente-faq-item.active .gemeente-faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .gemeente-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .gemeente-faq-item.active .gemeente-faq-answer {
+            max-height: 500px;
+        }
+
+        .gemeente-faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .gemeente-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .gemeente-cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gemeente-cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(92,138,157,0.3) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .gemeente-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .gemeente-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: var(--space-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gemeente-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-sage-blue);
+            border-color: var(--color-sage-blue);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .gemeente-hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .gemeente-hero-visual {
+                order: -1;
+            }
+
+            .gemeente-hero-stats {
+                justify-content: center;
+            }
+
+            .gemeente-why-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gemeente-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gemeente-goals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gemeente-process-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gemeente-process-steps::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gemeente-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .gemeente-hero-stats {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .gemeente-goals-grid,
+            .gemeente-process-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .gemeente-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Waarom zouden gemeenten overstappen op biologisch afbreekbare vlaggen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Gemeenten hebben een voorbeeldfunctie in duurzaamheid. Flag-Ciclo vlaggen passen bij lokale klimaatdoelen, verminderen microplastic-vervuiling en tonen inwoners dat de gemeente concreet verduurzaamt. De vlaggen zijn ook meetbaar voor duurzaamheidsrapportages."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kunnen we Flag-Ciclo vlaggen gebruiken voor feestdagen en evenementen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, Flag-Ciclo vlaggen zijn ideaal voor alle gemeentelijke toepassingen: van het gemeentehuis en officiële gelegenheden tot feestdagen zoals Koningsdag en lokale evenementen. Ze zijn beschikbaar in alle standaardmaten en volledig naar wens te bedrukken."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe verhouden de kosten zich tot traditionele vlaggen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele polyester vlaggen. Gezien de duurzaamheidsvoordelen en de positieve uitstraling naar inwoners is dit een minimale meerprijs. Voor grote aantallen zijn speciale tarieven beschikbaar."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kunnen we de vlaggen laten maken in onze gemeente-huisstijl?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Zeker. Alle Flag-Ciclo vlaggen worden full-color bedrukt met sublimatie. Je gemeente-logo, wapen en huisstijlkleuren komen er perfect op. We denken graag mee over het ontwerp en leveren een drukproef ter goedkeuring."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="gemeente-breadcrumb">
+        <div class="gemeente-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>Voor Gemeenten</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="gemeente-hero">
+        <div class="gemeente-hero-container">
+            <div class="gemeente-hero-content">
+                <div class="gemeente-hero-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    Voor Gemeenten
+                </div>
+                <h1 id="gemeente-knowledge-title">Duurzame vlaggen voor <span>gemeenten</span></h1>
+                <p class="gemeente-hero-subtitle">
+                    Geef het goede voorbeeld aan inwoners met biologisch afbreekbare vlaggen.
+                    Van gemeentehuis tot feestdagen: verduurzaam je vlaggenbestand zonder concessies aan kwaliteit.
+                </p>
+                <div class="gemeente-hero-stats">
+                    <div class="gemeente-hero-stat">
+                        <div class="gemeente-hero-stat-value">96%</div>
+                        <div class="gemeente-hero-stat-label">Biologisch afbreekbaar</div>
+                    </div>
+                    <div class="gemeente-hero-stat">
+                        <div class="gemeente-hero-stat-value">0%</div>
+                        <div class="gemeente-hero-stat-label">Microplastics</div>
+                    </div>
+                    <div class="gemeente-hero-stat">
+                        <div class="gemeente-hero-stat-value">~3</div>
+                        <div class="gemeente-hero-stat-label">Werkdagen levering</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gemeente-hero-visual">
+                <div class="gemeente-hero-image">
+                    <img src="https://placehold.co/600x450/2C5F4F/FFFFFF?text=Gemeentehuis+met+duurzame+vlaggen"
+                         alt="Nederlands gemeentehuis met biologisch afbreekbare vlaggen aan de gevel"
+                         width="600" height="450">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHY SECTION -->
+    <div class="gemeente-why">
+        <div class="gemeente-why-container">
+            <div class="gemeente-section-header">
+                <span class="gemeente-section-badge">Waarom Flag-Ciclo</span>
+                <h2>Waarom gemeenten kiezen voor Flag-Ciclo</h2>
+                <p>Drie redenen waarom biologisch afbreekbare vlaggen passen bij gemeentelijk beleid.</p>
+            </div>
+            <div class="gemeente-why-grid">
+                <div class="gemeente-why-card">
+                    <div class="gemeente-why-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3>Voorbeeldfunctie</h3>
+                    <p>Gemeenten inspireren inwoners door zelf duurzame keuzes te maken. Flag-Ciclo vlaggen laten zien dat verduurzaming concreet en haalbaar is.</p>
+                </div>
+                <div class="gemeente-why-card">
+                    <div class="gemeente-why-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3>Meetbare resultaten</h3>
+                    <p>96% biologische afbraak, 0% microplastics. Harde cijfers voor je duurzaamheidsrapportage en gemeentelijk jaarverslag.</p>
+                </div>
+                <div class="gemeente-why-card">
+                    <div class="gemeente-why-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>Klimaatdoelen</h3>
+                    <p>Draag bij aan lokale en nationale klimaatambities. Elke vlag die niet fragmenteert tot microplastics is een stap vooruit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- USE CASES SECTION -->
+    <div class="gemeente-cases">
+        <div class="gemeente-cases-container">
+            <div class="gemeente-section-header">
+                <span class="gemeente-section-badge">Toepassingen</span>
+                <h2>Waar gebruiken gemeenten Flag-Ciclo?</h2>
+                <p>Van officiële gelegenheden tot feestdagen: biologisch afbreekbaar voor elke situatie.</p>
+            </div>
+            <div class="gemeente-cases-grid">
+                <div class="gemeente-case-card">
+                    <div class="gemeente-case-image">
+                        <img src="https://placehold.co/600x400/2C5F4F/FFFFFF?text=Gemeentehuis+vlaggen"
+                             alt="Biologisch afbreekbare vlaggen aan gemeentehuis"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="gemeente-case-content">
+                        <h3>Gemeentehuis & openbare gebouwen</h3>
+                        <p>De Nederlandse en gemeentevlag aan het gemeentehuis, bibliotheek, sporthal en andere gemeentelijke gebouwen.</p>
+                        <div class="gemeente-case-features">
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Permanent
+                            </span>
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Mastvlaggen
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-case-card">
+                    <div class="gemeente-case-image">
+                        <img src="https://placehold.co/600x400/C66B4E/FFFFFF?text=Koningsdag+vlaggen"
+                             alt="Oranjevlaggen voor Koningsdag"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="gemeente-case-content">
+                        <h3>Feestdagen & herdenkingen</h3>
+                        <p>Oranjevlaggen voor Koningsdag, herdenkingsvlaggen voor 4 mei, en feestelijke decoratie door het jaar heen.</p>
+                        <div class="gemeente-case-features">
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Seizoensgebonden
+                            </span>
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Full-color
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-case-card">
+                    <div class="gemeente-case-image">
+                        <img src="https://placehold.co/600x400/5C8A9D/FFFFFF?text=Evenement+vlaggen"
+                             alt="Vlaggen bij gemeentelijk evenement"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="gemeente-case-content">
+                        <h3>Lokale evenementen</h3>
+                        <p>Braderieen, markten, sportevenementen en culturele festiviteiten. Tijdelijke vlaggen die geen sporen nalaten.</p>
+                        <div class="gemeente-case-features">
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Tijdelijk
+                            </span>
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Baniers/Beachflags
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-case-card">
+                    <div class="gemeente-case-image">
+                        <img src="https://placehold.co/600x400/8B7BA8/FFFFFF?text=Winkelcentrum+vlaggen"
+                             alt="Straatdecoratie met duurzame vlaggen"
+                             width="600" height="400" loading="lazy">
+                    </div>
+                    <div class="gemeente-case-content">
+                        <h3>Winkelgebieden & straten</h3>
+                        <p>Seizoensdecoratie in winkelstraten, welkomstvlaggen bij dorpskernen en thematische straatversiering.</p>
+                        <div class="gemeente-case-features">
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Wisselend
+                            </span>
+                            <span class="gemeente-case-feature">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Custom print
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUSTAINABILITY GOALS -->
+    <div class="gemeente-goals">
+        <div class="gemeente-goals-container">
+            <div class="gemeente-section-header">
+                <span class="gemeente-section-badge" style="background: var(--color-sage-blue);">Duurzaamheid</span>
+                <h2>Bijdrage aan gemeentelijke klimaatdoelen</h2>
+                <p>Flag-Ciclo vlaggen passen binnen bredere duurzaamheidsambities.</p>
+            </div>
+            <div class="gemeente-goals-grid">
+                <div class="gemeente-goal-card">
+                    <div class="gemeente-goal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h4>Klimaatneutraal 2050</h4>
+                    <p>Elke microplastic-vrije vlag draagt bij aan de nationale en lokale klimaatdoelen.</p>
+                </div>
+                <div class="gemeente-goal-card">
+                    <div class="gemeente-goal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h4>Plastic Pact NL</h4>
+                    <p>Ondersteun de doelstellingen van het Plastic Pact met meetbare microplastic-reductie.</p>
+                </div>
+                <div class="gemeente-goal-card">
+                    <div class="gemeente-goal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <h4>Circulaire economie</h4>
+                    <p>Vlaggen die volledig afbreken zonder restproducten passen in een circulair inkoopbeleid.</p>
+                </div>
+                <div class="gemeente-goal-card">
+                    <div class="gemeente-goal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h4>Bewustwording inwoners</h4>
+                    <p>Communiceer je duurzame keuze en inspireer inwoners om ook te verduurzamen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROCESS SECTION -->
+    <div class="gemeente-process">
+        <div class="gemeente-process-container">
+            <div class="gemeente-section-header">
+                <span class="gemeente-section-badge">Proces</span>
+                <h2>Van aanvraag tot levering</h2>
+                <p>In vier stappen naar duurzame gemeentevlaggen.</p>
+            </div>
+            <div class="gemeente-process-steps">
+                <div class="gemeente-process-step">
+                    <div class="gemeente-process-number">1</div>
+                    <h4>Inventariseer behoefte</h4>
+                    <p>Welke vlaggen heeft de gemeente nodig? Mastvlaggen, baniers, evenementvlaggen?</p>
+                </div>
+                <div class="gemeente-process-step">
+                    <div class="gemeente-process-number">2</div>
+                    <h4>Vraag offerte aan</h4>
+                    <p>Ontvang een vrijblijvende offerte met speciale tarieven voor gemeenten.</p>
+                </div>
+                <div class="gemeente-process-step">
+                    <div class="gemeente-process-number">3</div>
+                    <h4>Lever ontwerpen aan</h4>
+                    <p>Stuur je gemeente-logo en huisstijl. Wij zorgen voor de drukproef.</p>
+                </div>
+                <div class="gemeente-process-step">
+                    <div class="gemeente-process-number">4</div>
+                    <h4>Ontvang & hang</h4>
+                    <p>Binnen ~3 werkdagen geleverd. Inclusief certificaat voor je duurzaamheidsrapportage.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TESTIMONIAL -->
+    <div class="gemeente-testimonial">
+        <div class="gemeente-testimonial-container">
+            <div class="gemeente-testimonial-quote">
+                <p class="gemeente-testimonial-text">
+                    "Als gemeente willen we het goede voorbeeld geven aan onze inwoners. Met Flag-Ciclo vlaggen laten we zien
+                    dat duurzaamheid concreet is. De vlaggen zien er precies hetzelfde uit, maar breken na gebruik volledig af.
+                    Dat is echte vooruitgang."
+                </p>
+                <div class="gemeente-testimonial-author">
+                    <div class="gemeente-testimonial-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="gemeente-testimonial-info">
+                        <h4>Wethouder Duurzaamheid</h4>
+                        <p>Nederlandse gemeente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="gemeente-faq">
+        <div class="gemeente-faq-container">
+            <div class="gemeente-section-header">
+                <span class="gemeente-section-badge">FAQ</span>
+                <h2>Veelgestelde vragen van gemeenten</h2>
+                <p>Antwoorden op vragen die we vaak van gemeenten ontvangen.</p>
+            </div>
+            <div class="gemeente-faq-list">
+                <div class="gemeente-faq-item">
+                    <button class="gemeente-faq-question" aria-expanded="false">
+                        Waarom zouden we overstappen op biologisch afbreekbare vlaggen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="gemeente-faq-answer">
+                        <div class="gemeente-faq-answer-content">
+                            Gemeenten hebben een voorbeeldfunctie in duurzaamheid. Flag-Ciclo vlaggen passen bij lokale
+                            klimaatdoelen, verminderen microplastic-vervuiling en tonen inwoners dat de gemeente concreet
+                            verduurzaamt. De vlaggen zijn ook meetbaar voor duurzaamheidsrapportages.
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-faq-item">
+                    <button class="gemeente-faq-question" aria-expanded="false">
+                        Kunnen we Flag-Ciclo gebruiken voor feestdagen en evenementen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="gemeente-faq-answer">
+                        <div class="gemeente-faq-answer-content">
+                            Ja, Flag-Ciclo vlaggen zijn ideaal voor alle gemeentelijke toepassingen: van het gemeentehuis
+                            en officiële gelegenheden tot feestdagen zoals Koningsdag en lokale evenementen. Ze zijn beschikbaar
+                            in alle standaardmaten en volledig naar wens te bedrukken.
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-faq-item">
+                    <button class="gemeente-faq-question" aria-expanded="false">
+                        Hoe verhouden de kosten zich tot traditionele vlaggen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="gemeente-faq-answer">
+                        <div class="gemeente-faq-answer-content">
+                            Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele polyester vlaggen. Gezien
+                            de duurzaamheidsvoordelen en de positieve uitstraling naar inwoners is dit een minimale meerprijs.
+                            Voor grote aantallen zijn speciale tarieven beschikbaar.
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-faq-item">
+                    <button class="gemeente-faq-question" aria-expanded="false">
+                        Kunnen we vlaggen in onze gemeente-huisstijl krijgen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="gemeente-faq-answer">
+                        <div class="gemeente-faq-answer-content">
+                            Zeker. Alle Flag-Ciclo vlaggen worden full-color bedrukt met sublimatie. Je gemeente-logo,
+                            wapen en huisstijlkleuren komen er perfect op. We denken graag mee over het ontwerp en leveren
+                            een drukproef ter goedkeuring.
+                        </div>
+                    </div>
+                </div>
+                <div class="gemeente-faq-item">
+                    <button class="gemeente-faq-question" aria-expanded="false">
+                        Krijgen we documentatie voor onze duurzaamheidsrapportage?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="gemeente-faq-answer">
+                        <div class="gemeente-faq-answer-content">
+                            Ja, bij elke bestelling ontvang je certificaten en meetgegevens. Deze kun je opnemen in je
+                            gemeentelijk jaarverslag, duurzaamheidsrapportage of communicatie naar inwoners. We leveren
+                            exacte cijfers over de microplastic-reductie.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="gemeente-cta">
+        <div class="gemeente-cta-container">
+            <h2>Verduurzaam je gemeentevlaggen</h2>
+            <p>
+                Vraag een vrijblijvende offerte aan en ontdek de mogelijkheden voor jouw gemeente.
+                Speciale tarieven voor gemeenten beschikbaar.
+            </p>
+            <div class="gemeente-cta-buttons">
+                <a href="/voor-gemeenten/" class="btn-primary">
+                    Vraag offerte aan
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/bestel/" class="btn-secondary">
+                    Bekijk assortiment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.gemeente-faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.gemeente-faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Why Cards Animation
+            const whyCards = document.querySelectorAll('.gemeente-why-card');
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            whyCards.forEach(card => cardObserver.observe(card));
+        })();
+    </script>
+</section>

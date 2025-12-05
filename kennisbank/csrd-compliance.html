@@ -1,0 +1,1432 @@
+<!-- COMPONENT: CSRD Compliance Knowledge Page -->
+<!-- URL: /kennis/csrd-compliance/ -->
+<section class="csrd-knowledge" aria-labelledby="csrd-knowledge-title">
+    <style>
+        /* ========================================
+           CSRD COMPLIANCE PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .csrd-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .csrd-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .csrd-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .csrd-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .csrd-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .csrd-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .csrd-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .csrd-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .csrd-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .csrd-hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        .csrd-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 70%, rgba(198, 107, 78, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(92, 138, 157, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Animated Grid Background */
+        .csrd-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .csrd-hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .csrd-hero-content {
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.8s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .csrd-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(164, 107, 74, 0.2);
+            border: 1px solid rgba(164, 107, 74, 0.4);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: #e8c4a8;
+            margin-bottom: var(--space-md);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(164, 107, 74, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(164, 107, 74, 0); }
+        }
+
+        .csrd-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .csrd-hero h1 span {
+            background: linear-gradient(135deg, var(--color-terracotta), #e8856a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .csrd-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            margin-bottom: var(--space-lg);
+        }
+
+        .csrd-hero-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .csrd-hero-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
+        }
+
+        .csrd-hero-feature svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-sage-blue);
+            flex-shrink: 0;
+        }
+
+        .csrd-hero-visual {
+            position: relative;
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideInRight 0.8s ease 0.3s forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .csrd-hero-image {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .csrd-hero-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .csrd-hero-stat-card {
+            position: absolute;
+            bottom: -20px;
+            left: -30px;
+            background: var(--color-white);
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .csrd-hero-stat-card-value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--color-forest);
+        }
+
+        .csrd-hero-stat-card-label {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: var(--color-stone);
+        }
+
+        /* ========================================
+           WHAT IS CSRD SECTION
+           ======================================== */
+        .csrd-what {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .csrd-what-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .csrd-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .csrd-section-badge {
+            display: inline-block;
+            background: var(--color-forest);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .csrd-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .csrd-section-header p {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--color-stone);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .csrd-what-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .csrd-what-content h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-md);
+        }
+
+        .csrd-what-content p {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--color-charcoal);
+            line-height: 1.8;
+            margin-bottom: var(--space-md);
+        }
+
+        .csrd-what-content strong {
+            color: var(--color-forest);
+        }
+
+        .csrd-what-image {
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        /* ========================================
+           ESRS E2-5 SECTION
+           ======================================== */
+        .csrd-esrs {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .csrd-esrs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .csrd-esrs-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-2xl);
+            margin-top: var(--space-2xl);
+        }
+
+        .csrd-esrs-main {
+            background: var(--color-white);
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .csrd-esrs-main h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .csrd-esrs-main h3 svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-forest);
+        }
+
+        .csrd-esrs-main p {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--color-charcoal);
+            line-height: 1.8;
+            margin-bottom: var(--space-md);
+        }
+
+        .csrd-esrs-requirements {
+            margin-top: var(--space-lg);
+        }
+
+        .csrd-esrs-requirement {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--color-off-white);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+            transition: all 0.3s ease;
+        }
+
+        .csrd-esrs-requirement:hover {
+            background: var(--color-white);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transform: translateX(5px);
+        }
+
+        .csrd-esrs-requirement-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-forest);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .csrd-esrs-requirement-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-white);
+        }
+
+        .csrd-esrs-requirement h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--color-charcoal);
+            margin-bottom: 4px;
+        }
+
+        .csrd-esrs-requirement p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .csrd-esrs-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .csrd-esrs-card {
+            background: var(--color-white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .csrd-esrs-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .csrd-esrs-card.highlight {
+            background: linear-gradient(135deg, var(--color-forest), #1a3d32);
+            color: var(--color-white);
+        }
+
+        .csrd-esrs-card.highlight h4,
+        .csrd-esrs-card.highlight p {
+            color: var(--color-white);
+        }
+
+        .csrd-esrs-card.highlight p {
+            opacity: 0.85;
+        }
+
+        .csrd-esrs-card h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .csrd-esrs-card-value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 36px;
+            color: var(--color-forest);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+        }
+
+        .csrd-esrs-card.highlight .csrd-esrs-card-value {
+            color: var(--color-terracotta);
+        }
+
+        .csrd-esrs-card p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           HOW FLAG-CICLO HELPS
+           ======================================== */
+        .csrd-solution {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .csrd-solution-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .csrd-solution-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-top: var(--space-2xl);
+        }
+
+        .csrd-solution-card {
+            background: var(--color-off-white);
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .csrd-solution-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .csrd-solution-card:hover {
+            background: var(--color-white);
+            box-shadow: 0 20px 50px rgba(44, 95, 79, 0.12);
+            transform: translateY(-8px);
+        }
+
+        .csrd-solution-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-forest), #3d7a66);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            transition: transform 0.3s ease;
+        }
+
+        .csrd-solution-card:hover .csrd-solution-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .csrd-solution-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--color-white);
+        }
+
+        .csrd-solution-card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .csrd-solution-card p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           REPORTING SECTION
+           ======================================== */
+        .csrd-reporting {
+            padding: var(--space-3xl) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .csrd-reporting::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(198,107,78,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .csrd-reporting-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .csrd-reporting .csrd-section-header h2 {
+            color: var(--color-white);
+        }
+
+        .csrd-reporting .csrd-section-header p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .csrd-reporting-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-2xl);
+        }
+
+        .csrd-reporting-step {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: var(--space-lg);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .csrd-reporting-step:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+        }
+
+        .csrd-reporting-step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--color-terracotta);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--color-white);
+        }
+
+        .csrd-reporting-step h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-white);
+            margin-bottom: var(--space-xs);
+        }
+
+        .csrd-reporting-step p {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           FAQ SECTION
+           ======================================== */
+        .csrd-faq {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .csrd-faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .csrd-faq-list {
+            margin-top: var(--space-2xl);
+        }
+
+        .csrd-faq-item {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .csrd-faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .csrd-faq-question:hover {
+            color: var(--color-forest);
+        }
+
+        .csrd-faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-forest);
+            transition: transform 0.3s ease;
+        }
+
+        .csrd-faq-item.active .csrd-faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .csrd-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .csrd-faq-item.active .csrd-faq-answer {
+            max-height: 500px;
+        }
+
+        .csrd-faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .csrd-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .csrd-cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .csrd-cta-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .csrd-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .csrd-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: var(--space-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .csrd-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-sage-blue);
+            border-color: var(--color-sage-blue);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .csrd-hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .csrd-hero-visual {
+                order: -1;
+            }
+
+            .csrd-hero-stat-card {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .csrd-esrs-content {
+                grid-template-columns: 1fr;
+            }
+
+            .csrd-solution-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .csrd-reporting-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .csrd-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .csrd-what-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .csrd-reporting-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .csrd-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Wat is CSRD en wanneer moet mijn bedrijf eraan voldoen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "CSRD (Corporate Sustainability Reporting Directive) is de EU-richtlijn voor duurzaamheidsrapportage. Grote ondernemingen moeten vanaf 2024 rapporteren, beursgenoteerde MKB's vanaf 2026. Je moet rapporteren over milieu-impact, inclusief microplastics onder ESRS E2-5."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe helpen Flag-Ciclo vlaggen bij CSRD-compliance?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen zijn 96% biologisch afbreekbaar en laten 0% microplastics achter. Dit is direct meetbaar en rapporteerbaar onder ESRS E2-5, de standaard voor microplastic-emissies. Je kunt exact aantonen hoeveel microplastics je voorkomt."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Wat is ESRS E2-5 en waarom is het belangrijk?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "ESRS E2-5 is de European Sustainability Reporting Standard specifiek voor microplastics. Bedrijven moeten hun microplastic-emissies rapporteren en reductiemaatregelen documenteren. Flag-Ciclo vlaggen bieden een concrete, meetbare oplossing die je direct kunt opnemen in je rapportage."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Zijn Flag-Ciclo vlaggen gecertificeerd?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, Flag-Ciclo vlaggen hebben OEKO-TEX ECO PASSPORT certificering en zijn REACH compliant. De biologische afbraak is getest volgens ASTM D5988 (grond: 91.1%), ASTM D5511 (stortplaats: 91.1%), ASTM D5210 (rioolwater: 89.9%) en ASTM D6691 (zeewater)."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="csrd-breadcrumb">
+        <div class="csrd-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>CSRD-Compliance</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="csrd-hero">
+        <div class="csrd-hero-container">
+            <div class="csrd-hero-content">
+                <div class="csrd-hero-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    CSRD & ESRS E2-5
+                </div>
+                <h1 id="csrd-knowledge-title">CSRD-Compliance met <span>Flag-Ciclo</span> vlaggen</h1>
+                <p class="csrd-hero-subtitle">
+                    Vanaf 2024 moeten grote ondernemingen rapporteren over microplastic-emissies.
+                    Flag-Ciclo vlaggen bieden een meetbare oplossing die direct bijdraagt aan je ESRS E2-5 rapportage.
+                </p>
+                <div class="csrd-hero-features">
+                    <div class="csrd-hero-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Voldoet aan ESRS E2-5 rapportage-eisen</span>
+                    </div>
+                    <div class="csrd-hero-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>0% microplastics na afbraak - meetbaar resultaat</span>
+                    </div>
+                    <div class="csrd-hero-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>OEKO-TEX ECO PASSPORT gecertificeerd</span>
+                    </div>
+                </div>
+            </div>
+            <div class="csrd-hero-visual">
+                <div class="csrd-hero-image">
+                    <img src="https://placehold.co/600x450/2C5F4F/FFFFFF?text=CSRD+Dashboard+met+Microplastic+Metrics"
+                         alt="CSRD rapportage dashboard met microplastic metrics en Flag-Ciclo resultaten"
+                         width="600" height="450">
+                </div>
+                <div class="csrd-hero-stat-card">
+                    <div class="csrd-hero-stat-card-value">0%</div>
+                    <div class="csrd-hero-stat-card-label">Microplastic residue</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHAT IS CSRD SECTION -->
+    <div class="csrd-what">
+        <div class="csrd-what-container">
+            <div class="csrd-section-header">
+                <span class="csrd-section-badge">Achtergrond</span>
+                <h2>Wat is CSRD?</h2>
+                <p>De Corporate Sustainability Reporting Directive verandert hoe bedrijven over duurzaamheid rapporteren.</p>
+            </div>
+            <div class="csrd-what-grid">
+                <div class="csrd-what-content">
+                    <h3>De nieuwe EU-standaard voor duurzaamheidsrapportage</h3>
+                    <p>
+                        <strong>CSRD</strong> (Corporate Sustainability Reporting Directive) is de EU-richtlijn die bedrijven
+                        verplicht om gedetailleerd te rapporteren over hun milieu-impact. Dit gaat veel verder dan
+                        traditionele jaarverslagen.
+                    </p>
+                    <p>
+                        Onder de <strong>ESRS E2-5 standaard</strong> moeten bedrijven specifiek rapporteren over
+                        microplastic-emissies. Dit omvat alle bronnen van microplastics in je organisatie -
+                        inclusief buitenreclame zoals vlaggen en banners.
+                    </p>
+                    <p>
+                        <strong>Grote ondernemingen</strong> moeten vanaf 2024 voldoen. Beursgenoteerde MKB's volgen
+                        in 2026. De rapportage moet extern worden geaudit en gepubliceerd.
+                    </p>
+                </div>
+                <div class="csrd-what-image">
+                    <img src="https://placehold.co/600x500/F7F5F2/3A3A3A?text=EU+CSRD+Directive+Timeline"
+                         alt="CSRD implementatie timeline voor Nederlandse bedrijven"
+                         width="600" height="500" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESRS E2-5 SECTION -->
+    <div class="csrd-esrs">
+        <div class="csrd-esrs-container">
+            <div class="csrd-section-header">
+                <span class="csrd-section-badge">Standaard</span>
+                <h2>ESRS E2-5: Microplastics Rapportage</h2>
+                <p>De specifieke standaard voor het rapporteren van microplastic-emissies binnen CSRD.</p>
+            </div>
+            <div class="csrd-esrs-content">
+                <div class="csrd-esrs-main">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        Wat moet je rapporteren?
+                    </h3>
+                    <p>
+                        ESRS E2-5 vereist dat organisaties hun microplastic-emissies in kaart brengen, monitoren
+                        en reduceren. Dit geldt voor alle activiteiten die microplastics kunnen genereren of verspreiden.
+                    </p>
+                    <p>
+                        Traditionele polyester vlaggen zijn een bron van microplastics: bij slijtage en verval
+                        komen er duizenden plastic deeltjes vrij in het milieu. Dit moet je rapporteren.
+                    </p>
+
+                    <div class="csrd-esrs-requirements">
+                        <div class="csrd-esrs-requirement">
+                            <div class="csrd-esrs-requirement-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Inventarisatie microplastic-bronnen</h4>
+                                <p>Breng alle bronnen van microplastics in je organisatie in kaart, inclusief outdoor materialen.</p>
+                            </div>
+                        </div>
+                        <div class="csrd-esrs-requirement">
+                            <div class="csrd-esrs-requirement-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M18 17V9"/>
+                                    <path d="M13 17V5"/>
+                                    <path d="M8 17v-3"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Kwantificering van emissies</h4>
+                                <p>Meet en documenteer de hoeveelheid microplastics die vrijkomt per bron.</p>
+                            </div>
+                        </div>
+                        <div class="csrd-esrs-requirement">
+                            <div class="csrd-esrs-requirement-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 20V10"/>
+                                    <path d="M18 20V4"/>
+                                    <path d="M6 20v-4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Reductiedoelstellingen</h4>
+                                <p>Stel meetbare doelen voor het verminderen van microplastic-emissies.</p>
+                            </div>
+                        </div>
+                        <div class="csrd-esrs-requirement">
+                            <div class="csrd-esrs-requirement-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Maatregelen documenteren</h4>
+                                <p>Rapporteer welke concrete acties je neemt om emissies te reduceren.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="csrd-esrs-sidebar">
+                    <div class="csrd-esrs-card highlight">
+                        <h4>Flag-Ciclo Resultaat</h4>
+                        <div class="csrd-esrs-card-value">0%</div>
+                        <p>Microplastic residue na volledige afbraak van Flag-Ciclo vlaggen.</p>
+                    </div>
+                    <div class="csrd-esrs-card">
+                        <h4>Biologische Afbraak</h4>
+                        <div class="csrd-esrs-card-value">96%</div>
+                        <p>Lost volledig op in 2-3 jaar in bodem, compost, zeewater en stortplaats.</p>
+                    </div>
+                    <div class="csrd-esrs-card">
+                        <h4>ASTM Getest</h4>
+                        <div class="csrd-esrs-card-value" style="font-size: 24px;">91.1%</div>
+                        <p>Afbraak volgens ASTM D5988 (grond) en ASTM D5511 (stortplaats).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW FLAG-CICLO HELPS -->
+    <div class="csrd-solution">
+        <div class="csrd-solution-container">
+            <div class="csrd-section-header">
+                <span class="csrd-section-badge">Oplossing</span>
+                <h2>Hoe Flag-Ciclo helpt bij CSRD</h2>
+                <p>Drie concrete manieren waarop onze vlaggen bijdragen aan je compliance.</p>
+            </div>
+            <div class="csrd-solution-grid">
+                <div class="csrd-solution-card">
+                    <div class="csrd-solution-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3>Voorkom microplastic-emissies</h3>
+                    <p>
+                        Flag-Ciclo vlaggen breken volledig af tot CO2, water en biomassa.
+                        Geen microplastics die je moet rapporteren of verantwoorden.
+                    </p>
+                </div>
+                <div class="csrd-solution-card">
+                    <div class="csrd-solution-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3>Meetbare resultaten</h3>
+                    <p>
+                        Wij leveren documentatie met exacte cijfers: 96% afbraak,
+                        0% microplastics. Direct bruikbaar voor je ESRS E2-5 rapportage.
+                    </p>
+                </div>
+                <div class="csrd-solution-card">
+                    <div class="csrd-solution-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="7"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                        </svg>
+                    </div>
+                    <h3>Gecertificeerde technologie</h3>
+                    <p>
+                        OEKO-TEX ECO PASSPORT en REACH compliant. ASTM-getest voor
+                        afbraak in alle omgevingen. Auditable documentatie beschikbaar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTING STEPS -->
+    <div class="csrd-reporting">
+        <div class="csrd-reporting-container">
+            <div class="csrd-section-header">
+                <span class="csrd-section-badge" style="background: var(--color-terracotta);">Implementatie</span>
+                <h2>Flag-Ciclo in je CSRD-rapportage</h2>
+                <p>In vier stappen van aankoop naar compliance-documentatie.</p>
+            </div>
+            <div class="csrd-reporting-steps">
+                <div class="csrd-reporting-step">
+                    <div class="csrd-reporting-step-number">1</div>
+                    <h4>Bestel Flag-Ciclo vlaggen</h4>
+                    <p>Vervang je traditionele polyester vlaggen door biologisch afbreekbare alternatieven.</p>
+                </div>
+                <div class="csrd-reporting-step">
+                    <div class="csrd-reporting-step-number">2</div>
+                    <h4>Ontvang documentatie</h4>
+                    <p>Bij elke bestelling krijg je certificaten en meetgegevens voor je rapportage.</p>
+                </div>
+                <div class="csrd-reporting-step">
+                    <div class="csrd-reporting-step-number">3</div>
+                    <h4>Bereken je besparing</h4>
+                    <p>Gebruik onze calculator om je microplastic-reductie te kwantificeren.</p>
+                </div>
+                <div class="csrd-reporting-step">
+                    <div class="csrd-reporting-step-number">4</div>
+                    <h4>Rapporteer onder ESRS E2-5</h4>
+                    <p>Neem de cijfers direct op in je duurzaamheidsverslag als concrete maatregel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="csrd-faq">
+        <div class="csrd-faq-container">
+            <div class="csrd-section-header">
+                <span class="csrd-section-badge">FAQ</span>
+                <h2>Veelgestelde vragen over CSRD</h2>
+                <p>Antwoorden op de meest gestelde vragen over CSRD-compliance en Flag-Ciclo.</p>
+            </div>
+            <div class="csrd-faq-list">
+                <div class="csrd-faq-item">
+                    <button class="csrd-faq-question" aria-expanded="false">
+                        Wat is CSRD en wanneer moet mijn bedrijf eraan voldoen?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="csrd-faq-answer">
+                        <div class="csrd-faq-answer-content">
+                            CSRD (Corporate Sustainability Reporting Directive) is de EU-richtlijn voor duurzaamheidsrapportage.
+                            Grote ondernemingen moeten vanaf 2024 rapporteren, beursgenoteerde MKB's vanaf 2026.
+                            Je moet rapporteren over milieu-impact, inclusief microplastics onder ESRS E2-5.
+                        </div>
+                    </div>
+                </div>
+                <div class="csrd-faq-item">
+                    <button class="csrd-faq-question" aria-expanded="false">
+                        Hoe helpen Flag-Ciclo vlaggen bij CSRD-compliance?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="csrd-faq-answer">
+                        <div class="csrd-faq-answer-content">
+                            Flag-Ciclo vlaggen zijn 96% biologisch afbreekbaar en laten 0% microplastics achter.
+                            Dit is direct meetbaar en rapporteerbaar onder ESRS E2-5, de standaard voor microplastic-emissies.
+                            Je kunt exact aantonen hoeveel microplastics je voorkomt door over te stappen op onze vlaggen.
+                        </div>
+                    </div>
+                </div>
+                <div class="csrd-faq-item">
+                    <button class="csrd-faq-question" aria-expanded="false">
+                        Wat is ESRS E2-5 en waarom is het belangrijk?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="csrd-faq-answer">
+                        <div class="csrd-faq-answer-content">
+                            ESRS E2-5 is de European Sustainability Reporting Standard specifiek voor microplastics.
+                            Bedrijven moeten hun microplastic-emissies rapporteren en reductiemaatregelen documenteren.
+                            Flag-Ciclo vlaggen bieden een concrete, meetbare oplossing die je direct kunt opnemen in je rapportage.
+                        </div>
+                    </div>
+                </div>
+                <div class="csrd-faq-item">
+                    <button class="csrd-faq-question" aria-expanded="false">
+                        Zijn Flag-Ciclo vlaggen gecertificeerd?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="csrd-faq-answer">
+                        <div class="csrd-faq-answer-content">
+                            Ja, Flag-Ciclo vlaggen hebben OEKO-TEX ECO PASSPORT certificering en zijn REACH compliant.
+                            De biologische afbraak is getest volgens ASTM D5988 (grond: 91.1%), ASTM D5511 (stortplaats: 91.1%),
+                            ASTM D5210 (rioolwater: 89.9%) en ASTM D6691 (zeewater). Alle certificaten zijn beschikbaar voor je audit.
+                        </div>
+                    </div>
+                </div>
+                <div class="csrd-faq-item">
+                    <button class="csrd-faq-question" aria-expanded="false">
+                        Krijg ik documentatie voor mijn CSRD-rapportage?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="csrd-faq-answer">
+                        <div class="csrd-faq-answer-content">
+                            Bij elke bestelling ontvang je certificaten en meetgegevens die je direct kunt gebruiken
+                            in je ESRS E2-5 rapportage. We leveren exacte cijfers over de biologische afbraak en
+                            microplastic-reductie van je aangeschafte vlaggen. Dit maakt externe audit eenvoudig.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="csrd-cta">
+        <div class="csrd-cta-container">
+            <h2>Start met CSRD-compliant vlaggen</h2>
+            <p>
+                Bereken hoeveel microplastics jouw organisatie bespaart door over te stappen
+                op Flag-Ciclo vlaggen. Inclusief documentatie voor je ESRS E2-5 rapportage.
+            </p>
+            <div class="csrd-cta-buttons">
+                <a href="/bereken-besparing/" class="btn-primary">
+                    Bereken je besparing
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/bestel/" class="btn-secondary">
+                    Bekijk producten
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.csrd-faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.csrd-faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Solution Cards Animation
+            const solutionCards = document.querySelectorAll('.csrd-solution-card');
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            solutionCards.forEach(card => cardObserver.observe(card));
+        })();
+    </script>
+</section>

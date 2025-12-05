@@ -1,0 +1,1219 @@
+<!-- COMPONENT: FAQ Knowledge Page -->
+<!-- URL: /kennis/faq/ -->
+<section class="faq-knowledge" aria-labelledby="faq-knowledge-title">
+    <style>
+        /* ========================================
+           FAQ PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .faq-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .faq-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .faq-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .faq-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .faq-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .faq-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .faq-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .faq-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .faq-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .faq-hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        .faq-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(198, 107, 78, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(92, 138, 157, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .faq-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .faq-hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .faq-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(164, 107, 74, 0.2);
+            border: 1px solid rgba(164, 107, 74, 0.4);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: #e8c4a8;
+            margin-bottom: var(--space-md);
+        }
+
+        .faq-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .faq-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.85);
+            max-width: 600px;
+            margin: 0 auto var(--space-xl);
+            line-height: 1.7;
+        }
+
+        /* Search Box */
+        .faq-search {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .faq-search input {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            padding-left: 50px;
+            font-family: var(--font-body);
+            font-size: 16px;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--color-white);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .faq-search input:focus {
+            outline: none;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+        }
+
+        .faq-search input::placeholder {
+            color: var(--color-stone);
+        }
+
+        .faq-search-icon {
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--color-stone);
+        }
+
+        /* ========================================
+           CATEGORY TABS
+           ======================================== */
+        .faq-categories {
+            padding: var(--space-xl) var(--space-lg);
+            background: var(--color-white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .faq-categories-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-category-tabs {
+            display: flex;
+            gap: var(--space-xs);
+            overflow-x: auto;
+            padding-bottom: var(--space-xs);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .faq-category-tab {
+            padding: var(--space-sm) var(--space-md);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--color-stone);
+            background: var(--color-off-white);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .faq-category-tab:hover {
+            background: var(--color-forest);
+            color: var(--color-white);
+        }
+
+        .faq-category-tab.active {
+            background: var(--color-forest);
+            color: var(--color-white);
+        }
+
+        /* ========================================
+           FAQ SECTIONS
+           ======================================== */
+        .faq-sections {
+            padding: var(--space-2xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .faq-sections-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .faq-section-header {
+            margin-bottom: var(--space-lg);
+        }
+
+        .faq-section-badge {
+            display: inline-block;
+            background: var(--color-forest);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .faq-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--color-charcoal);
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .faq-item {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-md);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--color-forest);
+        }
+
+        .faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-forest);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+        }
+
+        .faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.8;
+        }
+
+        .faq-answer-content p {
+            margin-bottom: var(--space-sm);
+        }
+
+        .faq-answer-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-answer-content strong {
+            color: var(--color-charcoal);
+        }
+
+        .faq-answer-content ul {
+            margin: var(--space-sm) 0;
+            padding-left: var(--space-lg);
+        }
+
+        .faq-answer-content li {
+            margin-bottom: var(--space-xs);
+        }
+
+        /* Hidden class for search filtering */
+        .faq-item.hidden {
+            display: none;
+        }
+
+        .faq-section.hidden {
+            display: none;
+        }
+
+        /* No results message */
+        .faq-no-results {
+            text-align: center;
+            padding: var(--space-2xl);
+            display: none;
+        }
+
+        .faq-no-results.visible {
+            display: block;
+        }
+
+        .faq-no-results h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .faq-no-results p {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--color-stone);
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .faq-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .faq-cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .faq-cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(198,107,78,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .faq-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 32px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .faq-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .faq-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-sage-blue);
+            border-color: var(--color-sage-blue);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .faq-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .faq-categories {
+                padding: var(--space-md);
+            }
+
+            .faq-category-tabs {
+                justify-content: flex-start;
+            }
+
+            .faq-sections {
+                padding: var(--space-xl) var(--space-md);
+            }
+
+            .faq-question {
+                padding: var(--space-md);
+            }
+
+            .faq-answer-content {
+                padding: 0 var(--space-md) var(--space-md);
+            }
+
+            .faq-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup - Complete -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Wat zijn Flag-Ciclo vlaggen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen zijn biologisch afbreekbare vlaggen gemaakt met CiCLO-technologie. Dit is een additief dat polyester biologisch afbreekbaar maakt. 96% van de vlag breekt af in 2-3 jaar, met 0% microplastics als eindresultaat."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoelang gaat een Flag-Ciclo vlag mee?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen gaan 3-4 maanden mee bij intensief buitengebruik - precies even lang als traditionele polyester vlaggen. De UV-bestendigheid is 2 jaar. Het verschil zit in wat er na de levensduur gebeurt: Flag-Ciclo breekt af, traditioneel polyester fragmenteert tot microplastics."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Wat kost een Flag-Ciclo vlag?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen kosten slechts enkele euros meer dan traditionele polyester vlaggen. De exacte prijs hangt af van het type, de maat en de oplage. Voor grotere aantallen zijn speciale tarieven beschikbaar."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe snel worden de vlaggen geleverd?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Standaard levertijd is ongeveer 3 werkdagen. Voor spoedbestellingen zijn express-leveringen mogelijk. Neem contact op om de mogelijkheden te bespreken."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Kan ik mijn eigen ontwerp laten drukken?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, alle Flag-Ciclo vlaggen worden full-color bedrukt met sublimatie. Je kunt elk ontwerp, logo of artwork laten drukken. Lever je ontwerp aan als PDF of AI bestand met minimaal 150 DPI."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Wat is het verschil met recycled PET vlaggen?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Recycled PET vlaggen zijn gemaakt van gerecycled plastic, maar breken niet biologisch af. Ze fragmenteren nog steeds tot microplastics. Flag-Ciclo vlaggen breken volledig af tot CO2, water en biomassa - zonder microplastics."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "In welke omgevingen breken Flag-Ciclo vlaggen af?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen breken af in vrijwel elke omgeving: bodem (ASTM D5988: 91.1%), stortplaats (ASTM D5511: 91.1%), rioolwater (ASTM D5210: 89.9%) en zeewater (ASTM D6691: versnelde afbraak)."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Zijn Flag-Ciclo vlaggen gecertificeerd?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, Flag-Ciclo vlaggen hebben OEKO-TEX ECO PASSPORT certificering en zijn REACH compliant. De biologische afbraak is onafhankelijk getest volgens ASTM-normen."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe helpen Flag-Ciclo vlaggen bij CSRD-compliance?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Onder ESRS E2-5 moeten bedrijven rapporteren over microplastic-emissies. Flag-Ciclo vlaggen zijn 96% biologisch afbreekbaar en laten 0% microplastics achter. Dit is direct meetbaar en rapporteerbaar als concrete reductiemaatregel."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Welke maten zijn beschikbaar?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen zijn beschikbaar in alle gangbare maten: van 70x100cm tot 400x600cm voor mastvlaggen, diverse formaten voor baniervlaggen, en S tot XL voor beachflags. Custom maten zijn ook mogelijk."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="faq-breadcrumb">
+        <div class="faq-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>Veelgestelde Vragen</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="faq-hero">
+        <div class="faq-hero-container">
+            <div class="faq-hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                FAQ
+            </div>
+            <h1 id="faq-knowledge-title">Veelgestelde vragen</h1>
+            <p class="faq-hero-subtitle">
+                Antwoorden op de meest gestelde vragen over biologisch afbreekbare vlaggen,
+                Flag-Ciclo technologie en CSRD-compliance.
+            </p>
+            <div class="faq-search">
+                <svg class="faq-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="faq-search-input" placeholder="Zoek in veelgestelde vragen..." aria-label="Zoek in FAQ">
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="faq-categories">
+        <div class="faq-categories-container">
+            <div class="faq-category-tabs" role="tablist">
+                <button class="faq-category-tab active" data-category="all" role="tab">Alle vragen</button>
+                <button class="faq-category-tab" data-category="algemeen" role="tab">Algemeen</button>
+                <button class="faq-category-tab" data-category="technologie" role="tab">Technologie</button>
+                <button class="faq-category-tab" data-category="bestellen" role="tab">Bestellen</button>
+                <button class="faq-category-tab" data-category="csrd" role="tab">CSRD</button>
+                <button class="faq-category-tab" data-category="duurzaamheid" role="tab">Duurzaamheid</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTIONS -->
+    <div class="faq-sections">
+        <div class="faq-sections-container">
+            <!-- No Results Message -->
+            <div class="faq-no-results">
+                <h3>Geen resultaten gevonden</h3>
+                <p>Probeer een andere zoekterm of bekijk alle vragen.</p>
+            </div>
+
+            <!-- Algemeen -->
+            <div class="faq-section" data-category="algemeen" id="faq-algemeen">
+                <div class="faq-section-header">
+                    <span class="faq-section-badge">Algemeen</span>
+                    <h2>Algemene vragen</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Wat zijn Flag-Ciclo vlaggen?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Flag-Ciclo vlaggen</strong> zijn biologisch afbreekbare vlaggen gemaakt met CiCLO-technologie. Dit is een gepatenteerd additief dat tijdens de productie aan polyestervezels wordt toegevoegd, waardoor ze biologisch afbreekbaar worden.</p>
+                                <p>Het resultaat: vlaggen die er identiek uitzien en net zo lang meegaan als traditionele polyester, maar na afdanking <strong>96% afbreken in 2-3 jaar</strong>. Er blijven 0% microplastics achter - alleen CO2, water en biomassa.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Hoelang gaat een Flag-Ciclo vlag mee?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Flag-Ciclo vlaggen gaan <strong>3-4 maanden</strong> mee bij intensief buitengebruik - precies even lang als traditionele polyester vlaggen. De UV-bestendigheid is 2 jaar.</p>
+                                <p>Het verschil zit niet in de levensduur, maar in wat er <strong>na</strong> de levensduur gebeurt: Flag-Ciclo breekt volledig af, traditioneel polyester fragmenteert tot microplastics die 500+ jaar in het milieu blijven.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Wat is het verschil met recycled PET vlaggen?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Dit is een belangrijk onderscheid. <strong>Recycled PET vlaggen</strong> zijn gemaakt van gerecycled plastic (bijvoorbeeld oude flessen). Dit is beter dan nieuw plastic, maar ze breken nog steeds <strong>niet</strong> biologisch af.</p>
+                                <p><strong>Flag-Ciclo vlaggen</strong> zijn biologisch afbreekbaar. Ze breken volledig af tot CO2, water en biomassa - zonder microplastics. Dit is fundamenteel anders dan recyclen, waarbij het plastic behouden blijft.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technologie -->
+            <div class="faq-section" data-category="technologie" id="faq-technologie">
+                <div class="faq-section-header">
+                    <span class="faq-section-badge" style="background: var(--color-sage-blue);">Technologie</span>
+                    <h2>Over de technologie</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Hoe werkt CiCLO-technologie?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>CiCLO</strong> is een gepatenteerd additief dat tijdens de productie aan polyestervezels wordt toegevoegd. Het verandert de chemische structuur zodanig dat micro-organismen (bacterien, schimmels) de vezels kunnen verteren.</p>
+                                <p>Bij traditionele polyester kunnen micro-organismen de lange polymeerketens niet afbreken. Het CiCLO-additief creert "zwakke punten" in deze ketens, waardoor biologische afbraak mogelijk wordt.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            In welke omgevingen breken Flag-Ciclo vlaggen af?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Flag-Ciclo vlaggen zijn getest en breken af in vrijwel elke omgeving:</p>
+                                <ul>
+                                    <li><strong>Bodem/grond</strong> (ASTM D5988): 91.1% afbraak</li>
+                                    <li><strong>Stortplaats</strong> (ASTM D5511): 91.1% afbraak</li>
+                                    <li><strong>Rioolwater</strong> (ASTM D5210): 89.9% afbraak</li>
+                                    <li><strong>Zeewater</strong> (ASTM D6691): Versnelde afbraak</li>
+                                </ul>
+                                <p>Ongeacht waar de vlag terechtkomt na afdanking, de biologische afbraak vindt plaats.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Zijn Flag-Ciclo vlaggen gecertificeerd?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Ja, Flag-Ciclo vlaggen hebben de volgende certificeringen:</p>
+                                <ul>
+                                    <li><strong>OEKO-TEX ECO PASSPORT</strong> - Certificering voor chemisch veilige en duurzame textielproductie</li>
+                                    <li><strong>REACH Compliant</strong> - Voldoet aan Europese wetgeving voor chemische stoffen</li>
+                                    <li><strong>ASTM Getest</strong> - Onafhankelijke laboratoriumtests voor biologische afbraak</li>
+                                    <li><strong>CiCLO Licensed</strong> - Officieel gelicenseerde toepassing van CiCLO-technologie</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Wat blijft er over na volledige afbraak?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Na volledige biologische afbraak blijven alleen natuurlijke stoffen over:</p>
+                                <ul>
+                                    <li><strong>CO2</strong> (kooldioxide)</li>
+                                    <li><strong>H2O</strong> (water)</li>
+                                    <li><strong>Biomassa</strong> (organisch materiaal)</li>
+                                </ul>
+                                <p>Er blijven <strong>0% microplastics</strong> achter. Dit is het cruciale verschil met traditionele polyester vlaggen, die fragmenteren in steeds kleinere plastic deeltjes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bestellen -->
+            <div class="faq-section" data-category="bestellen" id="faq-bestellen">
+                <div class="faq-section-header">
+                    <span class="faq-section-badge" style="background: var(--color-terracotta);">Bestellen</span>
+                    <h2>Bestellen en levering</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Wat kost een Flag-Ciclo vlag?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Flag-Ciclo vlaggen kosten slechts <strong>enkele euros meer</strong> dan traditionele polyester vlaggen. De exacte prijs hangt af van:</p>
+                                <ul>
+                                    <li>Het type vlag (mastvlag, baniervlag, beachflag)</li>
+                                    <li>De maat</li>
+                                    <li>De oplage</li>
+                                    <li>Eventuele confectie-opties</li>
+                                </ul>
+                                <p>Voor grotere aantallen zijn speciale tarieven beschikbaar. Vraag een vrijblijvende offerte aan.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Hoe snel worden de vlaggen geleverd?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Standaard levertijd is <strong>ongeveer 3 werkdagen</strong> na goedkeuring van de drukproef.</p>
+                                <p>Voor spoedbestellingen zijn express-leveringen mogelijk. Neem contact op om de mogelijkheden te bespreken. We begrijpen dat deadlines soms krap zijn.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Kan ik mijn eigen ontwerp laten drukken?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Ja, alle Flag-Ciclo vlaggen worden <strong>full-color bedrukt</strong> met sublimatie. Je kunt elk ontwerp, logo of artwork laten drukken.</p>
+                                <p><strong>Aanleverspecificaties:</strong></p>
+                                <ul>
+                                    <li>Bestandsformaat: PDF of AI</li>
+                                    <li>Resolutie: minimaal 150 DPI</li>
+                                    <li>Kleurmodus: CMYK</li>
+                                    <li>Snijmarge: 2cm rondom</li>
+                                </ul>
+                                <p>Je ontvangt altijd een digitale drukproef ter goedkeuring voordat we printen.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Welke maten zijn beschikbaar?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Flag-Ciclo vlaggen zijn beschikbaar in alle gangbare maten:</p>
+                                <ul>
+                                    <li><strong>Mastvlaggen:</strong> 70x100cm tot 400x600cm</li>
+                                    <li><strong>Baniervlaggen:</strong> 60x200cm tot 120x400cm</li>
+                                    <li><strong>Beachflags:</strong> S, M, L, XL (diverse vormen)</li>
+                                </ul>
+                                <p>Custom maten zijn ook mogelijk. Neem contact op voor de mogelijkheden.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSRD -->
+            <div class="faq-section" data-category="csrd" id="faq-csrd">
+                <div class="faq-section-header">
+                    <span class="faq-section-badge" style="background: var(--color-sage-purple);">CSRD</span>
+                    <h2>CSRD en rapportage</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Hoe helpen Flag-Ciclo vlaggen bij CSRD-compliance?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Onder <strong>ESRS E2-5</strong> moeten bedrijven rapporteren over microplastic-emissies. Flag-Ciclo vlaggen bieden een <strong>meetbare oplossing</strong>:</p>
+                                <ul>
+                                    <li>96% biologisch afbreekbaar</li>
+                                    <li>0% microplastics na afbraak</li>
+                                    <li>Direct te documenteren als reductiemaatregel</li>
+                                </ul>
+                                <p>Je kunt exact aantonen hoeveel microplastics je voorkomt door over te stappen op Flag-Ciclo vlaggen.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Krijg ik documentatie voor mijn rapportage?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Ja, bij elke bestelling ontvang je <strong>certificaten en meetgegevens</strong> die je direct kunt gebruiken in je ESRS E2-5 rapportage.</p>
+                                <p>Dit omvat:</p>
+                                <ul>
+                                    <li>Certificaat biologische afbreekbaarheid</li>
+                                    <li>ASTM testresultaten</li>
+                                    <li>Kwantificering microplastic-reductie</li>
+                                </ul>
+                                <p>Deze documentatie maakt externe audit eenvoudig.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Wanneer moet mijn bedrijf voldoen aan CSRD?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>De CSRD-richtlijn wordt gefaseerd ingevoerd:</p>
+                                <ul>
+                                    <li><strong>2024:</strong> Grote ondernemingen die al onder NFRD vielen</li>
+                                    <li><strong>2025:</strong> Overige grote ondernemingen</li>
+                                    <li><strong>2026:</strong> Beursgenoteerde MKB's</li>
+                                </ul>
+                                <p>Onder ESRS E2-5 moet je specifiek rapporteren over microplastic-emissies en reductiemaatregelen. Flag-Ciclo vlaggen bieden een concrete, meetbare maatregel.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Duurzaamheid -->
+            <div class="faq-section" data-category="duurzaamheid" id="faq-duurzaamheid">
+                <div class="faq-section-header">
+                    <span class="faq-section-badge" style="background: var(--color-copper-rust);">Duurzaamheid</span>
+                    <h2>Duurzaamheid en impact</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Waarom zijn microplastics een probleem?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Microplastics zijn plastic deeltjes kleiner dan 5mm. Ze zijn problematisch omdat:</p>
+                                <ul>
+                                    <li>Ze <strong>niet afbreken</strong> - ze blijven 500+ jaar in het milieu</li>
+                                    <li>Ze zijn <strong>overal</strong> - in oceanen, bodem, lucht, drinkwater</li>
+                                    <li>Ze komen in de <strong>voedselketen</strong> terecht - inclusief menselijke lichamen</li>
+                                    <li>De gevolgen voor gezondheid zijn nog niet volledig bekend</li>
+                                </ul>
+                                <p>Traditionele polyester vlaggen fragmenteren tot duizenden microplastics. Flag-Ciclo vlaggen breken volledig af zonder microplastics.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Zijn vlaggen echt een bron van microplastics?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Ja. Traditionele polyester vlaggen zijn een <strong>significante bron</strong> van microplastics:</p>
+                                <ul>
+                                    <li><strong>Tijdens gebruik:</strong> Wind, regen en UV-straling slijten de vezels, waardoor microplastics vrijkomen</li>
+                                    <li><strong>Na afdanking:</strong> De vlag fragmenteert in steeds kleinere deeltjes</li>
+                                </ul>
+                                <p>Elke vlag die buiten hangt, draagt bij aan microplastic-vervuiling. Flag-Ciclo elimineert dit probleem volledig.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            Zijn Flag-Ciclo vlaggen composteerbaar?
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Flag-Ciclo vlaggen zijn <strong>biologisch afbreekbaar</strong>, maar we claimen niet dat ze "composteerbaar" zijn. Dit onderscheid is belangrijk:</p>
+                                <ul>
+                                    <li><strong>Biologisch afbreekbaar:</strong> Breekt af door micro-organismen (bewezen voor Flag-Ciclo)</li>
+                                    <li><strong>Composteerbaar:</strong> Vereist specifieke certificering (bijv. EN 13432) voor afbraak in composteercondities</li>
+                                </ul>
+                                <p>We maken alleen claims die we kunnen onderbouwen met testdata. De ASTM-tests bevestigen biologische afbraak in bodem, stortplaats, rioolwater en zeewater.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="faq-cta">
+        <div class="faq-cta-container">
+            <h2>Vraag niet beantwoord?</h2>
+            <p>Neem contact op en we helpen je graag verder met al je vragen over biologisch afbreekbare vlaggen.</p>
+            <div class="faq-cta-buttons">
+                <a href="/contact/" class="btn-primary">
+                    Neem contact op
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/bestel/" class="btn-secondary">
+                    Bekijk producten
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    // Close all in same section
+                    const section = item.closest('.faq-section');
+                    section.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Category Tabs
+            const tabs = document.querySelectorAll('.faq-category-tab');
+            const sections = document.querySelectorAll('.faq-section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const category = tab.dataset.category;
+
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Filter sections
+                    if (category === 'all') {
+                        sections.forEach(s => s.classList.remove('hidden'));
+                    } else {
+                        sections.forEach(s => {
+                            if (s.dataset.category === category) {
+                                s.classList.remove('hidden');
+                            } else {
+                                s.classList.add('hidden');
+                            }
+                        });
+                    }
+
+                    // Clear search
+                    document.getElementById('faq-search-input').value = '';
+                    faqItems.forEach(item => item.classList.remove('hidden'));
+                    document.querySelector('.faq-no-results').classList.remove('visible');
+                });
+            });
+
+            // Search Functionality
+            const searchInput = document.getElementById('faq-search-input');
+            const noResults = document.querySelector('.faq-no-results');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+
+                if (query === '') {
+                    // Show all
+                    faqItems.forEach(item => item.classList.remove('hidden'));
+                    sections.forEach(s => s.classList.remove('hidden'));
+                    noResults.classList.remove('visible');
+                    return;
+                }
+
+                // Reset category tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                tabs[0].classList.add('active');
+
+                let hasResults = false;
+
+                faqItems.forEach(item => {
+                    const questionText = item.querySelector('.faq-question').textContent.toLowerCase();
+                    const answerText = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+
+                    if (questionText.includes(query) || answerText.includes(query)) {
+                        item.classList.remove('hidden');
+                        hasResults = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                // Show/hide sections based on visible items
+                sections.forEach(section => {
+                    const visibleItems = section.querySelectorAll('.faq-item:not(.hidden)');
+                    if (visibleItems.length === 0) {
+                        section.classList.add('hidden');
+                    } else {
+                        section.classList.remove('hidden');
+                    }
+                });
+
+                // Show no results message
+                if (!hasResults) {
+                    noResults.classList.add('visible');
+                } else {
+                    noResults.classList.remove('visible');
+                }
+            });
+        })();
+    </script>
+</section>

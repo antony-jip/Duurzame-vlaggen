@@ -1,0 +1,1607 @@
+<!-- COMPONENT: Microplastics Knowledge Page -->
+<!-- URL: /kennis/microplastics/ -->
+<section class="micro-knowledge" aria-labelledby="micro-knowledge-title">
+    <style>
+        /* ========================================
+           MICROPLASTICS PAGE - COMPLETE STYLES
+           ======================================== */
+
+        /* CSS Variables */
+        .micro-knowledge {
+            --color-forest: #2C5F4F;
+            --color-terracotta: #C66B4E;
+            --color-sage-blue: #5C8A9D;
+            --color-copper-rust: #A46B4A;
+            --color-sage-purple: #8B7BA8;
+            --color-white: #FFFFFF;
+            --color-off-white: #F7F5F2;
+            --color-charcoal: #3A3A3A;
+            --color-stone: #8B8D7A;
+            --color-danger: #C66B4E;
+
+            --font-eyebrow: 'Bricolage Grotesque', sans-serif;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+
+            font-family: var(--font-body);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .micro-knowledge * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .micro-knowledge img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ========================================
+           BREADCRUMB
+           ======================================== */
+        .micro-breadcrumb {
+            background: var(--color-off-white);
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .micro-breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .micro-breadcrumb nav {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-stone);
+        }
+
+        .micro-breadcrumb a {
+            color: var(--color-forest);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .micro-breadcrumb a:hover {
+            color: var(--color-terracotta);
+        }
+
+        .micro-breadcrumb span {
+            margin: 0 var(--space-xs);
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .micro-hero {
+            position: relative;
+            background: linear-gradient(135deg, #2d1f1a 0%, #4a2f25 50%, var(--color-terracotta) 100%);
+            padding: var(--space-3xl) var(--space-lg);
+            overflow: hidden;
+        }
+
+        /* Particle Effect Background */
+        .micro-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3) 1px, transparent 0),
+                radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.2) 1px, transparent 0),
+                radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.4) 1px, transparent 0),
+                radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,0.2) 1px, transparent 0),
+                radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 1px, transparent 0),
+                radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.3) 1px, transparent 0);
+            background-size: 100% 100%;
+            animation: particles 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes particles {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            50% { transform: translate(5px, -5px); }
+            75% { transform: translate(-3px, -3px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .micro-hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .micro-hero-content {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .micro-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(198, 107, 78, 0.3);
+            border: 1px solid rgba(198, 107, 78, 0.5);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 50px;
+            font-family: var(--font-eyebrow);
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffd4c4;
+            margin-bottom: var(--space-md);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(198, 107, 78, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(198, 107, 78, 0); }
+        }
+
+        .micro-hero h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 54px);
+            color: var(--color-white);
+            margin-bottom: var(--space-md);
+            line-height: 1.15;
+        }
+
+        .micro-hero h1 span {
+            background: linear-gradient(135deg, var(--color-terracotta), #ffa07a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .micro-hero-subtitle {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            margin-bottom: var(--space-lg);
+        }
+
+        .micro-hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.3s forwards;
+        }
+
+        .micro-hero-image {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .micro-hero-warning {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            background: var(--color-white);
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            animation: shake 5s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            2% { transform: rotate(-2deg); }
+            4% { transform: rotate(2deg); }
+            6% { transform: rotate(-2deg); }
+            8% { transform: rotate(2deg); }
+            10% { transform: rotate(0); }
+        }
+
+        .micro-hero-warning-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-terracotta);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .micro-hero-warning-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-white);
+        }
+
+        .micro-hero-warning-text {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--color-charcoal);
+        }
+
+        .micro-hero-warning-text span {
+            display: block;
+            font-weight: 400;
+            font-family: var(--font-body);
+            font-size: 12px;
+            color: var(--color-stone);
+        }
+
+        /* ========================================
+           PROBLEM SECTION
+           ======================================== */
+        .micro-problem {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .micro-problem-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .micro-section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .micro-section-badge {
+            display: inline-block;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .micro-section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .micro-section-header p {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--color-stone);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .micro-problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .micro-problem-card {
+            background: var(--color-off-white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .micro-problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--color-terracotta);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .micro-problem-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .micro-problem-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .micro-problem-card:hover {
+            background: var(--color-white);
+            box-shadow: 0 20px 50px rgba(198, 107, 78, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .micro-problem-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--color-terracotta), #e8856a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            transition: transform 0.3s ease;
+        }
+
+        .micro-problem-card:hover .micro-problem-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .micro-problem-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--color-white);
+        }
+
+        .micro-problem-card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-sm);
+        }
+
+        .micro-problem-card p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           FLAGS AS SOURCE SECTION
+           ======================================== */
+        .micro-source {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .micro-source-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .micro-source-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            align-items: center;
+            margin-top: var(--space-2xl);
+        }
+
+        .micro-source-text h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-md);
+        }
+
+        .micro-source-text p {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--color-charcoal);
+            line-height: 1.8;
+            margin-bottom: var(--space-md);
+        }
+
+        .micro-source-text strong {
+            color: var(--color-terracotta);
+        }
+
+        .micro-source-list {
+            list-style: none;
+            margin-top: var(--space-md);
+        }
+
+        .micro-source-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-charcoal);
+            line-height: 1.5;
+        }
+
+        .micro-source-list svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-terracotta);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .micro-source-image {
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        /* ========================================
+           IMPACT COUNTER SECTION
+           ======================================== */
+        .micro-impact {
+            padding: var(--space-3xl) var(--space-lg);
+            background: linear-gradient(135deg, var(--color-terracotta) 0%, #a85540 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .micro-impact::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -30%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .micro-impact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .micro-impact h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-xl);
+        }
+
+        .micro-impact-counter {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2xl);
+            flex-wrap: wrap;
+        }
+
+        .micro-impact-stat {
+            text-align: center;
+        }
+
+        .micro-impact-stat-value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: clamp(48px, 8vw, 80px);
+            color: var(--color-white);
+            line-height: 1;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .micro-impact-stat-label {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: rgba(255,255,255,0.85);
+            margin-top: var(--space-xs);
+        }
+
+        .micro-impact-note {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-top: var(--space-xl);
+            font-style: italic;
+        }
+
+        /* ========================================
+           SOLUTION SECTION
+           ======================================== */
+        .micro-solution {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .micro-solution-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .micro-solution-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--space-lg);
+            align-items: stretch;
+            margin-top: var(--space-2xl);
+        }
+
+        .micro-solution-card {
+            padding: var(--space-xl);
+            border-radius: var(--radius-2xl);
+            position: relative;
+        }
+
+        .micro-solution-card.problem {
+            background: linear-gradient(135deg, #f5e6e2 0%, #edd9d4 100%);
+            border: 2px solid rgba(198, 107, 78, 0.2);
+        }
+
+        .micro-solution-card.solution {
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            color: var(--color-white);
+        }
+
+        .micro-solution-card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .micro-solution-card.problem h3 {
+            color: var(--color-terracotta);
+        }
+
+        .micro-solution-card h3 svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .micro-solution-list {
+            list-style: none;
+        }
+
+        .micro-solution-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            font-family: var(--font-body);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .micro-solution-card.problem .micro-solution-list li {
+            color: var(--color-charcoal);
+        }
+
+        .micro-solution-card.solution .micro-solution-list li {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .micro-solution-list svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .micro-solution-card.problem .micro-solution-list svg {
+            color: var(--color-terracotta);
+        }
+
+        .micro-solution-card.solution .micro-solution-list svg {
+            color: var(--color-sage-blue);
+        }
+
+        .micro-solution-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .micro-solution-arrow-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--color-forest);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .micro-solution-arrow-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-white);
+        }
+
+        /* ========================================
+           LIFECYCLE SECTION
+           ======================================== */
+        .micro-lifecycle {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .micro-lifecycle-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .micro-lifecycle-visual {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-2xl);
+            position: relative;
+        }
+
+        .micro-lifecycle-visual::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-terracotta), var(--color-forest));
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .micro-lifecycle-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            max-width: 200px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .micro-lifecycle-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .micro-lifecycle-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--color-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-sm);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .micro-lifecycle-step:hover .micro-lifecycle-icon {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .micro-lifecycle-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--color-forest);
+        }
+
+        .micro-lifecycle-step:first-child .micro-lifecycle-icon svg {
+            color: var(--color-terracotta);
+        }
+
+        .micro-lifecycle-step h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--color-charcoal);
+            margin-bottom: var(--space-xs);
+        }
+
+        .micro-lifecycle-step p {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: var(--color-stone);
+            line-height: 1.4;
+        }
+
+        /* ========================================
+           FAQ SECTION
+           ======================================== */
+        .micro-faq {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-white);
+        }
+
+        .micro-faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .micro-faq-list {
+            margin-top: var(--space-2xl);
+        }
+
+        .micro-faq-item {
+            background: var(--color-off-white);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .micro-faq-question {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-charcoal);
+            transition: color 0.3s ease;
+        }
+
+        .micro-faq-question:hover {
+            color: var(--color-terracotta);
+        }
+
+        .micro-faq-question svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-terracotta);
+            transition: transform 0.3s ease;
+        }
+
+        .micro-faq-item.active .micro-faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .micro-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .micro-faq-item.active .micro-faq-answer {
+            max-height: 500px;
+        }
+
+        .micro-faq-answer-content {
+            padding: 0 var(--space-lg) var(--space-lg);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--color-stone);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .micro-cta {
+            padding: var(--space-3xl) var(--space-lg);
+            background: var(--color-off-white);
+        }
+
+        .micro-cta-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--color-forest) 0%, #1a3d32 100%);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .micro-cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(198,107,78,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .micro-cta h2 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: clamp(24px, 3vw, 36px);
+            color: var(--color-white);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .micro-cta p {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: var(--space-lg);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .micro-cta-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: var(--color-terracotta);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #d87a5e;
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(198,107,78,0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            padding: 20px 36px;
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-sage-blue);
+            border-color: var(--color-sage-blue);
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .micro-hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .micro-hero-visual {
+                order: -1;
+            }
+
+            .micro-hero-warning {
+                right: 50%;
+                transform: translateX(50%);
+            }
+
+            .micro-problem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .micro-source-content {
+                grid-template-columns: 1fr;
+            }
+
+            .micro-solution-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .micro-solution-arrow {
+                transform: rotate(90deg);
+                margin: var(--space-md) 0;
+            }
+
+            .micro-lifecycle-visual {
+                flex-wrap: wrap;
+                gap: var(--space-lg);
+            }
+
+            .micro-lifecycle-visual::before {
+                display: none;
+            }
+
+            .micro-lifecycle-step {
+                flex-basis: 45%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .micro-hero {
+                padding: var(--space-2xl) var(--space-md);
+            }
+
+            .micro-impact-counter {
+                gap: var(--space-xl);
+            }
+
+            .micro-lifecycle-step {
+                flex-basis: 100%;
+            }
+
+            .micro-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Schema.org FAQPage Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Wat zijn microplastics precies?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Microplastics zijn minuscule plastic deeltjes kleiner dan 5mm. Ze ontstaan wanneer groter plastic fragmenteert door UV-straling, wind en wrijving. Deze deeltjes zijn zo klein dat ze overal terechtkomen: in water, bodem, lucht en zelfs in ons voedsel en lichaam."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Zijn vlaggen een bron van microplastics?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Ja, traditionele polyester vlaggen zijn een significante bron van microplastics. Door constante blootstelling aan wind, regen en UV-straling slijten de vezels en komen er microplastics vrij in het milieu. Na afdanking fragmenteren ze verder in steeds kleinere deeltjes."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoe lost Flag-Ciclo het microplastics probleem op?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Flag-Ciclo vlaggen zijn gemaakt met CiCLO-technologie: een additief dat polyester biologisch afbreekbaar maakt. In plaats van te fragmenteren tot microplastics, worden de vezels volledig verteerd door micro-organismen. Het eindresultaat: 0% microplastics, alleen CO2, water en biomassa."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Hoelang blijven microplastics in het milieu?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Microplastics van traditionele polyester blijven 500+ jaar in het milieu. Ze breken niet af maar fragmenteren alleen in steeds kleinere deeltjes. Flag-Ciclo vlaggen daarentegen breken volledig af in 2-3 jaar zonder microplastic-residue."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BREADCRUMB -->
+    <div class="micro-breadcrumb">
+        <div class="micro-breadcrumb-container">
+            <nav aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/kennis/">Kennisbank</a>
+                <span>/</span>
+                <span>Microplastics</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="micro-hero">
+        <div class="micro-hero-container">
+            <div class="micro-hero-content">
+                <div class="micro-hero-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Milieuprobleem
+                </div>
+                <h1 id="micro-knowledge-title">Het <span>microplastics</span> probleem bij vlaggen</h1>
+                <p class="micro-hero-subtitle">
+                    Traditionele polyester vlaggen zijn een onzichtbare bron van plastic vervuiling.
+                    Ontdek hoe microplastics vrijkomen en waarom Flag-Ciclo de oplossing biedt.
+                </p>
+            </div>
+            <div class="micro-hero-visual">
+                <div class="micro-hero-image">
+                    <img src="https://placehold.co/600x450/C66B4E/FFFFFF?text=Microplastics+onder+microscoop"
+                         alt="Microscopische weergave van microplastics afkomstig van polyester vezels"
+                         width="600" height="450">
+                </div>
+                <div class="micro-hero-warning">
+                    <div class="micro-hero-warning-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="micro-hero-warning-text">
+                        500+ jaar
+                        <span>Blijft in milieu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROBLEM SECTION -->
+    <div class="micro-problem">
+        <div class="micro-problem-container">
+            <div class="micro-section-header">
+                <span class="micro-section-badge">Het probleem</span>
+                <h2>Wat zijn microplastics?</h2>
+                <p>Minuscule plastic deeltjes die overal terechtkomen en niet meer verdwijnen.</p>
+            </div>
+            <div class="micro-problem-grid">
+                <div class="micro-problem-card">
+                    <div class="micro-problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            <circle cx="11" cy="11" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>Kleiner dan 5mm</h3>
+                    <p>Microplastics zijn plastic deeltjes kleiner dan 5mm. Zo klein dat ze onzichtbaar zijn voor het blote oog, maar overal aanwezig.</p>
+                </div>
+                <div class="micro-problem-card">
+                    <div class="micro-problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3>Overal aanwezig</h3>
+                    <p>Microplastics zijn gevonden in oceanen, rivieren, bodem, lucht, drinkwater, voedsel en zelfs in menselijk bloed en organen.</p>
+                </div>
+                <div class="micro-problem-card">
+                    <div class="micro-problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>Eeuwenlang aanwezig</h3>
+                    <p>Microplastics breken niet biologisch af. Ze fragmenteren alleen in steeds kleinere deeltjes en blijven 500+ jaar in het milieu.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLAGS AS SOURCE SECTION -->
+    <div class="micro-source">
+        <div class="micro-source-container">
+            <div class="micro-section-header">
+                <span class="micro-section-badge">Bron</span>
+                <h2>Vlaggen als microplastic-bron</h2>
+                <p>Hoe traditionele polyester vlaggen bijdragen aan plastic vervuiling.</p>
+            </div>
+            <div class="micro-source-content">
+                <div class="micro-source-text">
+                    <h3>De onzichtbare vervuiler aan je gevel</h3>
+                    <p>
+                        Traditionele vlaggen zijn gemaakt van <strong>100% polyester</strong> - een synthetisch materiaal
+                        dat niet biologisch afbreekt. Elke dag dat een vlag buiten hangt, slijten de vezels door
+                        wind, regen en UV-straling.
+                    </p>
+                    <p>
+                        Dit proces van fragmentatie zorgt ervoor dat duizenden <strong>microplastic deeltjes</strong>
+                        vrijkomen in de lucht en het regenwater. Deze deeltjes zijn te klein om op te vangen en
+                        verspreiden zich in het milieu.
+                    </p>
+                    <ul class="micro-source-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            </svg>
+                            Windslijtage laat continu vezels los
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            </svg>
+                            UV-straling verzwakt de vezelstructuur
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            </svg>
+                            Regenwater spoelt microplastics weg
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            </svg>
+                            Na afdanking fragmenteert de vlag verder
+                        </li>
+                    </ul>
+                </div>
+                <div class="micro-source-image">
+                    <img src="https://placehold.co/600x500/F7F5F2/3A3A3A?text=Versleten+vlag+met+losse+vezels"
+                         alt="Close-up van versleten polyester vlag met zichtbare vezelschade"
+                         width="600" height="500" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPACT COUNTER SECTION -->
+    <div class="micro-impact">
+        <div class="micro-impact-container">
+            <h2>De impact van traditionele vlaggen</h2>
+            <div class="micro-impact-counter">
+                <div class="micro-impact-stat">
+                    <div class="micro-impact-stat-value" data-count="500">0</div>
+                    <div class="micro-impact-stat-label">jaar in het milieu</div>
+                </div>
+                <div class="micro-impact-stat">
+                    <div class="micro-impact-stat-value">0%</div>
+                    <div class="micro-impact-stat-label">biologische afbraak</div>
+                </div>
+                <div class="micro-impact-stat">
+                    <div class="micro-impact-stat-value">100%</div>
+                    <div class="micro-impact-stat-label">fragmenteert tot microplastics</div>
+                </div>
+            </div>
+            <p class="micro-impact-note">
+                Traditionele polyester vlaggen breken niet af. Ze fragmenteren alleen in steeds kleinere deeltjes.
+            </p>
+        </div>
+    </div>
+
+    <!-- SOLUTION SECTION -->
+    <div class="micro-solution">
+        <div class="micro-solution-container">
+            <div class="micro-section-header">
+                <span class="micro-section-badge" style="background: var(--color-forest);">De oplossing</span>
+                <h2>Flag-Ciclo: 0% microplastics</h2>
+                <p>Biologisch afbreekbare vlaggen die het probleem bij de bron aanpakken.</p>
+            </div>
+            <div class="micro-solution-comparison">
+                <div class="micro-solution-card problem">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        Traditionele vlag
+                    </h3>
+                    <ul class="micro-solution-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Fragmenteert in microplastics
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Blijft 500+ jaar in milieu
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Verspreidt via wind en water
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Komt in voedselketen terecht
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Moet gerapporteerd onder CSRD
+                        </li>
+                    </ul>
+                </div>
+                <div class="micro-solution-arrow">
+                    <div class="micro-solution-arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="micro-solution-card solution">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Flag-Ciclo vlag
+                    </h3>
+                    <ul class="micro-solution-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            96% breekt volledig af
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            0% microplastics na afbraak
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Afbraak in 2-3 jaar
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Alleen CO2, water, biomassa
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Meetbare CSRD-compliance
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIFECYCLE SECTION -->
+    <div class="micro-lifecycle">
+        <div class="micro-lifecycle-container">
+            <div class="micro-section-header">
+                <span class="micro-section-badge" style="background: var(--color-forest);">Levenscyclus</span>
+                <h2>Van vlag tot volledige afbraak</h2>
+                <p>De reis van een Flag-Ciclo vlag: van gebruik tot natuurlijke afbraak.</p>
+            </div>
+            <div class="micro-lifecycle-visual">
+                <div class="micro-lifecycle-step">
+                    <div class="micro-lifecycle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                            <line x1="4" y1="22" x2="4" y2="15"/>
+                        </svg>
+                    </div>
+                    <h4>Gebruik</h4>
+                    <p>3-4 maanden actief gebruik met volle kwaliteit</p>
+                </div>
+                <div class="micro-lifecycle-step">
+                    <div class="micro-lifecycle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <h4>Afdanking</h4>
+                    <p>Vlag komt in bodem, compost of stortplaats</p>
+                </div>
+                <div class="micro-lifecycle-step">
+                    <div class="micro-lifecycle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="4"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                    </div>
+                    <h4>Microbiële afbraak</h4>
+                    <p>Micro-organismen verteren de vezels</p>
+                </div>
+                <div class="micro-lifecycle-step">
+                    <div class="micro-lifecycle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h4>Volledige afbraak</h4>
+                    <p>96% afgebroken, 0% microplastics</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="micro-faq">
+        <div class="micro-faq-container">
+            <div class="micro-section-header">
+                <span class="micro-section-badge">FAQ</span>
+                <h2>Veelgestelde vragen over microplastics</h2>
+                <p>Antwoorden op de meest gestelde vragen over microplastics en vlaggen.</p>
+            </div>
+            <div class="micro-faq-list">
+                <div class="micro-faq-item">
+                    <button class="micro-faq-question" aria-expanded="false">
+                        Wat zijn microplastics precies?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="micro-faq-answer">
+                        <div class="micro-faq-answer-content">
+                            Microplastics zijn minuscule plastic deeltjes kleiner dan 5mm. Ze ontstaan wanneer groter plastic
+                            fragmenteert door UV-straling, wind en wrijving. Deze deeltjes zijn zo klein dat ze overal
+                            terechtkomen: in water, bodem, lucht en zelfs in ons voedsel en lichaam.
+                        </div>
+                    </div>
+                </div>
+                <div class="micro-faq-item">
+                    <button class="micro-faq-question" aria-expanded="false">
+                        Zijn vlaggen echt een bron van microplastics?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="micro-faq-answer">
+                        <div class="micro-faq-answer-content">
+                            Ja, traditionele polyester vlaggen zijn een significante bron van microplastics. Door constante
+                            blootstelling aan wind, regen en UV-straling slijten de vezels en komen er microplastics vrij in
+                            het milieu. Na afdanking fragmenteren ze verder in steeds kleinere deeltjes.
+                        </div>
+                    </div>
+                </div>
+                <div class="micro-faq-item">
+                    <button class="micro-faq-question" aria-expanded="false">
+                        Hoe lost Flag-Ciclo het probleem op?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="micro-faq-answer">
+                        <div class="micro-faq-answer-content">
+                            Flag-Ciclo vlaggen zijn gemaakt met CiCLO-technologie: een additief dat polyester biologisch
+                            afbreekbaar maakt. In plaats van te fragmenteren tot microplastics, worden de vezels volledig
+                            verteerd door micro-organismen. Het eindresultaat: 0% microplastics, alleen CO2, water en biomassa.
+                        </div>
+                    </div>
+                </div>
+                <div class="micro-faq-item">
+                    <button class="micro-faq-question" aria-expanded="false">
+                        Hoelang blijven microplastics in het milieu?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="micro-faq-answer">
+                        <div class="micro-faq-answer-content">
+                            Microplastics van traditionele polyester blijven 500+ jaar in het milieu. Ze breken niet af maar
+                            fragmenteren alleen in steeds kleinere deeltjes. Flag-Ciclo vlaggen daarentegen breken volledig af
+                            in 2-3 jaar zonder microplastic-residue.
+                        </div>
+                    </div>
+                </div>
+                <div class="micro-faq-item">
+                    <button class="micro-faq-question" aria-expanded="false">
+                        Moet ik microplastics rapporteren onder CSRD?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="micro-faq-answer">
+                        <div class="micro-faq-answer-content">
+                            Ja, onder ESRS E2-5 moeten bedrijven hun microplastic-emissies rapporteren. Dit geldt voor alle
+                            bronnen, inclusief buitenreclame zoals vlaggen. Door over te stappen op Flag-Ciclo vlaggen kun je
+                            aantonen dat je concrete maatregelen neemt om microplastic-emissies te reduceren.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA SECTION -->
+    <div class="micro-cta">
+        <div class="micro-cta-container">
+            <h2>Stop microplastic-vervuiling vandaag</h2>
+            <p>
+                Stap over op Flag-Ciclo vlaggen en voorkom dat jouw organisatie bijdraagt aan
+                microplastic-vervuiling. Bereken je besparing in onze calculator.
+            </p>
+            <div class="micro-cta-buttons">
+                <a href="/bereken-besparing/" class="btn-primary">
+                    Bereken je besparing
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="/kennis/flag-ciclo-technologie/" class="btn-secondary">
+                    Lees over de technologie
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.micro-faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.micro-faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // Problem Cards Animation
+            const problemCards = document.querySelectorAll('.micro-problem-card');
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 150);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            problemCards.forEach(card => cardObserver.observe(card));
+
+            // Lifecycle Steps Animation
+            const lifecycleSteps = document.querySelectorAll('.micro-lifecycle-step');
+            const lifecycleObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 200);
+                        lifecycleObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            lifecycleSteps.forEach(step => lifecycleObserver.observe(step));
+
+            // Counter Animation
+            function animateCounter(element, target, suffix = '') {
+                let start = 0;
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                const timer = setInterval(() => {
+                    start += increment;
+                    if (start >= target) {
+                        element.textContent = target + suffix;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(start) + suffix;
+                    }
+                }, 16);
+            }
+
+            const counterElements = document.querySelectorAll('.micro-impact-stat-value[data-count]');
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseInt(entry.target.dataset.count);
+                        animateCounter(entry.target, target, '+');
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counterElements.forEach(el => counterObserver.observe(el));
+        })();
+    </script>
+</section>
