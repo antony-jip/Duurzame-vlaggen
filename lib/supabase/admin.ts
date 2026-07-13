@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { publicEnv, serverEnv } from "@/lib/env";
+import type { Database } from "@/lib/db/types";
 
 /**
  * Privileged Supabase client using the service-role key. Bypasses RLS.
@@ -11,7 +12,7 @@ import { publicEnv, serverEnv } from "@/lib/env";
  * service-role key server-side").
  */
 export function createSupabaseAdminClient() {
-  return createClient(publicEnv.supabaseUrl, serverEnv.supabaseServiceRoleKey, {
+  return createClient<Database>(publicEnv.supabaseUrl, serverEnv.supabaseServiceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
