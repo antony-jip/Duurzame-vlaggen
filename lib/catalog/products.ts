@@ -75,7 +75,11 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Bevestiging", choices: ["Karabijnhaken", "Spankoord"] },
     ],
     accent: "forest",
-    proboProductCode: null,
+    // VALIDATED Probo code (2026-07-13). Option tree: width+height (cm) + amount +
+    // finishing-all-sides + a finishing type (cut | hem | band-and-plastic-rings |
+    // band-and-d-rings | band-and-cord | velcro | band-and-nickel-rings) → can_order.
+    // Kept quote-only (template null) until /price payload is fixed + configurator built.
+    proboProductCode: "flag-ciclo",
     proboOptionTemplate: null,
   },
   {
@@ -96,7 +100,9 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Ontwerpservice", choices: ["Eigen ontwerp", "Laat ontwerpen"] },
     ],
     accent: "sage-blue",
-    proboProductCode: null,
+    // Same Flag-CiCLO® fabric as the baniervlag → Probo code "flag-ciclo".
+    // Mast flags typically finish with band-and-cord. Quote-only until /price fix.
+    proboProductCode: "flag-ciclo",
     proboOptionTemplate: null,
   },
   {
@@ -117,7 +123,9 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Voet", choices: ["Grondpin", "Kruisvoet", "Watertank"] },
     ],
     accent: "terracotta",
-    proboProductCode: null,
+    // VALIDATED Probo code (2026-07-13). Preset models — first option is `amount`.
+    // Quote-only until the configurator emits the full option set.
+    proboProductCode: "pole-flag",
     proboOptionTemplate: null,
   },
   {
@@ -138,25 +146,27 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Uithouder", choices: ["Zonder", "Met uithouder"] },
     ],
     accent: "sage-purple",
-    proboProductCode: null,
+    // VALIDATED Probo code (2026-07-13): facade-flag = gevelvlag. Preset models.
+    // Quote-only until the configurator emits the full option set.
+    proboProductCode: "facade-flag",
     proboOptionTemplate: null,
   },
   {
     slug: "vlaggenmast",
     name: "Vlaggenmast",
     category: "hardware",
-    tagline: "Aluminium vlaggenmast — de duurzame basis.",
+    tagline: "Aluminium Easylift-vlaggenmast in 4 kleuren.",
     description:
-      "Een stevige aluminium vlaggenmast als duurzame basis voor je mastvlag. Onderhoudsarm, recyclebaar en gemaakt om jaren mee te gaan. Verkrijgbaar in meerdere hoogtes.",
-    priceFrom: 520,
+      "Een stevige aluminium vlaggenmast (Easylift) als duurzame basis voor je mastvlag. Hoogwaardig aluminium dat jaren meegaat, inclusief montagebeugels, met 10+ jaar garantie. Online tot 8 meter, hogere masten op aanvraag.",
+    priceFrom: 637,
     badge: "Hardware",
-    sizes: [
-      { label: "6 meter" },
-      { label: "8 meter" },
-      { label: "10 meter" },
+    sizes: [{ label: "6 meter" }, { label: "8 meter" }],
+    options: [
+      { label: "Kleur", choices: ["Wit", "Aluminium", "Zwart", "Antraciet"] },
     ],
-    options: [{ label: "Uitvoering", choices: ["Met vlaggenstok", "Met uithaalmechanisme"] }],
     accent: "copper-rust",
+    // NOT a Probo product — own hardware, priced from duurzame-vlaggen.nl/bestel-vlaggenmast/
+    // (Easylift 6m WIT = €637 excl. btw). Stays quote/own-price, never routes to Probo.
     proboProductCode: null,
     proboOptionTemplate: null,
   },
