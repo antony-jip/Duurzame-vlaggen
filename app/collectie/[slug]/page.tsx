@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./product.module.css";
-import { Badge, Container } from "@/components/ui";
+import { Badge, Container, Leaf, Recycle, Truck } from "@/components/ui";
 import {
+  BRAND_IMAGES,
   getAllProducts,
   getProduct,
   isOrderable,
@@ -52,6 +54,13 @@ export default async function ProductPage({
   const { catalog, dict } = await getMessages();
   const orderable = isOrderable(product);
 
+  // Vlaggen krijgen het stofdetail als extra galleriebeeld — het doek ís het
+  // verhaal. Hardware toont alleen zijn eigen beelden.
+  const gallery =
+    product.category === "vlag"
+      ? [...product.gallery, BRAND_IMAGES.fabricDetail].slice(0, 3)
+      : product.gallery;
+
   return (
     <Container as="section" className={styles.page}>
       <nav className={styles.breadcrumb} aria-label="Kruimelpad">
@@ -63,10 +72,45 @@ export default async function ProductPage({
       <div className={styles.layout}>
         {/* Media */}
         <div className={styles.media}>
-          <div
-            className={`${styles.visual} ${accentClass[product.accent]}`}
-            aria-hidden="true"
-          />
+          <div className={`${styles.visual} ${accentClass[product.accent]}`}>
+            <Image
+              src={product.heroImage.src}
+              alt={product.heroImage.alt}
+              fill
+              priority
+              sizes="(max-width: 860px) 100vw, 50vw"
+              className={styles.photo}
+            />
+          </div>
+          {gallery.length > 0 && (
+            <div className={styles.thumbs}>
+              {gallery.map((image) => (
+                <div key={image.src} className={styles.thumb}>
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(max-width: 860px) 33vw, 16vw"
+                    className={styles.photo}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          <ul className={styles.trustRow}>
+            <li>
+              <Leaf size={16} aria-hidden="true" />
+              Biologisch afbreekbaar
+            </li>
+            <li>
+              <Recycle size={16} aria-hidden="true" />
+              Geproduceerd in NL
+            </li>
+            <li>
+              <Truck size={16} aria-hidden="true" />
+              2–4 weken geleverd
+            </li>
+          </ul>
         </div>
 
         {/* Info + configurator */}

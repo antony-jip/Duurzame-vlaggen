@@ -27,6 +27,46 @@ export interface CatalogOption {
   choices: string[];
 }
 
+export interface ProductImage {
+  /** Absolute URL (Supabase Storage, migrated from WordPress). */
+  src: string;
+  /** Dutch alt text. */
+  alt: string;
+}
+
+/** Base URL of the migrated WordPress media in Supabase Storage. */
+const MEDIA_BASE =
+  "https://hyvtseexvsdpdlrzwtgi.supabase.co/storage/v1/object/public/product-media/wp/";
+
+/** Shorthand for building a product image from its storage filename. */
+function img(file: string, alt: string): ProductImage {
+  return { src: `${MEDIA_BASE}${file}`, alt };
+}
+
+/** Sfeer-/trustbeelden voor homepage en productpagina's. */
+export const BRAND_IMAGES = {
+  homeHero: img(
+    "756-duurzame-vlaggen-home-1.webp",
+    "Duurzame vlaggen wapperend aan vlaggenmasten",
+  ),
+  homeAlt: img(
+    "764-duurzame-vlaggen-home-2.webp",
+    "Duurzame bedrijfsvlaggen in de buitenlucht",
+  ),
+  fabricDetail: img(
+    "592-duurzame-vlag-stof.webp",
+    "Close-up van biologisch afbreekbaar vlaggendoek",
+  ),
+  shipping: img(
+    "761-duurzame-vlaggen-verzenden.webp",
+    "Duurzame vlaggen worden ingepakt voor verzending",
+  ),
+  finishing: img(
+    "931-band-en-kunststof-ringen.webp",
+    "Afwerking met band en kunststof ringen",
+  ),
+} as const;
+
 export interface CatalogProduct {
   slug: string;
   name: string;
@@ -41,7 +81,11 @@ export interface CatalogProduct {
   badge?: string;
   sizes: CatalogSize[];
   options: CatalogOption[];
-  /** Visual accent for the gradient placeholder (no real photography yet). */
+  /** Main product photo, used on cards and as product-page hero. */
+  heroImage: ProductImage;
+  /** Extra photos for the product-page gallery (sfeer, maten, details). */
+  gallery: ProductImage[];
+  /** Visual accent — fallback gradient behind/instead of the photo. */
   accent: "forest" | "terracotta" | "sage-blue" | "sage-purple" | "copper-rust";
   /**
    * Probo linkage — null until confirmed. When set, the product becomes
@@ -74,6 +118,20 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Afwerking", choices: ["Tunnelzoom", "Zoom met ringen"] },
       { label: "Bevestiging", choices: ["Karabijnhaken", "Spankoord"] },
     ],
+    heroImage: img(
+      "762-duurzame-baniervlag.webp",
+      "Duurzame baniervlag aan een baniermast",
+    ),
+    gallery: [
+      img(
+        "772-baniervlaggen-duurzame-vlaggen.webp",
+        "Meerdere duurzame baniervlaggen naast elkaar",
+      ),
+      img(
+        "1018-baniervlaggen-maten-overzichten.webp",
+        "Overzicht van beschikbare baniervlag-maten",
+      ),
+    ],
     accent: "forest",
     // VALIDATED Probo code (2026-07-13). Option tree: width+height (cm) + amount +
     // finishing-all-sides + a finishing type (cut | hem | band-and-plastic-rings |
@@ -99,6 +157,17 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Band- en koordkleur", choices: ["Wit", "Zwart"] },
       { label: "Ontwerpservice", choices: ["Eigen ontwerp", "Laat ontwerpen"] },
     ],
+    heroImage: img(
+      "758-duurzame-mastvlag.webp",
+      "Duurzame mastvlag aan een vlaggenmast",
+    ),
+    gallery: [
+      img(
+        "1303-mastvlag-in-de-lucht.webp",
+        "Mastvlag wapperend hoog in de lucht",
+      ),
+      img("1027-mastvlaggen-maten.webp", "Overzicht van mastvlag-maten"),
+    ],
     accent: "sage-blue",
     // Same Flag-CiCLO® fabric as the baniervlag → Probo code "flag-ciclo".
     // Mast flags typically finish with band-and-cord. Quote-only until /price fix.
@@ -121,6 +190,20 @@ export const PRODUCTS: CatalogProduct[] = [
     options: [
       { label: "Model", choices: ["Straightflag", "Squareflag"] },
       { label: "Voet", choices: ["Grondpin", "Kruisvoet", "Watertank"] },
+    ],
+    heroImage: img(
+      "1400-duurzame-square-beachvlaggen.webp",
+      "Duurzame square beachvlaggen buiten opgesteld",
+    ),
+    gallery: [
+      img(
+        "1403-squareflag-duurzame-vlaggen.webp",
+        "Squareflag met duurzame doekprint",
+      ),
+      img(
+        "1401-duurzame-squareflag-eerste-foto.webp",
+        "Duurzame squareflag in gebruik",
+      ),
     ],
     accent: "terracotta",
     // VALIDATED Probo code (2026-07-13). Preset models — first option is `amount`.
@@ -145,6 +228,16 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "Afwerking", choices: ["Tunnelzoom boven", "Zoom met ringen"] },
       { label: "Uithouder", choices: ["Zonder", "Met uithouder"] },
     ],
+    heroImage: img(
+      "763-duurzame-gevelvlag.webp",
+      "Duurzame gevelvlag aan een uithouder",
+    ),
+    gallery: [
+      img(
+        "771-gevelvlaggen-duurzame-vlaggen.webp",
+        "Gevelvlaggen aan een bedrijfspand",
+      ),
+    ],
     accent: "sage-purple",
     // VALIDATED Probo code (2026-07-13): facade-flag = gevelvlag. Preset models.
     // Quote-only until the configurator emits the full option set.
@@ -164,6 +257,11 @@ export const PRODUCTS: CatalogProduct[] = [
     options: [
       { label: "Kleur", choices: ["Wit", "Aluminium", "Zwart", "Antraciet"] },
     ],
+    heroImage: img(
+      "1705-vlaggenmasten.webp",
+      "Aluminium Easylift-vlaggenmasten in verschillende kleuren",
+    ),
+    gallery: [],
     accent: "copper-rust",
     // NOT a Probo product — own hardware, priced from duurzame-vlaggen.nl/bestel-vlaggenmast/
     // (Easylift 6m WIT = €637 excl. btw). Stays quote/own-price, never routes to Probo.

@@ -24,6 +24,18 @@ import {
 } from "@/lib/orders/orchestration";
 import type { ProboAddress } from "@/lib/probo/products";
 import type { CartItem } from "@/components/cart/types";
+import { publicEnv } from "@/lib/env";
+
+/**
+ * The `items` payload is client-supplied (localStorage → hidden field), so a
+ * tampered `fileUrl` could point Probo at any URL. Only accept URLs that live
+ * in our own public artwork bucket; anything else is dropped to null.
+ */
+const ARTWORK_PREFIX = `${publicEnv.supabaseUrl}/storage/v1/object/public/order-artwork/`;
+
+function safeFileUrl(url: string | null | undefined): string | null {
+  return typeof url === "string" && url.startsWith(ARTWORK_PREFIX) ? url : null;
+}
 
 export interface CheckoutState {
   status: "idle" | "error" | "quote";
@@ -147,6 +159,7 @@ export async function checkoutAction(
     productName: it.name,
     amount: it.amount,
     options: it.options.map((o) => ({ code: o.code, value: o.value })),
+    fileUrl: safeFileUrl(it.fileUrl),
   }));
 
   const input: CheckoutInput = {

@@ -31,4 +31,12 @@ export interface CartItem {
   unitPriceEstimate: number;
   /** Human size label, e.g. "250 × 100 cm". */
   sizeLabel: string;
+  /**
+   * Public URL of the customer's uploaded artwork (order-artwork bucket), set
+   * on the winkelmand page. Null until a file is attached; passed to the order
+   * as `file_url` and on to Probo as `files:[{uri}]`.
+   */
+  fileUrl?: string | null;
+  /** Original filename of the uploaded artwork, for display. */
+  fileName?: string | null;
 }

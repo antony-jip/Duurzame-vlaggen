@@ -1,0 +1,359 @@
+/* Back-office layout — denser and plainer than the storefront, but on-token. */
+
+.shell {
+  min-height: 100vh;
+  background: var(--color-off-white);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--forest-6);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+  text-decoration: none;
+}
+
+.brandDivider {
+  color: var(--color-stone);
+}
+
+.brandAdmin {
+  color: var(--color-copper-rust);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.userEmail {
+  font-size: 0.85rem;
+  color: var(--color-stone);
+}
+
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+/* --- Headings --- */
+
+.pageTitle {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  color: var(--color-forest);
+  margin: 0 0 var(--space-md);
+}
+
+.sectionTitle {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--color-charcoal);
+  margin: 0 0 var(--space-sm);
+}
+
+.subheading {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: var(--color-stone);
+  margin: var(--space-md) 0 var(--space-xs);
+}
+
+/* --- KPIs --- */
+
+.kpis {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  min-width: 140px;
+}
+
+.kpiValue {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-forest);
+}
+
+.kpiLabel {
+  font-size: 0.8rem;
+  color: var(--color-stone);
+}
+
+/* --- Filters --- */
+
+.filters {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.filter {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--forest-6);
+  background: var(--color-white);
+  color: var(--color-charcoal);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.filter:hover {
+  background: var(--forest-3);
+}
+
+.filterActive {
+  background: var(--color-forest);
+  border-color: var(--color-forest);
+  color: var(--color-white);
+}
+
+/* --- Table --- */
+
+.tableWrap {
+  overflow-x: auto;
+  background: var(--color-white);
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--forest-6);
+  vertical-align: top;
+}
+
+.table th {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-stone);
+  background: var(--forest-3);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--forest-3);
+}
+
+.orderLink {
+  font-weight: 600;
+  color: var(--color-forest);
+  text-decoration: none;
+}
+
+.orderLink:hover {
+  text-decoration: underline;
+}
+
+.right {
+  text-align: right;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+.muted {
+  color: var(--color-stone);
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+
+.empty {
+  color: var(--color-stone);
+  padding: var(--space-lg) 0;
+}
+
+/* --- Detail --- */
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.detailHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.backLink {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--color-stone);
+  text-decoration: none;
+  margin-bottom: var(--space-xs);
+}
+
+.backLink:hover {
+  color: var(--color-forest);
+}
+
+.detailMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.actions {
+  padding: var(--space-md);
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.errorBox {
+  max-width: 560px;
+  padding: var(--space-lg);
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-terracotta) 30%, transparent);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: var(--shadow-sm);
+}
+
+.errorDetail {
+  margin: var(--space-sm) 0 var(--space-md);
+  padding: 10px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  color: var(--color-terracotta);
+  background: color-mix(in srgb, var(--color-terracotta) 8%, transparent);
+  border-radius: var(--radius-sm, 6px);
+  word-break: break-word;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 6px var(--space-md);
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.dl dt {
+  color: var(--color-stone);
+}
+
+.dl dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+.address {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+}
+
+.address > div {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.addressKey {
+  color: var(--color-stone);
+  min-width: 110px;
+}
+
+.json {
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  background: var(--forest-3);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  margin: 0;
+  max-width: 360px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* --- Timeline --- */
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.timelineItem {
+  padding: var(--space-sm);
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-sm);
+}
+
+.timelineTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.timelineType {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.88rem;
+}

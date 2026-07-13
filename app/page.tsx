@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import styles from "./page.module.css";
 import {
   Badge,
@@ -13,6 +14,7 @@ import {
   ShieldCheck,
   Truck,
 } from "@/components/ui";
+import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
   title: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
@@ -117,12 +119,15 @@ export default function Home() {
         }
         aside={
           <div className={styles.heroVisual}>
-            <div className={styles.flag} aria-hidden="true">
-              <span className={styles.flagMark}>
-                <span>
-                  <Leaf size={44} />
-                </span>
-              </span>
+            <div className={styles.flag}>
+              <Image
+                src={BRAND_IMAGES.homeHero.src}
+                alt={BRAND_IMAGES.homeHero.alt}
+                fill
+                priority
+                sizes="(max-width: 900px) 380px, 460px"
+                className={styles.heroPhoto}
+              />
             </div>
             <StatCard
               className={`${styles.statFloat} ${styles.statA}`}

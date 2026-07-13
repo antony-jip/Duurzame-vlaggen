@@ -46,6 +46,18 @@ export const serverEnv = {
   get supabaseServiceRoleKey() {
     return required("SUPABASE_SERVICE_ROLE_KEY");
   },
+
+  // Admin back-office allowlist. Comma-separated staff e-mails that may sign in
+  // to /admin. Returns a normalized (lowercased, trimmed) list; empty when unset
+  // (which locks everyone out — set ADMIN_EMAILS to grant access).
+  get adminEmails(): string[] {
+    const raw = process.env.ADMIN_EMAILS;
+    if (!raw) return [];
+    return raw
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+  },
 } as const;
 
 /** Public values — safe to reference in client and server code. */

@@ -36,27 +36,56 @@
 .media {
   position: sticky;
   top: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
+/* Photo frame — the accent gradient underneath is the fallback while the
+   image loads (or if it ever fails). */
 .visual {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-xl);
 }
-.visual::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      115deg,
-      rgba(255, 255, 255, 0.06) 0px,
-      rgba(255, 255, 255, 0.06) 2px,
-      transparent 2px,
-      transparent 46px
-    ),
-    radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.16) 0%, transparent 45%);
+.photo {
+  object-fit: cover;
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+.thumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--forest-6);
+}
+
+.trustRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  margin-top: var(--space-xs);
+  padding: 0;
+  list-style: none;
+}
+.trustRow li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-forest);
+}
+.trustRow svg {
+  flex-shrink: 0;
 }
 
 .accentForest {
@@ -279,8 +308,5 @@
   }
   .media {
     position: static;
-  }
-  .visual {
-    max-width: 420px;
   }
 }

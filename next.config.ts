@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  images: {
+    // Product/sfeer photography lives in Supabase Storage (migrated from WP).
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "hyvtseexvsdpdlrzwtgi.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

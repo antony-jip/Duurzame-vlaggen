@@ -9,13 +9,29 @@ import type { ProboProductInput, ProboDeliveryInput } from "./products";
  * Endpoints verified live: `POST /order`, `POST /order/status`.
  */
 
-/** A product line on an order — a configured product plus its uploader refs. */
+/**
+ * A print file supplied by public URL, per Probo's "supply files for an order
+ * request" flow. The `uri` must be publicly fetchable by Probo (we host it in
+ * the public `order-artwork` Storage bucket).
+ */
+export interface ProboFileInput {
+  /** Full public URL to the artwork (PDF/JPG/PNG). */
+  uri: string;
+  /** PDF page to use (default 1). */
+  page?: number;
+  /** Which side for double-sided products. */
+  side?: "front" | "back";
+}
+
+/** A product line on an order — a configured product plus its artwork/uploader refs. */
 export interface ProboOrderProductInput extends ProboProductInput {
   /**
-   * Uploader session references, obtained when the customer's artwork is
-   * uploaded. See uploader.ts. Required by Probo for products that need files.
+   * Uploader session references (Probo white-label uploader). Not used in the
+   * current build — we supply artwork by URL via {@link files} instead.
    */
   uploaders?: Array<{ id: number; external_id: number }>;
+  /** Customer artwork supplied by public URL. */
+  files?: ProboFileInput[];
 }
 
 /** Input for {@link createProboOrder}. */

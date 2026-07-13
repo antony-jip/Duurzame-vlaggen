@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./winkelwagen.module.css";
 import { Badge, Button, Card, Container, ArrowRight, Leaf } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
+import { ArtworkUpload } from "@/components/cart/ArtworkUpload";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import { getProduct, type CatalogProduct } from "@/lib/catalog/products";
 
@@ -58,17 +60,30 @@ export default function WinkelwagenPage() {
       <div className={styles.layout}>
         <div className={styles.lines}>
           {items.map((item) => {
-            const accent = getProduct(item.slug)?.accent ?? "forest";
+            const product = getProduct(item.slug);
+            const accent = product?.accent ?? "forest";
             const details = item.options
               .filter((o) => o.code !== "Formaat")
               .map((o) => `${o.code}: ${o.value ?? "—"}`)
               .join(" · ");
             return (
               <Card key={item.id} className={styles.line} elevation="default">
-                <div
-                  className={`${styles.thumb} ${accentClass[accent]}`}
-                  aria-hidden="true"
-                />
+                <div className={styles.thumb}>
+                  {product?.heroImage ? (
+                    <Image
+                      src={product.heroImage.src}
+                      alt={product.heroImage.alt}
+                      fill
+                      sizes="(max-width: 480px) 64px, 88px"
+                      className={styles.thumbPhoto}
+                    />
+                  ) : (
+                    <div
+                      className={`${styles.thumbFallback} ${accentClass[accent]}`}
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
                 <div className={styles.lineBody}>
                   <Link href={`/collectie/${item.slug}`} className={styles.lineName}>
                     {item.name}
@@ -80,6 +95,11 @@ export default function WinkelwagenPage() {
                       <Badge variant="detail">Offerte-aanvraag</Badge>
                     </span>
                   )}
+                  <ArtworkUpload
+                    itemId={item.id}
+                    fileUrl={item.fileUrl}
+                    fileName={item.fileName}
+                  />
                 </div>
                 <div className={styles.lineControls}>
                   <span className={styles.linePrice}>

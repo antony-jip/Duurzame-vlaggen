@@ -67,6 +67,22 @@ export async function insertOrderWithItems(
   );
 }
 
+/**
+ * List orders for the admin back-office, newest first. Optionally filter on a
+ * single status. Reads via the service-role admin client (bypasses RLS), so it
+ * MUST only be called behind the admin auth-gate.
+ */
+export async function listOrders(opts?: { status?: OrderStatus }): Promise<OrderRow[]> {
+  const supabase = createSupabaseAdminClient();
+  let query = supabase.from("orders").select().order("created_at", { ascending: false });
+  if (opts?.status) {
+    query = query.eq("status", opts.status);
+  }
+  const { data, error } = await query;
+  if (error) throw new Error(`listOrders failed: ${error.message}`);
+  return (data ?? []) as OrderRow[];
+}
+
 export async function getOrderById(id: string): Promise<OrderRow | null> {
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase.from("orders").select().eq("id", id).maybeSingle();
@@ -103,7 +119,7 @@ export async function getOrderItems(orderId: string): Promise<OrderItemRow[]> {
   return (data ?? []) as OrderItemRow[];
 }
 
-type OrderPatch = Partial<Omit<OrderInsert, "order_number">>;
+export type OrderPatch = Partial<Omit<OrderInsert, "order_number">>;
 
 export async function updateOrder(id: string, patch: OrderPatch): Promise<OrderRow> {
   const supabase = createSupabaseAdminClient();

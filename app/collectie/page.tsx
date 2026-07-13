@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./collectie.module.css";
 import { Badge, Card, Container, ArrowRight } from "@/components/ui";
@@ -44,10 +45,14 @@ export default async function CollectiePage() {
             className={styles.cardLink}
           >
             <Card hover elevation="raised" className={styles.card}>
-              <div
-                className={`${styles.visual} ${accentClass[product.accent]}`}
-                aria-hidden="true"
-              >
+              <div className={`${styles.visual} ${accentClass[product.accent]}`}>
+                <Image
+                  src={product.heroImage.src}
+                  alt={product.heroImage.alt}
+                  fill
+                  sizes="(max-width: 560px) 100vw, (max-width: 960px) 50vw, 33vw"
+                  className={styles.photo}
+                />
                 {product.badge && (
                   <Badge variant="primary" className={styles.visualBadge}>
                     {product.badge}

@@ -40,6 +40,8 @@ export interface CartContextValue {
   removeItem: (id: string) => void;
   /** Set a line's quantity (clamped to at least 1). */
   updateAmount: (id: string, amount: number) => void;
+  /** Attach (or clear, with null) the uploaded artwork for a line. */
+  setItemFile: (id: string, fileUrl: string | null, fileName: string | null) => void;
   /** Empty the cart. */
   clear: () => void;
 }
@@ -127,6 +129,13 @@ export function CartProvider({
     );
   }, []);
 
+  const setItemFile = useCallback(
+    (id: string, fileUrl: string | null, fileName: string | null) => {
+      setItems((prev) => prev.map((it) => (it.id === id ? { ...it, fileUrl, fileName } : it)));
+    },
+    [],
+  );
+
   const clear = useCallback(() => setItems([]), []);
 
   const value = useMemo<CartContextValue>(() => {
@@ -144,9 +153,10 @@ export function CartProvider({
       addItem,
       removeItem,
       updateAmount,
+      setItemFile,
       clear,
     };
-  }, [items, hydrated, catalog, addItem, removeItem, updateAmount, clear]);
+  }, [items, hydrated, catalog, addItem, removeItem, updateAmount, setItemFile, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

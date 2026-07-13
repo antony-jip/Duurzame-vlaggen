@@ -42,8 +42,16 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
-.thumb::after {
+.thumbPhoto {
+  object-fit: cover;
+}
+.thumbFallback {
+  position: absolute;
+  inset: 0;
+}
+.thumbFallback::after {
   content: "";
   position: absolute;
   inset: 0;

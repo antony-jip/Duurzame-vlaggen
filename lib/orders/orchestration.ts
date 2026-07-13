@@ -59,6 +59,11 @@ export interface OrderItemDraft {
   options: ProboOptionInput[];
   /** Quantity, mirrored from the Probo `amount` option, for our records. */
   amount: number;
+  /**
+   * Public URL of the customer's uploaded artwork (order-artwork bucket).
+   * Passed to Probo as `files:[{uri}]`. Null/undefined for quote-only lines.
+   */
+  fileUrl?: string | null;
   /** Resale markup %; defaults to {@link DEFAULT_MARKUP_PCT}. */
   markupPct?: number;
   /** Uploader session refs for products that need customer artwork. */
@@ -220,6 +225,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       configuration: { code: l.draft.proboProductCode, options: l.draft.options } as unknown as Json,
       amount: l.draft.amount,
       calculation_id: l.calculationId,
+      file_url: l.draft.fileUrl ?? null,
       base_price: l.basePrice,
       markup_pct: l.markupPct,
       line_price: l.linePrice,
@@ -336,6 +342,9 @@ export async function sendOrderToProbo(orderId: string): Promise<void> {
       return {
         code: it.probo_product_code,
         options: config.options ?? [],
+        // Customer artwork is supplied to Probo by public URL (order-artwork
+        // bucket). See ProboFileInput / lib/probo/orders.ts.
+        files: it.file_url ? [{ uri: it.file_url }] : undefined,
         uploaders:
           it.uploader_id !== null && it.uploader_external_id !== null
             ? [{ id: it.uploader_id, external_id: it.uploader_external_id }]
