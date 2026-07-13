@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/kennisbank/csrd-compliance" },
   title: "CSRD-compliance — geldt dit voor jouw bedrijf?",
   description:
     "Nieuwe EU-regels verplichten rapportage over microplastics, ook uit vlaggen. Check of de CSRD voor jouw bedrijf geldt en regel je compliance in vier simpele stappen.",

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/certificeringen" },
   title: "Certificeringen — onafhankelijk getest",
   description:
     "Geen marketingclaims maar labresultaten: ASTM-afbraaktests in grond, water en op stortplaatsen, plus OEKO-TEX ECO PASSPORT en EU REACH. Bekijk alle certificeringen.",

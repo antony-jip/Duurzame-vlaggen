@@ -4,6 +4,7 @@ import styles from "../info.module.css";
 import { Badge, Container } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/privacyverklaring" },
   title: "Privacyverklaring",
   description:
     "Hoe Duurzame Vlaggen (Sign Company B.V.) omgaat met jouw persoonsgegevens: wat we verzamelen, waarom, hoe lang we het bewaren en welke rechten je hebt.",

@@ -4,6 +4,7 @@ import { Badge, Container } from "@/components/ui";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact — offerte & advies",
   description:
     "Neem contact op met Sign Company B.V. in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/materiaal" },
   title: "Materiaal — biologisch afbreekbaar vlaggendoek",
   description:
     "Flag-CiCLO®-vlaggendoek lost volledig op in 2–3 jaar: geen microplastics, alleen CO₂, water en biomassa. Dezelfde kwaliteit als traditioneel polyester, wel CSRD-proof.",

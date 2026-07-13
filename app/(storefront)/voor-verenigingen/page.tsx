@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/voor-verenigingen" },
   title: "Voor verenigingen — duurzame clubvlaggen in jullie kleuren",
   description:
     "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en geen microplastics op het sportpark.",

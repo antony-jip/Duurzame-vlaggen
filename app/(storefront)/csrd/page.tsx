@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/csrd" },
   title: "CSRD — microplastics in je vlaggen rapporteren",
   description:
     "De CSRD verplicht bedrijven te rapporteren over microplastics onder ESRS E2-5 — ook uit vlaggen. Lees wanneer het voor jou geldt en hoe je het simpel oplost.",

@@ -14,6 +14,7 @@ import {
 import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/duurzaamheid" },
   title: "Duurzaamheid — Flag-CiCLO® technologie",
   description:
     "Duurzame vlaggen die verdwijnen. Zero plastic. Onze Flag-CiCLO®-vlaggen zijn 96% biologisch afbreekbaar in 2–3 jaar, bevatten 0% microplastics en zijn CSRD/ESRS E2-5-compliant.",

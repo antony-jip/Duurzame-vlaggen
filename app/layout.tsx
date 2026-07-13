@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, Manrope, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
+import { SITE_URL, SITE_NAME, OG_IMAGE } from "@/lib/seo";
 
 // Sora — headings, buttons, UI, forms, badges, stats (~70%)
 const sora = Sora({
@@ -27,6 +28,9 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+  // metadataBase maakt relatieve canonical- en OG-URL's absoluut. Volgt
+  // NEXT_PUBLIC_APP_URL (Vercel = echt domein), fallback = productiedomein.
+  metadataBase: new URL(SITE_URL),
   // Title template lives here only, so per-page titles read "<Page> | Duurzame
   // Vlaggen". The homepage sets an absolute title to avoid a doubled suffix.
   title: {
@@ -35,6 +39,50 @@ export const metadata: Metadata = {
   },
   description:
     "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd door Sign Company B.V.",
+  keywords: [
+    "duurzame vlaggen",
+    "biologisch afbreekbare vlaggen",
+    "vlaggen zonder microplastics",
+    "CSRD vlaggen",
+    "mastvlag",
+    "baniervlag",
+    "gevelvlag",
+    "beachvlag",
+    "vlaggenmast",
+    "Flag-CiCLO",
+  ],
+  applicationName: SITE_NAME,
+  authors: [{ name: "Sign Company B.V." }],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "nl_NL",
+    url: SITE_URL,
+    title: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    description:
+      "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd.",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Duurzame vlaggen wapperend aan vlaggenmasten",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    description:
+      "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof en binnen 5 werkdagen geleverd.",
+    images: [OG_IMAGE],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({

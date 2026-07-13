@@ -14,9 +14,10 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/kennisbank" },
   title: "Kennisbank — alles over biologisch afbreekbare vlaggen",
   description:
-    "Van CSRD-compliance tot microplastics en de juiste vlag kiezen: verdiep je in duurzame vlaggen met de artikelen uit onze kennisbank.",
+    "Van Flag-CiCLO®-technologie en CSRD-compliance tot microplastics en de juiste vlag kiezen: verdiep je in biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
 };
 
 const WAVE_PATH =

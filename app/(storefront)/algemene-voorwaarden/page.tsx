@@ -4,6 +4,7 @@ import styles from "../info.module.css";
 import { Badge, Container } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/algemene-voorwaarden" },
   title: "Algemene voorwaarden",
   description:
     "De algemene voorwaarden van Duurzame Vlaggen (Sign Company B.V.): aanbod, overeenkomst, herroepingsrecht, levering, betaling en klachtenregeling.",

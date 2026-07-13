@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/voor-bedrijven" },
   title: "Voor bedrijven — CSRD-proof bedrijfsvlaggen",
   description:
     "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. 0% microplastics, CSRD/ESRS E2-5-documentatie inbegrepen en levering in circa 3 werkdagen.",

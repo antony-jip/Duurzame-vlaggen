@@ -14,6 +14,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/garantie" },
   title: "Garantie — kwaliteit zwart-op-wit",
   description:
     "Transparante garantie op duurzame vlaggen, vlaggenmasten en accessoires. Tot 15 jaar breukgarantie op masten, productiefouten altijd vergoed en reactie binnen 24 uur.",

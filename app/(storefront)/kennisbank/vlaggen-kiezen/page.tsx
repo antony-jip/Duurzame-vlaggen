@@ -14,6 +14,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/kennisbank/vlaggen-kiezen" },
   title: "De juiste vlag kiezen — formaten en masthoogtes",
   description:
     "Welk vlagtype en welk formaat past bij jouw situatie? Praktische keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, plus gratis advies.",

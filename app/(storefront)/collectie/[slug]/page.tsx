@@ -25,6 +25,7 @@ import {
   type CatalogProduct,
 } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
+import { SITE_URL, SITE_NAME, COMPANY_NAME, jsonLd } from "@/lib/seo";
 import { ProductConfigurator } from "./ProductConfigurator";
 
 /* Vlagtype-pictogrammen — merkeigen producticonen, zoals op de homepage. */
@@ -57,9 +58,32 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) return { title: "Product niet gevonden" };
+  const canonical = `/collectie/${product.slug}`;
+  // Beschrijving = productintro (150-160 tekens rijk aan kernwoorden) i.p.v. de
+  // korte tagline, zodat de snippet de vlag echt verkoopt.
+  const description = product.description.slice(0, 158);
   return {
     title: product.name,
-    description: product.tagline,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: `${product.name} — ${SITE_NAME}`,
+      description,
+      url: canonical,
+      images: [
+        {
+          url: product.heroImage.src,
+          alt: product.heroImage.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} — ${SITE_NAME}`,
+      description,
+      images: [product.heroImage.src],
+    },
   };
 }
 
@@ -76,6 +100,31 @@ export default async function ProductPage({
   const orderable = isOrderable(product);
   const FlagIcon = FLAG_ICONS[product.slug] ?? FlagMast;
 
+  // Product-structured data: naam, beschrijving, beeld, merk en een
+  // AggregateOffer met de vanaf-prijs (ex btw) in EUR. Bestelbare vlaggen zijn
+  // InStock; offerte-only producten staan als PreOrder gemarkeerd.
+  const productJsonLd = jsonLd({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: [product.heroImage.src, ...product.gallery.map((g) => g.src)],
+    category: product.category === "hardware" ? "Vlaggenmast" : "Vlag",
+    brand: { "@type": "Brand", name: SITE_NAME },
+    manufacturer: { "@type": "Organization", name: COMPANY_NAME },
+    url: `${SITE_URL}/collectie/${product.slug}`,
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "EUR",
+      lowPrice: product.priceFrom,
+      offerCount: product.sizes.length,
+      availability: orderable
+        ? "https://schema.org/InStock"
+        : "https://schema.org/PreOrder",
+      seller: { "@type": "Organization", name: COMPANY_NAME },
+    },
+  });
+
   // Vlaggen krijgen het afwerkingsdetail (band + kunststof ringen) als extra
   // galleriebeeld — een scherpe, tastbare craft-shot i.p.v. het wazige
   // weefsel-beeld. Hardware toont alleen zijn eigen beelden.
@@ -86,6 +135,10 @@ export default async function ProductPage({
 
   return (
     <Container as="section" className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: productJsonLd }}
+      />
       <nav className={styles.breadcrumb} aria-label="Kruimelpad">
         <Link href="/collectie">{dict.nav.collection}</Link>
         <span aria-hidden="true">/</span>

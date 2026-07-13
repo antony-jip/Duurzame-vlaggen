@@ -15,9 +15,10 @@ import { getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/collectie" },
   title: "Collectie",
   description:
-    "Bekijk onze biologisch afbreekbare vlaggen: baniervlaggen, mastvlaggen, beachvlaggen, gevelvlaggen en aluminium vlaggenmasten.",
+    "Bekijk onze biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. CSRD-proof, zonder microplastics, geleverd in 5 werkdagen.",
 };
 
 const TRUST = [

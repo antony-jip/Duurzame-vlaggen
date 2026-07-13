@@ -13,6 +13,7 @@ import {
 import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/over-ons" },
   title: "Over ons — Sign Company B.V.",
   description:
     "Sign Company B.V. uit Enkhuizen maakt duurzame signing en vlaggen die volledig verdwijnen. Waarom wij kozen voor biologisch afbreekbare vlaggen zonder microplastics.",

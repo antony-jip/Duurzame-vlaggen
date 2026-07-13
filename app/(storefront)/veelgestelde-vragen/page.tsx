@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { isValidElement, type ReactNode } from "react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import styles from "../info.module.css";
+import { jsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   title: "Veelgestelde vragen",
   description:
     "Eerlijke antwoorden over Flag-CiCLO®-technologie, CSRD-rapportage, bestellen, levertijden, formaten en duurzaamheid. Vraag niet beantwoord? We reageren binnen 24 uur.",
+  alternates: { canonical: "/veelgestelde-vragen" },
 };
 
 const WAVE_PATH =
@@ -317,9 +319,44 @@ const GROUPS: FaqGroup[] = [
   },
 ];
 
+/** Zet een JSX-antwoord om naar platte tekst voor de FAQPage-structured data. */
+function answerToText(node: ReactNode): string {
+  const collect = (n: ReactNode): string => {
+    if (n === null || n === undefined || typeof n === "boolean") return "";
+    if (typeof n === "string" || typeof n === "number") return String(n);
+    if (Array.isArray(n)) return n.map(collect).join(" ");
+    if (isValidElement(n)) {
+      return collect((n.props as { children?: ReactNode }).children);
+    }
+    return "";
+  };
+  return collect(node).replace(/\s+/g, " ").trim();
+}
+
+// FAQPage-structured data uit dezelfde bron als de zichtbare vragen — één
+// waarheid, geen duplicaat-content die uit de pas kan lopen.
+const FAQ_JSON_LD = jsonLd({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: GROUPS.flatMap((group) =>
+    group.items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: answerToText(item.a),
+      },
+    })),
+  ),
+});
+
 export default function VeelgesteldeVragenPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO — compact, alleen copy. */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={`${styles.heroInner} ${styles.heroSingle}`}>

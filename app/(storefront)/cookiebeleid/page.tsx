@@ -4,6 +4,7 @@ import styles from "../info.module.css";
 import { Badge, Container } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/cookiebeleid" },
   title: "Cookiebeleid",
   description:
     "Welke cookies gebruikt Duurzame Vlaggen en waarom? Functionele en analytische cookies uitgelegd, plus hoe je je voorkeuren beheert of cookies verwijdert.",

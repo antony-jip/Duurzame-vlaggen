@@ -24,6 +24,7 @@ import { BRAND_IMAGES, getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/" },
   // Absolute title — the root layout template would otherwise double the suffix
   // ("… | Sign Company | Duurzame Vlaggen").
   title: {
