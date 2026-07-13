@@ -1,0 +1,178 @@
+{
+  "common": {
+    "siteName": "Drapeaux Durables",
+    "tagline": "Des drapeaux que vous hissez l'esprit tranquille",
+    "cta": {
+      "requestQuote": "Demander un devis",
+      "viewCollection": "Voir la collection",
+      "addToCart": "Ajouter au panier",
+      "checkout": "Commander",
+      "continueShopping": "Continuer mes achats",
+      "back": "Retour",
+      "readMore": "En savoir plus",
+      "configure": "Configurer"
+    },
+    "loading": "Chargement…",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "currencySymbol": "€"
+  },
+  "nav": {
+    "collection": "Collection",
+    "about": "À propos",
+    "sustainability": "Durabilité",
+    "contact": "Contact",
+    "cart": "Panier"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "100% biodégradable",
+      "title": "Des drapeaux qui préservent la planète",
+      "lead": "Du drapeau de mât au beach flag : imprimés sur des matériaux recyclés et compostables, produits en Europe à l'énergie verte.",
+      "primaryCta": "Voir la collection",
+      "secondaryCta": "Notre démarche durable"
+    },
+    "usps": {
+      "title": "Pourquoi Drapeaux Durables",
+      "items": {
+        "biodegradable": {
+          "title": "Biodégradable",
+          "body": "Tissus compostables sans microplastiques."
+        },
+        "european": {
+          "title": "Production européenne",
+          "body": "Circuits courts, produits à l'énergie verte."
+        },
+        "quality": {
+          "title": "Qualité soignée",
+          "body": "Des couleurs vives qui résistent aux intempéries."
+        },
+        "delivery": {
+          "title": "Livraison rapide",
+          "body": "Fabriqués sur mesure et expédiés en quelques jours ouvrés."
+        }
+      }
+    },
+    "featured": {
+      "title": "Drapeaux populaires",
+      "subtitle": "Le choix de nos clients"
+    }
+  },
+  "product": {
+    "configure": "Composez votre drapeau",
+    "price": "Prix",
+    "priceFrom": "À partir de",
+    "quantity": "Quantité",
+    "dimensions": "Dimensions",
+    "width": "Largeur",
+    "height": "Hauteur",
+    "unitCm": "cm",
+    "material": "Matériau",
+    "finishing": "Finition",
+    "upload": "Télécharger un fichier",
+    "uploadHint": "Glissez votre fichier ici ou cliquez pour parcourir (PDF, PNG, SVG).",
+    "uploadedFile": "Fichier téléchargé",
+    "removeFile": "Supprimer",
+    "deliveryTime": "Délai de livraison",
+    "deliveryEstimate": "Livraison estimée",
+    "inclVat": "TVA comprise",
+    "exclVat": "hors TVA",
+    "perUnit": "à l'unité",
+    "inStock": "En stock",
+    "madeToOrder": "Fabriqué sur mesure",
+    "specifications": "Spécifications",
+    "description": "Description"
+  },
+  "checkout": {
+    "title": "Commander",
+    "contact": "Coordonnées",
+    "company": "Informations société",
+    "companyName": "Raison sociale",
+    "vatNumber": "Numéro de TVA",
+    "billingAddress": "Adresse de facturation",
+    "shippingAddress": "Adresse de livraison",
+    "sameAsBilling": "L'adresse de livraison est identique à l'adresse de facturation",
+    "email": "Adresse e-mail",
+    "phone": "Numéro de téléphone",
+    "payNow": "Payer maintenant",
+    "orderSummary": "Récapitulatif de la commande",
+    "subtotal": "Sous-total",
+    "shipping": "Frais de livraison",
+    "shippingFree": "Offerts",
+    "vat": "TVA",
+    "vatReverseCharged": "Autoliquidation de la TVA",
+    "total": "Total",
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "street": "Rue",
+      "houseNumber": "Numéro",
+      "addition": "Complément",
+      "postalCode": "Code postal",
+      "city": "Ville",
+      "country": "Pays",
+      "notes": "Remarques"
+    },
+    "placeholders": {
+      "email": "nom@societe.fr",
+      "vatNumber": "FR12345678901"
+    },
+    "validation": {
+      "required": "Ce champ est obligatoire.",
+      "emailInvalid": "Veuillez saisir une adresse e-mail valide.",
+      "phoneInvalid": "Veuillez saisir un numéro de téléphone valide.",
+      "postalCodeInvalid": "Veuillez saisir un code postal valide.",
+      "vatNumberInvalid": "Veuillez saisir un numéro de TVA valide.",
+      "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié."
+    }
+  },
+  "order": {
+    "confirmation": {
+      "title": "Merci pour votre commande",
+      "subtitle": "Nous avons bien reçu votre commande et nous nous y mettons immédiatement.",
+      "orderNumber": "Numéro de commande",
+      "emailSent": "Une confirmation a été envoyée à {email}."
+    },
+    "status": {
+      "pending": "En attente de paiement",
+      "paid": "Payée",
+      "inProduction": "En production",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée"
+    },
+    "tracking": "Suivre votre colis",
+    "trackingNumber": "Numéro de suivi",
+    "estimatedDelivery": "Livraison prévue"
+  },
+  "footer": {
+    "company": {
+      "title": "Drapeaux Durables",
+      "description": "Drapeaux durables pour les entreprises et les événements, produits en Europe."
+    },
+    "links": {
+      "title": "Accès rapide",
+      "collection": "Collection",
+      "about": "À propos",
+      "sustainability": "Durabilité",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Mentions légales",
+      "terms": "Conditions générales",
+      "privacy": "Politique de confidentialité",
+      "returns": "Politique de retour",
+      "cookies": "Politique relative aux cookies"
+    },
+    "copyright": "Tous droits réservés."
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Veuillez réessayer plus tard.",
+    "notFound": "Page introuvable",
+    "notFoundBody": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil",
+    "paymentFailed": "Le paiement a échoué. Veuillez réessayer.",
+    "cartEmpty": "Votre panier est vide."
+  }
+}

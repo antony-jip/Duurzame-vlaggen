@@ -1,0 +1,143 @@
+.btn {
+  font-family: var(--font-button);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 36px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-base) var(--ease-out);
+  white-space: nowrap;
+}
+
+/* Shimmer sweep */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  transition: transform var(--duration-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.btn:hover::before {
+  transform: translateX(120%);
+}
+
+/* Icon shifts on hover */
+.icon {
+  display: inline-flex;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.btn:hover .icon {
+  transform: translateX(4px);
+}
+
+/* ===== Variants ===== */
+.primary {
+  background: var(--color-forest);
+  color: #fff;
+}
+.primary:hover {
+  background: var(--color-terracotta);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-terracotta-md);
+}
+
+.secondary {
+  background: #fff;
+  color: var(--color-forest);
+  border: 3px solid var(--forest-6);
+}
+.secondary:hover {
+  background: var(--color-sage-blue);
+  color: #fff;
+  border-color: var(--color-sage-blue);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sage-md);
+}
+
+.tertiary {
+  background: transparent;
+  color: var(--color-charcoal);
+  border: 2px solid var(--terracotta-6);
+  box-shadow: none;
+}
+.tertiary:hover {
+  background: var(--color-forest);
+  color: #fff;
+  border-color: var(--color-forest);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== Sizes ===== */
+.sm {
+  font-size: 14px;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+}
+.lg {
+  font-size: 16px;
+  padding: 24px 44px;
+  border-radius: var(--radius-xl);
+}
+
+.full {
+  width: 100%;
+}
+
+/* ===== States ===== */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.loading {
+  color: transparent !important;
+  pointer-events: none;
+}
+.loading .label,
+.loading .icon {
+  visibility: hidden;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+}
+
+/* On light-background variants the spinner needs a forest tint */
+.secondary .spinner,
+.tertiary .spinner {
+  border-color: var(--forest-6);
+  border-top-color: var(--color-forest);
+}

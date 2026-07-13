@@ -1,0 +1,178 @@
+{
+  "common": {
+    "siteName": "Duurzame Vlaggen",
+    "tagline": "Vlaggen die je met een gerust hart hijst",
+    "cta": {
+      "requestQuote": "Offerte aanvragen",
+      "viewCollection": "Bekijk de collectie",
+      "addToCart": "In winkelmand",
+      "checkout": "Afrekenen",
+      "continueShopping": "Verder winkelen",
+      "back": "Terug",
+      "readMore": "Lees meer",
+      "configure": "Samenstellen"
+    },
+    "loading": "Bezig met laden…",
+    "close": "Sluiten",
+    "yes": "Ja",
+    "no": "Nee",
+    "currencySymbol": "€"
+  },
+  "nav": {
+    "collection": "Collectie",
+    "about": "Over ons",
+    "sustainability": "Duurzaamheid",
+    "contact": "Contact",
+    "cart": "Winkelmand"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "100% biologisch afbreekbaar",
+      "title": "Vlaggen die de aarde niet belasten",
+      "lead": "Van mastvlag tot beachvlag: gedrukt op gerecyclede en composteerbare materialen, geproduceerd in Europa met groene stroom.",
+      "primaryCta": "Bekijk de collectie",
+      "secondaryCta": "Onze duurzaamheid"
+    },
+    "usps": {
+      "title": "Waarom Duurzame Vlaggen",
+      "items": {
+        "biodegradable": {
+          "title": "Biologisch afbreekbaar",
+          "body": "Composteerbare doeken zonder microplastics."
+        },
+        "european": {
+          "title": "Europese productie",
+          "body": "Korte transportlijnen, geproduceerd met groene stroom."
+        },
+        "quality": {
+          "title": "Scherpe kwaliteit",
+          "body": "Levendige kleuren die weer en wind doorstaan."
+        },
+        "delivery": {
+          "title": "Snelle levering",
+          "body": "Op maat gemaakt en binnen enkele werkdagen verzonden."
+        }
+      }
+    },
+    "featured": {
+      "title": "Populaire vlaggen",
+      "subtitle": "De keuze van onze klanten"
+    }
+  },
+  "product": {
+    "configure": "Stel je vlag samen",
+    "price": "Prijs",
+    "priceFrom": "Vanaf",
+    "quantity": "Aantal",
+    "dimensions": "Afmetingen",
+    "width": "Breedte",
+    "height": "Hoogte",
+    "unitCm": "cm",
+    "material": "Materiaal",
+    "finishing": "Afwerking",
+    "upload": "Ontwerp uploaden",
+    "uploadHint": "Sleep je bestand hierheen of klik om te bladeren (PDF, PNG, SVG).",
+    "uploadedFile": "Geüpload bestand",
+    "removeFile": "Verwijderen",
+    "deliveryTime": "Levertijd",
+    "deliveryEstimate": "Geschatte levering",
+    "inclVat": "incl. btw",
+    "exclVat": "excl. btw",
+    "perUnit": "per stuk",
+    "inStock": "Op voorraad",
+    "madeToOrder": "Op maat gemaakt",
+    "specifications": "Specificaties",
+    "description": "Omschrijving"
+  },
+  "checkout": {
+    "title": "Afrekenen",
+    "contact": "Contactgegevens",
+    "company": "Bedrijfsgegevens",
+    "companyName": "Bedrijfsnaam",
+    "vatNumber": "Btw-nummer",
+    "billingAddress": "Factuuradres",
+    "shippingAddress": "Verzendadres",
+    "sameAsBilling": "Verzendadres is gelijk aan factuuradres",
+    "email": "E-mailadres",
+    "phone": "Telefoonnummer",
+    "payNow": "Nu betalen",
+    "orderSummary": "Overzicht bestelling",
+    "subtotal": "Subtotaal",
+    "shipping": "Verzendkosten",
+    "shippingFree": "Gratis",
+    "vat": "Btw",
+    "vatReverseCharged": "Btw verlegd",
+    "total": "Totaal",
+    "fields": {
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "street": "Straat",
+      "houseNumber": "Huisnummer",
+      "addition": "Toevoeging",
+      "postalCode": "Postcode",
+      "city": "Plaats",
+      "country": "Land",
+      "notes": "Opmerkingen"
+    },
+    "placeholders": {
+      "email": "naam@bedrijf.nl",
+      "vatNumber": "NL123456789B01"
+    },
+    "validation": {
+      "required": "Dit veld is verplicht.",
+      "emailInvalid": "Vul een geldig e-mailadres in.",
+      "phoneInvalid": "Vul een geldig telefoonnummer in.",
+      "postalCodeInvalid": "Vul een geldige postcode in.",
+      "vatNumberInvalid": "Vul een geldig btw-nummer in.",
+      "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd."
+    }
+  },
+  "order": {
+    "confirmation": {
+      "title": "Bedankt voor je bestelling",
+      "subtitle": "We hebben je bestelling ontvangen en gaan direct aan de slag.",
+      "orderNumber": "Bestelnummer",
+      "emailSent": "Een bevestiging is verstuurd naar {email}."
+    },
+    "status": {
+      "pending": "In afwachting van betaling",
+      "paid": "Betaald",
+      "inProduction": "In productie",
+      "shipped": "Verzonden",
+      "delivered": "Geleverd",
+      "cancelled": "Geannuleerd"
+    },
+    "tracking": "Volg je zending",
+    "trackingNumber": "Trackingnummer",
+    "estimatedDelivery": "Verwachte levering"
+  },
+  "footer": {
+    "company": {
+      "title": "Duurzame Vlaggen",
+      "description": "Duurzame vlaggen voor bedrijven en evenementen, geproduceerd in Europa."
+    },
+    "links": {
+      "title": "Snel naar",
+      "collection": "Collectie",
+      "about": "Over ons",
+      "sustainability": "Duurzaamheid",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Juridisch",
+      "terms": "Algemene voorwaarden",
+      "privacy": "Privacyverklaring",
+      "returns": "Retourbeleid",
+      "cookies": "Cookiebeleid"
+    },
+    "copyright": "Alle rechten voorbehouden."
+  },
+  "errors": {
+    "generic": "Er is iets misgegaan. Probeer het later opnieuw.",
+    "notFound": "Pagina niet gevonden",
+    "notFoundBody": "De pagina die je zoekt bestaat niet of is verplaatst.",
+    "backHome": "Terug naar de startpagina",
+    "paymentFailed": "De betaling is mislukt. Probeer het opnieuw.",
+    "cartEmpty": "Je winkelmand is leeg."
+  }
+}

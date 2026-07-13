@@ -1,0 +1,114 @@
+.footer {
+  margin-top: auto;
+  background: var(--color-white);
+  border-top: 1px solid var(--forest-6);
+  padding-block: var(--space-3xl) var(--space-xl);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: var(--space-2xl);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+  text-transform: lowercase;
+}
+.brand b {
+  color: var(--color-forest);
+}
+
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-forest);
+  color: #fff;
+}
+
+.tagline {
+  margin-top: var(--space-md);
+  max-width: 34ch;
+  color: var(--color-stone);
+  font-size: 15px;
+}
+
+.colTitle {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-md);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.list a,
+.contact a {
+  color: var(--color-charcoal);
+  font-size: 15px;
+  font-family: var(--font-body);
+}
+.list a:hover,
+.contact a:hover {
+  color: var(--color-terracotta);
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  font-size: 15px;
+  color: var(--color-charcoal);
+  font-style: normal;
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--forest-6);
+  color: var(--color-stone);
+  font-size: 13px;
+}
+
+.bottomLinks {
+  display: flex;
+  gap: var(--space-md);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+  .brandCol {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

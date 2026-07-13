@@ -1,0 +1,64 @@
+/* Eyebrow — Copper Rust, Bricolage, hero/premium only */
+.eyebrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-copper-rust);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-copper);
+  font-family: var(--font-eyebrow);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+
+.eyebrow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid var(--color-copper-rust);
+  animation: pulse-ring 3s var(--ease-in-out) infinite;
+  pointer-events: none;
+}
+
+/* Small badges — Sora, uppercase */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.primary {
+  background: var(--color-forest);
+}
+.success {
+  background: var(--color-sage-blue);
+}
+.personal {
+  background: var(--color-sage-purple);
+}
+.detail {
+  background: var(--color-sage-purple);
+  font-weight: 600;
+}
+.outline {
+  background: transparent;
+  color: var(--color-stone);
+  border: 2px solid var(--forest-6);
+  font-weight: 600;
+  padding: 4px 10px;
+}

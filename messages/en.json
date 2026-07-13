@@ -1,0 +1,178 @@
+{
+  "common": {
+    "siteName": "Sustainable Flags",
+    "tagline": "Flags you can raise with a clear conscience",
+    "cta": {
+      "requestQuote": "Request a quote",
+      "viewCollection": "View the collection",
+      "addToCart": "Add to cart",
+      "checkout": "Checkout",
+      "continueShopping": "Continue shopping",
+      "back": "Back",
+      "readMore": "Read more",
+      "configure": "Configure"
+    },
+    "loading": "Loading…",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "currencySymbol": "€"
+  },
+  "nav": {
+    "collection": "Collection",
+    "about": "About",
+    "sustainability": "Sustainability",
+    "contact": "Contact",
+    "cart": "Cart"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "100% biodegradable",
+      "title": "Flags that don't cost the earth",
+      "lead": "From mast flags to beach flags: printed on recycled and compostable materials, produced in Europe with green energy.",
+      "primaryCta": "View the collection",
+      "secondaryCta": "Our sustainability"
+    },
+    "usps": {
+      "title": "Why Sustainable Flags",
+      "items": {
+        "biodegradable": {
+          "title": "Biodegradable",
+          "body": "Compostable fabrics without microplastics."
+        },
+        "european": {
+          "title": "European production",
+          "body": "Short transport routes, produced with green energy."
+        },
+        "quality": {
+          "title": "Sharp quality",
+          "body": "Vivid colours that stand up to wind and weather."
+        },
+        "delivery": {
+          "title": "Fast delivery",
+          "body": "Made to order and shipped within a few working days."
+        }
+      }
+    },
+    "featured": {
+      "title": "Popular flags",
+      "subtitle": "Our customers' favourites"
+    }
+  },
+  "product": {
+    "configure": "Build your flag",
+    "price": "Price",
+    "priceFrom": "From",
+    "quantity": "Quantity",
+    "dimensions": "Dimensions",
+    "width": "Width",
+    "height": "Height",
+    "unitCm": "cm",
+    "material": "Material",
+    "finishing": "Finishing",
+    "upload": "Upload artwork",
+    "uploadHint": "Drag your file here or click to browse (PDF, PNG, SVG).",
+    "uploadedFile": "Uploaded file",
+    "removeFile": "Remove",
+    "deliveryTime": "Delivery time",
+    "deliveryEstimate": "Estimated delivery",
+    "inclVat": "incl. VAT",
+    "exclVat": "excl. VAT",
+    "perUnit": "per unit",
+    "inStock": "In stock",
+    "madeToOrder": "Made to order",
+    "specifications": "Specifications",
+    "description": "Description"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "contact": "Contact details",
+    "company": "Company details",
+    "companyName": "Company name",
+    "vatNumber": "VAT number",
+    "billingAddress": "Billing address",
+    "shippingAddress": "Shipping address",
+    "sameAsBilling": "Shipping address is the same as billing address",
+    "email": "Email address",
+    "phone": "Phone number",
+    "payNow": "Pay now",
+    "orderSummary": "Order summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingFree": "Free",
+    "vat": "VAT",
+    "vatReverseCharged": "VAT reverse charged",
+    "total": "Total",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "street": "Street",
+      "houseNumber": "House number",
+      "addition": "Addition",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "email": "name@company.com",
+      "vatNumber": "IE1234567AB"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "phoneInvalid": "Please enter a valid phone number.",
+      "postalCodeInvalid": "Please enter a valid postal code.",
+      "vatNumberInvalid": "Please enter a valid VAT number.",
+      "vatNumberNotVerified": "This VAT number could not be verified."
+    }
+  },
+  "order": {
+    "confirmation": {
+      "title": "Thank you for your order",
+      "subtitle": "We've received your order and are getting started right away.",
+      "orderNumber": "Order number",
+      "emailSent": "A confirmation has been sent to {email}."
+    },
+    "status": {
+      "pending": "Awaiting payment",
+      "paid": "Paid",
+      "inProduction": "In production",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "tracking": "Track your shipment",
+    "trackingNumber": "Tracking number",
+    "estimatedDelivery": "Estimated delivery"
+  },
+  "footer": {
+    "company": {
+      "title": "Sustainable Flags",
+      "description": "Sustainable flags for businesses and events, produced in Europe."
+    },
+    "links": {
+      "title": "Quick links",
+      "collection": "Collection",
+      "about": "About",
+      "sustainability": "Sustainability",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Legal",
+      "terms": "Terms and conditions",
+      "privacy": "Privacy policy",
+      "returns": "Returns policy",
+      "cookies": "Cookie policy"
+    },
+    "copyright": "All rights reserved."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again later.",
+    "notFound": "Page not found",
+    "notFoundBody": "The page you're looking for doesn't exist or has been moved.",
+    "backHome": "Back to home",
+    "paymentFailed": "The payment failed. Please try again.",
+    "cartEmpty": "Your cart is empty."
+  }
+}

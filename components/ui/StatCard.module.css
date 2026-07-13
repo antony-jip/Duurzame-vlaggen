@@ -1,0 +1,53 @@
+.card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  padding: var(--space-md) var(--space-md);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: float 4s var(--ease-in-out) infinite;
+}
+
+/* Stagger the float so a cluster of cards drifts independently */
+.card:nth-child(2n) {
+  animation-delay: 0.8s;
+}
+.card:nth-child(3n) {
+  animation-delay: 1.6s;
+}
+
+.label {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.labelBlue {
+  color: var(--color-sage-blue);
+}
+.labelPurple {
+  color: var(--color-sage-purple);
+}
+
+.value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}

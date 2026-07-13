@@ -1,0 +1,178 @@
+{
+  "common": {
+    "siteName": "Nachhaltige Flaggen",
+    "tagline": "Flaggen, die Sie mit gutem Gewissen hissen",
+    "cta": {
+      "requestQuote": "Angebot anfordern",
+      "viewCollection": "Kollektion ansehen",
+      "addToCart": "In den Warenkorb",
+      "checkout": "Zur Kasse",
+      "continueShopping": "Weiter einkaufen",
+      "back": "Zurück",
+      "readMore": "Mehr erfahren",
+      "configure": "Zusammenstellen"
+    },
+    "loading": "Wird geladen…",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein",
+    "currencySymbol": "€"
+  },
+  "nav": {
+    "collection": "Kollektion",
+    "about": "Über uns",
+    "sustainability": "Nachhaltigkeit",
+    "contact": "Kontakt",
+    "cart": "Warenkorb"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "100% biologisch abbaubar",
+      "title": "Flaggen, die die Erde nicht belasten",
+      "lead": "Von der Mastflagge bis zur Beachflag: gedruckt auf recycelten und kompostierbaren Materialien, produziert in Europa mit Ökostrom.",
+      "primaryCta": "Kollektion ansehen",
+      "secondaryCta": "Unsere Nachhaltigkeit"
+    },
+    "usps": {
+      "title": "Warum Nachhaltige Flaggen",
+      "items": {
+        "biodegradable": {
+          "title": "Biologisch abbaubar",
+          "body": "Kompostierbare Stoffe ohne Mikroplastik."
+        },
+        "european": {
+          "title": "Europäische Produktion",
+          "body": "Kurze Transportwege, produziert mit Ökostrom."
+        },
+        "quality": {
+          "title": "Erstklassige Qualität",
+          "body": "Leuchtende Farben, die Wind und Wetter standhalten."
+        },
+        "delivery": {
+          "title": "Schnelle Lieferung",
+          "body": "Maßgefertigt und innerhalb weniger Werktage versandt."
+        }
+      }
+    },
+    "featured": {
+      "title": "Beliebte Flaggen",
+      "subtitle": "Die Wahl unserer Kunden"
+    }
+  },
+  "product": {
+    "configure": "Stellen Sie Ihre Flagge zusammen",
+    "price": "Preis",
+    "priceFrom": "Ab",
+    "quantity": "Anzahl",
+    "dimensions": "Abmessungen",
+    "width": "Breite",
+    "height": "Höhe",
+    "unitCm": "cm",
+    "material": "Material",
+    "finishing": "Verarbeitung",
+    "upload": "Design hochladen",
+    "uploadHint": "Datei hierher ziehen oder klicken zum Durchsuchen (PDF, PNG, SVG).",
+    "uploadedFile": "Hochgeladene Datei",
+    "removeFile": "Entfernen",
+    "deliveryTime": "Lieferzeit",
+    "deliveryEstimate": "Voraussichtliche Lieferung",
+    "inclVat": "inkl. MwSt.",
+    "exclVat": "zzgl. MwSt.",
+    "perUnit": "pro Stück",
+    "inStock": "Auf Lager",
+    "madeToOrder": "Maßgefertigt",
+    "specifications": "Spezifikationen",
+    "description": "Beschreibung"
+  },
+  "checkout": {
+    "title": "Zur Kasse",
+    "contact": "Kontaktdaten",
+    "company": "Firmendaten",
+    "companyName": "Firmenname",
+    "vatNumber": "USt-IdNr.",
+    "billingAddress": "Rechnungsadresse",
+    "shippingAddress": "Lieferadresse",
+    "sameAsBilling": "Lieferadresse entspricht der Rechnungsadresse",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer",
+    "payNow": "Jetzt bezahlen",
+    "orderSummary": "Bestellübersicht",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versandkosten",
+    "shippingFree": "Kostenlos",
+    "vat": "MwSt.",
+    "vatReverseCharged": "Steuerschuldnerschaft des Leistungsempfängers",
+    "total": "Gesamt",
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "street": "Straße",
+      "houseNumber": "Hausnummer",
+      "addition": "Zusatz",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "country": "Land",
+      "notes": "Anmerkungen"
+    },
+    "placeholders": {
+      "email": "name@firma.de",
+      "vatNumber": "DE123456789"
+    },
+    "validation": {
+      "required": "Dieses Feld ist erforderlich.",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "phoneInvalid": "Bitte geben Sie eine gültige Telefonnummer ein.",
+      "postalCodeInvalid": "Bitte geben Sie eine gültige Postleitzahl ein.",
+      "vatNumberInvalid": "Bitte geben Sie eine gültige USt-IdNr. ein.",
+      "vatNumberNotVerified": "Diese USt-IdNr. konnte nicht verifiziert werden."
+    }
+  },
+  "order": {
+    "confirmation": {
+      "title": "Vielen Dank für Ihre Bestellung",
+      "subtitle": "Wir haben Ihre Bestellung erhalten und legen sofort los.",
+      "orderNumber": "Bestellnummer",
+      "emailSent": "Eine Bestätigung wurde an {email} gesendet."
+    },
+    "status": {
+      "pending": "Warten auf Zahlung",
+      "paid": "Bezahlt",
+      "inProduction": "In Produktion",
+      "shipped": "Versandt",
+      "delivered": "Geliefert",
+      "cancelled": "Storniert"
+    },
+    "tracking": "Sendung verfolgen",
+    "trackingNumber": "Sendungsnummer",
+    "estimatedDelivery": "Voraussichtliche Lieferung"
+  },
+  "footer": {
+    "company": {
+      "title": "Nachhaltige Flaggen",
+      "description": "Nachhaltige Flaggen für Unternehmen und Veranstaltungen, produziert in Europa."
+    },
+    "links": {
+      "title": "Schnellzugriff",
+      "collection": "Kollektion",
+      "about": "Über uns",
+      "sustainability": "Nachhaltigkeit",
+      "contact": "Kontakt"
+    },
+    "legal": {
+      "title": "Rechtliches",
+      "terms": "Allgemeine Geschäftsbedingungen",
+      "privacy": "Datenschutzerklärung",
+      "returns": "Rückgaberecht",
+      "cookies": "Cookie-Richtlinie"
+    },
+    "copyright": "Alle Rechte vorbehalten."
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
+    "notFound": "Seite nicht gefunden",
+    "notFoundBody": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite",
+    "paymentFailed": "Die Zahlung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "cartEmpty": "Ihr Warenkorb ist leer."
+  }
+}

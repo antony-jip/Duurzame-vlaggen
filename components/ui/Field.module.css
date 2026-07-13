@@ -1,0 +1,98 @@
+.field {
+  display: block;
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+}
+
+.required {
+  color: var(--color-error);
+  margin-left: 2px;
+}
+
+.control {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  width: 100%;
+  padding: var(--space-sm) 20px;
+  background: #fff;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-base) var(--ease-out);
+}
+
+.control::placeholder {
+  color: var(--color-stone);
+  opacity: 0.6;
+}
+
+.control:hover:not(:focus):not(:disabled) {
+  border-color: var(--forest-8);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 4px var(--forest-3);
+}
+
+.control:disabled {
+  background: var(--color-off-white);
+  border-color: var(--forest-3);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+textarea.control {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+select.control {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%233A3A3A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 44px;
+}
+
+.error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+.error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+}
+
+.success {
+  border-color: var(--color-sage-blue);
+  box-shadow: 0 0 0 4px var(--sage-blue-3);
+}
+
+.helperText {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-stone);
+  margin-top: 6px;
+}
+
+.errorText {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-error);
+  margin-top: 6px;
+}

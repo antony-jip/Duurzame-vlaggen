@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Orderbevestiging
+   ========================================================================== */
+
+.page {
+  padding-block: var(--space-2xl) var(--space-4xl);
+  max-width: 760px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+}
+.head p {
+  color: var(--color-stone);
+}
+
+.card {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cellLabel {
+  font-size: 13px;
+  color: var(--color-stone);
+}
+.cellValue {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.total .cellValue {
+  color: var(--color-forest);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--forest-6);
+}
+
+.addressBlock {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-charcoal);
+}
+.addressBlock .cellLabel {
+  margin-bottom: 4px;
+}
+
+.actions {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

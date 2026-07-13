@@ -1,0 +1,31 @@
+.card {
+  background: var(--color-white);
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+/* Elevation levels */
+.flat {
+  box-shadow: none;
+}
+.raised {
+  box-shadow: var(--shadow-md);
+}
+
+.hover:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--forest-8);
+}
+
+/* When the whole card is a link, keep text colour intact */
+a.card {
+  color: inherit;
+  display: block;
+}

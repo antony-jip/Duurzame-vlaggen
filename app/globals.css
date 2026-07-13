@@ -1,49 +1,344 @@
+/* ==========================================================================
+   Duurzame-Vlaggen — Design System (Styleguide V5.0 "Sora Edition")
+   Philosophy: "Bold Disruptor – Unified Typography". Clean, geometric, light.
+   Font CSS variables (--font-heading / --font-body / --font-eyebrow) are
+   injected by next/font in app/layout.tsx and aliased below.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ===== COLORS ===== */
+  --color-forest: #2c5f4f; /* Primary actions, trust, stability */
+  --color-terracotta: #c66b4e; /* Energy, conversion, warmth (hover) */
+  --color-sage-blue: #5c8a9d; /* Secondary actions, success */
+  --color-copper-rust: #a46b4a; /* Premium craft — eyebrows only, ~3% */
+  --color-sage-purple: #8b7ba8; /* Personal / metadata — ~5% */
+  --color-white: #ffffff;
+  --color-off-white: #f7f5f2;
+  --color-charcoal: #3a3a3a; /* Body text */
+  --color-stone: #8b8d7a; /* Subtle text */
+  --color-error: #ef4444;
+
+  /* ===== OPACITY SCALES ===== */
+  /* Naming follows the styleguide: 3=0.04, 6=0.12, 15=0.15, 8=0.20 */
+  --forest-3: rgba(44, 95, 79, 0.04);
+  --forest-6: rgba(44, 95, 79, 0.12);
+  --forest-15: rgba(44, 95, 79, 0.15);
+  --forest-8: rgba(44, 95, 79, 0.2);
+
+  --terracotta-3: rgba(198, 107, 78, 0.04);
+  --terracotta-6: rgba(198, 107, 78, 0.12);
+  --terracotta-15: rgba(198, 107, 78, 0.15);
+  --terracotta-8: rgba(198, 107, 78, 0.2);
+
+  --sage-blue-3: rgba(92, 138, 157, 0.04);
+  --sage-blue-6: rgba(92, 138, 157, 0.12);
+  --sage-blue-15: rgba(92, 138, 157, 0.15);
+  --sage-blue-8: rgba(92, 138, 157, 0.2);
+
+  --copper-rust-3: rgba(164, 107, 74, 0.04);
+  --copper-rust-6: rgba(164, 107, 74, 0.12);
+  --copper-rust-15: rgba(164, 107, 74, 0.15);
+  --copper-rust-8: rgba(164, 107, 74, 0.2);
+
+  --sage-purple-3: rgba(139, 123, 168, 0.04);
+  --sage-purple-6: rgba(139, 123, 168, 0.12);
+  --sage-purple-15: rgba(139, 123, 168, 0.15);
+  --sage-purple-8: rgba(139, 123, 168, 0.2);
+
+  /* ===== FONTS =====
+     --font-heading, --font-body and --font-eyebrow are provided by next/font.
+     Button and UI share the heading family (Sora) per the styleguide. */
+  --font-button: var(--font-heading);
+  --font-ui: var(--font-heading);
+
+  /* ===== SPACING ===== */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 128px;
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+
+  /* ===== SHADOWS (forest-tinted) ===== */
+  --shadow-xs: 0 1px 3px rgba(44, 95, 79, 0.08);
+  --shadow-sm: 0 2px 8px rgba(44, 95, 79, 0.12);
+  --shadow-md: 0 4px 16px rgba(44, 95, 79, 0.15);
+  --shadow-lg: 0 8px 24px rgba(44, 95, 79, 0.25);
+  --shadow-xl: 0 12px 32px rgba(44, 95, 79, 0.35);
+  --shadow-2xl: 0 20px 60px rgba(44, 95, 79, 0.4);
+  --shadow-terracotta-md: 0 8px 24px rgba(198, 107, 78, 0.25);
+  --shadow-sage-md: 0 8px 24px rgba(92, 138, 157, 0.25);
+  --shadow-copper: 0 4px 20px rgba(164, 107, 74, 0.3);
+  --shadow-purple: 0 4px 16px rgba(139, 123, 168, 0.2);
+
+  /* ===== Z-INDEX ===== */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* ===== ANIMATION ===== */
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+
+  /* ===== BREAKPOINTS (reference values) ===== */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1600px;
+
+  /* ===== CONTAINER ===== */
+  --container-max: 1600px;
+  --container-padding: var(--space-2xl);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ==========================================================================
+   Resets
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-off-white);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Global typography
+   ========================================================================== */
+
+h1,
+.h1 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--color-charcoal);
+}
+
+h2,
+.h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(36px, 5vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-charcoal);
+}
+
+h3,
+.h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+
+h4,
+.h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--color-charcoal);
+}
+
+p,
+.text-base {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.8vw, 18px);
+  line-height: 1.65;
+  color: var(--color-charcoal);
+}
+
+.lead,
+.text-lg {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.text-sm {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
+.caption,
+.text-xs {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-stone);
+}
+
+.text-ui {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.text-data {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+
+.text-eyebrow {
+  font-family: var(--font-eyebrow);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
 }
 
 a {
-  color: inherit;
+  color: var(--color-forest);
   text-decoration: none;
+  transition: color var(--duration-base) var(--ease-out);
 }
 
-@media (prefers-color-scheme: dark) {
+a:hover {
+  color: var(--color-terracotta);
+}
+
+/* Gradient accent for 1–2 words in a hero heading */
+.accent {
+  background: linear-gradient(
+    120deg,
+    var(--color-terracotta) 0%,
+    #e08a6d 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
   html {
-    color-scheme: dark;
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
