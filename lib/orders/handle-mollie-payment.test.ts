@@ -50,8 +50,12 @@ const hasDb = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_
 describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → sent_to_probo", () => {
   let order: OrderRow;
   const paymentId = `tr_test_${randomUUID().replace(/-/g, "").slice(0, 20)}`;
+  const prevFulfilmentMode = process.env.FULFILMENT_MODE;
 
   beforeAll(async () => {
+    // Deze test bewijst de Probo-tak van de webhook; forceer daarom probo-modus
+    // (de default is inmiddels "manual", waarin er níét naar Probo wordt gestuurd).
+    process.env.FULFILMENT_MODE = "probo";
     // Seed an order that is already awaiting payment, as it would be right after
     // placeOrder created the Mollie payment.
     order = await insertOrderWithItems(
@@ -80,6 +84,11 @@ describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → sent_to_probo", (
   });
 
   afterAll(async () => {
+    if (prevFulfilmentMode === undefined) {
+      delete process.env.FULFILMENT_MODE;
+    } else {
+      process.env.FULFILMENT_MODE = prevFulfilmentMode;
+    }
     if (order?.id) {
       const supabase = createSupabaseAdminClient();
       await supabase.from("orders").delete().eq("id", order.id);

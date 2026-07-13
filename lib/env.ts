@@ -86,3 +86,22 @@ export const publicEnv = {
     return required("NEXT_PUBLIC_APP_URL", process.env.NEXT_PUBLIC_APP_URL);
   },
 } as const;
+
+/**
+ * Fulfilment-modus voor de klant-checkout.
+ *
+ *  - `"manual"` (default): prijzen komen uit het lokale prijsmodel en een
+ *    betaalde order blijft in de admin voor handmatige afhandeling. GEEN
+ *    Probo-calls in de klantflow.
+ *  - `"probo"`: het oorspronkelijke gedrag — live Probo-prijzen én een betaalde
+ *    order wordt automatisch naar Probo gestuurd. Bedoeld voor een latere
+ *    testomgeving.
+ *
+ * Lazy gelezen (functie i.p.v. const) zodat een runtime-override van
+ * `FULFILMENT_MODE` — bijvoorbeeld in een test — daadwerkelijk doorwerkt.
+ */
+export type FulfilmentMode = "manual" | "probo";
+
+export function fulfilmentMode(): FulfilmentMode {
+  return process.env.FULFILMENT_MODE === "probo" ? "probo" : "manual";
+}

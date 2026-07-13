@@ -368,6 +368,39 @@
   word-break: break-all;
 }
 
+/* Aangeleverd klant-ontwerp in de orderregel-tabel. */
+.artworkLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-forest, #2c5f4f);
+  font-weight: 700;
+  text-decoration: none;
+}
+.artworkLink:hover {
+  text-decoration: underline;
+}
+.artworkThumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: #fff;
+}
+.artworkDoc {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: rgba(198, 107, 78, 0.12);
+  color: var(--color-terracotta, #c66b4e);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
 .empty {
   color: var(--color-stone);
   background: var(--color-white);

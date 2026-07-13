@@ -22,4 +22,9 @@ export type { HeroProps } from "./Hero";
 export { Header } from "./Header";
 export { Footer } from "./Footer";
 
+export { Price } from "./Price";
+export type { PriceProps } from "./Price";
+
+export { VatToggle } from "./VatToggle";
+
 export * from "./Icon";

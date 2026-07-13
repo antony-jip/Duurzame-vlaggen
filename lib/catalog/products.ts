@@ -113,9 +113,10 @@ export const PRODUCTS: CatalogProduct[] = [
     priceFrom: 38,
     badge: "Populair",
     sizes: [
-      { label: "250 × 100 cm", widthCm: 250, heightCm: 100 },
-      { label: "300 × 100 cm", widthCm: 300, heightCm: 100 },
-      { label: "400 × 100 cm", widthCm: 400, heightCm: 100 },
+      // Baniervlag = verticale banier (staand): label breedte × hoogte.
+      { label: "100 × 250 cm", widthCm: 100, heightCm: 250 },
+      { label: "100 × 300 cm", widthCm: 100, heightCm: 300 },
+      { label: "100 × 400 cm", widthCm: 100, heightCm: 400 },
     ],
     options: [
       { label: "Afwerking", choices: ["Tunnelzoom", "Zoom met ringen"] },
@@ -150,17 +151,19 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Klassieke mastvlag voor aan de vlaggenmast.",
     description:
       "De mastvlag hijs je aan een vlaggenmast en is er in staand en liggend formaat. Duurzaam geprint op biologisch afbreekbaar doek, met een stevige band en koord voor jarenlang gebruik — en een schoon einde.",
-    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
-    // band+koord Wit 100×150 = €16,02 × 1,5 = €24,03 → €24,00 (2026-07-13).
-    priceFrom: 24,
+    // priceFrom = kleinste maat uit het lokale retailmodel (100×150).
+    // TODO: prijs verifiëren — mastvlag-prijzen zijn area-geschaald op het enige
+    // bekende punt 150×225 ≈ €44,50 (live site); zie lib/pricing/local-catalog.
+    priceFrom: 19.5,
     sizes: [
-      { label: "100 × 150 cm", widthCm: 100, heightCm: 150 },
-      { label: "150 × 225 cm", widthCm: 150, heightCm: 225 },
-      { label: "225 × 350 cm", widthCm: 225, heightCm: 350 },
+      // Mastvlag = hijsvlag (liggend): label is hoogte × breedte (NL-conventie,
+      // zoals de Nederlandse vlag), dus breedte = 150/225/350, hoogte = 100/150/225.
+      { label: "100 × 150 cm", widthCm: 150, heightCm: 100 },
+      { label: "150 × 225 cm", widthCm: 225, heightCm: 150 },
+      { label: "225 × 350 cm", widthCm: 350, heightCm: 225 },
     ],
     options: [
       { label: "Band- en koordkleur", choices: ["Wit", "Zwart"] },
-      { label: "Ontwerpservice", choices: ["Eigen ontwerp", "Laat ontwerpen"] },
     ],
     heroImage: img(
       "758-duurzame-mastvlag.webp",
@@ -187,9 +190,9 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Draagbare beachflag — binnen én buiten.",
     description:
       "De beachvlag (beachflag) is licht, draagbaar en pakt overal uit: evenementen, winkels, sportvelden. Verkrijgbaar als straight- en squareflag, geleverd inclusief stok en draagtas, met een duurzame doekprint die netjes afbreekt in plaats van als microplastic achter te blijven.",
-    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
-    // Straightflag S 40×235 = €30,03 × 1,5 = €45,05 → €45,00 (2026-07-13).
-    priceFrom: 45,
+    // priceFrom = goedkoopste maat uit het lokale retailmodel (Straight S = €35;
+    // dichtstbijzijnde ref-maat 80×220). Zie lib/pricing/local-catalog.
+    priceFrom: 35,
     // The model (Straight/Square) is encoded in the size: each size belongs to
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
     // Sizes are Probo's own presets for the Flag-CiCLO® material, verified live.
@@ -235,9 +238,8 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Gevelvlag die je merk aan de straatkant toont.",
     description:
       "De gevelvlag hangt aan een uithouder aan je gevel en trekt de aandacht van voorbijgangers. Afgewerkt met band, koord en lus, geprint op biologisch afbreekbaar doek — zichtbaar duurzaam, precies wat een CSRD-bewuste organisatie uitstraalt.",
-    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
-    // 100×70 = €7,93 × 1,5 = €11,90 → €11,50 (2026-07-13).
-    priceFrom: 11.5,
+    // priceFrom = echte retailprijs kleinste maat (100×70 = €17,50, ref).
+    priceFrom: 17.5,
     // Sizes are Probo's own facade-flag presets for Flag-CiCLO®, verified live.
     sizes: [
       { label: "100 × 70 cm", widthCm: 100, heightCm: 70 },
@@ -274,9 +276,11 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Aluminium Easylift-vlaggenmast in 4 kleuren.",
     description:
       "Een stevige aluminium vlaggenmast (Easylift) als duurzame basis voor je mastvlag. Hoogwaardig aluminium dat jaren meegaat, inclusief montagebeugels, met 10+ jaar garantie. Online tot 8 meter, hogere masten op aanvraag.",
-    priceFrom: 637,
+    // TODO: prijs verifiëren met Antony — catalogus stond op €637, live-config-ref
+    // geeft €520 (6 m). Ref-prijzen aangehouden; zie lib/pricing/local-catalog.
+    priceFrom: 520,
     badge: "Hardware",
-    sizes: [{ label: "6 meter" }, { label: "8 meter" }],
+    sizes: [{ label: "6 meter" }, { label: "7 meter" }, { label: "8 meter" }],
     options: [
       { label: "Kleur", choices: ["Wit", "Aluminium", "Zwart", "Antraciet"] },
     ],
@@ -286,8 +290,10 @@ export const PRODUCTS: CatalogProduct[] = [
     ),
     gallery: [],
     accent: "copper-rust",
-    // NOT a Probo product — own hardware, priced from duurzame-vlaggen.nl/bestel-vlaggenmast/
-    // (Easylift 6m WIT = €637 excl. btw). Stays quote/own-price, never routes to Probo.
+    // NOT a Probo product — own hardware (Easylift). Prices from the live-config
+    // ref: 6m €520 / 7m €552,50 / 8m €578,50, coating Zwart/Antraciet +€71,50.
+    // TODO: prijs verifiëren met Antony (catalogus stond eerder op €637/€799).
+    // Stays quote/own-price, never routes to Probo.
     proboProductCode: null,
     proboOptionTemplate: null,
   },

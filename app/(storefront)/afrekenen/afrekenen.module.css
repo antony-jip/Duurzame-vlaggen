@@ -161,6 +161,46 @@
 .summaryLine .qty {
   color: var(--color-stone);
 }
+
+/* Compacte aantal-stepper per regel (zelfde patroon als de winkelmand,
+   kleiner gemaat voor het overzicht). */
+.quantity {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: stretch;
+  border: 1.5px solid var(--forest-15);
+  border-radius: var(--radius-sm, 6px);
+  overflow: hidden;
+  background: var(--color-white);
+}
+.qtyBtn {
+  width: 30px;
+  min-height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-forest);
+  border: none;
+}
+.qtyBtn:hover:not(:disabled) {
+  background: var(--forest-6);
+}
+.qtyBtn:disabled {
+  color: var(--color-stone);
+  cursor: not-allowed;
+}
+.qtyValue {
+  min-width: 34px;
+  display: grid;
+  place-items: center;
+  border-inline: 1.5px solid var(--forest-15);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+}
 .summaryDivider {
   border: none;
   border-top: 1px solid var(--forest-6);

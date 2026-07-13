@@ -57,4 +57,11 @@ export interface CartItem {
    * ratio mismatch). Persisted so they survive a reload.
    */
   fileWarnings?: string[];
+  /**
+   * Compact raster preview of the artwork (downscaled PNG/JPEG data-URL,
+   * first PDF page rasterised via pdf.js). Display-only: cart/checkout
+   * thumbnails render this so a PDF shows its real first page and the preview
+   * survives navigation. The ordered file remains `fileUrl`.
+   */
+  previewUrl?: string | null;
 }

@@ -20,8 +20,13 @@ import {
 } from "react";
 import type { UiCatalog } from "@/config/domains";
 import type { CartItem } from "./types";
+import { localCartLineTotal } from "@/lib/pricing/local-catalog";
 
 const STORAGE_KEY = "dv-cart-v1";
+const VAT_STORAGE_KEY = "dv-vat-incl-v1";
+
+/** NL standaard-btw-tarief, gebruikt voor de ex/incl-weergave. */
+export const VAT_RATE = 0.21;
 
 export interface CartContextValue {
   /** Current cart lines. */
@@ -34,6 +39,10 @@ export interface CartContextValue {
   hydrated: boolean;
   /** Active UI catalog, for locale-aware currency formatting. */
   catalog: UiCatalog;
+  /** Toont de gebruiker prijzen incl. btw? (voorkeur, persistent) */
+  inclVat: boolean;
+  /** Wissel tussen prijzen ex en incl btw. */
+  toggleVat: () => void;
   /** Add a line; merges into an identical existing line by bumping its amount. */
   addItem: (item: Omit<CartItem, "id">) => void;
   /** Remove a line by id. */
@@ -47,6 +56,7 @@ export interface CartContextValue {
     fileName: string | null,
     filePath: string | null,
     fileWarnings: string[],
+    previewUrl?: string | null,
   ) => void;
   /** Empty the cart. */
   clear: () => void;
@@ -72,6 +82,7 @@ export function CartProvider({
 }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [inclVat, setInclVat] = useState(false);
 
   // Hydrate from localStorage exactly once, on mount. This is the canonical
   // "read persisted client state after SSR" case: the server renders an empty
@@ -87,12 +98,27 @@ export function CartProvider({
         const parsed = JSON.parse(raw) as unknown;
         if (Array.isArray(parsed)) setItems(parsed as CartItem[]);
       }
+      if (window.localStorage.getItem(VAT_STORAGE_KEY) === "1") {
+        setInclVat(true);
+      }
     } catch {
       // Corrupt/blocked storage — start empty.
     }
     setHydrated(true);
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  const toggleVat = useCallback(() => {
+    setInclVat((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(VAT_STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // Storage blocked — voorkeur blijft alleen in-memory.
+      }
+      return next;
+    });
+  }, []);
 
   // Persist after hydration so the initial empty state never clobbers storage.
   useEffect(() => {
@@ -142,10 +168,13 @@ export function CartProvider({
       fileName: string | null,
       filePath: string | null,
       fileWarnings: string[],
+      previewUrl: string | null = null,
     ) => {
       setItems((prev) =>
         prev.map((it) =>
-          it.id === id ? { ...it, fileUrl, fileName, filePath, fileWarnings } : it,
+          it.id === id
+            ? { ...it, fileUrl, fileName, filePath, fileWarnings, previewUrl }
+            : it,
         ),
       );
     },
@@ -155,8 +184,10 @@ export function CartProvider({
   const clear = useCallback(() => setItems([]), []);
 
   const value = useMemo<CartContextValue>(() => {
+    // Subtotaal met staffelkorting per regel — zo klopt de mand met de
+    // definitieve prijs die buildLocalQuote (checkout) berekent.
     const subtotal = items.reduce(
-      (sum, it) => sum + it.unitPriceEstimate * it.amount,
+      (sum, it) => sum + localCartLineTotal(it.unitPriceEstimate, it.amount),
       0,
     );
     const count = items.reduce((sum, it) => sum + it.amount, 0);
@@ -166,13 +197,15 @@ export function CartProvider({
       count,
       hydrated,
       catalog,
+      inclVat,
+      toggleVat,
       addItem,
       removeItem,
       updateAmount,
       setItemFile,
       clear,
     };
-  }, [items, hydrated, catalog, addItem, removeItem, updateAmount, setItemFile, clear]);
+  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemFile, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

@@ -16,12 +16,12 @@ import {
   FlagBeach,
   FlagGevel,
   FlagPole,
+  Price,
 } from "@/components/ui";
 import type { ComponentType } from "react";
 import { WindSpecks, DecayCounter, WapperFilter } from "./home-fx";
 import { BRAND_IMAGES, getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/i18n/formatting";
 
 export const metadata: Metadata = {
   // Absolute title — the root layout template would otherwise double the suffix
@@ -86,7 +86,7 @@ const STEPS = [
 ];
 
 export default async function Home() {
-  const { catalog, dict } = await getMessages();
+  const { dict } = await getMessages();
   const products = getAllProducts();
 
   return (
@@ -123,7 +123,9 @@ export default async function Home() {
               >
                 Bestel direct
               </Button>
-              <span className={styles.heroFrom}>vanaf € 11,50 excl. btw</span>
+              <span className={styles.heroFrom}>
+                vanaf <Price amount={11.5} suffix />
+              </span>
             </div>
           </div>
 
@@ -186,6 +188,19 @@ export default async function Home() {
             Nederland samen.
           </p>
         </Container>
+        {/* Wapper-golf naar het lichte blok eronder — zachte overgang van de
+            donkere waarheid naar de oplossing, i.p.v. een harde snijlijn. */}
+        <svg
+          className={styles.storyWave}
+          viewBox="0 0 1440 72"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
+            fill="currentColor"
+          />
+        </svg>
       </section>
 
       {/* DE NO-BRAINER — gewone vlag vs onze vlag, in de woorden van de klant */}
@@ -264,7 +279,7 @@ export default async function Home() {
                       <p>{product.tagline}</p>
                       <span className={styles.showcasePrice}>
                         {dict.product.priceFrom}{" "}
-                        <b>{formatCurrency(product.priceFrom, catalog)}</b>
+                        <Price amount={product.priceFrom} className={styles.showcasePriceValue} />
                       </span>
                     </div>
                   </Link>

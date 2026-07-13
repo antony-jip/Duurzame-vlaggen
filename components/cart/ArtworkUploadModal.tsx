@@ -3,43 +3,126 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sniffKind } from "@/lib/artwork/sniff";
+import {
+  analyzeBytes,
+  buildWarnings,
+  type ArtworkInfo,
+  type FlagSize,
+} from "@/lib/artwork/inspect";
+import {
+  rasterizeImageElement,
+  rasterizePdfFirstPage,
+} from "@/lib/artwork/preview";
+import { ArtworkProof } from "./ArtworkProof";
 import styles from "./ArtworkUpload.module.css";
 
 /**
- * Pop-up (native <dialog>) upload experience for a single cart line's artwork.
+ * Pop-up (native <dialog>) upload experience voor het ontwerp van één regel.
  *
- * The upload logic is unchanged from the inline version: client magic-byte
- * pre-sniff → POST {action:"sign"} → uploadToSignedUrl (browser → Supabase) →
- * POST {action:"finalize"} → {url, name, warnings[]}. What is new is that the
- * finalized-but-not-yet-attached file lives in the modal until the customer
- * explicitly confirms with "Dit bestand gebruiken". Anything that closes the
- * modal before that (Esc, backdrop, "Ander bestand kiezen", cancel) deletes the
- * orphaned upload via DELETE so no stray objects are left behind.
+ * LIVE DRUKPROEF: zodra de klant een bestand kiest tonen we direct een grote,
+ * beeldvullende drukproef vanuit het lokale bestand (`URL.createObjectURL`) op
+ * de exacte vlagverhouding. Het VOLLEDIGE bestand is altijd zichtbaar
+ * (afbeeldingen: object-fit contain; PDF: de eerste pagina, via pdf.js
+ * gerasterd naar een compacte preview-afbeelding, met de native <embed> als
+ * fallback zolang/als het rasteren niet lukt),
+ * met drie hulplijnen eroverheen: eindformaat (doorgetrokken zwart, de
+ * vlagmaat), afloop (doorgetrokken terracotta, exact 1 cm búiten het
+ * eindformaat) en veilige marge (gestippeld, 1 cm erbinnen) — beide in échte
+ * cm omgerekend naar de vlagmaat. Het benodigde aanleverformaat is dus
+ * vlagmaat + 2 cm (1 cm afloop rondom); de sidebar toont dat naast de
+ * vlagmaat, plus DPI en live weergave-controls (vullen/spiegelen/roteren) en
+ * een niet-blokkerende kwaliteitskaart. Voor afbeeldingen is er een tweede
+ * weergave, "Op de vlag": een realistische mockup met mast en wapperend doek.
+ * Beide weergaven renderen via het herbruikbare {@link ArtworkProof}; de
+ * weergave-keuze onthouden we binnen de sessie.
  *
- * `onConfirm` hands the finalized file back to the parent, which owns
- * `setItemFile` and the cleanup of the *previous* file on a replace.
+ * De echte upload (client-sniff → sign → uploadToSignedUrl → finalize) draait
+ * op de achtergrond, elk met een harde timeout zodat de UI nooit blijft
+ * hangen, en levert de definitieve `url`/`path` op. Is de upload gelukt, dan
+ * bevestigt de klant met "Dit bestand gebruiken". Mislukt de upload (bijv.
+ * lokaal met een dummy-Supabase-env), dan kan de klant het bestand tóch
+ * koppelen op basis van de lokale preview ("Toch gebruiken (preview)"), zodat
+ * de knop nooit definitief blokkeert. Alles wat de modal sluit vóór
+ * bevestiging (Esc, backdrop, ander bestand, sluiten) ruimt een reeds
+ * geüploade maar niet-gekoppelde file op via DELETE, plus de lokale
+ * object-URL.
+ *
+ * Kwaliteitswaarschuwingen (te lage DPI / afwijkende verhouding) berekenen we
+ * zowel client-side (meteen, uit de gelezen resolutie) als server-side (na
+ * finalize, autoritatief). We tonen de server-versie zodra die er is, anders
+ * de client-versie. Waarschuwingen zijn altijd NIET-blokkerend.
  */
 
 const BUCKET = "order-artwork";
-const MAX_BYTES = 50 * 1024 * 1024; // 50 MB, mirrors the server + bucket limit
+const MAX_BYTES = 50 * 1024 * 1024; // 50 MB, spiegelt server + bucket-limiet
+/**
+ * Max bestandsgrootte voor de inline data-URL in de preview-fallback. Base64
+ * is ~33% groter en de cart leeft in localStorage (~5 MB), dus boven deze
+ * grens vallen we terug op de vluchtige object-URL.
+ */
+const INLINE_PREVIEW_MAX_BYTES = 3 * 1024 * 1024;
+// Chunks die we lezen om de PDF-MediaBox (verhouding) client-side te bepalen.
+const PDF_SCAN_BYTES = 64 * 1024;
 
-type Phase = "idle" | "uploading" | "result" | "error";
-type Step = "sign" | "upload" | "check";
+type Phase = "idle" | "preview" | "error";
 
-/** Detected artwork dimensions returned by the finalize step (may be null). */
-type Dimensions =
-  | { kind: "raster"; pixelWidth: number; pixelHeight: number; ratio: number | null }
-  | { kind: "pdf"; widthCm: number; heightCm: number; ratio: number | null };
+/** Preview-weergave: technische drukproef of realistische vlag-mockup. */
+type PreviewView = "proof" | "flag";
 
-type Uploaded = {
-  url: string;
+/** Hoe het ontwerp in het vlagkader valt (CSS object-fit). */
+type FitMode = "contain" | "cover" | "fill";
+
+/** Rotatie van het ontwerp in de preview, in graden. */
+const ROTATIONS = [0, 90, 180, 270] as const;
+type Rotation = (typeof ROTATIONS)[number];
+
+const FIT_OPTIONS: ReadonlyArray<{ value: FitMode; label: string }> = [
+  { value: "contain", label: "Passend" },
+  { value: "cover", label: "Vullen" },
+  { value: "fill", label: "Uitrekken" },
+];
+
+/** sessionStorage-sleutel: onthoudt de gekozen weergave binnen de sessie. */
+const VIEW_STORAGE_KEY = "artwork-preview-view";
+
+/**
+ * Status van de echte upload op de achtergrond. Bij "failed" maakt `reject`
+ * het verschil tussen een échte afkeuring van het bestand (verkeerd type, te
+ * groot — duidelijke foutmelding) en een niet-beschikbare opslag (netwerk,
+ * lokale dev met dummy-Supabase-env — vriendelijke, niet-alarmerende melding:
+ * de drukproef zelf klopt gewoon).
+ */
+type Upload =
+  | { status: "uploading" }
+  | { status: "done"; url: string; path: string; warnings: string[] }
+  | { status: "failed"; message: string; reject: boolean };
+
+/** HTTP-statussen waarmee de server het bestand zélf afkeurt. */
+const REJECT_STATUSES = new Set([400, 413, 415]);
+
+/** Het lokaal gekozen bestand + wat we er client-side van weten. */
+type Selected = {
+  file: File;
+  /** Lokale object-URL voor de live preview (moet worden gerevoked). */
+  objectUrl: string;
   name: string;
-  path: string;
-  warnings: string[];
   size: number;
   isImage: boolean;
-  /** Design aspect ratio (width / height), when known. */
+  /** Ontwerpverhouding (breedte / hoogte) zodra bekend, anders null. */
   ratio: number | null;
+  /** Pixelmaten van rasterbeelden zodra gelezen (voor de DPI in de sidebar). */
+  pixelWidth: number | null;
+  pixelHeight: number | null;
+  /** Niet-blokkerende waarschuwingen uit de client-side analyse. */
+  warnings: string[];
+  /**
+   * Compacte raster-preview (data-URL): afbeeldingen gedownschaald, van een
+   * PDF de eerste pagina via pdf.js. Dit is de weergave-afbeelding voor alle
+   * previews (modal, mockup, cart-thumbnail) en gaat bij bevestigen mee naar
+   * de cart-regel. null zolang het rasteren loopt of wanneer het mislukte
+   * (PDF valt dan terug op de <embed>).
+   */
+  preview: string | null;
 };
 
 function formatBytes(bytes: number): string {
@@ -52,16 +135,59 @@ function isImageFile(name: string): boolean {
   return /\.(jpe?g|png)$/i.test(name);
 }
 
-/**
- * How far the design overflows the flag's cut area under a "cover" fit, as
- * percentages of the flag frame. Exactly one axis is 100%; the other exceeds it
- * and is the part that gets bled/cut off. Used to size the dimmed bleed layer.
- */
-function bleedSize(designRatio: number, flagRatio: number): { w: number; h: number } {
-  if (designRatio >= flagRatio) {
-    return { w: (designRatio / flagRatio) * 100, h: 100 };
+/** cm-waarde in nl-notatie met precies 1 decimaal (zoals "150,0"). */
+function formatCm(v: number): string {
+  return v.toLocaleString("nl-NL", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+}
+
+/** Max wachttijd per netwerkstap; erna wordt de upload als mislukt beschouwd. */
+const UPLOAD_TIMEOUT_MS = 20_000;
+
+/** POST naar /api/artwork met een harde timeout (voorkomt een oneindige await). */
+async function postArtwork(body: unknown): Promise<Response> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), UPLOAD_TIMEOUT_MS);
+  try {
+    return await fetch("/api/artwork", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+  } finally {
+    clearTimeout(timer);
   }
-  return { w: 100, h: (flagRatio / designRatio) * 100 };
+}
+
+/** Lees een bestand als data-URL; null bij een leesfout (fallback beslist). */
+function readAsDataUrl(file: File): Promise<string | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () =>
+      resolve(typeof reader.result === "string" ? reader.result : null);
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Race een promise tegen een timeout; bij timeout wint `onTimeout` (geen hang). */
+function withTimeout<T>(p: Promise<T>, ms: number, onTimeout: () => T): Promise<T> {
+  return new Promise<T>((resolve) => {
+    const timer = setTimeout(() => resolve(onTimeout()), ms);
+    p.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(onTimeout());
+      },
+    );
+  });
 }
 
 export function ArtworkUploadModal({
@@ -73,8 +199,18 @@ export function ArtworkUploadModal({
 }: {
   open: boolean;
   onClose: () => void;
-  /** Attach the finalized file to the cart line. */
-  onConfirm: (url: string, name: string, path: string, warnings: string[]) => void;
+  /**
+   * Koppel het definitief geüploade bestand aan de winkelmandregel.
+   * `previewUrl` is de compacte raster-preview (data-URL) voor weergave in
+   * cart/afrekenen; null wanneer die (nog) niet gemaakt kon worden.
+   */
+  onConfirm: (
+    url: string,
+    name: string,
+    path: string,
+    warnings: string[],
+    previewUrl: string | null,
+  ) => void;
   widthCm?: number;
   heightCm?: number;
 }) {
@@ -82,21 +218,56 @@ export function ArtworkUploadModal({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [phase, setPhase] = useState<Phase>("idle");
-  const [step, setStep] = useState<Step>("sign");
   const [dragOver, setDragOver] = useState(false);
-  const [uploaded, setUploaded] = useState<Uploaded | null>(null);
+  const [selected, setSelected] = useState<Selected | null>(null);
+  const [upload, setUpload] = useState<Upload | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Fallback design ratio read from the loaded <img> when the server didn't
-  // return dimensions (raster only).
-  const [imgRatio, setImgRatio] = useState<number | null>(null);
 
-  // Path of a finalized-but-unconfirmed upload, tracked in a ref so cleanup on
-  // close works regardless of render timing. Cleared on confirm (kept) or after
-  // its DELETE (discarded).
+  // Weergave-controls voor de drukproef (alleen afbeeldingen); resetten per
+  // bestandskeuze. Puur visueel — we drukken het bestand zoals aangeleverd.
+  const [fit, setFit] = useState<FitMode>("contain");
+  const [mirrored, setMirrored] = useState(false);
+  const [rotation, setRotation] = useState<Rotation>(0);
+
+  // "Drukproef" of "Op de vlag"; init altijd "proof" (hydration-veilig), de
+  // sessie-keuze laden we na mount uit sessionStorage.
+  const [view, setView] = useState<PreviewView>("proof");
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(VIEW_STORAGE_KEY);
+      if (saved === "proof" || saved === "flag") setView(saved);
+    } catch {
+      // sessionStorage niet beschikbaar (bijv. privémodus) — default volstaat
+    }
+  }, []);
+
+  const setViewMode = useCallback((v: PreviewView) => {
+    setView(v);
+    try {
+      sessionStorage.setItem(VIEW_STORAGE_KEY, v);
+    } catch {
+      // negeren
+    }
+  }, []);
+
+  // Path van een geüploade-maar-niet-bevestigde file, in een ref zodat cleanup
+  // bij sluiten los staat van render-timing. Leeg bij bevestigen of na DELETE.
   const pendingPathRef = useRef<string | null>(null);
+  // Actieve object-URL, in een ref zodat we hem altijd kunnen revoken.
+  const objectUrlRef = useRef<string | null>(null);
+  // Token dat per bestandskeuze ophoogt; async callbacks negeren verouderde
+  // resultaten wanneer de klant intussen een ander bestand koos.
+  const pickTokenRef = useRef(0);
+
+  const flag: FlagSize | null =
+    widthCm && heightCm && widthCm > 0 && heightCm > 0
+      ? { widthCm, heightCm }
+      : null;
 
   const deleteOrphan = useCallback(async (path: string): Promise<void> => {
-    // Best-effort; a leftover file is swept by scripts/cleanup-artwork.ts.
+    // Best-effort; een achtergebleven file wordt opgeruimd door
+    // scripts/cleanup-artwork.ts.
     try {
       await fetch("/api/artwork", {
         method: "DELETE",
@@ -104,27 +275,39 @@ export function ArtworkUploadModal({
         body: JSON.stringify({ path }),
       });
     } catch {
-      // ignore
+      // negeren
+    }
+  }, []);
+
+  const revokeObjectUrl = useCallback(() => {
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
     }
   }, []);
 
   const resetState = useCallback(() => {
+    pickTokenRef.current++;
+    revokeObjectUrl();
     setPhase("idle");
-    setStep("sign");
     setDragOver(false);
-    setUploaded(null);
+    setSelected(null);
+    setUpload(null);
     setError(null);
-    setImgRatio(null);
-  }, []);
+    setFit("contain");
+    setMirrored(false);
+    setRotation(0);
+  }, [revokeObjectUrl]);
 
-  // Discard any unconfirmed upload and return the modal to a clean state.
+  // Gooi een niet-bevestigde upload + lokale preview weg en reset de modal.
   const discardPending = useCallback(async () => {
     const path = pendingPathRef.current;
     pendingPathRef.current = null;
+    revokeObjectUrl();
     if (path) await deleteOrphan(path);
-  }, [deleteOrphan]);
+  }, [deleteOrphan, revokeObjectUrl]);
 
-  // Sync the native dialog with the `open` prop and reset on (re)open.
+  // Synchroniseer de native dialog met de `open`-prop en reset bij (her)openen.
   useEffect(() => {
     const dlg = dialogRef.current;
     if (!dlg) return;
@@ -136,150 +319,387 @@ export function ArtworkUploadModal({
     }
   }, [open, resetState]);
 
+  // Revoke de object-URL als het component verdwijnt.
+  useEffect(() => revokeObjectUrl, [revokeObjectUrl]);
+
   const requestClose = useCallback(() => {
-    // Close first for a snappy feel; clean up the orphan in the background.
+    // Eerst sluiten voor een snappy gevoel; opruimen op de achtergrond.
     void discardPending();
     onClose();
   }, [discardPending, onClose]);
 
-  async function runUpload(file: File) {
-    setError(null);
+  /**
+   * Lees pixelmaten van een raster via een <img>, bouw waarschuwingen en
+   * maak meteen de compacte preview-afbeelding (voor cart/afrekenen).
+   */
+  const analyzeRaster = useCallback(
+    (objectUrl: string, kind: "png" | "jpeg", token: number) => {
+      const img = new Image();
+      img.onload = () => {
+        if (token !== pickTokenRef.current) return;
+        const pixelWidth = img.naturalWidth;
+        const pixelHeight = img.naturalHeight;
+        if (pixelWidth <= 0 || pixelHeight <= 0) return;
+        const info: ArtworkInfo = { kind, pixelWidth, pixelHeight };
+        const warnings = buildWarnings(info, flag);
+        const preview = rasterizeImageElement(img, kind);
+        setSelected((prev) =>
+          prev && prev.objectUrl === objectUrl
+            ? {
+                ...prev,
+                ratio: pixelWidth / pixelHeight,
+                pixelWidth,
+                pixelHeight,
+                warnings,
+                preview,
+              }
+            : prev,
+        );
+      };
+      img.src = objectUrl;
+    },
+    [flag],
+  );
 
-    if (file.size > MAX_BYTES) {
-      setPhase("error");
-      setError("Dit bestand is te groot. Kies een bestand van maximaal 50 MB.");
-      return;
-    }
+  /** Raster de eerste PDF-pagina naar de preview-afbeelding (pdf.js). */
+  const rasterizePdf = useCallback(
+    async (file: File, objectUrl: string, token: number) => {
+      const preview = await rasterizePdfFirstPage(file);
+      if (!preview || token !== pickTokenRef.current) return;
+      setSelected((prev) =>
+        prev && prev.objectUrl === objectUrl ? { ...prev, preview } : prev,
+      );
+    },
+    [],
+  );
 
-    setPhase("uploading");
-    setStep("sign");
+  /** Lees de PDF-MediaBox (verhouding) uit kop + staart van het bestand. */
+  const analyzePdf = useCallback(
+    async (file: File, objectUrl: string, token: number) => {
+      try {
+        const head = new Uint8Array(
+          await file.slice(0, PDF_SCAN_BYTES).arrayBuffer(),
+        );
+        const tail =
+          file.size > PDF_SCAN_BYTES
+            ? new Uint8Array(
+                await file.slice(file.size - PDF_SCAN_BYTES).arrayBuffer(),
+              )
+            : undefined;
+        if (token !== pickTokenRef.current) return;
+        const info = analyzeBytes("pdf", head, tail);
+        if (!info || info.kind !== "pdf") return;
+        const warnings = buildWarnings(info, flag);
+        setSelected((prev) =>
+          prev && prev.objectUrl === objectUrl
+            ? {
+                ...prev,
+                ratio: info.heightCm > 0 ? info.widthCm / info.heightCm : null,
+                warnings,
+              }
+            : prev,
+        );
+      } catch {
+        // Verhouding onbekend — geen client-waarschuwing, upload beslist.
+      }
+    },
+    [flag],
+  );
 
-    try {
-      // Fast client-side sniff on the leading bytes (server stays authoritative).
+  /**
+   * Echte upload op de achtergrond: sign → uploadToSignedUrl → finalize.
+   * Elke stap heeft een harde timeout: een onbereikbare server of Storage-host
+   * (bijv. lokale dev met dummy-Supabase-env) eindigt altijd in status
+   * "failed" en laat de UI dus nooit eindeloos op "uploading" hangen.
+   */
+  const runUpload = useCallback(
+    async (file: File, token: number) => {
+      setUpload({ status: "uploading" });
+      try {
+        // 1. Vraag de server om een signed upload-URL (harde timeout).
+        const signRes = await postArtwork({
+          action: "sign",
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+        });
+        const signData = (await signRes.json()) as {
+          path?: string;
+          token?: string;
+          error?: string;
+        };
+        if (token !== pickTokenRef.current) return;
+        if (!signRes.ok || !signData.path || !signData.token) {
+          setUpload({
+            status: "failed",
+            reject: REJECT_STATUSES.has(signRes.status),
+            message: signData.error ?? "Uploaden voorbereiden mislukt.",
+          });
+          return;
+        }
+
+        // 2. Upload de bytes rechtstreeks naar Storage, met harde timeout.
+        const supabase = createSupabaseBrowserClient();
+        const uploadError = await withTimeout<Error | null>(
+          supabase.storage
+            .from(BUCKET)
+            .uploadToSignedUrl(signData.path, signData.token, file, {
+              contentType: file.type,
+            })
+            .then((r) => (r.error ? new Error(r.error.message) : null)),
+          UPLOAD_TIMEOUT_MS,
+          () => new Error("Upload duurde te lang."),
+        );
+        if (token !== pickTokenRef.current) {
+          // Klant koos intussen iets anders — ruim deze file weer op.
+          void deleteOrphan(signData.path);
+          return;
+        }
+        // Vanaf hier kan het object in storage bestaan — volg het voor cleanup.
+        pendingPathRef.current = signData.path;
+        if (uploadError) {
+          // Storage onbereikbaar (of lokale dev met dummy-env) — geen oordeel
+          // over het bestand zelf.
+          setUpload({
+            status: "failed",
+            reject: false,
+            message: "Uploaden mislukt. Probeer het opnieuw.",
+          });
+          return;
+        }
+
+        // 3. Finalize: server verifieert het bestand en analyseert de maten.
+        const finRes = await postArtwork({
+          action: "finalize",
+          path: signData.path,
+          widthCm,
+          heightCm,
+        });
+        const finData = (await finRes.json()) as {
+          url?: string;
+          name?: string;
+          warnings?: string[];
+          error?: string;
+        };
+        if (token !== pickTokenRef.current) return;
+        if (!finRes.ok || !finData.url) {
+          // Finalize afgekeurd (bijv. magic-byte mismatch) — server verwijderde
+          // het object op een 415; laat onze referentie los.
+          pendingPathRef.current = null;
+          setUpload({
+            status: "failed",
+            reject: REJECT_STATUSES.has(finRes.status),
+            message: finData.error ?? "Dit bestand kon niet worden verwerkt.",
+          });
+          return;
+        }
+        setUpload({
+          status: "done",
+          url: finData.url,
+          path: signData.path,
+          warnings: finData.warnings ?? [],
+        });
+      } catch {
+        if (token !== pickTokenRef.current) return;
+        setUpload({
+          status: "failed",
+          reject: false,
+          message: "Uploaden mislukt. Controleer je verbinding en probeer opnieuw.",
+        });
+      }
+    },
+    [deleteOrphan, widthCm, heightCm],
+  );
+
+  /** Nieuw bestand gekozen: valideer, toon direct de preview, upload erachteraan. */
+  const handleFile = useCallback(
+    async (file: File) => {
+      // Vorige selectie/upload ongeldig maken.
+      pickTokenRef.current++;
+      const token = pickTokenRef.current;
+      void discardPending();
+      setError(null);
+      setUpload(null);
+      setFit("contain");
+      setMirrored(false);
+      setRotation(0);
+
+      if (file.size > MAX_BYTES) {
+        setSelected(null);
+        setPhase("error");
+        setError("Dit bestand is te groot. Kies een bestand van maximaal 50 MB.");
+        return;
+      }
+
+      // Snelle client-side sniff op de eerste bytes (server blijft autoritair).
       const headBytes = new Uint8Array(await file.slice(0, 16).arrayBuffer());
-      if (!sniffKind(headBytes)) {
+      if (token !== pickTokenRef.current) return;
+      const kind = sniffKind(headBytes);
+      if (!kind) {
+        setSelected(null);
         setPhase("error");
         setError("Dit is geen geldig ontwerp. Kies een PDF-, JPG- of PNG-bestand.");
         return;
       }
 
-      // 1. Ask the server for a signed upload URL.
-      const signRes = await fetch("/api/artwork", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "sign",
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-        }),
-      });
-      const signData = (await signRes.json()) as {
-        path?: string;
-        token?: string;
-        error?: string;
-      };
-      if (!signRes.ok || !signData.path || !signData.token) {
-        setPhase("error");
-        setError(signData.error ?? "Uploaden mislukt. Probeer het opnieuw.");
-        return;
-      }
+      const objectUrl = URL.createObjectURL(file);
+      objectUrlRef.current = objectUrl;
+      const isImage = isImageFile(file.name) || kind !== "pdf";
 
-      // 2. Upload the bytes straight to Storage.
-      setStep("upload");
-      const supabase = createSupabaseBrowserClient();
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .uploadToSignedUrl(signData.path, signData.token, file, {
-          contentType: file.type,
-        });
-      // From here the object exists in storage — track it for cleanup.
-      pendingPathRef.current = signData.path;
-      if (uploadError) {
-        setPhase("error");
-        setError("Uploaden mislukt. Probeer het opnieuw.");
-        return;
-      }
-
-      // 3. Finalize: server verifies the file and analyses the dimensions.
-      setStep("check");
-      const finRes = await fetch("/api/artwork", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "finalize",
-          path: signData.path,
-          widthCm,
-          heightCm,
-        }),
-      });
-      const finData = (await finRes.json()) as {
-        url?: string;
-        name?: string;
-        warnings?: string[];
-        dimensions?: Dimensions | null;
-        error?: string;
-      };
-      if (!finRes.ok || !finData.url) {
-        // Finalize rejected (e.g. magic-byte mismatch) — the server already
-        // removed the object on a 415; drop our reference either way.
-        pendingPathRef.current = null;
-        setPhase("error");
-        setError(finData.error ?? "Dit bestand kon niet worden verwerkt.");
-        return;
-      }
-
-      const name = finData.name ?? file.name;
-      const ratio =
-        finData.dimensions && typeof finData.dimensions.ratio === "number"
-          ? finData.dimensions.ratio
-          : null;
-      setUploaded({
-        url: finData.url,
-        name,
-        path: signData.path,
-        warnings: finData.warnings ?? [],
+      // Toon de live preview meteen — nog zonder verhouding/warnings.
+      setSelected({
+        file,
+        objectUrl,
+        name: file.name,
         size: file.size,
-        isImage: isImageFile(name) || isImageFile(finData.url),
-        ratio,
+        isImage,
+        ratio: null,
+        pixelWidth: null,
+        pixelHeight: null,
+        warnings: [],
+        preview: null,
       });
-      setPhase("result");
-    } catch {
-      setPhase("error");
-      setError("Uploaden mislukt. Controleer je verbinding en probeer het opnieuw.");
-    }
-  }
+      setPhase("preview");
+
+      // Client-side kwaliteitsanalyse (vult verhouding + waarschuwingen aan)
+      // en de raster-preview (PDF: echte eerste pagina via pdf.js).
+      if (isImage) {
+        analyzeRaster(objectUrl, kind === "png" ? "png" : "jpeg", token);
+      } else {
+        void analyzePdf(file, objectUrl, token);
+        void rasterizePdf(file, objectUrl, token);
+      }
+
+      // Echte upload op de achtergrond.
+      void runUpload(file, token);
+    },
+    [discardPending, analyzeRaster, analyzePdf, rasterizePdf, runUpload],
+  );
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    e.target.value = ""; // allow re-picking the same file
-    if (file) void runUpload(file);
+    e.target.value = ""; // sta toe hetzelfde bestand opnieuw te kiezen
+    if (file) void handleFile(file);
   }
 
   function onDrop(e: React.DragEvent) {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) void runUpload(file);
+    if (file) void handleFile(file);
   }
 
-  function useThisFile() {
-    if (!uploaded) return;
-    // Confirmed: keep the object, hand it to the parent, don't clean it up.
+  async function confirmSelectedFile() {
+    if (!selected || !upload || upload.status === "uploading") return;
+
+    if (upload.status === "done") {
+      // Bevestigd: behoud het storage-object, geef het aan de parent. De lokale
+      // object-URL is niet meer nodig (de cart toont de raster-preview).
+      pendingPathRef.current = null;
+      revokeObjectUrl();
+      onConfirm(
+        upload.url,
+        selected.name,
+        upload.path,
+        upload.warnings,
+        selected.preview,
+      );
+      onClose();
+      return;
+    }
+
+    // FALLBACK (status "failed"): de echte upload lukte niet, bijv. lokale dev
+    // zonder werkende Storage. Koppel dan tóch een lokale preview zodat de
+    // klant nooit vastloopt; een eventueel wél geüpload maar niet-
+    // gefinaliseerd object ruimen we op. Voorkeur: een data-URL, want die zit
+    // ingebakken in de cart-state en overleeft dus navigatie/reload (blob-
+    // object-URL's zijn dood na een page load). Alleen voor kleine bestanden;
+    // grotere houden de vluchtige object-URL met een eerlijke notitie.
+    const orphan = pendingPathRef.current;
     pendingPathRef.current = null;
-    onConfirm(uploaded.url, uploaded.name, uploaded.path, uploaded.warnings);
+    if (orphan) void deleteOrphan(orphan);
+
+    if (selected.size <= INLINE_PREVIEW_MAX_BYTES) {
+      const dataUrl = await readAsDataUrl(selected.file);
+      if (dataUrl) {
+        revokeObjectUrl(); // de cart gebruikt de data-URL, blob mag weg
+        onConfirm(
+          dataUrl,
+          selected.name,
+          "",
+          [
+            ...selected.warnings,
+            "Voorbeeldkoppeling: het uploaden is nog niet gelukt; dit is een lokale preview.",
+          ],
+          selected.preview,
+        );
+        onClose();
+        return;
+      }
+    }
+
+    // Te groot voor inline (of leesfout): object-URL zoals voorheen. Het
+    // eigenaarschap gaat naar de parent (dus niet revoken).
+    const localUrl = selected.objectUrl;
+    objectUrlRef.current = null; // niet revoken: de cart gebruikt deze URL nog
+    onConfirm(
+      localUrl,
+      selected.name,
+      "",
+      [
+        ...selected.warnings,
+        "Voorbeeldkoppeling: het uploaden is nog niet gelukt; dit is een lokale preview en blijft niet bewaard als je verder navigeert.",
+      ],
+      selected.preview,
+    );
     onClose();
   }
 
   async function pickAnother() {
     await discardPending();
     resetState();
-    // Re-open the file picker for a quick retry.
+    // Heropen de bestandskiezer voor een snelle retry.
     inputRef.current?.click();
+  }
+
+  function retryUpload() {
+    if (!selected) return;
+    void runUpload(selected.file, pickTokenRef.current);
   }
 
   const sizeContext =
     widthCm && heightCm ? `Voor je vlag van ${widthCm} × ${heightCm} cm` : null;
+
+  // Toon de autoritaire server-waarschuwingen zodra die er zijn, anders de
+  // client-side inschatting.
+  const shownWarnings =
+    upload && upload.status === "done" ? upload.warnings : selected?.warnings ?? [];
+  // Bevestigen kan zodra de upload klaar is; bij een mislukte upload via de
+  // preview-fallback. Alleen tijdens het uploaden zelf is de knop even dicht.
+  const canConfirm = upload?.status === "done" || upload?.status === "failed";
+
+  // Sidebar-feiten: de vlagmaat (eindformaat), het benodigde aanleverformaat
+  // (vlagmaat + 1 cm afloop rondom, dus +2 cm per zijde — zoals drukkers dat
+  // officieel vragen) en de effectieve DPI (px / (cm / 2,54)), rekening
+  // houdend met 90°/270°-rotatie. PDF = vector, dus geen zinnige DPI: "-".
+  const sizeLabel = flag
+    ? `${formatCm(flag.widthCm)} × ${formatCm(flag.heightCm)} cm`
+    : "-";
+  const deliveryLabel = flag
+    ? `${formatCm(flag.widthCm + 2)} × ${formatCm(flag.heightCm + 2)} cm`
+    : "-";
+  const dpiLabel = (() => {
+    if (!selected || !selected.isImage || !flag) return "-";
+    if (!selected.pixelWidth || !selected.pixelHeight) return "…";
+    const quarter = rotation === 90 || rotation === 270;
+    const pw = quarter ? selected.pixelHeight : selected.pixelWidth;
+    const ph = quarter ? selected.pixelWidth : selected.pixelHeight;
+    const dpi = Math.min(
+      pw / (flag.widthCm / 2.54),
+      ph / (flag.heightCm / 2.54),
+    );
+    return String(Math.round(dpi));
+  })();
 
   return (
     <dialog
@@ -287,12 +707,12 @@ export function ArtworkUploadModal({
       className={styles.dialog}
       aria-labelledby="artwork-modal-title"
       onCancel={(e) => {
-        // Intercept Esc so we can clean up the orphan ourselves.
+        // Onderschep Esc zodat we de orphan zelf kunnen opruimen.
         e.preventDefault();
         requestClose();
       }}
       onClick={(e) => {
-        // Backdrop click: only when the press lands on the dialog itself.
+        // Backdrop-klik: alleen als de druk op de dialog zelf landt.
         if (e.target === dialogRef.current) requestClose();
       }}
     >
@@ -348,191 +768,430 @@ export function ArtworkUploadModal({
             <span className={styles.dropTitle}>
               Sleep je ontwerp hierheen of kies een bestand
             </span>
-            <span className={styles.dropHint}>PDF, JPG of PNG — max 50 MB</span>
+            <span className={styles.dropHint}>PDF, JPG of PNG · max 50 MB</span>
             <span className={styles.dropButton}>Bestand kiezen</span>
           </div>
         )}
 
-        {phase === "uploading" && (
-          <div className={styles.progress} role="status" aria-live="polite">
-            <span className={styles.spinner} aria-hidden="true" />
-            <span className={styles.progressLabel}>
-              {step === "sign" && "Uploaden voorbereiden…"}
-              {step === "upload" && "Bestand uploaden…"}
-              {step === "check" && "Ontwerp controleren…"}
-            </span>
-            <ol className={styles.steps}>
-              <li className={step === "sign" ? styles.stepActive : styles.stepDone}>
-                Voorbereiden
-              </li>
-              <li
-                className={
-                  step === "upload"
-                    ? styles.stepActive
-                    : step === "check"
-                      ? styles.stepDone
-                      : styles.stepPending
-                }
-              >
-                Uploaden
-              </li>
-              <li className={step === "check" ? styles.stepActive : styles.stepPending}>
-                Controleren
-              </li>
-            </ol>
-          </div>
-        )}
-
-        {phase === "result" && uploaded && (
+        {phase === "preview" && selected && (
           <div className={styles.result}>
-            {(() => {
-              const flagRatio =
-                widthCm && heightCm && heightCm > 0 ? widthCm / heightCm : null;
-              const designRatio = uploaded.ratio ?? imgRatio;
-              const bleed =
-                designRatio && flagRatio ? bleedSize(designRatio, flagRatio) : null;
+            {/* ── Linkerkolom: de grote drukproef of vlag-mockup ── */}
+            <div className={styles.previewCol}>
+              {(() => {
+                // Weergavebron: afbeeldingen op volle resolutie (object-URL);
+                // een PDF via de raster-preview (echte eerste pagina, pdf.js)
+                // zodra die klaar is. Alleen zolang/wanneer pdf.js niets
+                // oplevert valt de PDF terug op de native <embed>.
+                const previewIsImage = selected.isImage || selected.preview !== null;
+                const previewSrc = selected.isImage
+                  ? selected.objectUrl
+                  : selected.preview ?? selected.objectUrl;
+                const pdfEmbed = (
+                  <embed
+                    className={styles.pdfEmbed}
+                    src={`${selected.objectUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                    type="application/pdf"
+                    aria-label={`Voorbeeld van ${selected.name}`}
+                  />
+                );
 
-              // Without a flag size we can't draw cut lines — plain preview.
-              if (!flagRatio) {
+                // Zonder vlagmaat kunnen we geen hulplijnen tekenen: platte preview.
+                if (!flag) {
+                  return (
+                    <div className={styles.stage}>
+                      {previewIsImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          className={styles.plainPreview}
+                          src={previewSrc}
+                          alt={`Voorbeeld van ${selected.name}`}
+                        />
+                      ) : (
+                        <div className={styles.plainPdf}>{pdfEmbed}</div>
+                      )}
+                    </div>
+                  );
+                }
+
+                // Live transformatie vanuit de sidebar-controls. Bij 90°/270°
+                // wisselen breedte en hoogte van het beeldvak; met de
+                // vlagverhouding rekenen we dat om zodat het gedraaide vak het
+                // kader exact blijft vullen.
+                const quarter = rotation === 90 || rotation === 270;
+                const transformParts = [
+                  quarter ? "translate(-50%, -50%)" : null,
+                  rotation !== 0 ? `rotate(${rotation}deg)` : null,
+                  mirrored ? "scaleX(-1)" : null,
+                ].filter((p): p is string => p !== null);
+                const layerStyle: React.CSSProperties = {
+                  objectFit: fit,
+                  transform: transformParts.length
+                    ? transformParts.join(" ")
+                    : undefined,
+                  ...(quarter
+                    ? {
+                        top: "50%",
+                        left: "50%",
+                        width: `calc(100% * ${flag.heightCm} / ${flag.widthCm})`,
+                        height: `calc(100% * ${flag.widthCm} / ${flag.heightCm})`,
+                      }
+                    : null),
+                };
+
+                // Mockup zodra we een échte afbeelding hebben — voor PDF dus
+                // pas wanneer de raster-preview klaar is (een CSS-filter
+                // grijpt niet op de inhoud van een <embed>-plugin).
+                const mode: PreviewView = previewIsImage ? view : "proof";
+
                 return (
                   <div className={styles.stage}>
-                    {uploaded.isImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className={styles.plainPreview}
-                        src={uploaded.url}
-                        alt={`Voorbeeld van ${uploaded.name}`}
-                        onLoad={(e) => {
-                          const el = e.currentTarget;
-                          if (el.naturalHeight > 0)
-                            setImgRatio(el.naturalWidth / el.naturalHeight);
-                        }}
-                      />
+                    {previewIsImage && (
+                      <div
+                        className={styles.viewToggle}
+                        role="group"
+                        aria-label="Weergave van de preview"
+                      >
+                        <button
+                          type="button"
+                          className={
+                            mode === "proof"
+                              ? `${styles.viewOption} ${styles.viewOptionActive}`
+                              : styles.viewOption
+                          }
+                          aria-pressed={mode === "proof"}
+                          onClick={() => setViewMode("proof")}
+                        >
+                          Drukproef
+                        </button>
+                        <button
+                          type="button"
+                          className={
+                            mode === "flag"
+                              ? `${styles.viewOption} ${styles.viewOptionActive}`
+                              : styles.viewOption
+                          }
+                          aria-pressed={mode === "flag"}
+                          onClick={() => setViewMode("flag")}
+                        >
+                          Op de vlag
+                        </button>
+                      </div>
+                    )}
+
+                    {mode === "flag" ? (
+                      <>
+                        {/* Realistische mockup: mast + wapperend doek. */}
+                        <ArtworkProof
+                          className={styles.mockupSize}
+                          mode="mockup"
+                          wave
+                          src={previewSrc}
+                          isImage
+                          widthCm={flag.widthCm}
+                          heightCm={flag.heightCm}
+                          imgStyle={selected.isImage ? layerStyle : undefined}
+                          alt={`Voorbeeld van ${selected.name} als vlag aan de mast`}
+                        />
+                        <p className={styles.stageHint}>
+                          Zo wappert je ontwerp straks aan de mast.
+                        </p>
+                      </>
                     ) : (
-                      <span className={styles.pdfTile} aria-hidden="true">
-                        PDF
-                      </span>
+                      <>
+                        <div className={styles.proofGrid}>
+                          {/* Hoogte-maat verticaal langs de zijkant, buiten het kader. */}
+                          <span className={styles.axisH}>{flag.heightCm} cm</span>
+
+                          {/* Het vlagkader met hulplijnen; afbeeldingen krijgen
+                              de live weergave-instellingen mee, PDF toont de
+                              echte eerste pagina. */}
+                          <ArtworkProof
+                            className={styles.proofFrame}
+                            mode="drukproef"
+                            showGuides
+                            src={previewSrc}
+                            isImage={previewIsImage}
+                            widthCm={flag.widthCm}
+                            heightCm={flag.heightCm}
+                            imgStyle={selected.isImage ? layerStyle : undefined}
+                            alt={`Voorbeeld van ${selected.name} in het vlagkader`}
+                          />
+
+                          {/* Breedte-maat gecentreerd onder het kader. */}
+                          <span className={styles.axisW}>{flag.widthCm} cm</span>
+                        </div>
+
+                        {/* Legenda onder het kader. */}
+                        <div className={styles.legend}>
+                          <span className={styles.legendItem}>
+                            <span className={styles.swatchCut} aria-hidden="true" />
+                            Eindformaat
+                          </span>
+                          <span className={styles.legendItem}>
+                            <span className={styles.swatchBleed} aria-hidden="true" />
+                            Afloop (+1 cm rondom)
+                          </span>
+                          <span className={styles.legendItem}>
+                            <span className={styles.swatchSafe} aria-hidden="true" />
+                            Veilige marge (1 cm)
+                          </span>
+                        </div>
+
+                        <p className={styles.stageHint}>
+                          Je volledige ontwerp, passend in het vlagkader. Houd
+                          belangrijke tekst en logo&apos;s binnen de veilige marge.
+                        </p>
+                      </>
                     )}
                   </div>
                 );
-              }
-
-              return (
-                <div className={styles.stage}>
-                  <div
-                    className={styles.flagFrame}
-                    style={{ aspectRatio: `${widthCm} / ${heightCm}` }}
-                  >
-                    {uploaded.isImage ? (
-                      <>
-                        {/* Dimmed full design: everything outside the frame is cut. */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          className={styles.bleedLayer}
-                          src={uploaded.url}
-                          alt=""
-                          aria-hidden="true"
-                          style={
-                            bleed
-                              ? { width: `${bleed.w}%`, height: `${bleed.h}%` }
-                              : undefined
-                          }
-                          onLoad={(e) => {
-                            const el = e.currentTarget;
-                            if (!designRatio && el.naturalHeight > 0)
-                              setImgRatio(el.naturalWidth / el.naturalHeight);
-                          }}
-                        />
-                        {/* Kept (printed) region at full opacity, clipped to the frame. */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          className={styles.keepLayer}
-                          src={uploaded.url}
-                          alt={`Voorbeeld van ${uploaded.name} binnen de snijlijnen`}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        {/* PDF can't render client-side: sketch its ratio + tile. */}
-                        {bleed && (
-                          <span
-                            className={styles.pdfSketch}
-                            aria-hidden="true"
-                            style={{ width: `${bleed.w}%`, height: `${bleed.h}%` }}
-                          />
-                        )}
-                        <span className={styles.pdfTile} aria-hidden="true">
-                          PDF
-                        </span>
-                      </>
-                    )}
-                    {/* Cut lines = the flag edge. */}
-                    <span className={styles.cutBorder} aria-hidden="true" />
-                    <span className={`${styles.cutLabel} ${styles.cutLabelTop}`}>
-                      snijlijn
-                    </span>
-                    <span className={`${styles.dimLabel} ${styles.dimW}`}>
-                      {widthCm} cm
-                    </span>
-                    <span className={`${styles.dimLabel} ${styles.dimH}`}>
-                      {heightCm} cm
-                    </span>
-                  </div>
-                  <p className={styles.stageHint}>
-                    {uploaded.isImage
-                      ? "De gestippelde lijn is de snijlijn van je vlag. Het gedimde deel valt buiten de vlag en wordt afgesneden."
-                      : "De gestippelde lijn is de snijlijn van je vlag. We kunnen een PDF hier niet tonen; het kader laat de verhouding van je bestand t.o.v. de vlag zien."}
-                  </p>
-                </div>
-              );
-            })()}
-            <div className={styles.resultMeta}>
-              <span className={styles.resultName} title={uploaded.name}>
-                {uploaded.name}
-              </span>
-              <span className={styles.resultSize}>{formatBytes(uploaded.size)}</span>
+              })()}
             </div>
 
-            {uploaded.warnings.length > 0 ? (
-              <div className={`${styles.qualityBox} ${styles.qualityWarn}`}>
-                <span className={styles.qualityHead}>
-                  <span aria-hidden="true">⚠︎</span> Let op je ontwerp
+            {/* ── Rechterkolom: bestandsinfo, instellingen en acties ── */}
+            <aside
+              className={styles.sidebar}
+              aria-label="Bestandsinfo en instellingen"
+            >
+              <div className={styles.fileCard}>
+                <span className={styles.fileTitle} title={selected.name}>
+                  {selected.name}
                 </span>
-                <ul className={styles.qualityList}>
-                  {uploaded.warnings.map((w) => (
-                    <li key={w}>{w}</li>
-                  ))}
-                </ul>
-                <p className={styles.qualityNote}>
-                  Je kunt dit bestand toch gebruiken, maar de druk kan afwijken.
-                </p>
+                <dl className={styles.fileFacts}>
+                  <div className={styles.fileFact}>
+                    <dt>Vlagmaat</dt>
+                    <dd>{sizeLabel}</dd>
+                  </div>
+                  <div className={styles.fileFact}>
+                    <dt>Aanleverformaat</dt>
+                    <dd>{deliveryLabel}</dd>
+                  </div>
+                  <div className={styles.fileFact}>
+                    <dt>Dpi</dt>
+                    <dd>{dpiLabel}</dd>
+                  </div>
+                  <div className={styles.fileFact}>
+                    <dt>Bestand</dt>
+                    <dd>{formatBytes(selected.size)}</dd>
+                  </div>
+                </dl>
+                {flag && (
+                  <p className={styles.fileNote}>
+                    Benodigd aanleverformaat = vlagmaat + 1 cm afloop rondom.
+                  </p>
+                )}
               </div>
-            ) : (
-              <div className={`${styles.qualityBox} ${styles.qualityOk}`}>
-                <span className={styles.qualityHead}>
-                  <span className={styles.qualityCheck} aria-hidden="true">
+
+              {selected.isImage && flag ? (
+                <div className={styles.controls}>
+                  <div className={styles.controlRow}>
+                    <span className={styles.controlLabel}>Vullen</span>
+                    <div className={styles.segment} role="group" aria-label="Vullen">
+                      {FIT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          className={
+                            fit === opt.value
+                              ? `${styles.segBtn} ${styles.segActive}`
+                              : styles.segBtn
+                          }
+                          aria-pressed={fit === opt.value}
+                          onClick={() => setFit(opt.value)}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.controlRow}>
+                    <span className={styles.controlLabel}>Spiegelen</span>
+                    <button
+                      type="button"
+                      className={
+                        mirrored
+                          ? `${styles.segBtn} ${styles.segActive}`
+                          : styles.segBtn
+                      }
+                      aria-pressed={mirrored}
+                      onClick={() => setMirrored((m) => !m)}
+                    >
+                      {mirrored ? "Aan" : "Uit"}
+                    </button>
+                  </div>
+
+                  <div className={styles.controlRow}>
+                    <span className={styles.controlLabel}>Roteren</span>
+                    <div className={styles.segment} role="group" aria-label="Roteren">
+                      {ROTATIONS.map((deg) => (
+                        <button
+                          key={deg}
+                          type="button"
+                          className={
+                            rotation === deg
+                              ? `${styles.segBtn} ${styles.segActive}`
+                              : styles.segBtn
+                          }
+                          aria-pressed={rotation === deg}
+                          onClick={() => setRotation(deg)}
+                        >
+                          {deg}°
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className={styles.controlNote}>
+                    Weergave-instellingen voor de drukproef; we drukken je
+                    bestand zoals aangeleverd.
+                  </p>
+                </div>
+              ) : (
+                !selected.isImage && (
+                  <p className={styles.controlNote}>
+                    Vullen, spiegelen en roteren zijn niet beschikbaar voor
+                    PDF-bestanden.
+                  </p>
+                )
+              )}
+
+              {/* Kwaliteitskaart — altijd niet-blokkerend. */}
+              {shownWarnings.length > 0 ? (
+                <div className={`${styles.qualityBox} ${styles.qualityWarn}`}>
+                  <div className={styles.qualityTop}>
+                    <span className={styles.qualityHead}>
+                      <span aria-hidden="true">⚠︎</span> Waarschuwing
+                    </span>
+                    <a
+                      className={styles.qualityMore}
+                      href="/contact"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Meer informatie
+                    </a>
+                  </div>
+                  <ul className={styles.qualityList}>
+                    {shownWarnings.map((w) => (
+                      <li key={w}>{w}</li>
+                    ))}
+                  </ul>
+                  <p className={styles.qualityNote}>
+                    Je kunt dit bestand toch gebruiken, maar de druk kan afwijken.
+                  </p>
+                </div>
+              ) : (
+                <div className={`${styles.qualityBox} ${styles.qualityOk}`}>
+                  <span className={styles.qualityHead}>
+                    <span className={styles.qualityCheck} aria-hidden="true">
+                      ✓
+                    </span>
+                    Ontwerp ziet er goed uit
+                  </span>
+                  <p className={styles.qualityNote}>
+                    De resolutie en verhouding passen bij je vlagmaat.
+                  </p>
+                </div>
+              )}
+
+              {/* Upload-status (los van de preview, niet-blokkerend). */}
+              {upload?.status === "uploading" && (
+                <div
+                  className={styles.uploadStatus}
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className={styles.spinnerSmall} aria-hidden="true" />
+                  <span>Ontwerp uploaden…</span>
+                </div>
+              )}
+              {upload?.status === "done" && (
+                <div className={`${styles.uploadStatus} ${styles.uploadDone}`}>
+                  <span className={styles.uploadCheck} aria-hidden="true">
                     ✓
                   </span>
-                  Ontwerp ziet er goed uit
-                </span>
-                <p className={styles.qualityNote}>
-                  De resolutie en verhouding passen bij je vlagmaat.
-                </p>
-              </div>
-            )}
+                  <span>Upload gereed</span>
+                </div>
+              )}
+              {upload?.status === "failed" &&
+                (upload.reject ? (
+                  // Échte afkeuring (verkeerd bestandstype, te groot):
+                  // duidelijke foutmelding.
+                  <div className={`${styles.uploadStatus} ${styles.uploadFailed}`}>
+                    <span aria-hidden="true">⚠︎</span>
+                    <span className={styles.uploadFailedText}>
+                      {upload.message} Kies een ander bestand of probeer het
+                      opnieuw.
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.retry}
+                      onClick={retryUpload}
+                    >
+                      Opnieuw uploaden
+                    </button>
+                  </div>
+                ) : (
+                  // Opslag even niet bereikbaar (bijv. lokale dev): het
+                  // bestand is prima, dus informatief en niet-alarmerend.
+                  <div
+                    className={`${styles.uploadStatus} ${styles.uploadSoft}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <span className={styles.uploadInfo} aria-hidden="true">
+                      i
+                    </span>
+                    <span className={styles.uploadSoftText}>
+                      Je drukproef klopt. Opslaan bij ons kan zo, of ga alvast
+                      verder met de preview.
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.retryQuiet}
+                      onClick={retryUpload}
+                    >
+                      Opnieuw uploaden
+                    </button>
+                  </div>
+                ))}
 
-            <div className={styles.actions}>
               <button
                 type="button"
-                className={styles.secondary}
+                className={styles.linkButton}
                 onClick={() => void pickAnother()}
               >
                 Ander bestand kiezen
               </button>
-              <button type="button" className={styles.primary} onClick={useThisFile}>
-                Dit bestand gebruiken
-              </button>
-            </div>
+
+              <div className={styles.sidebarActions}>
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  onClick={requestClose}
+                >
+                  Sluiten
+                </button>
+                <button
+                  type="button"
+                  className={styles.primary}
+                  onClick={() => void confirmSelectedFile()}
+                  disabled={!canConfirm}
+                  title={
+                    canConfirm
+                      ? undefined
+                      : "Wacht tot de upload klaar is om dit bestand te gebruiken"
+                  }
+                >
+                  {upload?.status === "uploading"
+                    ? "Uploaden…"
+                    : upload?.status === "failed"
+                      ? "Toch gebruiken (preview)"
+                      : "Dit bestand gebruiken"}
+                </button>
+              </div>
+            </aside>
           </div>
         )}
 

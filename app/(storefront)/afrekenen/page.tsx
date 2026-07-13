@@ -13,9 +13,11 @@ import {
   Leaf,
   ShieldCheck,
   Truck,
+  Price,
 } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
-import { formatCurrency } from "@/lib/i18n/formatting";
+import { ArtworkProof } from "@/components/cart/ArtworkProof";
+import { localCartLineTotal } from "@/lib/pricing/local-catalog";
 import { checkoutAction, initialCheckoutState } from "./actions";
 
 const COUNTRIES = [
@@ -24,6 +26,34 @@ const COUNTRIES = [
   { code: "DE", label: "Duitsland" },
   { code: "FR", label: "Frankrijk" },
 ];
+
+/**
+ * Flag dimensions for the artwork preview — same fallback as the winkelmand:
+ * prefer the fields on the line, else parse the human `sizeLabel` (carts
+ * persisted before those fields existed). Returns empty when unknown.
+ */
+function flagSize(item: {
+  widthCm?: number;
+  heightCm?: number;
+  sizeLabel: string;
+}): { widthCm?: number; heightCm?: number } {
+  if (item.widthCm && item.heightCm) {
+    return { widthCm: item.widthCm, heightCm: item.heightCm };
+  }
+  const m = /(\d+)\s*[×x]\s*(\d+)\s*cm/i.exec(item.sizeLabel);
+  if (m) return { widthCm: Number(m[1]), heightCm: Number(m[2]) };
+  return {};
+}
+
+/** Is the attached artwork a raster image (vs PDF)? Filename is leading; the
+ *  url covers storage links and inline data-URLs (local preview fallback). */
+function isImageArtwork(fileName?: string | null, fileUrl?: string | null): boolean {
+  return (
+    /\.(jpe?g|png)$/i.test(fileName ?? "") ||
+    /\.(jpe?g|png)$/i.test(fileUrl ?? "") ||
+    /^data:image\//i.test(fileUrl ?? "")
+  );
+}
 
 /** A reusable Probo-shape address block. */
 function AddressFields({
@@ -119,7 +149,7 @@ function AddressFields({
 }
 
 export default function AfrekenenPage() {
-  const { items, subtotal, hydrated, catalog, clear } = useCart();
+  const { items, subtotal, hydrated, inclVat, clear, updateAmount } = useCart();
   const [state, formAction, isPending] = useActionState(
     checkoutAction,
     initialCheckoutState,
@@ -284,27 +314,77 @@ export default function AfrekenenPage() {
         {/* Order summary */}
         <Card as="aside" className={styles.summary} elevation="raised">
           <h2>Overzicht bestelling</h2>
-          {items.map((item) => (
-            <div key={item.id} className={styles.summaryLine}>
-              <span>
-                {item.name}{" "}
-                <span className={styles.qty}>
-                  ({item.sizeLabel} · {item.amount}×)
+          {items.map((item) => {
+            const size = flagSize(item);
+            return (
+              <div key={item.id} className={styles.summaryLine}>
+                <div>
+                  {item.name}{" "}
+                  <span className={styles.qty}>({item.sizeLabel})</span>
+                  {/* Aantal per regel; het verborgen items-veld en het
+                      subtotaal rekenen automatisch mee (client component). */}
+                  <div
+                    className={styles.quantity}
+                    role="group"
+                    aria-label={`Aantal ${item.name}`}
+                  >
+                    <button
+                      type="button"
+                      className={styles.qtyBtn}
+                      onClick={() => updateAmount(item.id, item.amount - 1)}
+                      disabled={item.amount <= 1}
+                      aria-label="Aantal verlagen"
+                    >
+                      −
+                    </button>
+                    <span className={styles.qtyValue} aria-live="polite">
+                      {item.amount}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.qtyBtn}
+                      onClick={() => updateAmount(item.id, item.amount + 1)}
+                      aria-label="Aantal verhogen"
+                    >
+                      +
+                    </button>
+                  </div>
+                  {/* Mini-mockup van het aangeleverde ontwerp, op de échte
+                      verhouding van deze regel — zelfde render als de
+                      winkelmand. Puur weergave. */}
+                  {item.fileUrl && size.widthCm && size.heightCm && (
+                    <div style={{ marginTop: 4 }}>
+                      <ArtworkProof
+                        mode="mockup"
+                        small
+                        src={item.previewUrl ?? item.fileUrl}
+                        isImage={
+                          !!item.previewUrl ||
+                          isImageArtwork(item.fileName, item.fileUrl)
+                        }
+                        widthCm={size.widthCm}
+                        heightCm={size.heightCm}
+                        alt={`Je ontwerp op de ${item.name} van ${item.sizeLabel}`}
+                      />
+                    </div>
+                  )}
+                </div>
+                <span>
+                  <Price amount={localCartLineTotal(item.unitPriceEstimate, item.amount)} />
                 </span>
-              </span>
-              <span>
-                {formatCurrency(item.unitPriceEstimate * item.amount, catalog)}
-              </span>
-            </div>
-          ))}
+              </div>
+            );
+          })}
           <hr className={styles.summaryDivider} />
           <div className={`${styles.summaryRow} ${styles.total}`}>
             <span>Subtotaal</span>
-            <span>{formatCurrency(subtotal, catalog)}</span>
+            <span>
+              <Price amount={subtotal} />
+            </span>
           </div>
           <p className={styles.summaryNote}>
-            Indicatief en exclusief btw. Verzendkosten en btw worden bij de
-            definitieve bevestiging berekend.
+            Indicatief en {inclVat ? "inclusief" : "exclusief"} btw. Verzendkosten
+            en btw worden bij de definitieve bevestiging berekend.
           </p>
 
           {hasQuoteOnly && (

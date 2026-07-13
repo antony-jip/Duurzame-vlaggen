@@ -254,6 +254,7 @@ export default async function AdminOrderDetailPage({
                   <th className={styles.right}>Inkoop</th>
                   <th className={styles.right}>Marge</th>
                   <th className={styles.right}>Regelprijs</th>
+                  <th>Ontwerp</th>
                   <th>Configuratie</th>
                 </tr>
               </thead>
@@ -266,6 +267,33 @@ export default async function AdminOrderDetailPage({
                     <td className={styles.right}>{formatMoney(it.base_price, order.currency)}</td>
                     <td className={styles.right}>{it.markup_pct}%</td>
                     <td className={styles.right}>{formatMoney(it.line_price, order.currency)}</td>
+                    <td>
+                      {it.file_url ? (
+                        <a
+                          href={it.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.artworkLink}
+                          title="Aangeleverd ontwerp openen/downloaden"
+                        >
+                          {/(\.png|\.jpe?g|\.webp)$/i.test(it.file_url) ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={it.file_url}
+                              alt="Aangeleverd ontwerp"
+                              className={styles.artworkThumb}
+                            />
+                          ) : (
+                            <span className={styles.artworkDoc} aria-hidden="true">
+                              PDF
+                            </span>
+                          )}
+                          <span>Bekijk</span>
+                        </a>
+                      ) : (
+                        <span className={styles.muted}>—</span>
+                      )}
+                    </td>
                     <td>
                       <pre className={styles.json}>
                         {JSON.stringify(it.configuration, null, 2)}

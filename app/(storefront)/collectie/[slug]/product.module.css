@@ -395,6 +395,370 @@
   margin: 0;
 }
 
+/* ==========================================================================
+   Formaat-pillen met stukprijs
+   ========================================================================== */
+.sizePill {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  min-height: 52px;
+  padding: 8px var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.sizePill:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.sizePillLabel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.sizePillPrice {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-stone);
+  font-variant-numeric: tabular-nums;
+}
+.choice input:checked + .sizePill {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.choice input:checked + .sizePill .sizePillLabel,
+.choice input:checked + .sizePill .sizePillPrice {
+  color: var(--accent);
+}
+.choice input:focus-visible + .sizePill {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Staffelkorting — klikbare tier-kaarten
+   ========================================================================== */
+.staffelGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-xs);
+}
+.staffelCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 14px 6px 10px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.staffelCard:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.staffelCard[data-active="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.staffelCard:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.staffelQty {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+}
+.staffelCard[data-active="true"] .staffelQty {
+  color: var(--accent);
+}
+.staffelPer {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  font-variant-numeric: tabular-nums;
+}
+.staffelDisc {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.staffelPopular {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.staffelCheck {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+}
+
+.customQtyRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+.customQtyLabel {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+.savings {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
+}
+
+/* ==========================================================================
+   Optie-beeldkaarten (1:1)
+   ========================================================================== */
+.optionCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: var(--space-sm);
+}
+.optionCard {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+.optionCard input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.optionCardInner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.optionCardMedia {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid var(--forest-6);
+  background: var(--forest-3);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.optionCard:hover .optionCardMedia {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.optionCardImg {
+  object-fit: cover;
+}
+.optionCardSwatch {
+  position: absolute;
+  inset: 0;
+}
+.optionCardFallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
+  background: var(--accent-soft);
+}
+.optionCardCheck {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.optionCard input:checked + .optionCardInner .optionCardMedia {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.optionCard input:checked + .optionCardInner .optionCardCheck {
+  opacity: 1;
+  transform: scale(1);
+}
+.optionCard input:focus-visible + .optionCardInner .optionCardMedia {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.optionCardText {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+.optionCardLabel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.optionCard input:checked + .optionCardInner .optionCardLabel {
+  color: var(--accent);
+}
+.optionCardSurcharge {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-stone);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Ontwerpservice-toggle
+   ========================================================================== */
+.designToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+.designToggle:hover {
+  border-color: var(--accent);
+}
+.designToggle[data-on="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.designToggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.designText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.designTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.designSub {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-stone);
+}
+.designSwitch {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--forest-6);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.designToggle[data-on="true"] .designSwitch {
+  background: var(--accent);
+}
+.designKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.designToggle[data-on="true"] .designKnob {
+  transform: translateX(20px);
+}
+
 /* ---- Sticky buy-bar (prijs + CTA) ---- */
 .buyBar {
   position: sticky;
@@ -465,6 +829,15 @@
   font-size: 14px;
   color: var(--color-forest);
   font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .staffelGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .optionCards {
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
 }
 
 @media (max-width: 860px) {

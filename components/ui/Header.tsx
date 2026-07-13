@@ -17,8 +17,9 @@ import {
   FlagPole,
 } from "./Icon";
 import { useCart } from "@/components/cart/CartProvider";
+import { VatToggle } from "./VatToggle";
+import { Price } from "./Price";
 import { getAllProducts } from "@/lib/catalog/products";
-import { formatCurrency } from "@/lib/i18n/formatting";
 import type { ComponentType } from "react";
 
 const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
@@ -77,7 +78,6 @@ const MEGA_PRODUCTS = getAllProducts();
 export function Header() {
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
-  const { catalog } = useCart();
 
   // Grace-timer: het paneel blijft even open terwijl de muis van de
   // Collectie-link over de subnav naar het paneel beweegt.
@@ -119,14 +119,17 @@ export function Header() {
     <header className={styles.header}>
       <div className={styles.topbar}>
         <Container className={styles.topbarInner} as="div">
-          {TOPBAR_USPS.map((usp) => (
-            <span key={usp} className={styles.topbarItem}>
-              <span aria-hidden="true" className={styles.topbarCheck}>
-                ✓
+          <div className={styles.topbarUsps}>
+            {TOPBAR_USPS.map((usp) => (
+              <span key={usp} className={styles.topbarItem}>
+                <span aria-hidden="true" className={styles.topbarCheck}>
+                  ✓
+                </span>
+                {usp}
               </span>
-              {usp}
-            </span>
-          ))}
+            ))}
+          </div>
+          <VatToggle />
         </Container>
       </div>
 
@@ -172,9 +175,6 @@ export function Header() {
 
         <div className={styles.actions}>
           <CartLink />
-          <Link href="/contact" className={styles.offerte}>
-            Offerte
-          </Link>
           <button
             type="button"
             className={styles.toggle}
@@ -224,7 +224,10 @@ export function Header() {
                     <span className={styles.megaText}>
                       <span className={styles.megaName}>{p.name}</span>
                       <span className={styles.megaPrice}>
-                        vanaf <b>{formatCurrency(p.priceFrom, catalog)}</b>
+                        vanaf{" "}
+                        <b>
+                          <Price amount={p.priceFrom} />
+                        </b>
                       </span>
                     </span>
                   </Link>

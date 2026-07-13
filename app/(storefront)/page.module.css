@@ -182,7 +182,9 @@
   display: block;
   width: 100%;
   height: clamp(28px, 4.5vw, 64px);
-  color: var(--color-off-white);
+  /* Golft naar de donkere story-sectie eronder — dus dezelfde donkergroene
+     kleur, geen felle off-white band tussen twee donkere vlakken. */
+  color: color-mix(in srgb, var(--color-forest) 52%, #06120c);
   margin-top: auto;
 }
 .heroPhoto {
@@ -234,7 +236,9 @@
 .story {
   position: relative;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-forest) 72%, #0d1f18);
+  /* Diep, bijna-zwart groen — maximaal contrast met het volgende lichte blok
+     en met de witte kop erop. */
+  background: color-mix(in srgb, var(--color-forest) 52%, #06120c);
   padding-block: clamp(88px, 12vw, 180px);
 }
 .storyParticles {
@@ -242,6 +246,17 @@
   inset: 0;
   pointer-events: none;
   opacity: 0.7;
+}
+/* Golf-overgang onderaan de story naar het lichte blok eronder. */
+.storyWave {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  pointer-events: none;
 }
 .storyInner {
   position: relative;
@@ -257,7 +272,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.55);
+  color: #eaa886;
 }
 .storyLine {
   font-family: var(--font-heading);
@@ -265,12 +280,12 @@
   font-size: clamp(30px, 4.6vw, 64px);
   line-height: 1.06;
   letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.92);
+  color: #ffffff;
   max-width: 20ch;
   text-wrap: balance;
 }
 .storyLine:nth-of-type(3) {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.82);
 }
 .storyTurn {
   color: #eaa886;
@@ -723,7 +738,7 @@
 .showcaseCard[data-accent] .showcasePrice {
   color: rgba(255, 255, 255, 0.7);
 }
-.showcaseCard[data-accent] .showcasePrice b {
+.showcaseCard[data-accent] .showcasePriceValue {
   color: #fff;
 }
 /* Speelse kanteling bij hover — elke vlag wappert zijn eigen kant op. */
@@ -766,7 +781,7 @@
   font-size: 14px;
   color: var(--color-stone);
 }
-.showcasePrice b {
+.showcasePriceValue {
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 20px;

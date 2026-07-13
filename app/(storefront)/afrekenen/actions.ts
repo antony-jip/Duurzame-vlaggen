@@ -202,6 +202,8 @@ export async function checkoutAction(
       productType: it.slug,
       productName: it.name,
       amount: it.amount,
+      // Maatlabel meesturen zodat buildLocalQuote de juiste CatalogSize vindt.
+      sizeLabel: it.sizeLabel,
       options: mapped.options,
       selections,
       unmapped: mapped.unmapped,

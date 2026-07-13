@@ -177,9 +177,15 @@
 /* ── Modal (native <dialog>) ──────────────────────────────────────────── */
 
 .dialog {
-  width: min(560px, calc(100vw - 2 * var(--space-sm, 16px)));
-  max-width: 100%;
-  max-height: min(92vh, 760px);
+  /* Bijna schermvullend: de drukproef is het dominante element. */
+  width: min(1520px, 96vw);
+  max-width: 96vw;
+  height: min(94vh, 1200px);
+  max-height: 94vh;
+  /* Centreer de native dialog (de globale reset haalt margin weg → anders
+     plakt hij linksboven). inset:0 + margin:auto = midden-midden. */
+  inset: 0;
+  margin: auto;
   padding: 0;
   border: none;
   border-radius: var(--radius-lg, 14px);
@@ -220,6 +226,7 @@
   flex-direction: column;
   gap: var(--space-sm, 16px);
   padding: var(--space-md, 24px);
+  height: 100%;
   max-height: inherit;
   overflow-y: auto;
   font-family: var(--font-ui);
@@ -275,6 +282,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  /* Vul de bijna-schermvullende modal ook in de idle-fase. */
+  flex: 1 0 auto;
   min-height: 200px;
   padding: var(--space-lg, 32px) var(--space-md, 24px);
   text-align: center;
@@ -329,194 +338,193 @@
   border-radius: var(--radius-sm, 6px);
 }
 
-/* ── Upload progress ──────────────────────────────────────────────────── */
-
-.progress {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  min-height: 200px;
-  justify-content: center;
-  text-align: center;
-}
-
-.spinner {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--color-forest) 20%, transparent);
-  border-top-color: var(--color-forest);
-  animation: spin 0.8s linear infinite;
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-.progressLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-charcoal, #3a3a3a);
-}
-
-.steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  font-size: 11px;
-  letter-spacing: 0.02em;
-}
-
-.steps li {
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-charcoal) 6%, transparent);
-  color: var(--color-stone, #8b8d7a);
-}
-
-.stepActive {
-  background: color-mix(in srgb, var(--color-forest) 14%, transparent) !important;
-  color: var(--color-forest) !important;
-  font-weight: 600;
-}
-
-.stepDone {
-  background: color-mix(in srgb, var(--color-sage-blue) 16%, transparent) !important;
-  color: var(--color-sage-blue) !important;
-}
-
-/* ── Result: cut-lines preview ────────────────────────────────────────── */
+/* ── Result: drukproef links, sidebar rechts ──────────────────────────── */
 
 .result {
+  /* Laat de preview alle beschikbare hoogte pakken; nooit krimpen onder de
+     eigen inhoud (de modal scrollt dan gewoon). */
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-md, 24px);
+  align-items: stretch;
+}
+
+.previewCol {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm, 16px);
+  min-width: 0;
 }
 
 .stage {
-  --stage-h: 240px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 18px;
-  overflow: hidden;
+  justify-content: center;
+  flex: 1 0 auto;
+  gap: 14px;
+  padding: clamp(16px, 3vw, 28px);
   border-radius: var(--radius-md, 10px);
   background: color-mix(in srgb, var(--color-charcoal) 4%, #fff);
 }
 
 .plainPreview {
   max-width: 100%;
-  max-height: 240px;
+  max-height: min(64vh, 820px);
   border-radius: var(--radius-sm, 6px);
   object-fit: contain;
 }
 
-.pdfTile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm, 6px);
-  background: color-mix(in srgb, var(--color-terracotta) 12%, #fff);
-  color: var(--color-terracotta);
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  z-index: 3;
-}
-
-.flagFrame {
-  position: relative;
-  max-width: min(78%, 380px);
-  max-height: var(--stage-h);
-  margin: 26px auto;
-  /* aspect-ratio is set inline from the flag size */
-}
-
-.bleedLayer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-  opacity: 0.32;
-  filter: saturate(0.85);
-  z-index: 0;
-  border-radius: 2px;
-  pointer-events: none;
-}
-
-.keepLayer {
+/* Echte PDF-preview via de native <embed>. Zonder expliciete maten rendert
+   een <embed> op zijn kleine standaardformaat linksboven; hier vult hij
+   altijd het volledige kader waarin hij staat. */
+.pdfEmbed {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  border: 0;
+  background: var(--color-white, #fff);
   z-index: 1;
 }
 
-.pdfSketch {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1.5px dashed color-mix(in srgb, var(--color-sage-blue) 65%, transparent);
-  background: color-mix(in srgb, var(--color-sage-blue) 8%, transparent);
-  z-index: 0;
-  pointer-events: none;
+/* Platte PDF-preview (geen vlagmaat bekend): geef de absolute embed een
+   kader met een redelijke documentverhouding. */
+.plainPdf {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: min(64vh, 820px);
+  border-radius: var(--radius-sm, 6px);
+  overflow: hidden;
+  box-shadow: var(--shadow-md, 0 4px 14px rgba(44, 95, 79, 0.14));
 }
 
-.cutBorder {
-  position: absolute;
-  inset: 0;
-  border: 2px dashed var(--color-charcoal, #3a3a3a);
-  box-shadow: 0 0 0 1px color-mix(in srgb, #fff 70%, transparent);
-  z-index: 2;
-  pointer-events: none;
+/* Weergave-toggle: technische drukproef of realistische vlag-mockup. */
+.viewToggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-charcoal) 7%, #fff);
 }
 
-.cutLabel,
-.dimLabel {
-  position: absolute;
-  z-index: 3;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: color-mix(in srgb, #fff 88%, transparent);
+.viewOption {
+  border: none;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-stone, #8b8d7a);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.viewOption:hover {
   color: var(--color-charcoal, #3a3a3a);
+}
+
+.viewOptionActive {
+  background: var(--color-white, #fff);
+  color: var(--color-forest);
+  box-shadow: 0 1px 4px rgba(44, 95, 79, 0.18);
+}
+
+/* Grid: hoogte-maat links, kader midden, breedte-maat eronder. */
+.proofGrid {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  grid-template-rows: 1fr max-content;
+  align-items: center;
+  justify-items: center;
+  /* Ruime gaps zodat de afloop-lijn búiten het kader vrij blijft. */
+  column-gap: 22px;
+  row-gap: 16px;
+  width: 100%;
+}
+
+.axisH {
+  grid-column: 1;
+  grid-row: 1;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
   font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--color-stone, #8b8d7a);
   white-space: nowrap;
-  pointer-events: none;
 }
 
-.cutLabelTop {
-  top: 6px;
-  left: 6px;
+.axisW {
+  grid-column: 2;
+  grid-row: 2;
+  font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--color-stone, #8b8d7a);
+  white-space: nowrap;
 }
 
-.cutLabelTop::before {
-  content: "✂ ";
+/* Sizing + grid-plaatsing van de ArtworkProof-drukproef; het visuele kader
+   (lichte doek-tint, hulplijnen in échte cm) komt uit ArtworkProof zelf.
+   Bewust géén box-shadow: een donkere blur naast het ontwerp las als een
+   "zwarte strook" bij letterbox-randen. Extra selector-diepte zodat deze
+   sizing wint van de `width: 100%`-default in ArtworkProof.module.css. */
+.proofGrid .proofFrame {
+  --maxh: min(64vh, 900px);
+  grid-column: 2;
+  grid-row: 1;
+  /* Vult de breedte, maar begrensd door maximale hoogte × verhouding,
+     zodat de vlagverhouding exact klopt en de preview zo groot mogelijk is. */
+  width: min(100%, calc(var(--maxh) * var(--fw) / var(--fh)));
+  height: auto;
 }
 
-.dimW {
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
+/* Legenda onder het kader (i.p.v. tekst over het beeld). */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  font-family: var(--font-ui);
 }
 
-.dimH {
-  top: 50%;
-  right: 6px;
-  transform: translateY(-50%);
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+.swatchCut,
+.swatchBleed,
+.swatchSafe {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+}
+
+.swatchCut {
+  border-top: 2px solid var(--color-charcoal, #3a3a3a);
+}
+
+.swatchBleed {
+  border-top: 2px solid var(--color-terracotta);
+}
+
+.swatchSafe {
+  border-top: 1.5px dashed var(--color-sage-blue, #5c8a9d);
 }
 
 .stageHint {
@@ -527,30 +535,281 @@
   text-align: center;
 }
 
-.resultMeta {
+/* ── "Op de vlag": sizing voor de ArtworkProof-mockup ─────────────────── */
+
+/* Alleen maat-vars; mast, doek en wapper-effect komen uit ArtworkProof. */
+.mockupSize {
+  --maxh: min(60vh, 820px);
+  --cloth-w: calc(var(--maxh) * var(--fw) / var(--fh));
+}
+
+/* ── Sidebar: bestandsinfo, instellingen en acties ────────────────────── */
+
+.sidebar {
   display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 14px;
   min-width: 0;
 }
 
-.resultName {
-  max-width: 70%;
+.fileCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid color-mix(in srgb, var(--color-forest) 16%, transparent);
+  background: var(--color-offwhite, #f7f5f2);
+}
+
+.fileTitle {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.fileFacts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fileFact {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.fileFact dt {
+  color: var(--color-stone, #8b8d7a);
+}
+
+.fileFact dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-charcoal, #3a3a3a);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Toelichting onder de bestandsfeiten (aanleverformaat = vlagmaat + afloop). */
+.fileNote {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--color-stone, #8b8d7a);
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 10%, transparent);
+}
+
+.controlRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.controlLabel {
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--color-charcoal, #3a3a3a);
 }
 
-.resultSize {
-  font-size: 12px;
+.segment {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-sm, 6px);
+  background: color-mix(in srgb, var(--color-charcoal) 6%, #fff);
+}
+
+.segBtn {
+  border: none;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-stone, #8b8d7a);
+  padding: 5px 9px;
+  border-radius: calc(var(--radius-sm, 6px) - 2px);
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.segBtn:hover {
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.segActive,
+.segActive:hover {
+  background: var(--color-forest);
+  color: var(--color-white, #fff);
+}
+
+.controlNote {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
   color: var(--color-stone, #8b8d7a);
 }
 
-/* ── Quality check box ────────────────────────────────────────────────── */
+.linkButton {
+  align-self: flex-start;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-forest);
+  background: none;
+  border: none;
+  padding: 2px 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.linkButton:hover {
+  color: var(--color-terracotta);
+}
+
+/* ── Upload-status (los van de live preview) ──────────────────────────── */
+
+.uploadStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-stone, #8b8d7a);
+  background: color-mix(in srgb, var(--color-charcoal) 5%, #fff);
+}
+
+.uploadDone {
+  color: var(--color-forest);
+  background: color-mix(in srgb, var(--color-forest) 8%, #fff);
+}
+
+.uploadFailed {
+  flex-wrap: wrap;
+  color: color-mix(in srgb, var(--color-terracotta) 82%, #000);
+  background: color-mix(in srgb, var(--color-terracotta) 10%, #fff);
+}
+
+.uploadFailedText {
+  flex: 1 1 180px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Vriendelijke variant: opslag even niet bereikbaar, maar het bestand is
+   goed. Informatieve forest-tint in plaats van alarm-terracotta. */
+.uploadSoft {
+  flex-wrap: wrap;
+  color: var(--color-charcoal, #3a3a3a);
+  background: color-mix(in srgb, var(--color-forest) 6%, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-forest) 16%, transparent);
+}
+
+.uploadSoftText {
+  flex: 1 1 180px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.uploadInfo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-forest) 14%, #fff);
+  color: var(--color-forest);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.uploadCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-forest);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.spinnerSmall {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--color-forest) 22%, transparent);
+  border-top-color: var(--color-forest);
+  animation: spin 0.8s linear infinite;
+}
+
+.retry {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-white, #fff);
+  background: var(--color-terracotta);
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.retry:hover {
+  background: color-mix(in srgb, var(--color-terracotta) 88%, #000);
+}
+
+/* Rustige retry bij de vriendelijke status: geen alarm-kleur. */
+.retryQuiet {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-forest);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-forest) 40%, transparent);
+  border-radius: var(--radius-sm, 6px);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.retryQuiet:hover {
+  background: color-mix(in srgb, var(--color-forest) 8%, #fff);
+  border-color: var(--color-forest);
+}
+
+/* ── Kwaliteitskaart ──────────────────────────────────────────────────── */
 
 .qualityBox {
   display: flex;
@@ -566,8 +825,15 @@
 }
 
 .qualityWarn {
-  background: color-mix(in srgb, #c8860a 10%, #fff);
-  border: 1px solid color-mix(in srgb, #c8860a 30%, transparent);
+  background: color-mix(in srgb, var(--color-terracotta) 10%, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-terracotta) 32%, transparent);
+}
+
+.qualityTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .qualityHead {
@@ -580,7 +846,19 @@
 }
 
 .qualityWarn .qualityHead {
-  color: #9a6a00;
+  color: color-mix(in srgb, var(--color-terracotta) 82%, #000);
+}
+
+.qualityMore {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-forest);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.qualityMore:hover {
+  color: var(--color-terracotta);
 }
 
 .qualityCheck {
@@ -605,12 +883,12 @@
   gap: 4px;
   font-size: 12.5px;
   line-height: 1.45;
-  color: #9a6a00;
+  color: color-mix(in srgb, var(--color-terracotta) 78%, #000);
 }
 
 .qualityList li::before {
-  content: "⚠︎ ";
-  color: #c8860a;
+  content: "– ";
+  color: var(--color-terracotta);
 }
 
 .qualityNote {
@@ -626,6 +904,18 @@
   gap: 10px;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+/* Footer-knoppen onderin de sidebar (Sluiten + Dit bestand gebruiken). */
+.sidebarActions {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.sidebarActions .primary,
+.sidebarActions .secondary {
+  flex: 1 1 0;
 }
 
 .primary,
@@ -647,8 +937,13 @@
   border: 1px solid var(--color-forest);
 }
 
-.primary:hover {
+.primary:hover:not(:disabled) {
   background: color-mix(in srgb, var(--color-forest) 88%, #000);
+}
+
+.primary:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .secondary {
@@ -665,6 +960,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1 0 auto;
   min-height: 160px;
   justify-content: center;
   padding: var(--space-sm, 16px);
@@ -691,13 +987,24 @@
   margin-top: 6px;
 }
 
-/* ── Mobile: near-fullscreen sheet ────────────────────────────────────── */
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .result {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarActions {
+    margin-top: 0;
+  }
+}
 
 @media (max-width: 640px) {
   .dialog {
     width: 100vw;
     max-width: 100vw;
-    max-height: 92vh;
+    height: 96dvh;
+    max-height: 96dvh;
     margin: auto auto 0;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -715,6 +1022,14 @@
     }
   }
 
+  .proofFrame {
+    --maxh: min(48vh, 520px);
+  }
+
+  .mockupSize {
+    --maxh: min(44vh, 480px);
+  }
+
   .actions {
     justify-content: stretch;
   }
@@ -729,7 +1044,7 @@
 @media (prefers-reduced-motion: reduce) {
   .dialog[open],
   .dialog[open]::backdrop,
-  .spinner {
+  .spinnerSmall {
     animation: none;
   }
 }

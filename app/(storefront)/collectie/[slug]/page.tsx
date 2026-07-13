@@ -15,6 +15,7 @@ import {
   FlagBeach,
   FlagGevel,
   FlagPole,
+  Price,
 } from "@/components/ui";
 import {
   BRAND_IMAGES,
@@ -24,7 +25,6 @@ import {
   type CatalogProduct,
 } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/i18n/formatting";
 import { ProductConfigurator } from "./ProductConfigurator";
 
 /* Vlagtype-pictogrammen — merkeigen producticonen, zoals op de homepage. */
@@ -159,7 +159,7 @@ export default async function ProductPage({
             <div className={styles.specRow}>
               <dt>{dict.product.priceFrom}</dt>
               <dd>
-                {formatCurrency(product.priceFrom, catalog)} {dict.product.exclVat}
+                <Price amount={product.priceFrom} suffix />
               </dd>
             </div>
             <div className={styles.specRow}>

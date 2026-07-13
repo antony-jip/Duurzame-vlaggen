@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import type { ComponentType } from "react";
 import styles from "./collectie.module.css";
 import {
   Badge,
@@ -9,29 +9,15 @@ import {
   Leaf,
   Recycle,
   Truck,
-  FlagBanier,
-  FlagMast,
-  FlagBeach,
-  FlagGevel,
-  FlagPole,
+  Price,
 } from "@/components/ui";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/i18n/formatting";
 
 export const metadata: Metadata = {
   title: "Collectie",
   description:
     "Bekijk onze biologisch afbreekbare vlaggen: baniervlaggen, mastvlaggen, beachvlaggen, gevelvlaggen en aluminium vlaggenmasten.",
-};
-
-/* Vlagtype-pictogrammen — merkeigen producticonen, zoals op de homepage. */
-const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
-  baniervlag: FlagBanier,
-  mastvlag: FlagMast,
-  beachvlag: FlagBeach,
-  gevelvlag: FlagGevel,
-  vlaggenmast: FlagPole,
 };
 
 const TRUST = [
@@ -53,7 +39,7 @@ const TRUST = [
 ];
 
 export default async function CollectiePage() {
-  const { catalog, dict } = await getMessages();
+  const { dict } = await getMessages();
   const products = getAllProducts();
 
   return (
@@ -69,7 +55,6 @@ export default async function CollectiePage() {
 
       <div className={styles.grid}>
         {products.map((product) => {
-          const FlagIcon = FLAG_ICONS[product.slug] ?? FlagMast;
           return (
             <Link
               key={product.slug}
@@ -77,8 +62,14 @@ export default async function CollectiePage() {
               className={styles.cardLink}
             >
               <div className={styles.card} data-accent={product.accent}>
-                <div className={styles.iconWrap}>
-                  <FlagIcon size={132} aria-hidden="true" />
+                <div className={styles.mediaWrap}>
+                  <Image
+                    src={product.heroImage.src}
+                    alt={product.heroImage.alt}
+                    fill
+                    sizes="(max-width: 560px) 100vw, (max-width: 960px) 50vw, 33vw"
+                    className={styles.media}
+                  />
                   {product.badge && (
                     <Badge variant="outline" className={styles.tag}>
                       {product.badge}
@@ -92,10 +83,12 @@ export default async function CollectiePage() {
                     <span className={styles.priceFrom}>
                       {dict.product.priceFrom}
                     </span>
-                    <span className={styles.price}>
-                      {formatCurrency(product.priceFrom, catalog)}
-                    </span>
-                    <span className={styles.exVat}>{dict.product.exclVat}</span>
+                    <Price
+                      amount={product.priceFrom}
+                      className={styles.price}
+                      suffix
+                      suffixClassName={styles.exVat}
+                    />
                   </div>
                   <span className={styles.cardCta}>
                     {dict.common.cta.configure}

@@ -19,9 +19,15 @@
 .topbarInner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: clamp(16px, 4vw, 48px);
+  justify-content: space-between;
+  gap: clamp(12px, 3vw, 32px);
   min-height: 36px;
+  flex-wrap: wrap;
+}
+.topbarUsps {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 4vw, 48px);
   flex-wrap: wrap;
 }
 .topbarItem {
@@ -276,20 +282,30 @@
   flex-shrink: 0;
 }
 
+/* Winkelmand — dé shop-actie, dus een volle lichte pill die opvalt op de
+   forest balk (forest tekst + tas-icoon op wit). */
 .cart {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: 15px;
+  color: var(--color-forest);
+  background: #fff;
+  font-family: var(--font-button);
+  font-weight: 800;
+  font-size: 14px;
   letter-spacing: -0.01em;
   position: relative;
-  padding: 6px 0;
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 .cart:hover {
-  color: #fff;
+  color: var(--color-forest);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 /* Count badge — terracotta dot with breathing room from the word. */
 .cartCount {
@@ -312,11 +328,12 @@
 @media (max-width: 1023px) {
   .cart {
     gap: 0;
+    padding: 10px;
   }
   .cartCount {
     position: absolute;
-    top: -4px;
-    right: -10px;
+    top: -6px;
+    right: -6px;
     margin-left: 0;
   }
 }

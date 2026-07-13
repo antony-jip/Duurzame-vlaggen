@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "./CartProvider";
+import { rasterizePdfSrc } from "@/lib/artwork/preview";
 import { ArtworkUploadModal } from "./ArtworkUploadModal";
 import styles from "./ArtworkUpload.module.css";
 
@@ -22,6 +23,7 @@ export function ArtworkUpload({
   fileName,
   filePath,
   fileWarnings,
+  previewUrl,
   widthCm,
   heightCm,
 }: {
@@ -30,6 +32,8 @@ export function ArtworkUpload({
   fileName?: string | null;
   filePath?: string | null;
   fileWarnings?: string[];
+  /** Compacte raster-preview (data-URL) van het ontwerp, voor de thumbnail. */
+  previewUrl?: string | null;
   widthCm?: number;
   heightCm?: number;
 }) {
@@ -50,9 +54,15 @@ export function ArtworkUpload({
     }
   }
 
-  function onConfirm(url: string, name: string, path: string, warnings: string[]) {
+  function onConfirm(
+    url: string,
+    name: string,
+    path: string,
+    warnings: string[],
+    preview: string | null,
+  ) {
     const previousPath = filePath ?? null;
-    setItemFile(itemId, url, name, path, warnings);
+    setItemFile(itemId, url, name, path, warnings, preview);
     // Replace succeeded → clean up the file we just replaced.
     if (previousPath && previousPath !== path) void deleteOrphan(previousPath);
   }
@@ -60,13 +70,42 @@ export function ArtworkUpload({
   async function onRemove() {
     setBusy(true);
     const path = filePath ?? null;
-    setItemFile(itemId, null, null, null, []);
+    setItemFile(itemId, null, null, null, [], null);
     if (path) await deleteOrphan(path);
     setBusy(false);
   }
 
   const isImage =
     /\.(jpe?g|png)$/i.test(fileName ?? "") || /\.(jpe?g|png)$/i.test(fileUrl ?? "");
+
+  // Zelf-rasteriseren voor oude regels zonder voorbereide previewUrl: is de
+  // bron een PDF, maak dan client-side de eerste pagina zodat de thumbnail
+  // een echt beeld toont in plaats van de "PDF"-tekst. rasterizePdfSrc cachet
+  // per src, dus dit valt samen met de mockup-preview eronder (geen dubbel
+  // werk). Faalt het (dode blob-URL), dan blijft de PDF-badge staan.
+  const [pdfThumb, setPdfThumb] = useState<string | null>(null);
+  const needsRaster = !previewUrl && !isImage && !!fileUrl;
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!needsRaster || !fileUrl) {
+      setPdfThumb(null);
+      return;
+    }
+    let cancelled = false;
+    setPdfThumb(null);
+    void rasterizePdfSrc(fileUrl).then((dataUrl) => {
+      if (!cancelled && dataUrl) setPdfThumb(dataUrl);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [needsRaster, fileUrl]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Thumbnail: de raster-preview (toont ook de echte eerste PDF-pagina en
+  // overleeft navigatie); anders de afbeeldings-url zelf, of de zojuist
+  // gerasterde PDF-pagina.
+  const thumbSrc = previewUrl ?? (isImage ? fileUrl : pdfThumb);
   const warnings = fileWarnings ?? [];
 
   return (
@@ -81,9 +120,9 @@ export function ArtworkUpload({
             className={styles.preview}
             aria-label={`Ontwerp openen: ${fileName ?? "bestand"}`}
           >
-            {isImage ? (
+            {thumbSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={fileUrl} alt={`Voorbeeld van ${fileName ?? "je ontwerp"}`} />
+              <img src={thumbSrc} alt={`Voorbeeld van ${fileName ?? "je ontwerp"}`} />
             ) : (
               <span className={styles.pdfBadge}>PDF</span>
             )}

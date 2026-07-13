@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Market } from "@/config/domains";
-import { publicEnv } from "@/lib/env";
+import { publicEnv, fulfilmentMode } from "@/lib/env";
 import type { Json, OrderRow } from "@/lib/db/types";
 
 import { configureProduct, getPrice } from "@/lib/probo/products";
@@ -10,6 +10,8 @@ import { createProboOrder } from "@/lib/probo/orders";
 import { createPayment, getPayment } from "@/lib/mollie/payments";
 import { computeVat } from "@/lib/vat";
 import { computeLinePrice, computeOrderTotals } from "@/lib/pricing";
+import { getProduct } from "@/lib/catalog/products";
+import { getSize, localLinePrice, localShipping } from "@/lib/pricing/local-catalog";
 
 import {
   advanceOrderStatus,
@@ -59,6 +61,12 @@ export interface OrderItemDraft {
   options: ProboOptionInput[];
   /** Quantity, mirrored from the Probo `amount` option, for our records. */
   amount: number;
+  /**
+   * Menselijk maatlabel uit de catalogus (bijv. "250 × 100 cm"). Gebruikt door
+   * de lokale prijsberekening (`buildLocalQuote`) om de juiste `CatalogSize` te
+   * vinden. Niet naar Probo gestuurd.
+   */
+  sizeLabel?: string;
   /**
    * Human-readable storefront selections (Dutch labels → chosen value), stored
    * on the order line for the admin. NOT sent to Probo — `options` is.
@@ -188,6 +196,80 @@ export async function buildQuote(input: CheckoutInput): Promise<Quote> {
   };
 }
 
+/**
+ * Lokale variant van {@link buildQuote} voor de "manual" fulfilment-modus.
+ *
+ * Spiegelt buildQuote — zelfde {@link Quote}-vorm, dezelfde `computeVat` en
+ * `computeOrderTotals` — maar rekent de regelprijzen met het lokale prijsmodel
+ * (`@/lib/pricing/local-catalog`) in plaats van live Probo-calls:
+ *
+ *  - regelprijs via `localLinePrice` (product uit `getProduct`, maat uit `getSize`),
+ *  - verzendkosten via `localShipping(subtotaal)`, packaging altijd 0,
+ *  - GEEN `configureProduct`/`getPrice` — er is dus geen Probo `calculation_id`
+ *    (leeg) en geen aparte inkoopprijs/markup (basePrice == linePrice, markup 0).
+ */
+export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
+  if (input.items.length === 0) {
+    throw new Error("buildLocalQuote: no items");
+  }
+
+  const lines: QuoteLine[] = [];
+  for (const draft of input.items) {
+    const product = getProduct(draft.productType);
+    if (!product) {
+      throw new Error(`buildLocalQuote: onbekend product ${draft.productType}`);
+    }
+    const size = draft.sizeLabel ? getSize(product, draft.sizeLabel) : undefined;
+
+    // localLinePrice vouwt het aantal al in de regelprijs (× amount).
+    const linePrice = localLinePrice({
+      product,
+      size,
+      amount: draft.amount,
+      selections: draft.selections,
+    });
+
+    lines.push({
+      draft,
+      // Geen Probo-calculatie in manual-modus.
+      calculationId: "",
+      // Geen aparte inkoopprijs lokaal → basePrice gelijk aan verkoopprijs.
+      basePrice: linePrice,
+      markupPct: 0,
+      linePrice,
+    });
+  }
+
+  // Subtotaal ex btw (afgerond op centen) → drijft de eigen verzendregel.
+  const subtotaal = Math.round(lines.reduce((sum, l) => sum + l.linePrice, 0) * 100) / 100;
+  const shippingPrice = localShipping(subtotaal);
+  const packagingPrice = 0;
+
+  const vat = await computeVat({
+    isBusiness: Boolean(input.isBusiness),
+    vatNumber: input.vatNumber ?? null,
+    market: input.market,
+    shippingCountry: input.shippingAddress.country ?? null,
+  });
+
+  const totals = computeOrderTotals({
+    // linePrice is al de regeltotaal (aantal ingevouwen) → amount 1.
+    lines: lines.map((l) => ({ unitPrice: l.linePrice, amount: 1 })),
+    shippingPrice,
+    packagingPrice,
+    vatRatePct: vat.rate,
+  });
+
+  return {
+    currency: "EUR",
+    lines,
+    shippingPrice,
+    packagingPrice,
+    vat,
+    totals,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Place order + create payment
 // ---------------------------------------------------------------------------
@@ -204,7 +286,9 @@ export interface PlaceOrderResult {
  * the order to `awaiting_payment`. Returns the checkout URL for redirect.
  */
 export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult> {
-  const quote = await buildQuote(input);
+  // Manual-modus (default): lokale prijs, geen Probo. Probo-modus: live quote.
+  const quote =
+    fulfilmentMode() === "manual" ? await buildLocalQuote(input) : await buildQuote(input);
   const appUrl = publicEnv.appUrl;
 
   const order = await insertOrderWithItems(
@@ -242,7 +326,8 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
           : {}),
       } as unknown as Json,
       amount: l.draft.amount,
-      calculation_id: l.calculationId,
+      // Manual-modus heeft geen Probo-calculatie → leeg wordt null.
+      calculation_id: l.calculationId || null,
       file_url: l.draft.fileUrl ?? null,
       base_price: l.basePrice,
       markup_pct: l.markupPct,
@@ -308,7 +393,12 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     if (order.status === "awaiting_payment") {
       await advanceOrderStatus(order.id, "paid", { mollie_status: payment.status });
     }
-    await sendOrderToProbo(order.id);
+    // Manual-modus (default): de order blijft op `paid` staan voor handmatige
+    // afhandeling in de admin. Alleen in probo-modus sturen we hem automatisch
+    // door naar Probo.
+    if (fulfilmentMode() === "probo") {
+      await sendOrderToProbo(order.id);
+    }
     return;
   }
 

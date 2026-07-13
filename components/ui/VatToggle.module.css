@@ -1,0 +1,35 @@
+/* Segmented btw-schakelaar in de lichte topbar. */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--forest-6);
+  border: 1px solid var(--forest-8);
+}
+.opt {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-stone);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  line-height: 1.4;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.opt:hover {
+  color: var(--color-forest);
+}
+.opt[data-active="true"] {
+  background: var(--color-forest);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}

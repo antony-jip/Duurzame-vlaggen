@@ -11,9 +11,27 @@ const PRODUCT_LINKS = getAllProducts().map((p) => ({
   label: p.name,
 }));
 
-const COMPANY_LINKS = [
-  { href: "/over-ons", label: "Over ons" },
+// Segment-landingpagina's.
+const AUDIENCE_LINKS = [
+  { href: "/voor-bedrijven", label: "Voor bedrijven" },
+  { href: "/voor-gemeenten", label: "Voor gemeenten" },
+  { href: "/voor-verenigingen", label: "Voor verenigingen" },
+];
+
+// Verdieping: duurzaamheid, materiaal en de kennisbank.
+const KNOWLEDGE_LINKS = [
   { href: "/duurzaamheid", label: "Duurzaamheid" },
+  { href: "/materiaal", label: "Materiaal" },
+  { href: "/certificeringen", label: "Certificeringen" },
+  { href: "/csrd", label: "CSRD" },
+  { href: "/kennisbank", label: "Kennisbank" },
+];
+
+// Service en bedrijf.
+const SERVICE_LINKS = [
+  { href: "/veelgestelde-vragen", label: "Veelgestelde vragen" },
+  { href: "/garantie", label: "Garantie" },
+  { href: "/over-ons", label: "Over ons" },
   { href: "/contact", label: "Offerte aanvragen" },
   { href: "/contact", label: "Contact" },
 ];
@@ -61,6 +79,14 @@ export function Footer() {
               Biologisch afbreekbare vlaggen voor bedrijven die hun merk laten
               wapperen zonder de planeet te belasten.
             </p>
+            <address className={styles.contact}>
+              <span>Sign Company B.V.</span>
+              <span>Enkhuizen, Nederland</span>
+              <a href="mailto:info@duurzame-vlaggen.nl">
+                info@duurzame-vlaggen.nl
+              </a>
+              <a href="tel:+31850608963">085 060 8963</a>
+            </address>
           </div>
 
           <nav aria-labelledby="footer-products">
@@ -76,30 +102,44 @@ export function Footer() {
             </div>
           </nav>
 
-          <nav aria-labelledby="footer-company">
-            <h2 id="footer-company" className={styles.colTitle}>
-              Bedrijf
+          <nav aria-labelledby="footer-audience">
+            <h2 id="footer-audience" className={styles.colTitle}>
+              Voor wie
             </h2>
             <div className={styles.list}>
-              {COMPANY_LINKS.map((item) => (
-                <Link key={item.label} href={item.href}>
+              {AUDIENCE_LINKS.map((item) => (
+                <Link key={item.href} href={item.href}>
                   {item.label}
                 </Link>
               ))}
             </div>
           </nav>
 
-          <div>
-            <h2 className={styles.colTitle}>Contact</h2>
-            <address className={styles.contact}>
-              <span>Sign Company B.V.</span>
-              <span>Enkhuizen, Nederland</span>
-              <a href="mailto:info@duurzame-vlaggen.nl">
-                info@duurzame-vlaggen.nl
-              </a>
-              <a href="tel:+31850608963">085 060 8963</a>
-            </address>
-          </div>
+          <nav aria-labelledby="footer-knowledge">
+            <h2 id="footer-knowledge" className={styles.colTitle}>
+              Kennis
+            </h2>
+            <div className={styles.list}>
+              {KNOWLEDGE_LINKS.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+
+          <nav aria-labelledby="footer-service">
+            <h2 id="footer-service" className={styles.colTitle}>
+              Service
+            </h2>
+            <div className={styles.list}>
+              {SERVICE_LINKS.map((item) => (
+                <Link key={item.label} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
         </div>
 
         <div className={styles.bottom}>
@@ -107,8 +147,9 @@ export function Footer() {
             &copy; {year} Sign Company B.V. — Alle rechten voorbehouden.
           </span>
           <div className={styles.bottomLinks}>
-            <Link href="/privacy">Privacy</Link>
-            <Link href="/voorwaarden">Voorwaarden</Link>
+            <Link href="/privacyverklaring">Privacy</Link>
+            <Link href="/cookiebeleid">Cookies</Link>
+            <Link href="/algemene-voorwaarden">Algemene voorwaarden</Link>
           </div>
         </div>
       </Container>
