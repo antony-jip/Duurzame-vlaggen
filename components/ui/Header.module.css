@@ -1,24 +1,89 @@
+/* Masthead — Styleguide V5.0 "Sora Edition".
+   Light glass bar that stays readable over any page, with the cart and the
+   Offerte action as first-class webshop elements. The white logo-full asset
+   lives in the forest footer; up here the coloured mark + Sora wordmark reads
+   as the nameplate. */
 .header {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
+  /* Flat forest — flows seamlessly into the hero block for the clean look. */
+  background: var(--color-forest);
 }
 
-/* ---- Primary bar (forest green) ---- */
+/* ---- USP-topbar — licht, met forest vinkjes ---- */
 .topbar {
-  background: var(--color-forest);
-  color: #fff;
+  background: var(--color-off-white);
+  border-bottom: 1px solid var(--forest-6);
+}
+.topbarInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 48px);
+  min-height: 36px;
+  flex-wrap: wrap;
+}
+.topbarItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  padding-block: 6px;
+}
+.topbarCheck {
+  color: var(--color-forest);
+  font-weight: 700;
+}
+@media (max-width: 720px) {
+  .topbarItem:nth-child(n + 3) {
+    display: none;
+  }
 }
 
 .inner {
   display: flex;
   align-items: center;
   gap: var(--space-lg);
-  min-height: 72px;
-  padding-top: var(--space-sm);
-  padding-bottom: var(--space-sm);
+  min-height: 76px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
+/* ---- Product-subnav — donkerder forest plank onder de masthead ---- */
+.subnav {
+  background: color-mix(in srgb, var(--color-forest) 82%, #10241c);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.subnavInner {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+  min-height: 44px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.subnavInner::-webkit-scrollbar {
+  display: none;
+}
+.subnavLink {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  padding: 12px 0;
+  white-space: nowrap;
+}
+.subnavLink:hover {
+  color: #fff;
+}
+
+/* ---- Brand — het witte volledige logo, gemaakt voor de forest balk ---- */
 .brand {
   display: inline-flex;
   align-items: center;
@@ -26,12 +91,12 @@
 }
 
 .logo {
-  display: block;
-  height: 33px;
-  width: auto;
+  width: clamp(170px, 18vw, 232px);
+  height: auto;
   object-fit: contain;
 }
 
+/* ---- Primary nav ---- */
 .nav {
   display: flex;
   align-items: center;
@@ -43,155 +108,370 @@
   font-family: var(--font-ui);
   font-weight: 600;
   font-size: 15px;
+  letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.88);
   text-decoration: none;
-  padding: 6px 2px;
-  border-bottom: 2px solid transparent;
-  transition: color var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+  padding: 6px 0;
+  position: relative;
 }
-
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #eaa886;
+  transition: right var(--duration-base) var(--ease-out);
+}
 .link:hover {
   color: #fff;
-  border-bottom-color: var(--color-terracotta);
+}
+.link:hover::after {
+  right: 0;
 }
 
-.actions {
+/* ---- Mega-menu ---- */
+.megaWrap {
+  display: inline-flex;
+}
+.chevron {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 7px;
+  margin-bottom: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--duration-base) var(--ease-out);
+  vertical-align: middle;
+}
+.linkOpen {
+  color: #fff;
+}
+.linkOpen::after {
+  right: 0;
+}
+.linkOpen .chevron {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.megaPanel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding-block: var(--space-md);
+  animation: fade-in-up var(--duration-fast) var(--ease-out);
+  z-index: var(--z-dropdown);
+}
+.megaGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-xs);
+}
+/* Verfijnde menukaart: klein kleurchipje + naam + prijs op één regel. */
+.megaCard {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  flex-shrink: 0;
+  gap: 14px;
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  color: var(--color-charcoal);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.megaCard:hover {
+  background: var(--forest-3);
+  color: var(--color-charcoal);
+}
+.megaText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
-.cta {
+/* Klein merkchipje met wit vlag-pictogram, licht gekanteld. */
+.megaTile {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.megaCard:hover .megaTile {
+  transform: rotate(0deg);
+}
+.megaTile svg {
+  stroke-width: 1.7;
+}
+.megaCard[data-accent="sage-blue"] .megaTile {
+  background: var(--color-sage-blue);
+}
+.megaCard[data-accent="terracotta"] .megaTile {
+  background: var(--color-terracotta);
+}
+.megaCard[data-accent="sage-purple"] .megaTile {
+  background: var(--color-sage-purple);
+}
+.megaCard[data-accent="copper-rust"] .megaTile {
+  background: var(--color-copper-rust);
+}
+.megaName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.megaPrice {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--color-stone);
+  white-space: nowrap;
+}
+.megaPrice b {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--color-forest);
+}
+.megaFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-md);
+}
+.megaAll {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-button);
-  font-weight: 800;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 14px;
-  color: #fff;
-  background: var(--color-terracotta);
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out), background var(--duration-base) var(--ease-out);
+  color: var(--color-forest);
+}
+.megaAll:hover {
+  color: var(--color-terracotta);
+}
+@media (max-width: 1023px) {
+  .megaPanel {
+    display: none;
+  }
 }
 
-.cta:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-terracotta-md);
-  background: #b85f43;
-}
-
-/* ---- Secondary bar (product categories) ---- */
-.subbar {
-  background: color-mix(in srgb, var(--color-forest) 88%, black);
-}
-
-.subinner {
+/* ---- Actions ---- */
+.actions {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  flex-wrap: wrap;
-  min-height: 48px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  flex-shrink: 0;
 }
 
-.subLink {
+.cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(255, 255, 255, 0.88);
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.82);
-  text-decoration: none;
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  transition: color var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  position: relative;
+  padding: 6px 0;
 }
-
-.subLink:hover {
+.cart:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+}
+/* Count badge — terracotta dot with breathing room from the word. */
+.cartCount {
+  min-width: 20px;
+  height: 20px;
+  margin-left: 2px;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--color-terracotta);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 999px;
+  box-shadow: var(--shadow-xs);
+}
+/* When the word is hidden (mobile) the badge floats on the bag icon. */
+@media (max-width: 1023px) {
+  .cart {
+    gap: 0;
+  }
+  .cartCount {
+    position: absolute;
+    top: -4px;
+    right: -10px;
+    margin-left: 0;
+  }
 }
 
-/* ---- Mobile ---- */
+/* Offerte — terracotta conversieknop op de forest balk, witte tekst. */
+.offerte {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-button);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #fff;
+  background: var(--color-terracotta);
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-terracotta-md);
+  text-decoration: none;
+  transition: all var(--duration-base) var(--ease-out);
+}
+.offerte:hover {
+  background: #b25a3e;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ---- Mobile toggle ---- */
 .toggle {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
   border: none;
+  border-radius: var(--radius-md);
   background: transparent;
   color: #fff;
-  border-radius: var(--radius-sm);
   cursor: pointer;
 }
-
 .toggle:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.panel {
+/* ---- Full-screen mobile menu — forest statement panel ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
   background: var(--color-forest);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  padding-block: var(--space-sm);
+  color: #fff;
+  display: flex;
+  animation: fade-in-up var(--duration-base) var(--ease-out);
 }
-
-.panelNav {
+.overlayInner {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  overflow-y: auto;
 }
-
-.panelLink {
+.overlayTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 16px;
+}
+.kicker {
   font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  padding: 12px 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.panelLink:hover {
-  color: #fff;
-}
-
-.panelHeading {
-  font-family: var(--font-ui);
-  font-weight: 700;
   font-size: 12px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.55);
-  padding: 16px 4px 6px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.overlayClose {
+  display: inline-flex;
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  margin-right: -6px;
 }
 
-.panelCta {
-  margin-top: var(--space-sm);
+.overlayNav {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-md);
+  flex: 1;
+}
+.overlayLink {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(34px, 10vw, 56px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #fff;
+  text-decoration: none;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+.overlayLink:hover,
+.overlayLink:active {
+  color: #eaa886;
 }
 
-@media (max-width: 900px) {
+.overlayFoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+.overlayAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.overlayAction:hover {
+  color: #eaa886;
+}
+.overlayNote {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 42ch;
+  margin-top: var(--space-xs);
+}
+
+@media (max-width: 1023px) {
   .nav,
-  .subbar {
+  .offerte,
+  .cartWord {
     display: none;
-  }
-  .actions {
-    margin-left: auto;
   }
   .toggle {
     display: inline-flex;
   }
+  .actions {
+    margin-left: auto;
+    gap: var(--space-sm);
+  }
 }
 
-@media (max-width: 520px) {
-  .actions .cta {
+@media (min-width: 1024px) {
+  .overlayClose {
     display: none;
   }
 }

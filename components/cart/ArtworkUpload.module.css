@@ -91,17 +91,27 @@
   gap: 8px;
 }
 
-.check {
+.check,
+.warnBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--color-sage-blue, #5c8a9d);
-  color: #fff;
+  flex-shrink: 0;
   font-size: 11px;
   font-weight: 700;
+}
+
+.check {
+  background: var(--color-sage-blue, #5c8a9d);
+  color: #fff;
+}
+
+.warnBadge {
+  background: color-mix(in srgb, #c8860a 18%, #fff);
+  color: #9a6a00;
 }
 
 .fileName {
@@ -138,4 +148,588 @@
   font-family: var(--font-ui);
   font-size: 12px;
   color: var(--color-terracotta);
+}
+
+.warnings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warning {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.4;
+  color: #9a6a00;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.warning span {
+  color: #c8860a;
+  flex-shrink: 0;
+}
+
+/* ── Modal (native <dialog>) ──────────────────────────────────────────── */
+
+.dialog {
+  width: min(560px, calc(100vw - 2 * var(--space-sm, 16px)));
+  max-width: 100%;
+  max-height: min(92vh, 760px);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg, 14px);
+  background: var(--color-white, #fff);
+  color: var(--color-charcoal, #3a3a3a);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(44, 95, 79, 0.25));
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--color-charcoal, #3a3a3a) 45%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.dialog[open] {
+  animation: modalIn var(--duration-base, 300ms) var(--ease-out, ease);
+}
+
+.dialog[open]::backdrop {
+  animation: backdropIn var(--duration-base, 300ms) var(--ease-out, ease);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 16px);
+  padding: var(--space-md, 24px);
+  max-height: inherit;
+  overflow-y: auto;
+  font-family: var(--font-ui);
+}
+
+.modalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm, 16px);
+}
+
+.modalTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.modalContext {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+.close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--color-stone, #8b8d7a);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.close:hover {
+  background: color-mix(in srgb, var(--color-charcoal) 8%, transparent);
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+/* ── Drop zone ────────────────────────────────────────────────────────── */
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 200px;
+  padding: var(--space-lg, 32px) var(--space-md, 24px);
+  text-align: center;
+  border: 1.5px dashed color-mix(in srgb, var(--color-forest) 40%, transparent);
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--color-forest) 4%, #fff);
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.dropzone:hover,
+.dropzone:focus-visible {
+  background: color-mix(in srgb, var(--color-forest) 8%, #fff);
+  border-color: var(--color-forest);
+  outline: none;
+}
+
+.dropzoneActive {
+  background: color-mix(in srgb, var(--color-forest) 12%, #fff);
+  border-color: var(--color-forest);
+  border-style: solid;
+}
+
+.dropIcon {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--color-forest);
+}
+
+.dropTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.dropHint {
+  font-size: 12px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+.dropButton {
+  margin-top: 6px;
+  padding: 9px 16px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-white, #fff);
+  background: var(--color-forest);
+  border-radius: var(--radius-sm, 6px);
+}
+
+/* ── Upload progress ──────────────────────────────────────────────────── */
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-height: 200px;
+  justify-content: center;
+  text-align: center;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--color-forest) 20%, transparent);
+  border-top-color: var(--color-forest);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progressLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.steps li {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-charcoal) 6%, transparent);
+  color: var(--color-stone, #8b8d7a);
+}
+
+.stepActive {
+  background: color-mix(in srgb, var(--color-forest) 14%, transparent) !important;
+  color: var(--color-forest) !important;
+  font-weight: 600;
+}
+
+.stepDone {
+  background: color-mix(in srgb, var(--color-sage-blue) 16%, transparent) !important;
+  color: var(--color-sage-blue) !important;
+}
+
+/* ── Result: cut-lines preview ────────────────────────────────────────── */
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 16px);
+}
+
+.stage {
+  --stage-h: 240px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  overflow: hidden;
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--color-charcoal) 4%, #fff);
+}
+
+.plainPreview {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: var(--radius-sm, 6px);
+  object-fit: contain;
+}
+
+.pdfTile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 6px);
+  background: color-mix(in srgb, var(--color-terracotta) 12%, #fff);
+  color: var(--color-terracotta);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  z-index: 3;
+}
+
+.flagFrame {
+  position: relative;
+  max-width: min(78%, 380px);
+  max-height: var(--stage-h);
+  margin: 26px auto;
+  /* aspect-ratio is set inline from the flag size */
+}
+
+.bleedLayer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  opacity: 0.32;
+  filter: saturate(0.85);
+  z-index: 0;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.keepLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.pdfSketch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1.5px dashed color-mix(in srgb, var(--color-sage-blue) 65%, transparent);
+  background: color-mix(in srgb, var(--color-sage-blue) 8%, transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cutBorder {
+  position: absolute;
+  inset: 0;
+  border: 2px dashed var(--color-charcoal, #3a3a3a);
+  box-shadow: 0 0 0 1px color-mix(in srgb, #fff 70%, transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cutLabel,
+.dimLabel {
+  position: absolute;
+  z-index: 3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, #fff 88%, transparent);
+  color: var(--color-charcoal, #3a3a3a);
+  font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.cutLabelTop {
+  top: 6px;
+  left: 6px;
+}
+
+.cutLabelTop::before {
+  content: "✂ ";
+}
+
+.dimW {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dimH {
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+
+.stageHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-stone, #8b8d7a);
+  text-align: center;
+}
+
+.resultMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.resultName {
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.resultSize {
+  font-size: 12px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+/* ── Quality check box ────────────────────────────────────────────────── */
+
+.qualityBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md, 10px);
+}
+
+.qualityOk {
+  background: color-mix(in srgb, var(--color-sage-blue) 10%, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-sage-blue) 30%, transparent);
+}
+
+.qualityWarn {
+  background: color-mix(in srgb, #c8860a 10%, #fff);
+  border: 1px solid color-mix(in srgb, #c8860a 30%, transparent);
+}
+
+.qualityHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.qualityWarn .qualityHead {
+  color: #9a6a00;
+}
+
+.qualityCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-sage-blue, #5c8a9d);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qualityList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #9a6a00;
+}
+
+.qualityList li::before {
+  content: "⚠︎ ";
+  color: #c8860a;
+}
+
+.qualityNote {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+/* ── Actions & errors ─────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.primary,
+.secondary {
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm, 6px);
+  font-family: var(--font-button);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.primary {
+  color: var(--color-white, #fff);
+  background: var(--color-forest);
+  border: 1px solid var(--color-forest);
+}
+
+.primary:hover {
+  background: color-mix(in srgb, var(--color-forest) 88%, #000);
+}
+
+.secondary {
+  color: var(--color-charcoal, #3a3a3a);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-charcoal) 22%, transparent);
+}
+
+.secondary:hover {
+  border-color: var(--color-charcoal, #3a3a3a);
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 160px;
+  justify-content: center;
+  padding: var(--space-sm, 16px);
+  text-align: center;
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--color-error, #ef4444) 6%, #fff);
+}
+
+.errorTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-error, #ef4444);
+}
+
+.errorText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.errorBox .actions {
+  justify-content: center;
+  margin-top: 6px;
+}
+
+/* ── Mobile: near-fullscreen sheet ────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .dialog {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 92vh;
+    margin: auto auto 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--radius-lg, 14px);
+    border-top-right-radius: var(--radius-lg, 14px);
+  }
+
+  .dialog[open] {
+    animation: sheetIn var(--duration-base, 300ms) var(--ease-out, ease);
+  }
+
+  @keyframes sheetIn {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+
+  .primary,
+  .secondary {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open],
+  .dialog[open]::backdrop,
+  .spinner {
+    animation: none;
+  }
 }

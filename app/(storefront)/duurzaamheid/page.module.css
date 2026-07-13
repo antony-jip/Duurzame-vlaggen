@@ -1,0 +1,568 @@
+/* ==========================================================================
+   Duurzaamheid — flagship sustainability story.
+   Doorgetrokken merkstijl van de homepage: forest full-bleed hero, wapper-
+   golven tussen secties, gekantelde kleurchips, forest kleurblok als
+   data-moment. Styleguide V5.0 "Sora", bold-disruptor.
+   ========================================================================== */
+
+/* ---- Section rhythm ---- */
+.section {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.sectionTight {
+  padding-block: clamp(48px, 5vw, 96px);
+}
+.sectionHead {
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.sectionHead .lead {
+  color: var(--color-stone);
+}
+
+/* ==========================================================================
+   HERO — egaal forest vlak dat uit de header loopt, korte pakkende kop met
+   punt, foto in de organische wapper-vorm.
+   ========================================================================== */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-forest);
+}
+.heroInner {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  min-height: clamp(460px, 64vh, 680px);
+  padding-block: clamp(40px, 6vh, 88px);
+}
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+.heroEyebrow {
+  animation: fade-in-up var(--duration-slow) var(--ease-out) both;
+}
+.heroTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(44px, 6vw, 92px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 60ms both;
+}
+.heroAccent {
+  color: #eaa886;
+}
+.heroSub {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(17px, 1.9vw, 21px);
+  line-height: 1.6;
+  max-width: 46ch;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 140ms both;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 220ms both;
+}
+
+/* De wapper-vorm: organische blob met de doek-close-up — merkmotief hero. */
+.heroBlob {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-height: clamp(340px, 54vh, 560px);
+  width: 100%;
+  justify-self: end;
+  overflow: hidden;
+  border-radius: 58% 42% 56% 44% / 48% 56% 44% 52%;
+  box-shadow: var(--shadow-lg);
+  animation: blob-drift 14s var(--ease-in-out) infinite alternate;
+}
+.heroPhoto {
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+@keyframes blob-drift {
+  0% {
+    border-radius: 58% 42% 56% 44% / 48% 56% 44% 52%;
+  }
+  50% {
+    border-radius: 46% 54% 44% 56% / 56% 44% 58% 42%;
+  }
+  100% {
+    border-radius: 54% 46% 60% 40% / 44% 58% 42% 56%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroBlob {
+    animation: none;
+  }
+}
+
+/* Golf-overgang onderaan de hero, in de kleur van de volgende sectie. */
+.heroWave {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroBlob {
+    order: -1;
+    justify-self: center;
+    max-width: 440px;
+  }
+}
+
+/* ==========================================================================
+   FASEN — van wapperende vlag tot biomassa, genummerde merkchips + wapper-lijn
+   ========================================================================== */
+.phasesWrap {
+  position: relative;
+}
+.phasesLine {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  width: calc(100% - 48px);
+  height: 44px;
+  pointer-events: none;
+}
+.phasesLine path {
+  fill: none;
+  stroke: var(--forest-8);
+  stroke-width: 2;
+  stroke-dasharray: 6 7;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .phasesLine path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+}
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.phases {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+}
+.phase {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+/* Genummerde merkchips — zelfde taal als USP's en stappen op de homepage. */
+.phaseNum {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.phase:nth-child(2) .phaseNum {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.phase:nth-child(3) .phaseNum {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.phase:nth-child(4) .phaseNum {
+  background: var(--color-sage-purple);
+  transform: rotate(3deg);
+}
+.phase:hover .phaseNum {
+  transform: rotate(0deg) translateY(-4px);
+}
+.phase h3 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.phase p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .phase {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .phase:nth-child(2) {
+      animation-range: entry 12% entry 55%;
+    }
+    .phase:nth-child(3) {
+      animation-range: entry 19% entry 65%;
+    }
+    .phase:nth-child(4) {
+      animation-range: entry 26% entry 75%;
+    }
+  }
+}
+@media (max-width: 900px) {
+  .phases {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  .phasesLine {
+    display: none;
+  }
+}
+@media (max-width: 520px) {
+  .phases {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   DATA-BLOK — forest kleurblok tussen wapper-golven, de cijfers kolossaal.
+   Merkeigen data-moment; glass stat-chips die zweven (V5.0 float).
+   ========================================================================== */
+.dataBand {
+  margin-block: clamp(24px, 3vw, 48px);
+}
+.wave {
+  display: block;
+  width: 100%;
+  height: clamp(32px, 5vw, 72px);
+  color: var(--color-forest);
+}
+.waveBottom {
+  transform: scaleY(-1);
+}
+.dataBlock {
+  position: relative;
+  background: var(--color-forest);
+  overflow: hidden;
+}
+.dataInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  padding-block: clamp(56px, 7vw, 104px);
+}
+.dataEyebrow {
+  display: inline-flex;
+  background: var(--color-copper-rust);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-copper);
+  font-family: var(--font-eyebrow);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+.dataTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.dataAccent {
+  color: #eaa886;
+}
+.dataBody {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.65;
+  max-width: 56ch;
+}
+.dataStats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+.dataStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 168px;
+  padding: 22px 26px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-lg);
+  animation: float 5s var(--ease-in-out) infinite;
+}
+.dataStat:nth-child(2) {
+  animation-delay: -1.3s;
+}
+.dataStat:nth-child(3) {
+  animation-delay: -2.6s;
+}
+.dataStat:nth-child(4) {
+  animation-delay: -3.9s;
+}
+.dataStatValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 3.4vw, 40px);
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.dataStatLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+.dataFootnote {
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 56ch;
+  margin-top: var(--space-xs);
+}
+
+/* ==========================================================================
+   CERTIFICERINGEN — clean merk-kaarten met gekantelde kleurchip.
+   ========================================================================== */
+.certsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+.certCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: clamp(24px, 2.4vw, 32px);
+  background: #fff;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.certCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.certIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+}
+.certCard:nth-child(2) .certIcon {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.certCard:nth-child(3) .certIcon {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.certCard:nth-child(4) .certIcon {
+  background: var(--color-sage-purple);
+  transform: rotate(3deg);
+}
+.certName {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.certCard p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+@media (max-width: 900px) {
+  .certsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .certsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   CSRD — forest-3 band met gekantelde kleurchips (USP-taal).
+   ========================================================================== */
+.csrdBand {
+  background: var(--forest-3);
+}
+.csrdGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+}
+.csrdItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+.csrdIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+}
+.csrdItem:nth-child(2) .csrdIcon {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.csrdItem:nth-child(3) .csrdIcon {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.csrdItem h3 {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.csrdItem p {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .csrdItem {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .csrdItem:nth-child(2) {
+      animation-range: entry 12% entry 55%;
+    }
+    .csrdItem:nth-child(3) {
+      animation-range: entry 19% entry 65%;
+    }
+  }
+}
+@media (max-width: 820px) {
+  .csrdGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+/* ==========================================================================
+   CTA-BAND — terracotta kleurblok, tweede merkkleur-moment (homepage-echo).
+   ========================================================================== */
+.ctaBand {
+  background: var(--color-terracotta);
+  border-radius: var(--radius-2xl);
+  padding: clamp(48px, 6vw, 96px);
+}
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  max-width: 760px;
+  margin-inline: auto;
+}
+.ctaTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(36px, 4.5vw, 64px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.ctaSub {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.6;
+}
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+.ctaLink {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ctaLink:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+@media (max-width: 560px) {
+  .ctaActions {
+    flex-direction: column;
+    width: 100%;
+  }
+}

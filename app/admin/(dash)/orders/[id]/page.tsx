@@ -5,8 +5,8 @@ import { Badge, Button, Card } from "@/components/ui";
 import { getOrderById, getOrderItems } from "@/lib/orders/repository";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { ALLOWED_TRANSITIONS } from "@/lib/orders/state-machine";
-import type { OrderEventRow } from "@/lib/db/types";
-import { STATUS_LABELS, statusBadgeVariant, formatMoney, formatDateTime } from "../../../format";
+import type { OrderEventRow, OrderStatus } from "@/lib/db/types";
+import { STATUS_LABELS, formatMoney, formatDateTime } from "../../../format";
 import { requireAdminPage } from "../../../auth";
 import {
   refreshProboStatusAction,
@@ -20,6 +20,33 @@ export const metadata: Metadata = {
   title: "Orderdetail · Admin",
   robots: { index: false, follow: false },
 };
+
+/**
+ * Semantic status pill — mirrors the palette used in the orders table so the
+ * colour language stays identical across the back-office (sage-blue = wachtend,
+ * forest = onderweg, forest-vol = afgerond, gedempt copper = aandacht).
+ */
+const STATUS_TONE: Record<OrderStatus, string> = {
+  cart: styles.pillNeutral,
+  awaiting_payment: styles.pillWait,
+  paid: styles.pillProgress,
+  sent_to_probo: styles.pillProgress,
+  probo_accepted: styles.pillProgress,
+  in_production: styles.pillProgress,
+  shipped: styles.pillDone,
+  payment_failed: styles.pillError,
+  probo_rejected: styles.pillError,
+  cancelled: styles.pillError,
+};
+
+function StatusPill({ status }: { status: OrderStatus }) {
+  return (
+    <span className={`${styles.pill} ${STATUS_TONE[status]}`}>
+      <span className={styles.pillDot} aria-hidden="true" />
+      {STATUS_LABELS[status]}
+    </span>
+  );
+}
 
 /** Read the event timeline for an order (admin client, oldest first). */
 async function getOrderEvents(orderId: string): Promise<OrderEventRow[]> {
@@ -73,7 +100,7 @@ export default async function AdminOrderDetailPage({
           </Link>
           <h1 className={styles.pageTitle}>{order.order_number}</h1>
           <div className={styles.detailMeta}>
-            <Badge variant={statusBadgeVariant(order.status)}>{STATUS_LABELS[order.status]}</Badge>
+            <StatusPill status={order.status} />
             <span className={styles.muted}>{formatDateTime(order.created_at)}</span>
           </div>
         </div>

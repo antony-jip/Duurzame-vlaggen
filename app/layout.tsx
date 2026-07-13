@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Sora, Manrope, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import { Header, Footer } from "@/components/ui";
-import { CartProvider } from "@/components/cart/CartProvider";
-import { getUiCatalog } from "@/lib/i18n";
 
 // Sora — headings, buttons, UI, forms, badges, stats (~70%)
 const sora = Sora({
@@ -30,33 +27,27 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+  // Title template lives here only, so per-page titles read "<Page> | Duurzame
+  // Vlaggen". The homepage sets an absolute title to avoid a doubled suffix.
   title: {
     default: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
     template: "%s | Duurzame Vlaggen",
   },
   description:
-    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 2–4 weken geleverd door Sign Company B.V.",
+    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd door Sign Company B.V.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const catalog = await getUiCatalog();
-
   return (
     <html
       lang="nl"
       className={`${sora.variable} ${manrope.variable} ${bricolage.variable}`}
     >
-      <body>
-        <CartProvider catalog={catalog}>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-        </CartProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

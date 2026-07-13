@@ -60,6 +60,16 @@ export interface OrderItemDraft {
   /** Quantity, mirrored from the Probo `amount` option, for our records. */
   amount: number;
   /**
+   * Human-readable storefront selections (Dutch labels → chosen value), stored
+   * on the order line for the admin. NOT sent to Probo — `options` is.
+   */
+  selections?: Record<string, string>;
+  /**
+   * Storefront choices that have no Probo equivalent (e.g. "Ontwerpservice").
+   * Kept on the order line so staff can handle them manually.
+   */
+  unmapped?: Array<{ label: string; value: string }>;
+  /**
    * Public URL of the customer's uploaded artwork (order-artwork bucket).
    * Passed to Probo as `files:[{uri}]`. Null/undefined for quote-only lines.
    */
@@ -222,7 +232,15 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       probo_product_code: l.draft.proboProductCode,
       product_type: l.draft.productType,
       product_name: l.draft.productName ?? null,
-      configuration: { code: l.draft.proboProductCode, options: l.draft.options } as unknown as Json,
+      configuration: {
+        code: l.draft.proboProductCode,
+        options: l.draft.options,
+        // Human-readable choices + any non-mappable selections, for the admin.
+        ...(l.draft.selections ? { selections: l.draft.selections } : {}),
+        ...(l.draft.unmapped && l.draft.unmapped.length
+          ? { unmapped: l.draft.unmapped }
+          : {}),
+      } as unknown as Json,
       amount: l.draft.amount,
       calculation_id: l.calculationId,
       file_url: l.draft.fileUrl ?? null,

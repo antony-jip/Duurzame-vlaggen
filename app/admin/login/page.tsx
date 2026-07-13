@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Card, Container } from "@/components/ui";
+import Image from "next/image";
 import { getAdminUser } from "../auth";
 import { LoginForm } from "./LoginForm";
 import styles from "./login.module.css";
@@ -18,13 +18,21 @@ export default async function AdminLoginPage() {
   if (user) redirect("/admin");
 
   return (
-    <Container variant="narrow" className={styles.wrap}>
-      <Card elevation="raised" className={styles.panel}>
+    <div className={styles.screen}>
+      <div className={styles.panel}>
+        <Image
+          src="/logo-mark.png"
+          alt="Duurzame Vlaggen"
+          width={56}
+          height={56}
+          className={styles.mark}
+          priority
+        />
         <p className={styles.eyebrow}>Duurzame Vlaggen</p>
         <h1 className={styles.title}>Back-office</h1>
         <p className={styles.subtitle}>Log in met je staff-account.</p>
         <LoginForm />
-      </Card>
-    </Container>
+      </div>
+    </div>
   );
 }

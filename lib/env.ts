@@ -11,8 +11,7 @@
  * not at module import — this keeps `next build` from failing on unrelated code.
  */
 
-function required(name: string): string {
-  const value = process.env[name];
+function required(name: string, value = process.env[name]): string {
   if (!value) {
     throw new Error(
       `Missing required environment variable: ${name}. ` +
@@ -60,16 +59,30 @@ export const serverEnv = {
   },
 } as const;
 
-/** Public values — safe to reference in client and server code. */
+/**
+ * Public values — safe to reference in client and server code.
+ *
+ * Client bundles only receive NEXT_PUBLIC_ vars where Next.js can inline a
+ * LITERAL `process.env.NEXT_PUBLIC_X` expression at compile time — a dynamic
+ * `process.env[name]` lookup stays undefined in the browser. Hence each getter
+ * passes the literal read into `required` instead of letting it look the var
+ * up by name.
+ */
 export const publicEnv = {
   get supabaseUrl() {
-    return required("NEXT_PUBLIC_SUPABASE_URL");
+    return required(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+    );
   },
   get supabaseAnonKey() {
-    return required("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    return required(
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    );
   },
   /** Canonical app URL — used to build Mollie/Probo callback & return URLs. */
   get appUrl() {
-    return required("NEXT_PUBLIC_APP_URL");
+    return required("NEXT_PUBLIC_APP_URL", process.env.NEXT_PUBLIC_APP_URL);
   },
 } as const;

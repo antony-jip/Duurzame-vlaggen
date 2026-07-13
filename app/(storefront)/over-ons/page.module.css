@@ -1,0 +1,412 @@
+/* ==========================================================================
+   Over ons — Sign Company B.V., ambacht & missie.
+   Doorgetrokken merkstijl van de homepage: forest full-bleed hero, donker
+   filmisch probleem-blok, forest missie-kleurblok tussen wapper-golven,
+   gekantelde kleurchips. Styleguide V5.0 "Sora", bold-disruptor.
+   ========================================================================== */
+
+/* ---- Section rhythm ---- */
+.section {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.sectionTight {
+  padding-block: clamp(48px, 5vw, 96px);
+}
+.sectionHead {
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+
+/* ==========================================================================
+   HERO — egaal forest vlak, foto in de organische wapper-vorm.
+   ========================================================================== */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-forest);
+}
+.heroInner {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  min-height: clamp(460px, 64vh, 680px);
+  padding-block: clamp(40px, 6vh, 88px);
+}
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+.heroEyebrow {
+  animation: fade-in-up var(--duration-slow) var(--ease-out) both;
+}
+.heroTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(40px, 5.6vw, 84px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 60ms both;
+}
+.heroAccent {
+  color: #eaa886;
+}
+.heroSub {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(17px, 1.9vw, 21px);
+  line-height: 1.6;
+  max-width: 48ch;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 140ms both;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 220ms both;
+}
+.heroBlob {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-height: clamp(340px, 54vh, 560px);
+  width: 100%;
+  justify-self: end;
+  overflow: hidden;
+  border-radius: 54% 46% 58% 42% / 46% 54% 46% 54%;
+  box-shadow: var(--shadow-lg);
+  animation: blob-drift 14s var(--ease-in-out) infinite alternate;
+}
+.heroPhoto {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+@keyframes blob-drift {
+  0% {
+    border-radius: 54% 46% 58% 42% / 46% 54% 46% 54%;
+  }
+  50% {
+    border-radius: 46% 54% 44% 56% / 56% 44% 58% 42%;
+  }
+  100% {
+    border-radius: 58% 42% 56% 44% / 44% 58% 42% 56%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroBlob {
+    animation: none;
+  }
+}
+.heroWave {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  margin-top: auto;
+}
+@media (max-width: 900px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroBlob {
+    order: -1;
+    justify-self: center;
+    max-width: 440px;
+  }
+}
+
+/* ==========================================================================
+   HET PROBLEEM — donker filmisch blok, confronterend. Regel onthult op scroll.
+   ========================================================================== */
+.problem {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-forest) 72%, #0d1f18);
+  padding-block: clamp(80px, 11vw, 168px);
+}
+.problemInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(20px, 3vw, 40px);
+  max-width: 1100px;
+}
+.problemKicker {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+}
+.problemLine {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 4.4vw, 62px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+.problemAccent {
+  color: #eaa886;
+}
+.problemBody {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 56ch;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .problemLine {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 55%;
+    }
+  }
+}
+
+/* ==========================================================================
+   MISSIE — forest kleurblok tussen wapper-golven, statement kolossaal +
+   zwevende glass stat-chips.
+   ========================================================================== */
+.mission {
+  margin-block: clamp(24px, 3vw, 48px);
+}
+.wave {
+  display: block;
+  width: 100%;
+  height: clamp(32px, 5vw, 72px);
+  color: var(--color-forest);
+}
+.waveBottom {
+  transform: scaleY(-1);
+}
+.missionBlock {
+  position: relative;
+  background: var(--color-forest);
+  overflow: hidden;
+}
+.missionInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  padding-block: clamp(56px, 7vw, 104px);
+}
+.missionEyebrow {
+  display: inline-flex;
+  background: var(--color-copper-rust);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-copper);
+  font-family: var(--font-eyebrow);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+.missionTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(38px, 5.6vw, 78px);
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.missionAccent {
+  color: #eaa886;
+}
+.missionBody {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.65;
+  max-width: 58ch;
+}
+.missionStats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+.missionStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 168px;
+  padding: 20px 26px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-lg);
+  animation: float 5s var(--ease-in-out) infinite;
+}
+.missionStat:nth-child(2) {
+  animation-delay: -1.6s;
+}
+.missionStat:nth-child(3) {
+  animation-delay: -3.2s;
+}
+.missionStatValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.missionStatLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ==========================================================================
+   WAARDEN — drie beloftes met gekantelde kleurchips (USP-taal).
+   ========================================================================== */
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+}
+.value {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+.valueIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.value:nth-child(2) .valueIcon {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.value:nth-child(3) .valueIcon {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.value:hover .valueIcon {
+  transform: rotate(0deg) translateY(-4px);
+}
+.value h3 {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.value p {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .value {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .value:nth-child(2) {
+      animation-range: entry 12% entry 55%;
+    }
+    .value:nth-child(3) {
+      animation-range: entry 19% entry 65%;
+    }
+  }
+}
+@media (max-width: 820px) {
+  .valuesGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+/* ==========================================================================
+   CTA-BAND — terracotta kleurblok (homepage-echo).
+   ========================================================================== */
+.ctaBand {
+  background: var(--color-terracotta);
+  border-radius: var(--radius-2xl);
+  padding: clamp(48px, 6vw, 96px);
+}
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  max-width: 760px;
+  margin-inline: auto;
+}
+.ctaTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(36px, 4.5vw, 64px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.ctaSub {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.6;
+}
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+.ctaLink {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ctaLink:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+@media (max-width: 560px) {
+  .ctaActions {
+    flex-direction: column;
+    width: 100%;
+  }
+}

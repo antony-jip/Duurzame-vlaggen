@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Orderbevestiging — merk-eigen bevestiging: forest kleurblok met check-chip,
+   daaronder de besteldetails.
+   ========================================================================== */
+
+.page {
+  padding-block: var(--space-2xl) var(--space-4xl);
+  max-width: 760px;
+}
+
+/* Forest kleurblok — echo van de missie- en CTA-banden op de homepage. */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: clamp(32px, 5vw, 56px);
+  margin-bottom: var(--space-xl);
+  border-radius: var(--radius-2xl);
+  background: var(--color-forest);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+/* Gekantelde witte check-chip — het speelse merkmotief, feestelijk. */
+.checkChip {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  transform: rotate(-4deg);
+  box-shadow: var(--shadow-md);
+}
+.orderTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.heroTitle {
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(32px, 4.5vw, 52px);
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.heroSub {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.card {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cellLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+.cellValue {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.total .cellValue {
+  color: var(--color-forest);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--forest-6);
+}
+
+.addressBlock {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-charcoal);
+}
+.addressBlock .cellLabel {
+  margin-bottom: 4px;
+}
+
+.actions {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -32,6 +32,14 @@ export interface CartItem {
   /** Human size label, e.g. "250 × 100 cm". */
   sizeLabel: string;
   /**
+   * Flag dimensions in cm (from the catalogue `sizes[]`), used to check the
+   * uploaded artwork's resolution/aspect ratio. Absent on hardware lines and on
+   * carts persisted before this field existed (the winkelmand falls back to
+   * parsing `sizeLabel`).
+   */
+  widthCm?: number;
+  heightCm?: number;
+  /**
    * Public URL of the customer's uploaded artwork (order-artwork bucket), set
    * on the winkelmand page. Null until a file is attached; passed to the order
    * as `file_url` and on to Probo as `files:[{uri}]`.
@@ -39,4 +47,14 @@ export interface CartItem {
   fileUrl?: string | null;
   /** Original filename of the uploaded artwork, for display. */
   fileName?: string | null;
+  /**
+   * Storage object key (`${uuid}-${safeName}`) of the uploaded artwork. Needed
+   * to delete the file on replace/remove. Null when no file is attached.
+   */
+  filePath?: string | null;
+  /**
+   * Non-blocking warnings about the uploaded artwork (low resolution, aspect
+   * ratio mismatch). Persisted so they survive a reload.
+   */
+  fileWarnings?: string[];
 }

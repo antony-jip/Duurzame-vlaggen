@@ -89,9 +89,85 @@ export function Truck({ size = 18, ...props }: IconProps) {
 export function Menu({ size = 24, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      <path d="M4 6h16" />
-      <path d="M4 12h16" />
-      <path d="M4 18h16" />
+      <path d="M3 6h18" />
+      <path d="M3 12h18" />
+      <path d="M3 18h18" />
+    </svg>
+  );
+}
+
+export function Close({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
+export function Bag({ size = 22, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
+
+/* ---- Vlagtype-pictogrammen — rustige merkeigen producticonen ---- */
+
+export function FlagBanier({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      {/* Staande rechthoekige banier langs de mast, met een lichte golf
+         in de onderrand. */}
+      <path d="M6 2v20" />
+      <path d="M6 3h11" />
+      <path d="M17 3v13.4c-3.7 1.3-7.3-1.3-11 0" />
+      <path d="M4 22h4" />
+    </svg>
+  );
+}
+
+export function FlagMast({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M5 2v20" />
+      <path d="M5 4c4-1.6 6 1.6 10 0 1.6-.6 3-.6 4 0v7c-1-.6-2.4-.6-4 0-4 1.6-6-1.6-10 0" />
+      <path d="M3 22h4" />
+    </svg>
+  );
+}
+
+export function FlagBeach({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M7 22c0-9 .5-16 3-20" />
+      <path d="M10 2c6 1 8 7 7 15-2.5-2-5-2.5-8-2" />
+      <path d="M5 22h5" />
+    </svg>
+  );
+}
+
+export function FlagGevel({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      {/* Muur, schuine uithouder, en een banier die eraan hangt. */}
+      <path d="M5 2v20" />
+      <path d="M5 9l11-4" />
+      <path d="M16 5v9.6c-1.5-.9-3-.9-4.4 0V6.6" />
+    </svg>
+  );
+}
+
+export function FlagPole({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M12 22V4" />
+      <circle cx="12" cy="3" r="1" />
+      <path d="M8 22h8" />
+      <path d="M10 19h4" />
     </svg>
   );
 }

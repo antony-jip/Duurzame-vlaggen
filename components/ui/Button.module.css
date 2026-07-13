@@ -10,7 +10,6 @@
   gap: 10px;
   padding: 20px 36px;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
   cursor: pointer;
   text-decoration: none;
   border: none;
@@ -54,6 +53,7 @@
 .primary {
   background: var(--color-forest);
   color: #fff;
+  box-shadow: var(--shadow-md);
 }
 .primary:hover {
   background: var(--color-terracotta);
@@ -62,10 +62,13 @@
   box-shadow: var(--shadow-terracotta-md);
 }
 
+/* Secondary is a light-on-light button: it reads as an outline, so the
+   resting shadow stays whisper-soft and only lifts on hover. */
 .secondary {
   background: #fff;
   color: var(--color-forest);
-  border: 3px solid var(--forest-6);
+  border: 2px solid var(--forest-6);
+  box-shadow: var(--shadow-xs);
 }
 .secondary:hover {
   background: var(--color-sage-blue);

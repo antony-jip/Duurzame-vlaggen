@@ -1,19 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Footer.module.css";
 import { Container } from "./Container";
-import { Leaf } from "./Icon";
+import { ArrowRight } from "./Icon";
+import { getAllProducts } from "@/lib/catalog/products";
 
-const PRODUCT_LINKS = [
-  { href: "/collectie/baniervlaggen", label: "Baniervlaggen" },
-  { href: "/collectie/mastvlaggen", label: "Mastvlaggen" },
-  { href: "/collectie/gevelvlaggen", label: "Gevelvlaggen" },
-  { href: "/collectie/beachflags", label: "Beachflags" },
-];
+// Derive from the catalogue so slugs never drift from the real product pages.
+const PRODUCT_LINKS = getAllProducts().map((p) => ({
+  href: `/collectie/${p.slug}`,
+  label: p.name,
+}));
 
 const COMPANY_LINKS = [
   { href: "/over-ons", label: "Over ons" },
   { href: "/duurzaamheid", label: "Duurzaamheid" },
-  { href: "/offerte", label: "Offerte aanvragen" },
+  { href: "/contact", label: "Offerte aanvragen" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -21,20 +22,44 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footerWrap}>
+      {/* Wapper-golf de footer in — zelfde overgang als hero en missieband. */}
+      <svg
+        className={styles.topWave}
+        viewBox="0 0 1440 72"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
+          fill="currentColor"
+        />
+      </svg>
+      <div className={styles.footer}>
       <Container>
+        {/* Oversized sign-off — the brand thesis as a closing statement. */}
+        <div className={styles.signoff}>
+          <span className={styles.kicker}>Sign Company B.V.</span>
+          <p className={styles.statement}>
+            Laat je merk <em>wapperen</em>, niet de planeet belasten.
+          </p>
+          <Link href="/contact" className={styles.signoffLink}>
+            Vraag een gratis staal aan <ArrowRight size={20} />
+          </Link>
+        </div>
+
         <div className={styles.grid}>
           <div className={styles.brandCol}>
-            <span className={styles.brand}>
-              <span className={styles.mark} aria-hidden="true">
-                <Leaf size={18} />
-              </span>
-              duurzame&nbsp;<b>vlaggen</b>
-            </span>
+            <Image
+              src="/logo-full-light.png"
+              alt="Duurzame Vlaggen"
+              width={280}
+              height={27}
+              className={styles.logo}
+            />
             <p className={styles.tagline}>
               Biologisch afbreekbare vlaggen voor bedrijven die hun merk laten
-              wapperen zonder de planeet te belasten. Een initiatief van Sign
-              Company B.V.
+              wapperen zonder de planeet te belasten.
             </p>
           </div>
 
@@ -57,7 +82,7 @@ export function Footer() {
             </h2>
             <div className={styles.list}>
               {COMPANY_LINKS.map((item) => (
-                <Link key={item.href} href={item.href}>
+                <Link key={item.label} href={item.href}>
                   {item.label}
                 </Link>
               ))}
@@ -68,11 +93,11 @@ export function Footer() {
             <h2 className={styles.colTitle}>Contact</h2>
             <address className={styles.contact}>
               <span>Sign Company B.V.</span>
-              <a href="mailto:hallo@duurzame-vlaggen.nl">
-                hallo@duurzame-vlaggen.nl
+              <span>Enkhuizen, Nederland</span>
+              <a href="mailto:info@duurzame-vlaggen.nl">
+                info@duurzame-vlaggen.nl
               </a>
-              <a href="tel:+31850000000">085 000 00 00</a>
-              <span>Nederland</span>
+              <a href="tel:+31850608963">085 060 8963</a>
             </address>
           </div>
         </div>
@@ -87,6 +112,7 @@ export function Footer() {
           </div>
         </div>
       </Container>
+      </div>
     </footer>
   );
 }

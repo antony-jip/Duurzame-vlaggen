@@ -1,65 +1,76 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useCart } from "./CartProvider";
+import { ArtworkUploadModal } from "./ArtworkUploadModal";
 import styles from "./ArtworkUpload.module.css";
 
 /**
- * Per-line artwork upload for the winkelmand. Posts the chosen file to
- * `/api/artwork`, which stores it in the public order-artwork bucket and returns
- * a public URL; that URL is saved on the cart line (`fileUrl`) and later handed
- * to Probo as `files:[{uri}]`. Purely presentational state — the source of
- * truth is the cart in localStorage.
+ * Per-line artwork upload for the winkelmand.
+ *
+ * The actual upload flow (client sniff → sign → uploadToSignedUrl → finalize)
+ * lives in {@link ArtworkUploadModal}, a native <dialog> pop-up. This component
+ * renders the compact cart-line summary (thumbnail, name, ✓/⚠︎ badge, warnings)
+ * and opens the modal for uploading/replacing. The finalized file is committed
+ * to the cart line here via `setItemFile`; on a replace we clean up the file we
+ * just replaced. Removing a file does not need the modal.
  */
+
 export function ArtworkUpload({
   itemId,
   fileUrl,
   fileName,
+  filePath,
+  fileWarnings,
+  widthCm,
+  heightCm,
 }: {
   itemId: string;
   fileUrl?: string | null;
   fileName?: string | null;
+  filePath?: string | null;
+  fileWarnings?: string[];
+  widthCm?: number;
+  heightCm?: number;
 }) {
   const { setItemFile } = useCart();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = ""; // allow re-picking the same file
-    if (!file) return;
-    setError(null);
-    setBusy(true);
+  async function deleteOrphan(path: string): Promise<void> {
+    // Best-effort; a leftover file is swept by scripts/cleanup-artwork.ts.
     try {
-      const body = new FormData();
-      body.append("file", file);
-      const res = await fetch("/api/artwork", { method: "POST", body });
-      const data = (await res.json()) as { url?: string; name?: string; error?: string };
-      if (!res.ok || !data.url) {
-        setError(data.error ?? "Uploaden mislukt.");
-        return;
-      }
-      setItemFile(itemId, data.url, data.name ?? file.name);
+      await fetch("/api/artwork", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path }),
+      });
     } catch {
-      setError("Uploaden mislukt. Controleer je verbinding.");
-    } finally {
-      setBusy(false);
+      // ignore
     }
   }
 
-  const isImage = /\.(jpe?g|png)$/i.test(fileName ?? "") || /\.(jpe?g|png)$/i.test(fileUrl ?? "");
+  function onConfirm(url: string, name: string, path: string, warnings: string[]) {
+    const previousPath = filePath ?? null;
+    setItemFile(itemId, url, name, path, warnings);
+    // Replace succeeded → clean up the file we just replaced.
+    if (previousPath && previousPath !== path) void deleteOrphan(previousPath);
+  }
+
+  async function onRemove() {
+    setBusy(true);
+    const path = filePath ?? null;
+    setItemFile(itemId, null, null, null, []);
+    if (path) await deleteOrphan(path);
+    setBusy(false);
+  }
+
+  const isImage =
+    /\.(jpe?g|png)$/i.test(fileName ?? "") || /\.(jpe?g|png)$/i.test(fileUrl ?? "");
+  const warnings = fileWarnings ?? [];
 
   return (
     <div className={styles.wrap}>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/jpeg,image/png,application/pdf"
-        className={styles.input}
-        onChange={onPick}
-        aria-label="Ontwerpbestand uploaden"
-      />
       {fileUrl ? (
         <div className={styles.done}>
           {/* Preview zodat de klant zijn ontwerp terugziet. */}
@@ -79,16 +90,22 @@ export function ArtworkUpload({
           </a>
           <div className={styles.doneMeta}>
             <span className={styles.doneLabel}>
-              <span className={styles.check} aria-hidden="true">
-                ✓
-              </span>
+              {warnings.length > 0 ? (
+                <span className={styles.warnBadge} aria-hidden="true">
+                  ⚠︎
+                </span>
+              ) : (
+                <span className={styles.check} aria-hidden="true">
+                  ✓
+                </span>
+              )}
               <span className={styles.fileName}>{fileName ?? "Ontwerp"}</span>
             </span>
             <span className={styles.doneActions}>
               <button
                 type="button"
                 className={styles.link}
-                onClick={() => inputRef.current?.click()}
+                onClick={() => setModalOpen(true)}
                 disabled={busy}
               >
                 Vervangen
@@ -96,10 +113,10 @@ export function ArtworkUpload({
               <button
                 type="button"
                 className={styles.link}
-                onClick={() => setItemFile(itemId, null, null)}
+                onClick={onRemove}
                 disabled={busy}
               >
-                Verwijderen
+                {busy ? "Bezig…" : "Verwijderen"}
               </button>
             </span>
           </div>
@@ -108,13 +125,29 @@ export function ArtworkUpload({
         <button
           type="button"
           className={styles.upload}
-          onClick={() => inputRef.current?.click()}
-          disabled={busy}
+          onClick={() => setModalOpen(true)}
         >
-          {busy ? "Bezig met uploaden…" : "＋ Ontwerp uploaden (PDF/JPG/PNG)"}
+          ＋ Ontwerp uploaden (PDF/JPG/PNG)
         </button>
       )}
-      {error && <span className={styles.error}>{error}</span>}
+
+      {warnings.length > 0 && (
+        <ul className={styles.warnings}>
+          {warnings.map((w) => (
+            <li key={w} className={styles.warning}>
+              <span aria-hidden="true">⚠︎</span> {w}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <ArtworkUploadModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={onConfirm}
+        widthCm={widthCm}
+        heightCm={heightCm}
+      />
     </div>
   );
 }

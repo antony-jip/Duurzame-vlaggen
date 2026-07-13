@@ -1,0 +1,1164 @@
+/* ==========================================================================
+   Homepage — Styleguide V5.0 "Sora Edition", bold-disruptor uitvoering.
+   Full-bleed hero met kolossale Sora-kop; daarna kaart-secties op off-white.
+   ========================================================================== */
+
+/* ---- Section rhythm ---- */
+.section {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.sectionTight {
+  padding-block: clamp(48px, 5vw, 96px);
+}
+.sectionHead {
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.sectionHead .lead {
+  color: var(--color-stone);
+}
+
+/* ==========================================================================
+   HERO — Dopper-clean: egaal forest vlak, korte pakkende zin, foto in een
+   organische wapper-vorm
+   ========================================================================== */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-forest);
+}
+
+/* ---- Microplastic-snippers: het probleem, ambient in beeld ---- */
+.heroParticles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.speck {
+  position: absolute;
+  display: block;
+  background: rgba(247, 245, 242, 0.45);
+  border-radius: 1.5px;
+  animation-name: speck-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+/* Elke snipper dwarrelt schuin omhoog, kantelt, en lost op — zoals plastic
+   dat uit een verweerde vlag waait. */
+@keyframes speck-drift {
+  0% {
+    transform: translate(0, 20px) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(46px, -110px) rotate(200deg);
+    opacity: 0;
+  }
+}
+/* Rond onze vlag (rechterhelft) lossen de snippers op. */
+.heroParticles {
+  mask-image: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 42%,
+    rgba(0, 0, 0, 0.25) 62%,
+    transparent 82%
+  );
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 42%,
+    rgba(0, 0, 0, 0.25) 62%,
+    transparent 82%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .speck {
+    animation: none;
+    opacity: 0.25;
+  }
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+  min-height: clamp(540px, 78vh, 820px);
+  padding-block: clamp(40px, 6vh, 88px);
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.heroTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(56px, 7.5vw, 116px);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) both;
+}
+.heroAccent {
+  color: #eaa886;
+}
+
+.heroSub {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(17px, 1.9vw, 21px);
+  line-height: 1.6;
+  max-width: 42ch;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 100ms both;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 200ms both;
+}
+.heroFrom {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* De wapper-vorm: organische blob die zachtjes golft — ons druppel-moment. */
+.heroBlob {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-height: clamp(380px, 62vh, 660px);
+  width: 100%;
+  justify-self: end;
+  overflow: hidden;
+  border-radius: 58% 42% 56% 44% / 48% 56% 44% 52%;
+  animation: blob-drift 14s var(--ease-in-out) infinite alternate;
+}
+
+/* Scroll-driven parallax (pure CSS, animation-timeline) — de blob beweegt
+   subtiel mee met het scrollen. Progressive enhancement. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .heroBlob {
+      animation:
+        blob-drift 14s var(--ease-in-out) infinite alternate,
+        blob-parallax linear both;
+      animation-timeline: auto, view();
+      animation-range: normal, exit 0% exit 100%;
+    }
+  }
+}
+@keyframes blob-parallax {
+  to {
+    transform: translateY(64px) scale(0.97);
+  }
+}
+
+/* Golf-overgang onderaan de hero, in de kleur van de volgende sectie. */
+.heroWave {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  margin-top: auto;
+}
+.heroPhoto {
+  object-fit: cover;
+  object-position: 62% 30%;
+  /* SVG-displacement: het doek in de foto golft echt (home-fx WapperFilter). */
+  filter: url(#wapper);
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroPhoto {
+    filter: none;
+  }
+}
+
+@keyframes blob-drift {
+  0% {
+    border-radius: 58% 42% 56% 44% / 48% 56% 44% 52%;
+  }
+  50% {
+    border-radius: 46% 54% 44% 56% / 56% 44% 58% 42%;
+  }
+  100% {
+    border-radius: 54% 46% 60% 40% / 44% 58% 42% 56%;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroBlob {
+    order: -1;
+    justify-self: center;
+    max-width: 480px;
+  }
+}
+@media (max-width: 560px) {
+  .heroActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+}
+
+/* ==========================================================================
+   HET VERHAAL — donker filmisch blok, regels onthullen op scroll
+   ========================================================================== */
+.story {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-forest) 72%, #0d1f18);
+  padding-block: clamp(88px, 12vw, 180px);
+}
+.storyParticles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.storyInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(20px, 3vw, 40px);
+  max-width: 1100px;
+}
+.storyKicker {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+}
+.storyLine {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 64px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.storyLine:nth-of-type(3) {
+  color: rgba(255, 255, 255, 0.72);
+}
+.storyTurn {
+  color: #eaa886;
+  margin-top: clamp(12px, 2vw, 28px);
+}
+/* Live afbraak-teller — tikt door terwijl je leest. */
+.storyCounter {
+  margin-top: clamp(20px, 3vw, 36px);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+}
+.storyCounterNum {
+  display: inline-block;
+  min-width: 4.5ch;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.35em;
+  letter-spacing: -0.01em;
+  color: #eaa886;
+  font-variant-numeric: tabular-nums;
+}
+.storyFootnote {
+  color: rgba(255, 255, 255, 0.4);
+}
+.storyFootnoteText {
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.38);
+  max-width: 48ch;
+}
+
+/* Regels komen één voor één binnen terwijl je scrolt. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .storyLine {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 55%;
+    }
+    .storyTurn {
+      animation-range: entry 25% entry 75%;
+    }
+  }
+}
+
+/* ==========================================================================
+   DE NO-BRAINER — gewone vlag vs duurzame vlag
+   ========================================================================== */
+.brainer {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+.brainerGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+.brainerCard {
+  border-radius: var(--radius-2xl);
+  padding: clamp(28px, 3.5vw, 52px);
+}
+.brainerCard h3 {
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-md);
+}
+.brainerCard ul {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.brainerCard li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.brainerCard li::before {
+  content: attr(data-mark);
+  font-family: var(--font-ui);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+/* De oude wereld: vaal, stoffig, licht doorgestreept gevoel. */
+.brainerOld {
+  background: rgba(139, 141, 122, 0.14);
+  color: var(--color-stone);
+}
+.brainerOld h3 {
+  color: var(--color-stone);
+}
+.brainerOld li::before {
+  color: var(--color-stone);
+}
+/* De nieuwe wereld: vol forest, levend. */
+.brainerNew {
+  background: var(--color-forest);
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-lg);
+  transform: rotate(0.6deg);
+}
+.brainerNew h3 {
+  color: #fff;
+}
+.brainerNew li::before {
+  color: #eaa886;
+}
+.brainerPunch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: clamp(32px, 4vw, 56px);
+}
+.brainerPunchline {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 42px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-charcoal);
+}
+.brainerPunchline span {
+  color: var(--color-terracotta);
+}
+@media (max-width: 860px) {
+  .brainerGrid {
+    grid-template-columns: 1fr;
+  }
+  .brainerNew {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   USP's — vier witte kaarten met forest-iconen
+   ========================================================================== */
+.uspGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+/* Clean: geen kaart-dozen — icoon, kop, tekst op het vlak zelf.
+   Interactie: scroll-reveal per blok + tactiele hover. */
+.usp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  cursor: default;
+}
+/* Terracotta onderstreep-sweep bij hover. */
+.usp::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--forest-8);
+  transition:
+    width var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out);
+}
+.usp:hover::before {
+  width: 72px;
+  background: var(--color-terracotta);
+}
+
+/* Staggered scroll-reveal — pure CSS view-timeline (Next 16-era browsers);
+   valt stil terug op gewoon tonen waar niet ondersteund. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .usp {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .usp:nth-child(2) {
+      animation-range: entry 12% entry 55%;
+    }
+    .usp:nth-child(3) {
+      animation-range: entry 19% entry 65%;
+    }
+    .usp:nth-child(4) {
+      animation-range: entry 26% entry 75%;
+    }
+  }
+}
+/* Volle merkkleur-blokjes met wit icoon, speels gekanteld — zelfde bold
+   taal als de collectie-tegels. */
+.uspIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.usp:nth-child(2) .uspIcon {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.usp:nth-child(3) .uspIcon {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.usp:nth-child(4) .uspIcon {
+  background: var(--color-sage-purple);
+  transform: rotate(3deg);
+}
+.usp:hover .uspIcon {
+  transform: rotate(0deg) translateY(-4px);
+}
+.usp h3 {
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.usp p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+
+@media (max-width: 1100px) {
+  .uspGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .uspGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   COLLECTIE-SHOWCASE — featured groot + grid, echte fotografie
+   ========================================================================== */
+.showcase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.showcaseCard {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  color: var(--color-charcoal);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.showcaseCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  color: var(--color-charcoal);
+}
+
+/* Featured — forest kleurvlak (echo van de hero) met de foto in de
+   wapper-vorm: de secties spreken dezelfde taal. */
+.featured {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  border-radius: var(--radius-2xl);
+  background: var(--color-forest);
+  box-shadow: none;
+}
+.featured:hover {
+  box-shadow: var(--shadow-lg);
+}
+.featuredMedia {
+  position: relative;
+  min-height: clamp(280px, 32vw, 460px);
+  margin: clamp(20px, 2.5vw, 36px);
+  border-radius: 56% 44% 58% 42% / 50% 54% 46% 50%;
+  overflow: hidden;
+}
+.featuredBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: clamp(28px, 4vw, 64px);
+  padding-left: 0;
+}
+.featuredBody h3 {
+  font-size: clamp(28px, 3vw, 42px);
+  color: #fff;
+}
+.featuredBody p {
+  color: rgba(255, 255, 255, 0.8);
+}
+.featured .showcasePrice {
+  color: rgba(255, 255, 255, 0.75);
+}
+.featured .showcasePrice b {
+  color: #fff;
+}
+.featured .exVat {
+  color: rgba(255, 255, 255, 0.6);
+}
+.featured .showcaseCta {
+  color: #eaa886;
+}
+.featured:hover .showcaseCta {
+  color: #fff;
+}
+
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-md);
+}
+/* Foto in een zachte wapper-vorm (featured) — motief van hero. */
+.showcaseMedia {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 14px;
+  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
+  overflow: hidden;
+}
+.showcasePhoto {
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+.showcaseCard:hover .showcasePhoto {
+  transform: scale(1.05) rotate(-1.5deg);
+}
+
+/* Merkeigen pictogram-tegels: groot vlagtype-icoon in de accentkleur op een
+   witte wapper-vorm; wappert bij hover. */
+.showcaseIconWrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
+}
+.showcaseIconWrap svg {
+  stroke-width: 1.4;
+  transform-origin: 30% 85%;
+  transition: transform var(--duration-base) var(--ease-out);
+  /* De vlaggen wapperen zachtjes door — het merk leeft. */
+  animation: flag-sway 5.5s var(--ease-in-out) infinite;
+}
+.showcaseCard:nth-child(2) .showcaseIconWrap svg {
+  animation-delay: -1.1s;
+}
+.showcaseCard:nth-child(3) .showcaseIconWrap svg {
+  animation-delay: -2.2s;
+}
+.showcaseCard:nth-child(4) .showcaseIconWrap svg {
+  animation-delay: -3.3s;
+}
+.showcaseCard:nth-child(5) .showcaseIconWrap svg {
+  animation-delay: -4.4s;
+}
+@keyframes flag-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+.showcaseCard[data-accent="forest"] .showcaseIconWrap svg {
+  color: var(--color-forest);
+}
+.showcaseCard[data-accent="sage-blue"] .showcaseIconWrap svg {
+  color: var(--color-sage-blue);
+}
+.showcaseCard[data-accent="terracotta"] .showcaseIconWrap svg {
+  color: var(--color-terracotta);
+}
+.showcaseCard[data-accent="sage-purple"] .showcaseIconWrap svg {
+  color: var(--color-sage-purple);
+}
+.showcaseCard[data-accent="copper-rust"] .showcaseIconWrap svg {
+  color: var(--color-copper-rust);
+}
+@keyframes flag-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-4deg);
+  }
+  65% {
+    transform: rotate(2.5deg);
+  }
+}
+.showcaseCard:hover .showcaseIconWrap svg {
+  animation: flag-wiggle 0.9s var(--ease-in-out);
+}
+
+/* Volle merkkleur-vlakken per product — bold disruptor, geen fluistertint. */
+.showcaseCard[data-accent="forest"] {
+  background: var(--color-forest);
+}
+.showcaseCard[data-accent="sage-blue"] {
+  background: var(--color-sage-blue);
+}
+.showcaseCard[data-accent="terracotta"] {
+  background: var(--color-terracotta);
+}
+.showcaseCard[data-accent="sage-purple"] {
+  background: var(--color-sage-purple);
+}
+.showcaseCard[data-accent="copper-rust"] {
+  background: var(--color-copper-rust);
+}
+
+/* Witte typografie op de kleurvlakken. */
+.showcaseCard[data-accent] {
+  border-radius: var(--radius-2xl);
+}
+.showcaseCard[data-accent] .showcaseBody h3 {
+  color: #fff;
+  font-weight: 800;
+}
+.showcaseCard[data-accent] .showcaseBody p {
+  color: rgba(255, 255, 255, 0.78);
+}
+.showcaseCard[data-accent] .showcasePrice {
+  color: rgba(255, 255, 255, 0.7);
+}
+.showcaseCard[data-accent] .showcasePrice b {
+  color: #fff;
+}
+/* Speelse kanteling bij hover — elke vlag wappert zijn eigen kant op. */
+.showcaseCard[data-accent]:hover {
+  transform: translateY(-6px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+}
+.showcaseCard[data-accent]:nth-child(even):hover {
+  transform: translateY(-6px) rotate(1deg);
+}
+.showcaseBadge {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+}
+.showcaseTag {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  background: rgba(255, 255, 255, 0.92);
+}
+.showcaseBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-md);
+}
+.showcaseBody h3 {
+  font-size: 20px;
+}
+.showcaseBody p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+.showcasePrice {
+  margin-top: 6px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-stone);
+}
+.showcasePrice b {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+.exVat {
+  font-size: 12px;
+  color: var(--color-stone);
+}
+.showcaseCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-sm);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-forest);
+}
+.showcaseCard:hover .showcaseCta {
+  color: var(--color-terracotta);
+}
+
+@media (max-width: 1180px) {
+  .showcaseGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .showcaseGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .showcaseGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   MISSIE — forest kleurblok tussen wapper-golven, merkstatement kolossaal
+   ========================================================================== */
+.mission {
+  margin-block: clamp(24px, 3vw, 48px);
+}
+.wave {
+  display: block;
+  width: 100%;
+  height: clamp(32px, 5vw, 72px);
+  color: var(--color-forest);
+}
+.waveBottom {
+  transform: scaleY(-1);
+}
+.missionBlock {
+  position: relative;
+  background: var(--color-forest);
+  overflow: hidden;
+}
+/* Clean: egaal vlak — geen achtergrond-patroon. */
+.missionInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  padding-block: clamp(56px, 7vw, 104px);
+}
+.missionEyebrow {
+  display: inline-flex;
+  background: var(--color-copper-rust);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-copper);
+  font-family: var(--font-eyebrow);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+.missionTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.missionAccent {
+  color: #eaa886;
+}
+.missionBody {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.65;
+  max-width: 52ch;
+}
+.missionStats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+/* Glass stat-chips die zachtjes zweven (V5.0 float). */
+.missionStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 168px;
+  padding: 18px 26px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-lg);
+  animation: float 5s var(--ease-in-out) infinite;
+}
+.missionStat:nth-child(2) {
+  animation-delay: -1.6s;
+}
+.missionStat:nth-child(3) {
+  animation-delay: -3.2s;
+}
+.missionStatValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.missionStatLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ==========================================================================
+   HET DOEK — craft-band met weefsel-fotografie
+   ========================================================================== */
+/* Op het doorlopende off-white vlak — geen witte band-sprong na de golf. */
+.craft {
+  background: transparent;
+}
+.craftInner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 96px);
+  align-items: center;
+  padding-block: clamp(64px, 7vw, 112px);
+}
+/* Zelfde organische wapper-vorm als de hero — het terugkerende merkmotief. */
+.craftMedia {
+  position: relative;
+  min-height: clamp(320px, 36vw, 560px);
+  border-radius: 54% 46% 58% 42% / 46% 54% 46% 54%;
+  overflow: hidden;
+}
+.craftPhoto {
+  object-fit: cover;
+}
+.craftBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+.craftBody h2 {
+  max-width: 16ch;
+}
+.craftBody p {
+  color: var(--color-stone);
+  max-width: 48ch;
+}
+.craftList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+.craftList li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-charcoal);
+}
+.craftList svg {
+  flex-shrink: 0;
+  color: var(--color-forest);
+}
+
+@media (max-width: 900px) {
+  .craftInner {
+    grid-template-columns: 1fr;
+  }
+  .craftMedia {
+    order: -1;
+    min-height: clamp(260px, 56vw, 440px);
+  }
+}
+
+/* ==========================================================================
+   STAPPEN — echte volgorde, uniform forest genummerd
+   ========================================================================== */
+.stepsBand {
+  background: var(--forest-3);
+}
+.stepsWrap {
+  position: relative;
+}
+/* De wapper-lijn achter de nummers — tekent zichzelf op scroll. */
+.stepsLine {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  width: calc(100% - 44px);
+  height: 44px;
+  pointer-events: none;
+}
+.stepsLine path {
+  fill: none;
+  stroke: var(--forest-8);
+  stroke-width: 2;
+  stroke-dasharray: 6 7;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stepsLine path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+}
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+/* Genummerde merkchips — zelfde taal als USP's en mega-menu. */
+.stepNum {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.step:nth-child(2) .stepNum {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.step:nth-child(3) .stepNum {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.step:nth-child(4) .stepNum {
+  background: var(--color-sage-purple);
+  transform: rotate(3deg);
+}
+.step:hover .stepNum {
+  transform: rotate(0deg) translateY(-4px);
+}
+.step h3 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.step p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+/* Staggered reveal, zelfde ritme als de USP's. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .step {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+    .step:nth-child(2) {
+      animation-range: entry 12% entry 55%;
+    }
+    .step:nth-child(3) {
+      animation-range: entry 19% entry 65%;
+    }
+    .step:nth-child(4) {
+      animation-range: entry 26% entry 75%;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+}
+@media (max-width: 560px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   CTA-BAND — terracotta kleurblok: het tweede merkkleur-moment
+   ========================================================================== */
+.ctaBand {
+  background: var(--color-terracotta);
+  border-radius: var(--radius-2xl);
+  padding: clamp(48px, 6vw, 96px);
+}
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  max-width: 720px;
+  margin-inline: auto;
+}
+.ctaTitle {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(36px, 4.5vw, 64px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.ctaSub {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.6;
+}
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+.ctaLink {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ctaLink:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 560px) {
+  .ctaActions {
+    flex-direction: column;
+    width: 100%;
+  }
+}

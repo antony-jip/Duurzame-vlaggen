@@ -1,0 +1,499 @@
+/* ==========================================================================
+   Productpagina — kroonjuweel. Organische wapper-vorm voor het beeld,
+   tactiele keuzekaarten in de accentkleur, prominente sticky buy-bar.
+   ========================================================================== */
+
+.page {
+  padding-block: var(--space-2xl) var(--space-4xl);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-stone);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+.breadcrumb a {
+  color: var(--color-stone);
+}
+.breadcrumb a:hover {
+  color: var(--color-terracotta);
+}
+.breadcrumb span[aria-current] {
+  color: var(--color-charcoal);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+
+/* ---- Media-kolom ---- */
+.media {
+  position: sticky;
+  top: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Volle merkkleur-vlak met de foto in de organische wapper-vorm — hetzelfde
+   druppel-motief als de hero en de craft-band. */
+.visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 56% 44% 58% 42% / 50% 54% 46% 50%;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  animation: blob-drift 16s var(--ease-in-out) infinite alternate;
+}
+@keyframes blob-drift {
+  0% {
+    border-radius: 56% 44% 58% 42% / 50% 54% 46% 50%;
+  }
+  50% {
+    border-radius: 46% 54% 44% 56% / 56% 44% 58% 42%;
+  }
+  100% {
+    border-radius: 54% 46% 60% 40% / 44% 58% 42% 56%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visual {
+    animation: none;
+    border-radius: var(--radius-2xl);
+  }
+}
+.photo {
+  object-fit: cover;
+}
+
+/* Gekantelde merkkleur-chip met wit vlagtype-icoon — het terugkerende motief. */
+.accentChip {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  transform: rotate(-4deg);
+  box-shadow: var(--shadow-md);
+}
+.accentChip[data-accent="forest"] {
+  background: var(--color-forest);
+}
+.accentChip[data-accent="sage-blue"] {
+  background: var(--color-sage-blue);
+}
+.accentChip[data-accent="terracotta"] {
+  background: var(--color-terracotta);
+}
+.accentChip[data-accent="sage-purple"] {
+  background: var(--color-sage-purple);
+}
+.accentChip[data-accent="copper-rust"] {
+  background: var(--color-copper-rust);
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+.thumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--forest-6);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.thumb:hover {
+  transform: translateY(-3px) rotate(-1deg);
+}
+
+/* Trust-chips — merkkleur-blokjes taal, forest getint. */
+.trustRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  padding: 0;
+  list-style: none;
+}
+.trustRow li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-forest);
+}
+.trustRow svg {
+  flex-shrink: 0;
+}
+
+.accentForest {
+  background: linear-gradient(135deg, #2c5f4f 0%, #24503f 100%);
+}
+.accentSageBlue {
+  background: linear-gradient(135deg, #5c8a9d 0%, #497486 100%);
+}
+.accentTerracotta {
+  background: linear-gradient(135deg, #c66b4e 0%, #a8543b 100%);
+}
+.accentSagePurple {
+  background: linear-gradient(135deg, #8b7ba8 0%, #6f6191 100%);
+}
+.accentCopperRust {
+  background: linear-gradient(135deg, #a46b4a 0%, #c66b4e 100%);
+}
+
+/* ---- Info-kolom ---- */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.eyebrowRow {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+.title {
+  margin-top: var(--space-xs);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.description {
+  color: var(--color-stone);
+  max-width: 52ch;
+}
+
+.specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md) 0;
+  border-block: 1px solid var(--forest-6);
+}
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: 15px;
+}
+.specRow dt {
+  color: var(--color-stone);
+}
+.specRow dd {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ==========================================================================
+   Configurator — accentkleur per product via --accent
+   ========================================================================== */
+.configurator {
+  --accent: var(--color-forest);
+  --accent-soft: var(--forest-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.configurator[data-accent="forest"] {
+  --accent: var(--color-forest);
+  --accent-soft: var(--forest-6);
+}
+.configurator[data-accent="sage-blue"] {
+  --accent: var(--color-sage-blue);
+  --accent-soft: var(--sage-blue-6);
+}
+.configurator[data-accent="terracotta"] {
+  --accent: var(--color-terracotta);
+  --accent-soft: var(--terracotta-6);
+}
+.configurator[data-accent="sage-purple"] {
+  --accent: var(--color-sage-purple);
+  --accent-soft: var(--sage-purple-6);
+}
+.configurator[data-accent="copper-rust"] {
+  --accent: var(--color-copper-rust);
+  --accent-soft: var(--copper-rust-6);
+}
+
+.notice {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--sage-blue-6);
+  border: 1px solid var(--sage-blue-15);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-charcoal);
+}
+.noticeIcon {
+  color: var(--color-sage-blue);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.group {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.groupLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+}
+.groupValue {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+/* Tactiele keuzekaarten als toegankelijke radio-pillen. */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.choice {
+  position: relative;
+}
+.choice input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+.choicePill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.choicePill:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.choice input:checked + .choicePill {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.choice input:focus-visible + .choicePill {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Aantal-stepper — ruime touch-targets (≥44px). */
+.quantity {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+  background: var(--color-white);
+}
+.qtyBtn {
+  width: 56px;
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent);
+  border: none;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.qtyBtn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.qtyBtn:disabled {
+  color: var(--color-stone);
+  cursor: not-allowed;
+}
+.qtyInput {
+  width: 64px;
+  text-align: center;
+  border: none;
+  border-inline: 1.5px solid var(--forest-6);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--color-charcoal);
+  background: var(--color-white);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ---- Sticky buy-bar (prijs + CTA) ---- */
+.buyBar {
+  position: sticky;
+  bottom: var(--space-md);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.priceLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+.priceValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 3.4vw, 38px);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.priceNote {
+  font-size: 12px;
+  color: var(--color-stone);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+}
+.quoteLink {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-stone);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.quoteLink:hover {
+  color: var(--color-forest);
+}
+
+.added {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--color-forest);
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  .media {
+    position: static;
+  }
+  /* Pin de buy-bar onderaan de viewport op mobiel. */
+  .buyBar {
+    bottom: 0;
+    margin-inline: calc(-1 * var(--space-md));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-bottom: none;
+    box-shadow: 0 -6px 24px rgba(44, 95, 79, 0.16);
+  }
+}
+@media (max-width: 420px) {
+  .buyBar {
+    align-items: stretch;
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .actions :global(a),
+  .actions :global(button) {
+    width: 100%;
+  }
+}

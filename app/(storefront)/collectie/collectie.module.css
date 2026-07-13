@@ -1,0 +1,298 @@
+/* ==========================================================================
+   Collectie — catalogusoverzicht in de merk-tegels van de homepage:
+   volle kleurvlakken, vlagtype-pictogram in een witte wapper-vorm, prijs.
+   ========================================================================== */
+
+.page {
+  padding-block: var(--space-3xl) var(--space-4xl);
+}
+
+.head {
+  max-width: 720px;
+  margin-bottom: clamp(40px, 5vw, 72px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+.head h1 {
+  text-wrap: balance;
+}
+.head p {
+  color: var(--color-stone);
+}
+
+/* ---- Tegel-raster ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.cardLink {
+  display: block;
+  height: 100%;
+  color: inherit;
+}
+.cardLink:hover {
+  color: inherit;
+}
+
+/* Volle merkkleur-tegel — zelfde bold taal als de homepage-showcase. */
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.card[data-accent="forest"] {
+  background: var(--color-forest);
+}
+.card[data-accent="sage-blue"] {
+  background: var(--color-sage-blue);
+}
+.card[data-accent="terracotta"] {
+  background: var(--color-terracotta);
+}
+.card[data-accent="sage-purple"] {
+  background: var(--color-sage-purple);
+}
+.card[data-accent="copper-rust"] {
+  background: var(--color-copper-rust);
+}
+/* Speelse kanteling bij hover — elke vlag wappert zijn eigen kant op. */
+.card:hover {
+  transform: translateY(-6px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+}
+.cardLink:nth-child(even) .card:hover {
+  transform: translateY(-6px) rotate(1deg);
+}
+
+/* Groot vlagtype-pictogram in de accentkleur op een witte wapper-vorm. */
+.iconWrap {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  margin: clamp(14px, 1.6vw, 20px);
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
+}
+.iconWrap svg {
+  stroke-width: 1.4;
+  transform-origin: 30% 85%;
+  transition: transform var(--duration-base) var(--ease-out);
+  animation: flag-sway 5.5s var(--ease-in-out) infinite;
+}
+.cardLink:nth-child(2) .iconWrap svg {
+  animation-delay: -1.1s;
+}
+.cardLink:nth-child(3) .iconWrap svg {
+  animation-delay: -2.2s;
+}
+.cardLink:nth-child(4) .iconWrap svg {
+  animation-delay: -3.3s;
+}
+.cardLink:nth-child(5) .iconWrap svg {
+  animation-delay: -4.4s;
+}
+.card[data-accent="forest"] .iconWrap svg {
+  color: var(--color-forest);
+}
+.card[data-accent="sage-blue"] .iconWrap svg {
+  color: var(--color-sage-blue);
+}
+.card[data-accent="terracotta"] .iconWrap svg {
+  color: var(--color-terracotta);
+}
+.card[data-accent="sage-purple"] .iconWrap svg {
+  color: var(--color-sage-purple);
+}
+.card[data-accent="copper-rust"] .iconWrap svg {
+  color: var(--color-copper-rust);
+}
+@keyframes flag-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+@keyframes flag-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-4deg);
+  }
+  65% {
+    transform: rotate(2.5deg);
+  }
+}
+.card:hover .iconWrap svg {
+  animation: flag-wiggle 0.9s var(--ease-in-out);
+}
+
+.tag {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  flex: 1;
+}
+.body h2 {
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #fff;
+}
+.tagline {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  flex: 1;
+}
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: var(--space-sm);
+}
+.priceFrom {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+}
+.price {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.exVat {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-md);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+}
+.cardCta svg {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.card:hover .cardCta svg {
+  transform: translateX(4px);
+}
+
+/* Staggered scroll-reveal — zelfde ritme als de homepage-secties. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .cardLink {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 2% entry 40%;
+    }
+    .cardLink:nth-child(2) {
+      animation-range: entry 8% entry 48%;
+    }
+    .cardLink:nth-child(3) {
+      animation-range: entry 14% entry 56%;
+    }
+    .cardLink:nth-child(4) {
+      animation-range: entry 20% entry 64%;
+    }
+    .cardLink:nth-child(5) {
+      animation-range: entry 26% entry 72%;
+    }
+  }
+}
+
+/* ---- Merk-USP-strip onder het raster ---- */
+.trust {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: clamp(48px, 6vw, 88px);
+  padding-top: clamp(40px, 5vw, 64px);
+  border-top: 1px solid var(--forest-6);
+}
+.trustItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+/* Volle merkkleur-chip met wit icoon, speels gekanteld. */
+.trustIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest);
+  color: #fff;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.trustItem:nth-child(2) .trustIcon {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.trustItem:nth-child(3) .trustIcon {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+.trustItem:hover .trustIcon {
+  transform: rotate(0deg) translateY(-4px);
+}
+.trustItem h3 {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.trustItem p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-stone);
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .trust {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

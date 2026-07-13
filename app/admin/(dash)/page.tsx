@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge } from "@/components/ui";
 import { listOrders } from "@/lib/orders/repository";
 import type { OrderStatus } from "@/lib/db/types";
-import { STATUS_LABELS, statusBadgeVariant, formatMoney, formatDateTime } from "../format";
+import { STATUS_LABELS, formatMoney, formatDateTime } from "../format";
 import { requireAdminPage } from "../auth";
 import styles from "./admin.module.css";
 
@@ -11,6 +10,35 @@ export const metadata: Metadata = {
   title: "Orders · Admin",
   robots: { index: false, follow: false },
 };
+
+/**
+ * Map an order status onto a semantic pill tone. Kept local to the back-office
+ * (format.ts owns the labels; this owns the presentation) so the palette stays
+ * consistent between the table and the order detail without touching shared
+ * helpers. Tones: sage-blue = wachtend, forest = onderweg, forest-vol =
+ * afgerond, gedempt copper = aandacht/afgesloten-negatief.
+ */
+const STATUS_TONE: Record<OrderStatus, string> = {
+  cart: styles.pillNeutral,
+  awaiting_payment: styles.pillWait,
+  paid: styles.pillProgress,
+  sent_to_probo: styles.pillProgress,
+  probo_accepted: styles.pillProgress,
+  in_production: styles.pillProgress,
+  shipped: styles.pillDone,
+  payment_failed: styles.pillError,
+  probo_rejected: styles.pillError,
+  cancelled: styles.pillError,
+};
+
+function StatusPill({ status }: { status: OrderStatus }) {
+  return (
+    <span className={`${styles.pill} ${STATUS_TONE[status]}`}>
+      <span className={styles.pillDot} aria-hidden="true" />
+      {STATUS_LABELS[status]}
+    </span>
+  );
+}
 
 /** Quick-filter tabs shown above the table. */
 const FILTERS: { key: string; label: string; status?: OrderStatus }[] = [
@@ -50,6 +78,9 @@ export default async function AdminOrdersPage({
     ),
   ).length;
   const shippedCount = allOrders.filter((o) => o.status === "shipped").length;
+  const attentionCount = allOrders.filter((o) =>
+    ["payment_failed", "probo_rejected"].includes(o.status),
+  ).length;
 
   return (
     <section>
@@ -60,7 +91,7 @@ export default async function AdminOrdersPage({
           <span className={styles.kpiValue}>{allOrders.length}</span>
           <span className={styles.kpiLabel}>Orders totaal</span>
         </div>
-        <div className={styles.kpi}>
+        <div className={`${styles.kpi} ${styles.kpiBlue}`}>
           <span className={styles.kpiValue}>{openCount}</span>
           <span className={styles.kpiLabel}>Openstaand</span>
         </div>
@@ -68,23 +99,30 @@ export default async function AdminOrdersPage({
           <span className={styles.kpiValue}>{shippedCount}</span>
           <span className={styles.kpiLabel}>Verzonden</span>
         </div>
+        <div className={`${styles.kpi} ${styles.kpiAlert}`}>
+          <span className={styles.kpiValue}>{attentionCount}</span>
+          <span className={styles.kpiLabel}>Aandacht nodig</span>
+        </div>
       </div>
 
-      <nav className={styles.filters} aria-label="Filter op status">
-        {FILTERS.map((f) => {
-          const isActive = f.status ? active === f.status : active === null;
-          const href = f.status ? `/admin?status=${f.status}` : "/admin";
-          return (
-            <Link
-              key={f.key}
-              href={href}
-              className={`${styles.filter} ${isActive ? styles.filterActive : ""}`}
-            >
-              {f.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className={styles.toolbar}>
+        <nav className={styles.filters} aria-label="Filter op status">
+          {FILTERS.map((f) => {
+            const isActive = f.status ? active === f.status : active === null;
+            const href = f.status ? `/admin?status=${f.status}` : "/admin";
+            return (
+              <Link
+                key={f.key}
+                href={href}
+                aria-current={isActive ? "page" : undefined}
+                className={`${styles.filter} ${isActive ? styles.filterActive : ""}`}
+              >
+                {f.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
 
       {orders.length === 0 ? (
         <p className={styles.empty}>Geen orders gevonden.</p>
@@ -113,9 +151,7 @@ export default async function AdminOrdersPage({
                   </td>
                   <td className={styles.nowrap}>{formatDateTime(o.created_at)}</td>
                   <td>
-                    <Badge variant={statusBadgeVariant(o.status)}>
-                      {STATUS_LABELS[o.status]}
-                    </Badge>
+                    <StatusPill status={o.status} />
                   </td>
                   <td className={styles.upper}>{o.market}</td>
                   <td>{o.email}</td>

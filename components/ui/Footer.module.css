@@ -1,100 +1,161 @@
-.footer {
+/* Forest-green statement footer — the one deep-colour moment that closes the
+   otherwise light editorial pages. The white logo comes into its own here. */
+.footerWrap {
   margin-top: auto;
-  background: var(--color-white);
-  border-top: 1px solid var(--forest-6);
-  padding-block: var(--space-3xl) var(--space-xl);
+}
+.topWave {
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-forest);
+}
+.footer {
+  background: var(--color-forest);
+  color: #fff;
+  padding-block: clamp(56px, 7vw, 104px) var(--space-xl);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
-  gap: var(--space-2xl);
+/* ---- Oversized sign-off ---- */
+.signoff {
+  padding-bottom: clamp(48px, 6vw, 80px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
-
-.brand {
+.kicker {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.kicker::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.statement {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 18px;
+  font-size: clamp(34px, 6vw, 78px);
+  line-height: 1.02;
   letter-spacing: -0.02em;
-  color: var(--color-charcoal);
-  text-transform: lowercase;
+  color: #fff;
+  max-width: 16ch;
+  margin-top: var(--space-md);
 }
-.brand b {
-  color: var(--color-forest);
+.statement em {
+  font-style: italic;
+  color: #e6a488; /* light terracotta — legible accent on forest */
 }
-
-.mark {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--color-forest);
+.signoffLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: var(--space-xl);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: #fff;
 }
+.signoffLink svg {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.signoffLink:hover {
+  color: #e6a488;
+}
+.signoffLink:hover svg {
+  transform: translateX(5px);
+}
 
+/* ---- Columns ---- */
+.grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1.3fr;
+  gap: var(--space-2xl);
+  padding-block: clamp(48px, 6vw, 80px);
+}
+
+.logo {
+  height: 27px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.95;
+}
 .tagline {
   margin-top: var(--space-md);
   max-width: 34ch;
-  color: var(--color-stone);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 15px;
+  line-height: 1.55;
 }
 
 .colTitle {
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-charcoal);
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.55);
   margin-bottom: var(--space-md);
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 12px;
 }
-
 .list a,
 .contact a {
-  color: var(--color-charcoal);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 15px;
   font-family: var(--font-body);
 }
 .list a:hover,
 .contact a:hover {
-  color: var(--color-terracotta);
+  color: #e6a488;
 }
 
 .contact {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 12px;
   font-size: 15px;
-  color: var(--color-charcoal);
+  color: rgba(255, 255, 255, 0.88);
   font-style: normal;
 }
 
+/* ---- Bottom bar ---- */
 .bottom {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  margin-top: var(--space-2xl);
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--forest-6);
-  color: var(--color-stone);
-  font-size: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
-
 .bottomLinks {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-lg);
+}
+.bottomLinks a {
+  color: rgba(255, 255, 255, 0.7);
+}
+.bottomLinks a:hover {
+  color: #fff;
 }
 
 @media (max-width: 860px) {
@@ -106,7 +167,6 @@
     grid-column: 1 / -1;
   }
 }
-
 @media (max-width: 520px) {
   .grid {
     grid-template-columns: 1fr;

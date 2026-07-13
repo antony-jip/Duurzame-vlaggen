@@ -40,8 +40,14 @@ export interface CartContextValue {
   removeItem: (id: string) => void;
   /** Set a line's quantity (clamped to at least 1). */
   updateAmount: (id: string, amount: number) => void;
-  /** Attach (or clear, with null) the uploaded artwork for a line. */
-  setItemFile: (id: string, fileUrl: string | null, fileName: string | null) => void;
+  /** Attach (or clear, with nulls) the uploaded artwork for a line. */
+  setItemFile: (
+    id: string,
+    fileUrl: string | null,
+    fileName: string | null,
+    filePath: string | null,
+    fileWarnings: string[],
+  ) => void;
   /** Empty the cart. */
   clear: () => void;
 }
@@ -130,8 +136,18 @@ export function CartProvider({
   }, []);
 
   const setItemFile = useCallback(
-    (id: string, fileUrl: string | null, fileName: string | null) => {
-      setItems((prev) => prev.map((it) => (it.id === id ? { ...it, fileUrl, fileName } : it)));
+    (
+      id: string,
+      fileUrl: string | null,
+      fileName: string | null,
+      filePath: string | null,
+      fileWarnings: string[],
+    ) => {
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === id ? { ...it, fileUrl, fileName, filePath, fileWarnings } : it,
+        ),
+      );
     },
     [],
   );

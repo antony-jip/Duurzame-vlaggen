@@ -107,7 +107,10 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Verticale banier die opvalt — biologisch afbreekbaar.",
     description:
       "De baniervlag is onze meest gekozen vlag: een verticale banier die je merk laat wapperen bij de ingang, op beurzen of langs de weg. Geprint op Flag-CiCLO®-doek dat in 2–3 jaar biologisch afbreekt, zonder microplastics.",
-    priceFrom: 32.5,
+    // priceFrom = echte goedkoopste config (Probo-inkoop kleinste maat × 1,5,
+    // naar beneden afgerond op €0,50): Tunnelzoom/hem 250×100 = €25,46 × 1,5
+    // = €38,19 → €38,00. Live geverifieerd 2026-07-13.
+    priceFrom: 38,
     badge: "Populair",
     sizes: [
       { label: "250 × 100 cm", widthCm: 250, heightCm: 100 },
@@ -133,12 +136,12 @@ export const PRODUCTS: CatalogProduct[] = [
       ),
     ],
     accent: "forest",
-    // VALIDATED Probo code (2026-07-13). Option tree: width+height (cm) + amount +
-    // finishing-all-sides + a finishing type (cut | hem | band-and-plastic-rings |
-    // band-and-d-rings | band-and-cord | velcro | band-and-nickel-rings) → can_order.
-    // Kept quote-only (template null) until /price payload is fixed + configurator built.
+    // ORDERABLE (2026-07-13). Probo code `flag-ciclo`; option tree verified live.
+    // The base below (finishing-all-sides) is always sent; the size + finishing
+    // chain is built per-selection in lib/catalog/probo-mapping.ts. The template
+    // being non-null is what flips isOrderable() → online checkout.
     proboProductCode: "flag-ciclo",
-    proboOptionTemplate: null,
+    proboOptionTemplate: [{ code: "finishing-all-sides" }],
   },
   {
     slug: "mastvlag",
@@ -147,7 +150,9 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Klassieke mastvlag voor aan de vlaggenmast.",
     description:
       "De mastvlag hijs je aan een vlaggenmast en is er in staand en liggend formaat. Duurzaam geprint op biologisch afbreekbaar doek, met een stevige band en koord voor jarenlang gebruik — en een schoon einde.",
-    priceFrom: 19.5,
+    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
+    // band+koord Wit 100×150 = €16,02 × 1,5 = €24,03 → €24,00 (2026-07-13).
+    priceFrom: 24,
     sizes: [
       { label: "100 × 150 cm", widthCm: 100, heightCm: 150 },
       { label: "150 × 225 cm", widthCm: 150, heightCm: 225 },
@@ -169,10 +174,11 @@ export const PRODUCTS: CatalogProduct[] = [
       img("1027-mastvlaggen-maten.webp", "Overzicht van mastvlag-maten"),
     ],
     accent: "sage-blue",
-    // Same Flag-CiCLO® fabric as the baniervlag → Probo code "flag-ciclo".
-    // Mast flags typically finish with band-and-cord. Quote-only until /price fix.
+    // ORDERABLE (2026-07-13). Same Flag-CiCLO® fabric as the baniervlag. Mast flags
+    // finish with band-and-cord (colour + 200 cm cord), built per-selection in
+    // lib/catalog/probo-mapping.ts. Non-null template flips isOrderable() → true.
     proboProductCode: "flag-ciclo",
-    proboOptionTemplate: null,
+    proboOptionTemplate: [{ code: "finishing-all-sides" }],
   },
   {
     slug: "beachvlag",
@@ -180,15 +186,23 @@ export const PRODUCTS: CatalogProduct[] = [
     category: "vlag",
     tagline: "Draagbare beachflag — binnen én buiten.",
     description:
-      "De beachvlag (beachflag) is licht, draagbaar en pakt overal uit: evenementen, winkels, sportvelden. Verkrijgbaar als straight- en squareflag, met een duurzame doekprint die netjes afbreekt in plaats van als microplastic achter te blijven.",
-    priceFrom: 35,
+      "De beachvlag (beachflag) is licht, draagbaar en pakt overal uit: evenementen, winkels, sportvelden. Verkrijgbaar als straight- en squareflag, geleverd inclusief stok en draagtas, met een duurzame doekprint die netjes afbreekt in plaats van als microplastic achter te blijven.",
+    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
+    // Straightflag S 40×235 = €30,03 × 1,5 = €45,05 → €45,00 (2026-07-13).
+    priceFrom: 45,
+    // The model (Straight/Square) is encoded in the size: each size belongs to
+    // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
+    // Sizes are Probo's own presets for the Flag-CiCLO® material, verified live.
     sizes: [
-      { label: "Straight — S", widthCm: 60, heightCm: 200 },
-      { label: "Straight — M", widthCm: 70, heightCm: 260 },
-      { label: "Square — M", widthCm: 70, heightCm: 230 },
+      { label: "Straight S — 40 × 235 cm", widthCm: 40, heightCm: 235 },
+      { label: "Straight M — 65 × 315 cm", widthCm: 65, heightCm: 315 },
+      { label: "Straight L — 90 × 430 cm", widthCm: 90, heightCm: 430 },
+      { label: "Square S — 75 × 200 cm", widthCm: 75, heightCm: 200 },
+      { label: "Square M — 75 × 300 cm", widthCm: 75, heightCm: 300 },
+      { label: "Square L — 75 × 400 cm", widthCm: 75, heightCm: 400 },
     ],
     options: [
-      { label: "Model", choices: ["Straightflag", "Squareflag"] },
+      { label: "Mastzijde", choices: ["Links", "Rechts"] },
       { label: "Voet", choices: ["Grondpin", "Kruisvoet", "Watertank"] },
     ],
     heroImage: img(
@@ -206,10 +220,13 @@ export const PRODUCTS: CatalogProduct[] = [
       ),
     ],
     accent: "terracotta",
-    // VALIDATED Probo code (2026-07-13). Preset models — first option is `amount`.
-    // Quote-only until the configurator emits the full option set.
-    proboProductCode: "pole-flag",
-    proboOptionTemplate: null,
+    // ORDERABLE (2026-07-13, owner-confirmed). Default code `beachflag-straight`;
+    // square sizes override to `beachflag-square` in lib/catalog/probo-mapping.ts.
+    // Chain: amount → flag-ciclo → size preset → flag-pole-side → composition
+    // (vlag + stok + draagtas). Voet = cross-sell, stays on the order line only.
+    // (Previous `pole-flag` code was wrong — that is Probo's "Mastvlag".)
+    proboProductCode: "beachflag-straight",
+    proboOptionTemplate: [{ code: "flag-ciclo" }],
   },
   {
     slug: "gevelvlag",
@@ -217,15 +234,20 @@ export const PRODUCTS: CatalogProduct[] = [
     category: "vlag",
     tagline: "Gevelvlag die je merk aan de straatkant toont.",
     description:
-      "De gevelvlag hangt aan een uithouder aan je gevel en trekt de aandacht van voorbijgangers. Geprint op biologisch afbreekbaar doek — zichtbaar duurzaam, precies wat een CSRD-bewuste organisatie uitstraalt.",
-    priceFrom: 17.5,
+      "De gevelvlag hangt aan een uithouder aan je gevel en trekt de aandacht van voorbijgangers. Afgewerkt met band, koord en lus, geprint op biologisch afbreekbaar doek — zichtbaar duurzaam, precies wat een CSRD-bewuste organisatie uitstraalt.",
+    // priceFrom = echte goedkoopste config (inkoop × 1,5, floor €0,50):
+    // 100×70 = €7,93 × 1,5 = €11,90 → €11,50 (2026-07-13).
+    priceFrom: 11.5,
+    // Sizes are Probo's own facade-flag presets for Flag-CiCLO®, verified live.
     sizes: [
       { label: "100 × 70 cm", widthCm: 100, heightCm: 70 },
       { label: "150 × 100 cm", widthCm: 150, heightCm: 100 },
       { label: "225 × 150 cm", widthCm: 225, heightCm: 150 },
     ],
     options: [
-      { label: "Afwerking", choices: ["Tunnelzoom boven", "Zoom met ringen"] },
+      // Probo's only facade-flag finishing is "band, koord en lus" (fixed in the
+      // mapping); the customer choices are the pole side + our bracket cross-sell.
+      { label: "Mastzijde", choices: ["Links", "Rechts"] },
       { label: "Uithouder", choices: ["Zonder", "Met uithouder"] },
     ],
     heroImage: img(
@@ -239,10 +261,11 @@ export const PRODUCTS: CatalogProduct[] = [
       ),
     ],
     accent: "sage-purple",
-    // VALIDATED Probo code (2026-07-13): facade-flag = gevelvlag. Preset models.
-    // Quote-only until the configurator emits the full option set.
+    // ORDERABLE (2026-07-13, owner-confirmed). Chain: amount → flag-ciclo → size
+    // preset → flag-pole-side → landscape-strap-cord-loop (fixed finishing), see
+    // lib/catalog/probo-mapping.ts. Uithouder = cross-sell, order line only.
     proboProductCode: "facade-flag",
-    proboOptionTemplate: null,
+    proboOptionTemplate: [{ code: "flag-ciclo" }],
   },
   {
     slug: "vlaggenmast",

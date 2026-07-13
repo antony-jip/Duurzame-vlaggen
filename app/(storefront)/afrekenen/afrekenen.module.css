@@ -1,0 +1,241 @@
+/* ==========================================================================
+   Afrekenen — vertrouwenwekkend: genummerde stappen, sticky besteloverzicht,
+   inline validatie en duurzaamheids-/betaal-trustsignalen.
+   ========================================================================== */
+
+.page {
+  padding-block: var(--space-2xl) var(--space-4xl);
+}
+
+.head {
+  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+.head h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* Genummerde stappen via een counter op de form. */
+.form {
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.fieldset {
+  counter-increment: step;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(20px, 2.2vw, 24px);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xs);
+}
+/* Gekantelde merkkleur-chip met het stapnummer — zelfde taal als de homepage. */
+.legend::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 16px;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-sm);
+}
+.fieldset:nth-of-type(2) .legend::before {
+  background: var(--color-sage-blue);
+  transform: rotate(2.5deg);
+}
+.fieldset:nth-of-type(3) .legend::before {
+  background: var(--color-terracotta);
+  transform: rotate(-2deg);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+.rowThreeOne {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: var(--space-md);
+}
+
+/* Toggle */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 48px;
+  border: 1.5px solid var(--forest-15);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  width: fit-content;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+.toggle:hover {
+  border-color: var(--color-forest);
+}
+.toggle input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-forest);
+}
+.toggleLabel {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Banner */
+.banner {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.bannerError {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #b91c1c;
+}
+.bannerQuote {
+  background: var(--sage-blue-6);
+  border: 1px solid var(--sage-blue-15);
+  color: var(--color-charcoal);
+}
+
+/* Besteloverzicht */
+.summary {
+  position: sticky;
+  top: var(--space-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.summary h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xs);
+}
+.summaryLine {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: 14px;
+}
+.summaryLine .qty {
+  color: var(--color-stone);
+}
+.summaryDivider {
+  border: none;
+  border-top: 1px solid var(--forest-6);
+  margin-block: var(--space-xs);
+}
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 15px;
+}
+.summaryRow.total {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.summaryRow.total span:last-child {
+  color: var(--color-forest);
+}
+.summaryNote {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-stone);
+  margin-top: var(--space-xs);
+}
+.submit {
+  margin-top: var(--space-sm);
+}
+
+/* Betaal-/duurzaamheids-trustsignalen onder de knop. */
+.trust {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--forest-6);
+}
+.trust li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-forest);
+}
+.trust svg {
+  flex-shrink: 0;
+}
+
+.empty {
+  max-width: 480px;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding-block: var(--space-3xl);
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .summary {
+    position: static;
+    order: -1;
+  }
+}
+@media (max-width: 520px) {
+  .row,
+  .rowThreeOne {
+    grid-template-columns: 1fr;
+  }
+}
