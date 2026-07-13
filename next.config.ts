@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Pin the workspace root to this project. A stray package-lock.json in a
+  // parent directory otherwise makes Turbopack infer the wrong root, which can
+  // break file tracing on Vercel.
+  turbopack: {
+    root: projectRoot,
+  },
 };
 
 export default nextConfig;
