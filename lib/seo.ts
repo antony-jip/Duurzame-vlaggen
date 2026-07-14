@@ -4,10 +4,18 @@
  * `SITE_URL` volgt `NEXT_PUBLIC_APP_URL` wanneer die gezet is (op Vercel het
  * echte domein) en valt anders terug op het productiedomein. Trailing slash
  * wordt weggehaald zodat canonical-paden schoon aansluiten.
+ *
+ * Belangrijk: Vercel-env-waarden (bv. `duurzame-vlaggen.vercel.app`) komen vaak
+ * ZONDER protocol binnen. `new URL()` in de metadataBase crasht dan met
+ * "Invalid URL". Daarom forceren we hier altijd een `https://`-schema.
  */
 
-export const SITE_URL = (
+const rawSiteUrl = (
   process.env.NEXT_PUBLIC_APP_URL || "https://duurzame-vlaggen.nl"
+).trim();
+
+export const SITE_URL = (
+  /^https?:\/\//i.test(rawSiteUrl) ? rawSiteUrl : `https://${rawSiteUrl}`
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "Duurzame Vlaggen";
