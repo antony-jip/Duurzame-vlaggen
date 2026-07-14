@@ -14,7 +14,7 @@ import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/over-ons" },
-  title: "Over ons — Sign Company B.V.",
+  title: "Over ons. Sign Company B.V.",
   description:
     "Sign Company B.V. uit Enkhuizen maakt duurzame signing en vlaggen die volledig verdwijnen. Waarom wij kozen voor biologisch afbreekbare vlaggen zonder microplastics.",
 };
@@ -24,7 +24,7 @@ const VALUES = [
   {
     icon: <Leaf size={26} />,
     title: "Verdwijnen zoals het hoort",
-    body: "Onze vlaggen lossen op in 2–3 jaar en laten alleen CO₂, water en biomassa achter. Geen microplastics die 200 jaar in de natuur blijven.",
+    body: "Onze vlaggen lossen op in 2 tot 3 jaar en laten alleen CO₂, water en biomassa achter. Geen microplastics die 200 jaar in de natuur blijven.",
   },
   {
     icon: <Recycle size={26} />,
@@ -34,7 +34,7 @@ const VALUES = [
   {
     icon: <ShieldCheck size={26} />,
     title: "Aantoonbaar duurzaam",
-    body: "Onafhankelijke ASTM-labtests en certificeringen als OEKO-TEX en REACH onderbouwen elke claim. Geen greenwashing, wel bewijs.",
+    body: "Onafhankelijke ASTM labtests en certificeringen als OEKO-TEX en REACH onderbouwen elke claim. Geen greenwashing, wel bewijs.",
   },
 ];
 
@@ -62,7 +62,7 @@ export default function OverOnsPage() {
             <p className={styles.heroSub}>
               Sign Company B.V. uit Enkhuizen ontwikkelt duurzame signing en
               vlaggen. Wij bewijzen dat een vlag opvallend én verantwoord kan
-              zijn — met Flag-CiCLO®-technologie die volledig verdwijnt na
+              zijn. Met Flag-CiCLO® technologie die volledig verdwijnt na
               gebruik.
             </p>
             <div className={styles.heroActions}>
@@ -143,10 +143,10 @@ export default function OverOnsPage() {
             <p className={styles.missionBody}>
               Daarom kozen wij voor Flag-CiCLO®: biologisch afbreekbaar polyester
               dat micro-organismen volledig kunnen verteren. Onze vlaggen breken
-              voor 96% af in 2–3 jaar en laten geen microplastics achter —
-              terwijl ze tijdens gebruik net zo goed presteren als een gewone
-              vlag. Zo maken we duurzaamheid concreet én rapporteerbaar: de
-              certificaten en ESRS E2-5-documentatie leveren we standaard mee.
+              voor 96% af in 2 tot 3 jaar en laten geen microplastics achter.
+              Tijdens gebruik presteren ze net zo goed als een gewone vlag. Zo
+              maken we duurzaamheid concreet én rapporteerbaar: de certificaten
+              en de documentatie voor ESRS E2-5 leveren we standaard mee.
             </p>
             <div className={styles.missionStats} aria-label="Kerncijfers">
               <div className={styles.missionStat}>
@@ -160,7 +160,7 @@ export default function OverOnsPage() {
                 <span className={styles.missionStatLabel}>Microplastics</span>
               </div>
               <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>2–3 jaar</span>
+                <span className={styles.missionStatValue}>2 tot 3 jaar</span>
                 <span className={styles.missionStatLabel}>
                   Tot volledig opgelost
                 </span>

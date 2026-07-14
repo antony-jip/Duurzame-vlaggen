@@ -5,7 +5,7 @@ import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
-  title: "Contact — offerte & advies",
+  title: "Contact, offerte en advies",
   description:
     "Neem contact op met Sign Company B.V. in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",
 };
@@ -54,12 +54,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             Contact
           </Badge>
           <h1 id="contact-title" className={styles.heroTitle}>
-            Laten we je vlag laten{" "}
+            Tijd om te{" "}
             <span className={styles.heroAccent}>wapperen</span>.
           </h1>
           <p className={styles.heroSub}>
             Vraag een offerte aan, bestel een gratis staal of stel je vraag over
-            CSRD en compliance. We reageren binnen 24 uur — meestal sneller.
+            CSRD en compliance. We reageren binnen 24 uur. Meestal sneller.
           </p>
         </Container>
         <svg
@@ -111,7 +111,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <h2 className={styles.formTitle}>Stuur ons een bericht</h2>
               {product && (
                 <p className={styles.prefillNote}>
-                  Je vraag gaat over <strong>{product}</strong> — we hebben het
+                  Je vraag gaat over <strong>{product}</strong>. We hebben het
                   onderwerp alvast ingevuld.
                 </p>
               )}

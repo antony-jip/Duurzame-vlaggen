@@ -253,7 +253,7 @@ export default function AfrekenenPage() {
               type="tel"
               label="Telefoonnummer"
               autoComplete="tel"
-              helperText="Optioneel — voor vragen over je bestelling."
+              helperText="Optioneel, voor vragen over je bestelling."
               errorText={state.fieldErrors?.phone}
             />
             <label className={styles.toggle}>

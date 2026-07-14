@@ -51,7 +51,7 @@ export default function AlgemeneVoorwaardenPage() {
           <div className={styles.prose}>
             <p className={styles.proseMeta}>Laatst bijgewerkt: januari 2025</p>
 
-            <h2>Artikel 1 — Identiteit van de ondernemer</h2>
+            <h2>Artikel 1: Identiteit van de ondernemer</h2>
             <div className={styles.proseCard}>
               <p>
                 <strong>Sign Company B.V.</strong>, handelend onder de naam
@@ -60,7 +60,7 @@ export default function AlgemeneVoorwaardenPage() {
                 De Drie Kronen 115, 1601 MT Enkhuizen
                 <br />
                 Telefoon: <a href="tel:+31850608963">085 060 8963</a>{" "}
-                (maandag t/m vrijdag, 9:00–17:00 uur)
+                (maandag t/m vrijdag, 9:00 tot 17:00 uur)
                 <br />
                 E-mail:{" "}
                 <a href="mailto:info@duurzame-vlaggen.nl">
@@ -71,7 +71,7 @@ export default function AlgemeneVoorwaardenPage() {
               </p>
             </div>
 
-            <h2>Artikel 2 — Toepasselijkheid</h2>
+            <h2>Artikel 2: Toepasselijkheid</h2>
             <p>
               Deze voorwaarden gelden voor elk aanbod van Duurzame Vlaggen en
               voor elke overeenkomst op afstand tussen ons en jou als
@@ -82,7 +82,7 @@ export default function AlgemeneVoorwaardenPage() {
               gunstigst is.
             </p>
 
-            <h2>Artikel 3 — Het aanbod</h2>
+            <h2>Artikel 3: Het aanbod</h2>
             <p>
               Elk aanbod bevat een volledige en nauwkeurige omschrijving van de
               producten, zodat je het goed kunt beoordelen. Afbeeldingen zijn
@@ -92,7 +92,7 @@ export default function AlgemeneVoorwaardenPage() {
               nadrukkelijk bij.
             </p>
 
-            <h2>Artikel 4 — De overeenkomst</h2>
+            <h2>Artikel 4: De overeenkomst</h2>
             <p>
               De overeenkomst komt tot stand zodra jij het aanbod aanvaardt en
               aan de gestelde voorwaarden voldoet. Bestel je online, dan
@@ -102,7 +102,7 @@ export default function AlgemeneVoorwaardenPage() {
               beveiliging van je gegevens en betaling.
             </p>
 
-            <h2>Artikel 5 — Herroepingsrecht</h2>
+            <h2>Artikel 5: Herroepingsrecht</h2>
             <p>
               Je kunt een aankoop gedurende een bedenktijd van 14 dagen zonder
               opgave van redenen ontbinden. De bedenktijd gaat in op de dag
@@ -114,7 +114,7 @@ export default function AlgemeneVoorwaardenPage() {
             <p>
               Wil je herroepen? Meld dit binnen de bedenktijd via het
               modelformulier of op een andere ondubbelzinnige manier, en stuur
-              het product binnen 14 dagen terug — waar mogelijk in originele
+              het product binnen 14 dagen terug, waar mogelijk in originele
               staat en verpakking. De rechtstreekse kosten van terugzending
               zijn voor jouw rekening. Wij betalen alle betalingen, inclusief
               eventuele leveringskosten, binnen 14 dagen na je melding terug
@@ -122,7 +122,7 @@ export default function AlgemeneVoorwaardenPage() {
             </p>
             <div className={styles.proseCard}>
               <p>
-                <strong>Let op — maatwerk is uitgesloten:</strong> vlaggen die
+                <strong>Let op, maatwerk is uitgesloten:</strong> vlaggen die
                 op jouw specificatie zijn bedrukt (met eigen logo of ontwerp)
                 zijn volgens de wet uitgesloten van het herroepingsrecht. Dit
                 zijn producten die volgens jouw individuele keuze zijn
@@ -130,7 +130,7 @@ export default function AlgemeneVoorwaardenPage() {
               </p>
             </div>
 
-            <h2>Artikel 6 — De prijs</h2>
+            <h2>Artikel 6: De prijs</h2>
             <p>
               Gedurende de geldigheidsduur van een aanbod verhogen we de
               prijzen niet, behalve bij wijzigingen in btw-tarieven. De in het
@@ -140,7 +140,7 @@ export default function AlgemeneVoorwaardenPage() {
               regelingen.
             </p>
 
-            <h2>Artikel 7 — Nakoming en garantie</h2>
+            <h2>Artikel 7: Nakoming en garantie</h2>
             <p>
               We staan ervoor in dat producten voldoen aan de overeenkomst, de
               vermelde specificaties en redelijke eisen van deugdelijkheid.
@@ -150,7 +150,7 @@ export default function AlgemeneVoorwaardenPage() {
               productgroep.
             </p>
 
-            <h2>Artikel 8 — Levering en uitvoering</h2>
+            <h2>Artikel 8: Levering en uitvoering</h2>
             <p>
               We leveren op het adres dat jij aan ons hebt doorgegeven en
               voeren geaccepteerde bestellingen uiterlijk binnen 30 dagen uit,
@@ -161,7 +161,7 @@ export default function AlgemeneVoorwaardenPage() {
               van bezorging.
             </p>
 
-            <h2>Artikel 9 — Betaling</h2>
+            <h2>Artikel 9: Betaling</h2>
             <p>
               Tenzij anders overeengekomen betaal je binnen 14 dagen na het
               ingaan van de bedenktermijn. Als consument kun je nooit verplicht
@@ -172,7 +172,7 @@ export default function AlgemeneVoorwaardenPage() {
               met een minimum van €40).
             </p>
 
-            <h2>Artikel 10 — Klachten</h2>
+            <h2>Artikel 10: Klachten</h2>
             <p>
               Klachten over de uitvoering van de overeenkomst dien je binnen
               bekwame tijd, volledig en duidelijk omschreven bij ons in. We
@@ -190,7 +190,7 @@ export default function AlgemeneVoorwaardenPage() {
               .
             </p>
 
-            <h2>Artikel 11 — Geschillen</h2>
+            <h2>Artikel 11: Geschillen</h2>
             <p>
               Op alle overeenkomsten waarop deze voorwaarden betrekking hebben
               is uitsluitend Nederlands recht van toepassing, ook als je in het
@@ -199,7 +199,7 @@ export default function AlgemeneVoorwaardenPage() {
               zijn en worden schriftelijk vastgelegd.
             </p>
 
-            <h2>Bijlage — Modelformulier voor herroeping</h2>
+            <h2>Bijlage: Modelformulier voor herroeping</h2>
             <p>
               Wil je de overeenkomst herroepen? Stuur dan onderstaande gegevens
               aan Sign Company B.V. (Duurzame Vlaggen), De Drie Kronen 115,
@@ -221,7 +221,7 @@ export default function AlgemeneVoorwaardenPage() {
 
             <p>
               Vragen over deze voorwaarden?{" "}
-              <Link href="/contact">Neem gerust contact op</Link> — we helpen
+              <Link href="/contact">Neem gerust contact op</Link>. We helpen
               je graag.
             </p>
           </div>

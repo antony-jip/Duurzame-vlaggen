@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-verenigingen" },
-  title: "Voor verenigingen — duurzame clubvlaggen in jullie kleuren",
+  title: "Voor verenigingen. Duurzame clubvlaggen in jullie kleuren",
   description:
     "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en geen microplastics op het sportpark.",
 };
@@ -30,7 +30,7 @@ const REASONS = [
   {
     icon: <Check size={24} />,
     title: "Clubkorting",
-    body: "Hoe meer vlaggen, hoe voordeliger: staffelkorting vanaf 10 stuks. Elke euro telt bij een vereniging — dat snappen wij.",
+    body: "Hoe meer vlaggen, hoe voordeliger: staffelkorting vanaf 10 stuks. Elke euro telt bij een vereniging. Dat snappen wij.",
   },
   {
     icon: <Recycle size={24} />,
@@ -81,22 +81,22 @@ const SEASON = [
   {
     meta: "Seizoen start",
     title: "Trots bij het clubhuis",
-    body: "Zelfde kwaliteit als traditionele vlaggen — jullie kleuren in de wind bij elke thuiswedstrijd.",
+    body: "Zelfde kwaliteit als traditionele vlaggen. Jullie kleuren in de wind bij elke thuiswedstrijd.",
   },
   {
     meta: "Seizoen einde",
     title: "Tijd voor nieuwe vlaggen",
-    body: "Na 3–4 maanden intensief gebruik mogen de oude vlaggen weg. Geen gedoe, gewoon bij het afval.",
+    body: "Na 3 tot 4 maanden intensief gebruik mogen de oude vlaggen weg. Geen gedoe, gewoon bij het afval.",
   },
   {
-    meta: "1–2 jaar",
+    meta: "1 tot 2 jaar",
     title: "Natuurlijk proces",
     body: "Micro-organismen breken de vezels af, net zoals bij natuurlijke materialen.",
   },
   {
-    meta: "2–3 jaar",
+    meta: "2 tot 3 jaar",
     title: "Geen sporen",
-    body: "96% volledig opgelost. Alleen CO₂, water en biomassa blijven over — niets op het sportpark.",
+    body: "96% volledig opgelost. Alleen CO₂, water en biomassa blijven over. Niets op het sportpark.",
   },
 ];
 
@@ -171,7 +171,7 @@ export default function VoorVerenigingenPage() {
             <h2 id="why-title">Geen plastic. Wél clubtrots.</h2>
             <p className="lead">
               Jullie verdienen vlaggen die net zo goed presteren als jullie
-              teams — tegen verenigingsvriendelijke prijzen.
+              teams. Tegen verenigingsvriendelijke prijzen.
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>
@@ -229,7 +229,7 @@ export default function VoorVerenigingenPage() {
             <p className="lead">
               Jullie clubvlaggen presteren een heel seizoen en laten daarna
               geen plastic sporen achter op het veld of in de natuur. Een
-              statement naar leden en sponsors — en dat mag je best laten zien.
+              statement naar leden en sponsors. En dat mag je best laten zien.
             </p>
           </div>
           <div className={styles.steps}>

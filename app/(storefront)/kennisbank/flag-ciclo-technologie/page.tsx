@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/flag-ciclo-technologie" },
-  title: "Flag-CiCLO® technologie — hoe een vlag kan verdwijnen",
+  title: "Flag-CiCLO® technologie: hoe een vlag kan verdwijnen",
   description:
     "Geen magie, wel wetenschap: zo zorgt CiCLO®-technologie dat onze vlaggen volledig oplossen zonder sporen achter te laten. De levenscyclus stap voor stap uitgelegd.",
 };
@@ -24,7 +24,7 @@ const WAVE_PATH =
 
 const PHASES = [
   {
-    meta: "3–4 maanden",
+    meta: "3 tot 4 maanden",
     title: "In gebruik",
     body: "Volledig functioneel, met dezelfde kwaliteit als traditioneel polyester en 2 jaar UV-bestendige kleuren.",
   },
@@ -34,12 +34,12 @@ const PHASES = [
     body: "In grond, compost, zee of op de stortplaats komen micro-organismen in contact met de vezels.",
   },
   {
-    meta: "1–2 jaar",
+    meta: "1 tot 2 jaar",
     title: "Afbraak",
-    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen — vergelijkbaar met wol.",
+    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen. Vergelijkbaar met wol.",
   },
   {
-    meta: "2–3 jaar totaal",
+    meta: "2 tot 3 jaar totaal",
     title: "Verdwenen",
     body: "96% opgelost. Alleen CO₂, water en biomassa blijven over. Geen microplastics.",
   },
@@ -50,7 +50,7 @@ const HOW = [
   {
     icon: <Recycle size={24} />,
     title: "Slimme technologie",
-    body: "CiCLO® wordt tijdens het spinproces in de polyestervezel zelf verwerkt — als biologisch afbreekbare 'spots' die dienen als voedingsbron.",
+    body: "CiCLO® wordt tijdens het spinproces in de polyestervezel zelf verwerkt. Als biologisch afbreekbare 'spots' die dienen als voedingsbron.",
   },
   {
     icon: <Leaf size={24} />,
@@ -80,7 +80,7 @@ export default function FlagCicloTechnologiePage() {
             </h1>
             <p className={styles.heroSub}>
               Geen magie, wel wetenschap. Ontdek hoe CiCLO®-technologie ervoor
-              zorgt dat onze vlaggen volledig oplossen — zonder sporen achter
+              zorgt dat onze vlaggen volledig oplossen. Zonder sporen achter
               te laten.
             </p>
             <div className={styles.heroActions}>
@@ -101,7 +101,7 @@ export default function FlagCicloTechnologiePage() {
               <span className={styles.heroStatLabel}>Lost volledig op</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>2–3 jaar</span>
+              <span className={styles.heroStatValue}>2 tot 3 jaar</span>
               <span className={styles.heroStatLabel}>Afbraaktijd</span>
             </div>
             <div className={styles.heroStat}>
@@ -129,7 +129,7 @@ export default function FlagCicloTechnologiePage() {
             <p className="lead">
               Gewone polyester vlaggen slijten en laten kleine plastic deeltjes
               achter die honderden jaren in de natuur blijven. Onze vlaggen
-              zijn anders — door één ingrediënt in de vezel.
+              zijn anders. Door één ingrediënt in de vezel.
             </p>
           </div>
           <div className={styles.chipGrid}>
@@ -151,8 +151,8 @@ export default function FlagCicloTechnologiePage() {
               <h3>Goed om te weten</h3>
               <p>
                 De vlag breekt niet af terwijl je hem gebruikt. Pas als het
-                doek na afdanking in contact komt met micro-organismen — in
-                grond, compost of water — start het proces. Aan de mast blijft
+                doek na afdanking in contact komt met micro-organismen, in
+                grond, compost of water, start het proces. Aan de mast blijft
                 je vlag gewoon intact.
               </p>
             </div>
@@ -171,8 +171,8 @@ export default function FlagCicloTechnologiePage() {
             <h2 id="cycle-title">Van wapperen tot volledig verdwijnen.</h2>
             <p className="lead">
               Dezelfde kwaliteit en levensduur als traditionele polyester
-              vlaggen. Maar na afdanking lost 96% volledig op in 2–3 jaar —
-              zonder enige microplastics.
+              vlaggen. Maar na afdanking lost 96% volledig op in 2 tot 3 jaar.
+              Zonder enige microplastics.
             </p>
           </div>
           <div className={styles.steps}>
@@ -199,9 +199,9 @@ export default function FlagCicloTechnologiePage() {
             <p className="lead">
               De CiCLO®-technologie is meer dan drie jaar getest door erkende
               laboratoria, in grond, zeewater, rioolwaterzuivering en op
-              stortplaatsen — volgens internationale ASTM-normen. Daarnaast is
-              het materiaal OEKO-TEX® ECO PASSPORT-gecertificeerd en REACH-
-              compliant.
+              stortplaatsen. Volgens internationale ASTM-normen. Daarnaast is
+              het materiaal OEKO-TEX® ECO PASSPORT-gecertificeerd en voldoet
+              het aan REACH.
             </p>
             <Link href="/certificeringen" className={styles.arrowLink}>
               Bekijk alle certificeringen en testresultaten{" "}

@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/vlaggen-kiezen" },
-  title: "De juiste vlag kiezen — formaten en masthoogtes",
+  title: "De juiste vlag kiezen: formaten en masthoogtes",
   description:
     "Welk vlagtype en welk formaat past bij jouw situatie? Praktische keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, plus gratis advies.",
 };
@@ -27,14 +27,14 @@ const WAVE_PATH =
 const TYPES = [
   {
     icon: <FlagMast size={24} />,
-    kicker: "6–12 m masten",
+    kicker: "6 tot 12 m masten",
     title: "Mastvlag",
     body: "De klassieke keuze voor vlaggenmasten bij je pand of entree. Standaardmaten: 100×150, 150×225 en 200×300 cm.",
     href: "/collectie/mastvlag",
   },
   {
     icon: <FlagBanier size={24} />,
-    kicker: "3–8 m baniermasten",
+    kicker: "3 tot 8 m baniermasten",
     title: "Baniervlag",
     body: "Verticaal en representatief, ideaal bij entrees. Standaardmaten: 80×300, 100×400 en 120×500 cm.",
     href: "/collectie/baniervlag",
@@ -65,8 +65,8 @@ const BANIER_SIZES = [
 // Welk mastvlag-formaat bij welke masthoogte.
 const MAST_SIZES = [
   { size: "100×150 cm", mast: "6 meter mast" },
-  { size: "150×225 cm", mast: "7–8 meter mast" },
-  { size: "200×300 cm", mast: "10–12 meter mast" },
+  { size: "150×225 cm", mast: "7 tot 8 meter mast" },
+  { size: "200×300 cm", mast: "10 tot 12 meter mast" },
 ];
 
 const FAQ = [
@@ -80,7 +80,7 @@ const FAQ = [
   },
   {
     q: "Hoelang gaat zo'n vlag mee?",
-    a: "Bij normaal buitengebruik zo'n 3–4 maanden; de kleuren blijven tot 2 jaar UV-bestendig. En het mooie: onze vlaggen zijn 96% biologisch afbreekbaar, dus geen microplastics die in de natuur achterblijven.",
+    a: "Bij normaal buitengebruik zo'n 3 tot 4 maanden; de kleuren blijven tot 2 jaar UV-bestendig. En het mooie: onze vlaggen zijn 96% biologisch afbreekbaar, dus geen microplastics die in de natuur achterblijven.",
   },
   {
     q: "Kan ik ook een afwijkend formaat bestellen?",
@@ -132,7 +132,7 @@ export default function VlaggenKiezenPage() {
               <span className={styles.heroStatLabel}>Vlagtypes</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>3–12 m</span>
+              <span className={styles.heroStatValue}>3 tot 12 m</span>
               <span className={styles.heroStatLabel}>Masthoogtes</span>
             </div>
             <div className={styles.heroStat}>
@@ -198,12 +198,12 @@ export default function VlaggenKiezenPage() {
               <span className={styles.cardIcon} aria-hidden="true">
                 <FlagMast size={24} />
               </span>
-              <span className={styles.cardKicker}>6–12 m masten</span>
+              <span className={styles.cardKicker}>6 tot 12 m masten</span>
               <h3>Mastvlag-formaten</h3>
               <ul className={styles.cardList}>
                 {MAST_SIZES.map((row) => (
                   <li key={row.size}>
-                    <strong>{row.size}</strong> — {row.mast}
+                    <strong>{row.size}</strong> · {row.mast}
                   </li>
                 ))}
               </ul>
@@ -215,12 +215,12 @@ export default function VlaggenKiezenPage() {
               <span className={styles.cardIcon} aria-hidden="true">
                 <FlagBanier size={24} />
               </span>
-              <span className={styles.cardKicker}>3–8 m masten</span>
+              <span className={styles.cardKicker}>3 tot 8 m masten</span>
               <h3>Baniervlag-formaten</h3>
               <ul className={styles.cardList}>
                 {BANIER_SIZES.map((row) => (
                   <li key={row.size}>
-                    <strong>{row.size}</strong> — {row.mast}
+                    <strong>{row.size}</strong> · {row.mast}
                   </li>
                 ))}
               </ul>
@@ -276,7 +276,7 @@ export default function VlaggenKiezenPage() {
               </h2>
               <p className={styles.ctaSub}>
                 Gevonden wat je zocht? We leveren binnen circa 3 dagen. Twijfel
-                je nog? Neem gerust contact op — we denken graag met je mee.
+                je nog? Neem gerust contact op. We denken graag met je mee.
               </p>
               <div className={styles.ctaActions}>
                 <Button

@@ -54,8 +54,9 @@ const GROUPS: FaqGroup[] = [
             <p>
               Zodra de vlag na afdanking in contact komt met grond, compost,
               zeewater of een stortplaats, breken die organismen de vezels af.
-              Het resultaat: 96% afbraak in 2–3 jaar, zonder microplastics. Je
-              vlag gedraagt zich dus normaal, maar lost op als je hem weggooit.
+              Het resultaat: 96% afbraak in 2 tot 3 jaar, zonder microplastics.
+              Je vlag gedraagt zich dus normaal, maar lost op als je hem
+              weggooit.
             </p>
             <Link href="/kennisbank/flag-ciclo-technologie">
               Lees meer over de technologie
@@ -67,10 +68,11 @@ const GROUPS: FaqGroup[] = [
         q: "Hoe lang gaat zo'n vlag mee?",
         a: (
           <p>
-            In normaal gebruik 3–4 maanden — precies even lang als traditionele
-            polyester vlaggen. De kleuren zijn tot 2 jaar UV-bestendig. En nee:
-            je vlag breekt niet af terwijl hij aan de mast hangt. Dat proces
-            start pas na afdanking, in contact met micro-organismen.
+            In normaal gebruik 3 tot 4 maanden. Precies even lang als
+            traditionele polyester vlaggen. De kleuren zijn tot 2 jaar
+            UV-bestendig. En nee: je vlag breekt niet af terwijl hij aan de mast
+            hangt. Dat proces start pas na afdanking, in contact met
+            micro-organismen.
           </p>
         ),
       },
@@ -80,7 +82,7 @@ const GROUPS: FaqGroup[] = [
           <p>
             Ja, identiek. Flag-CiCLO®-doek gedraagt zich precies als standaard
             polyester: dezelfde printkwaliteit, kleuren en stevigheid. Het
-            enige verschil is wat er na afdanking gebeurt — en dat ziet niemand
+            enige verschil is wat er na afdanking gebeurt. En dat ziet niemand
             behalve je duurzaamheidsverslag.
           </p>
         ),
@@ -94,7 +96,7 @@ const GROUPS: FaqGroup[] = [
               OEKO-TEX® ECO PASSPORT (ecologisch verantwoord), EU REACH
               (chemicaliënverordening) en ASTM D5988, D5511, D5210 en D6691
               (geteste afbraak in grond, stortplaats, rioolwater en zee).
-              Onafhankelijke labs hebben dit bevestigd — niet wij zelf.
+              Onafhankelijke labs hebben dit bevestigd. Niet wij zelf.
             </p>
             <Link href="/certificeringen">Bekijk alle certificaten</Link>
           </>
@@ -123,7 +125,7 @@ const GROUPS: FaqGroup[] = [
             <p>
               De Corporate Sustainability Reporting Directive is EU-wetgeving
               die grote bedrijven verplicht te rapporteren over hun
-              milieu-impact — onder ESRS E2-5 ook over microplastics. Standaard
+              milieu-impact. Onder ESRS E2-5 ook over microplastics. Standaard
               polyester vlaggen laten microplastics achter, en dat moet je dus
               verantwoorden. Met Flag-CiCLO® is er simpelweg niets te
               rapporteren: 0% microplastic-residu.
@@ -136,7 +138,7 @@ const GROUPS: FaqGroup[] = [
         q: "Krijg ik CSRD-certificaten van jullie?",
         a: (
           <p>
-            Even eerlijk: CSRD is een rapportageplicht, geen certificering —
+            Even eerlijk: CSRD is een rapportageplicht, geen certificering.
             &ldquo;CSRD-certificaten&rdquo; bestaan niet. Wat je van ons wél
             krijgt: productspecificaties van het Flag-CiCLO®-materiaal,
             informatie over de CiCLO®-technologie en certificeringen zoals
@@ -151,7 +153,7 @@ const GROUPS: FaqGroup[] = [
           <p>
             Vanaf 2025 is CSRD verplicht voor grote bedrijven (250+
             werknemers); in de jaren daarna volgen steeds kleinere bedrijven.
-            Slim om nu al over te stappen — niet omdat het moet, maar omdat je
+            Slim om nu al over te stappen. Niet omdat het moet, maar omdat je
             dan geen haast hebt. En haast maakt duur.
           </p>
         ),
@@ -180,7 +182,7 @@ const GROUPS: FaqGroup[] = [
           <p>
             Standaard leveren we circa 3 werkdagen na goedkeuring van je
             ontwerp. Bij complexe custom designs kan het iets langer duren.
-            Haast? Rush-orders zijn mogelijk — neem even contact op.
+            Haast? Rush-orders zijn mogelijk. Neem even contact op.
           </p>
         ),
       },
@@ -190,7 +192,7 @@ const GROUPS: FaqGroup[] = [
           <p>
             Flag-CiCLO®-vlaggen zijn slechts enkele euro's duurder per stuk
             dan traditionele polyester vlaggen. Bij zakelijke volumes is het
-            prijsverschil verwaarloosbaar — en je krijgt er CSRD-proof
+            prijsverschil verwaarloosbaar. En je krijgt er CSRD-proof
             documentatie bij.
           </p>
         ),
@@ -249,8 +251,8 @@ const GROUPS: FaqGroup[] = [
         a: (
           <>
             <p>
-              Ja, naast vlaggen leveren we ook vlaggenmasten — met 5 tot 15
-              jaar breukgarantie afhankelijk van het type. Voor advies over de
+              Ja, naast vlaggen leveren we ook vlaggenmasten, met 5 tot 15 jaar
+              breukgarantie afhankelijk van het type. Voor advies over de
               juiste combinatie van mast en vlag denken we graag mee.
             </p>
             <Link href="/collectie/vlaggenmast">Bekijk vlaggenmasten</Link>
@@ -267,10 +269,10 @@ const GROUPS: FaqGroup[] = [
         q: "96%? Waarom niet 100%?",
         a: (
           <p>
-            96% van het textiel lost volledig op in 2–3 jaar; de overige 4%
+            96% van het textiel lost volledig op in 2 tot 3 jaar; de overige 4%
             wordt omgezet in onschadelijke biomassa. Er blijven geen
-            microplastics achter. We claimen geen 100%, omdat dat niet klopt —
-            en wij beloven niets dat we niet kunnen bewijzen.
+            microplastics achter. We claimen geen 100%, omdat dat niet klopt. Wij
+            beloven niets dat we niet kunnen bewijzen.
           </p>
         ),
       },
@@ -281,7 +283,7 @@ const GROUPS: FaqGroup[] = [
             <p>
               Traditionele polyester vlaggen zijn van plastic. Bij slijtage
               door wind, regen en zon komen continu microplastic-vezels vrij
-              die in grondwater, oceanen en ecosystemen terechtkomen — en daar
+              die in grondwater, oceanen en ecosystemen terechtkomen. En daar
               honderden jaren blijven.
             </p>
             <Link href="/kennisbank/microplastics">
@@ -305,7 +307,7 @@ const GROUPS: FaqGroup[] = [
         a: (
           <>
             <p>
-              Goede vraag — fijn dat je kritisch bent. Nee: de
+              Goede vraag, fijn dat je kritisch bent. Nee: de
               CiCLO®-technologie is onafhankelijk getest door ASTM-labs, niet
               door ons. Het materiaal is niet-toxisch voor marien leven en de
               afbraakproducten zijn onschadelijk: CO₂, water en biomassa. De
@@ -373,9 +375,9 @@ export default function VeelgesteldeVragenPage() {
               .
             </h1>
             <p className={styles.heroSub}>
-              Geen juridische muurtjes, geen omwegen. Gewoon eerlijke
-              antwoorden op de vragen die je hebt — en op de vragen die je
-              misschien nog niet wist te stellen.
+              Geen juridische muurtjes, geen omwegen. Gewoon eerlijke antwoorden
+              op de vragen die je hebt. En op de vragen die je misschien nog niet
+              wist te stellen.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -431,8 +433,8 @@ export default function VeelgesteldeVragenPage() {
                 Vraag niet beantwoord?
               </h2>
               <p className={styles.ctaSub}>
-                Neem direct contact op. We reageren binnen 24 uur — door een
-                mens die je vraag leest en serieus neemt.
+                Neem direct contact op. We reageren binnen 24 uur. Door een mens
+                die je vraag leest en serieus neemt.
               </p>
               <div className={styles.ctaActions}>
                 <Button

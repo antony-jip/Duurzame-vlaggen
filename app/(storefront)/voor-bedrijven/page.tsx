@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-bedrijven" },
-  title: "Voor bedrijven — CSRD-proof bedrijfsvlaggen",
+  title: "Voor bedrijven. CSRD-proof bedrijfsvlaggen",
   description:
     "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. 0% microplastics, CSRD/ESRS E2-5-documentatie inbegrepen en levering in circa 3 werkdagen.",
 };
@@ -56,7 +56,7 @@ const PRODUCTS = [
     icon: <FlagGevel size={24} />,
     kicker: "Aan je pand",
     title: "Gevelvlag",
-    body: "Je logo of design in full-color aan de gevel van je bedrijfspand — op doek dat na gebruik volledig afbreekt.",
+    body: "Je logo in full-color aan de gevel. Op doek dat na gebruik volledig afbreekt. Geen plastic dat je pand overleeft.",
     href: "/collectie/gevelvlag",
     label: "Bekijk gevelvlaggen",
   },
@@ -64,7 +64,7 @@ const PRODUCTS = [
     icon: <FlagMast size={24} />,
     kicker: "Klassiek display",
     title: "Mastvlag",
-    body: "De vertrouwde mastvlag, zonder microplastics. Zelfde levensduur en kwaliteit, na afdanking opgelost in 2–3 jaar.",
+    body: "De vertrouwde mastvlag. Nul microplastics. Zelfde levensduur en kwaliteit, na afdanking opgelost in 2 tot 3 jaar.",
     href: "/collectie/mastvlag",
     label: "Bekijk mastvlaggen",
   },
@@ -72,7 +72,7 @@ const PRODUCTS = [
     icon: <FlagBanier size={24} />,
     kicker: "Representatief",
     title: "Baniervlag",
-    body: "Strak en representatief bij entrees en beurzen — zonder blijvende milieu-impact als de campagne voorbij is.",
+    body: "Strak en representatief bij entrees en beurzen. Campagne voorbij? Geen plastic dat achterblijft in de natuur.",
     href: "/collectie/baniervlag",
     label: "Bekijk baniervlaggen",
   },
@@ -97,10 +97,10 @@ export default function VoorBedrijvenPage() {
               <span className={styles.heroAccent}>verdwijnen</span>.
             </h1>
             <p className={styles.heroSub}>
-              Zelfde kwaliteit en kleurvastheid als je huidige polyester
-              vlaggen, maar zonder de eeuwige plastic erfenis. 96% lost volledig
-              op in 2–3 jaar na afdanking — geen microplastics, geen
-              CSRD-hoofdpijn.
+              Elke gewone vlag wappert zichzelf kapot tot microplastic. De onze
+              niet. Zelfde kwaliteit en kleurvastheid als je huidige polyester,
+              maar 96% lost volledig op in 2 tot 3 jaar na afdanking. Geen
+              microplastics. Geen CSRD-hoofdpijn.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -210,14 +210,14 @@ export default function VoorBedrijvenPage() {
             </h2>
             <p className="lead">
               Grote bedrijven moeten onder de CSRD rapporteren over
-              microplastics — en textiel telt mee. Elke polyester vlag die
-              slijt, laat duizenden plastic vezels achter in bodem en water.
-              Dat is geen detail meer, dat is een regel in je verslag.
+              microplastics. En textiel telt mee. Elke polyester vlag die slijt,
+              laat duizenden plastic vezels achter in bodem en water. Geen detail
+              meer. Een regel in je verslag.
             </p>
             <p className="lead">
               Onze vlaggen lossen op. Geen microplastics om te verantwoorden,
               geen lastige vragen van accountants of stakeholders. Je kunt
-              wachten tot iemand ernaar vraagt — of je regelt het nu.
+              wachten tot iemand ernaar vraagt. Of je regelt het nu.
             </p>
             <Link href="/csrd" className={styles.arrowLink}>
               Alles over CSRD en je vlaggen <ArrowRight size={16} />

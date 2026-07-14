@@ -22,7 +22,7 @@ const ORG_JSON_LD = jsonLd({
   url: SITE_URL,
   logo: LOGO_URL,
   description:
-    "Biologisch afbreekbare vlaggen voor bedrijven, gemeenten en verenigingen — CSRD-proof en zonder microplastics.",
+    "Biologisch afbreekbare vlaggen voor bedrijven, gemeenten en verenigingen. Klaar voor de CSRD en zonder microplastics.",
   areaServed: "NL",
   contactPoint: {
     "@type": "ContactPoint",

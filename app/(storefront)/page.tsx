@@ -28,27 +28,27 @@ export const metadata: Metadata = {
   // Absolute title — the root layout template would otherwise double the suffix
   // ("… | Sign Company | Duurzame Vlaggen").
   title: {
-    absolute: "Duurzame Vlaggen — biologisch afbreekbaar",
+    absolute: "Duurzame Vlaggen. Biologisch afbreekbaar.",
   },
   description:
-    "Laat je merk wapperen zonder de planeet te belasten. Biologisch afbreekbare banier-, mast-, gevelvlaggen en beachflags. CSRD-proof en binnen 5 werkdagen geleverd.",
+    "Elke gewone vlag wappert uiteen tot microplastic. De onze niet. Biologisch afbreekbare baniervlaggen, mastvlaggen, gevelvlaggen en beachflags. Onderbouwd voor je duurzaamheidsverslag, binnen 5 werkdagen geleverd.",
 };
 
 const USPS = [
   {
     icon: <Leaf size={26} />,
     title: "100% biologisch afbreekbaar",
-    body: "Geweven van plantaardige, composteerbare vezels. Na gebruik terug de kringloop in — geen microplastics, geen restafval.",
+    body: "Geweven van plantaardige, composteerbare vezels. Na gebruik terug de kringloop in. Geen microplastics. Geen restafval.",
   },
   {
     icon: <Recycle size={26} />,
     title: "Circulair geproduceerd",
-    body: "Waterloos bedrukt met pigmenten op biobasis en geproduceerd op groene stroom in eigen atelier in Nederland.",
+    body: "Waterloos bedrukt met pigmenten op biobasis. Geproduceerd op groene stroom, in ons eigen atelier in Nederland.",
   },
   {
     icon: <ShieldCheck size={26} />,
-    title: "CSRD-proof rapportage",
-    body: "Bij elke bestelling een CO₂- en materiaalpaspoort dat naadloos aansluit op je duurzaamheidsverslag.",
+    title: "Klaar voor je CSRD-verslag",
+    body: "Bij elke bestelling een CO₂-paspoort en materiaalpaspoort dat naadloos aansluit op je duurzaamheidsverslag.",
   },
   {
     icon: <Truck size={26} />,
@@ -70,7 +70,7 @@ const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
 const STEPS = [
   {
     title: "Kies je vlag",
-    body: "Selecteer het model en formaat dat bij je toepassing past — of laat je adviseren door ons team.",
+    body: "Selecteer het model en formaat dat bij je toepassing past. Of laat je adviseren door ons team.",
   },
   {
     title: "Upload je ontwerp",
@@ -110,9 +110,9 @@ export default async function Home() {
               <span className={styles.heroAccent}>0% afval.</span>
             </h1>
             <p className={styles.heroSub}>
-              Gewone vlaggen slijten tot duizenden stukjes microplastic in de
-              natuur. De onze composteren volledig — bedrukt in Nederland,
-              geleverd binnen 5 werkdagen.
+              Elke gewone vlag wappert zichzelf kapot tot duizenden stukjes
+              microplastic. De onze composteert volledig. Gedrukt in Nederland.
+              Binnen 5 werkdagen op je mast.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -215,7 +215,7 @@ export default async function Home() {
             <div className={`${styles.brainerCard} ${styles.brainerOld}`}>
               <h3>De gewone vlag</h3>
               <ul>
-                <li data-mark="✗">Polyester — slijt tot microplastics</li>
+                <li data-mark="✗">Polyester, slijt tot microplastics</li>
                 <li data-mark="✗">Eindigt op de afvalberg</li>
                 <li data-mark="✗">Niets te melden in je CSRD-verslag</li>
                 <li data-mark="—">Scherpe print, weerbestendig</li>
@@ -224,8 +224,8 @@ export default async function Home() {
             <div className={`${styles.brainerCard} ${styles.brainerNew}`}>
               <h3>De duurzame vlag</h3>
               <ul>
-                <li data-mark="✓">Composteert volledig — nul restafval</li>
-                <li data-mark="✓">CO₂- en materiaalpaspoort bij elke order</li>
+                <li data-mark="✓">Composteert volledig, nul restafval</li>
+                <li data-mark="✓">CO₂-paspoort en materiaalpaspoort bij elke order</li>
                 <li data-mark="✓">Direct een regel vóór je duurzaamheidsverslag</li>
                 <li data-mark="✓">Even scherpe print, even weerbestendig</li>
               </ul>
@@ -249,7 +249,7 @@ export default async function Home() {
             <Badge variant="success">Bestel direct online</Badge>
             <h2 id="types-title">Kies je vlag.</h2>
             <p className="lead">
-              Samenstellen, ontwerp uploaden, afrekenen — binnen 5 werkdagen aan
+              Samenstellen, ontwerp uploaden, afrekenen. Binnen 5 werkdagen aan
               de mast.
             </p>
           </div>
@@ -298,8 +298,8 @@ export default async function Home() {
             <Badge variant="primary">Waarom duurzame vlaggen</Badge>
             <h2 id="usp-title">Zichtbaar duurzaam.</h2>
             <p className="lead">
-              Polyester vlaggen eindigen op de afvalberg. De onze niet — en dat
-              bewijs je zwart-op-wit.
+              Polyester vlaggen eindigen op de afvalberg. De onze niet. En dat
+              bewijs je zwart op wit.
             </p>
           </div>
           <div className={styles.uspGrid}>
@@ -339,9 +339,9 @@ export default async function Home() {
               Wél <span className={styles.missionAccent}>vlagvertoon</span>.
             </h2>
             <p className={styles.missionBody}>
-              Elke polyester vlag eindigt als plastic afval. De onze niet: het
-              doek composteert na gebruik volledig — en dat bewijzen we bij elke
-              bestelling zwart-op-wit.
+              Elke polyester vlag eindigt als plastic afval. De onze niet. Het
+              doek composteert na gebruik volledig, en dat bewijzen we bij elke
+              bestelling zwart op wit.
             </p>
             <div className={styles.missionStats} aria-label="Kerncijfers">
               <div className={styles.missionStat}>
@@ -396,13 +396,13 @@ export default async function Home() {
             <p>
               Ons Flag-CiCLO®-doek voelt en print als premium polyester, maar is
               opgebouwd uit vezels die na hun leven volledig in de natuur
-              afbreken — in jaren, niet in eeuwen. Geen microplastics, geen
+              afbreken. In jaren, niet in eeuwen. Geen microplastics. Geen
               afvalberg.
             </p>
             <ul className={styles.craftList}>
               <li>
                 <Leaf size={18} aria-hidden="true" /> Composteerbare vezels,
-                CSRD-onderbouwd
+                onderbouwd voor je duurzaamheidsverslag
               </li>
               <li>
                 <Recycle size={18} aria-hidden="true" /> Waterloos bedrukt op

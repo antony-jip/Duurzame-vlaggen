@@ -25,7 +25,7 @@ const TRUST = [
   {
     icon: <Leaf size={24} />,
     title: "100% biologisch afbreekbaar",
-    body: "Geweven van composteerbare vezels — geen microplastics, geen restafval.",
+    body: "Geweven van composteerbare vezels. Geen microplastics. Geen restafval.",
   },
   {
     icon: <Recycle size={24} />,
@@ -49,8 +49,9 @@ export default async function CollectiePage() {
         <Badge variant="success">{dict.nav.collection}</Badge>
         <h1 id="collectie-title">Kies je vlag.</h1>
         <p className="lead">
-          Elke vlag is geprint op biologisch afbreekbaar doek en op maat gemaakt.
-          Kies je model, stel het samen en reken direct online af.
+          Elke gewone vlag wappert zichzelf kapot tot microplastic. De onze niet.
+          Geprint op biologisch afbreekbaar doek, op maat gemaakt. Kies je model,
+          stel het samen en reken direct online af.
         </p>
       </div>
 

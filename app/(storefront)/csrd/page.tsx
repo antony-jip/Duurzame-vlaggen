@@ -14,9 +14,9 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/csrd" },
-  title: "CSRD — microplastics in je vlaggen rapporteren",
+  title: "CSRD. Microplastics in je vlaggen rapporteren",
   description:
-    "De CSRD verplicht bedrijven te rapporteren over microplastics onder ESRS E2-5 — ook uit vlaggen. Lees wanneer het voor jou geldt en hoe je het simpel oplost.",
+    "De CSRD verplicht bedrijven te rapporteren over microplastics onder ESRS E2-5. Ook die uit vlaggen. Lees wanneer het voor jou geldt en hoe je het simpel oplost.",
 };
 
 const WAVE_PATH =
@@ -32,7 +32,7 @@ const REPORT_POINTS = [
   {
     icon: <Check size={24} />,
     title: "Hoeveel precies?",
-    body: "Geen 'ongeveer veel' — je moet het kunnen meten of berekenen. Flag-CiCLO®-vlaggen scoren hier simpelweg 0%.",
+    body: "Geen 'ongeveer veel'. Je moet het kunnen meten of berekenen. Flag-CiCLO® vlaggen scoren hier simpelweg 0%.",
   },
   {
     icon: <Recycle size={24} />,
@@ -66,7 +66,7 @@ const TIMELINE = [
   {
     year: "2029",
     title: "Buitenlandse bedrijven",
-    body: "Niet-EU-bedrijven met meer dan €150 miljoen omzet in Europa.",
+    body: "Bedrijven van buiten de EU met meer dan €150 miljoen omzet in Europa.",
   },
 ];
 
@@ -90,8 +90,8 @@ export default function CsrdPage() {
             </h1>
             <p className={styles.heroSub}>
               De Europese CSRD verplicht bedrijven te melden hoeveel
-              microplastics ze uitstoten — inclusief de vezels die uit
-              polyester vlaggen slijten. Onze vlaggen lossen op en laten géén
+              microplastics ze uitstoten. Inclusief de vezels die uit polyester
+              vlaggen slijten. Onze vlaggen lossen op en laten géén
               microplastics achter. Probleem opgelost voordat het begint.
             </p>
             <div className={styles.heroActions}>
@@ -142,18 +142,19 @@ export default function CsrdPage() {
             <h2 id="what-title">Wat is CSRD eigenlijk?</h2>
             <p className="lead">
               CSRD staat voor Corporate Sustainability Reporting Directive: een
-              EU-wet die bedrijven verplicht eerlijk te vertellen hoe duurzaam
-              ze écht zijn. Niet vaag, maar met harde, controleerbare cijfers.
-              Hoeveel CO₂? Hoeveel afval? En ja — ook hoeveel microplastics.
+              Europese wet die bedrijven verplicht eerlijk te vertellen hoe
+              duurzaam ze écht zijn. Niet vaag, maar met harde, controleerbare
+              cijfers. Hoeveel CO₂? Hoeveel afval? En ja, ook hoeveel
+              microplastics.
             </p>
             <p className="lead">
               Microplastics vallen onder hoofdstuk ESRS E2-5 ("zorgwekkende
               stoffen"). Gebruikt je bedrijf polyester vlaggen, dan draag je
-              bij aan microplastic-uitstoot. En dat staat straks in je
+              bij aan de uitstoot van microplastics. En dat staat straks in je
               jaarverslag.
             </p>
             <Link href="/kennisbank/microplastics" className={styles.arrowLink}>
-              Waarom zijn vlaggen een microplastics-bron?{" "}
+              Waarom zijn vlaggen een bron van microplastics?{" "}
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -172,7 +173,7 @@ export default function CsrdPage() {
             <p className="lead">
               De wet wordt stapsgewijs ingevoerd: grote bedrijven eerst,
               daarna steeds kleinere. Lever je aan grote bedrijven? Dan word
-              je indirect geraakt — je klanten gaan om data vragen.
+              je indirect geraakt. Je klanten gaan om data vragen.
             </p>
           </div>
           <div className={styles.timeline}>
@@ -238,8 +239,8 @@ export default function CsrdPage() {
             <Badge variant="personal">De oplossing</Badge>
             <h2 id="compare-title">Gewone vlaggen vs. onze vlaggen.</h2>
             <p className="lead">
-              Het verschil zit in wat er overblijft als de vlag versleten is —
-              en dus in wat er in je rapport komt te staan.
+              Het verschil zit in wat er overblijft als de vlag versleten is.
+              En dus in wat er in je rapport komt te staan.
             </p>
           </div>
           <div className={styles.compare}>
@@ -260,10 +261,10 @@ export default function CsrdPage() {
               </span>
               <h3>Niets te verantwoorden</h3>
               <ul className={styles.compareList}>
-                <li>96% lost volledig op in 2–3 jaar</li>
+                <li>96% lost volledig op in 2 tot 3 jaar</li>
                 <li>Géén microplastics na afbraak</li>
                 <li>Zelfde kwaliteit als traditioneel</li>
-                <li>ESRS E2-5-documentatie inbegrepen</li>
+                <li>Documentatie voor ESRS E2-5 inbegrepen</li>
                 <li>Compliant vanaf dag één</li>
               </ul>
             </div>
@@ -297,7 +298,7 @@ export default function CsrdPage() {
                   href="/kennisbank/csrd-compliance"
                   className={styles.ctaLink}
                 >
-                  Lees de complete CSRD-gids
+                  Lees de complete gids over CSRD
                 </Link>
               </div>
             </div>

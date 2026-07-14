@@ -145,15 +145,15 @@ export default async function ProductPage({
           <ul className={styles.trustRow}>
             <li>
               <Leaf size={16} aria-hidden="true" />
-              Biologisch afbreekbaar
+              Composteert volledig
             </li>
             <li>
               <Recycle size={16} aria-hidden="true" />
-              Geproduceerd in NL
+              Gedrukt in Nederland
             </li>
             <li>
               <Truck size={16} aria-hidden="true" />
-              Binnen 5 werkdagen geleverd
+              Binnen 5 werkdagen op je mast
             </li>
           </ul>
         </div>

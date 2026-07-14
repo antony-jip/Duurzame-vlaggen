@@ -15,37 +15,37 @@ import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/duurzaamheid" },
-  title: "Duurzaamheid — Flag-CiCLO® technologie",
+  title: "Duurzaamheid. Flag-CiCLO® technologie",
   description:
-    "Duurzame vlaggen die verdwijnen. Zero plastic. Onze Flag-CiCLO®-vlaggen zijn 96% biologisch afbreekbaar in 2–3 jaar, bevatten 0% microplastics en zijn CSRD/ESRS E2-5-compliant.",
+    "Vlaggen die verdwijnen. Zero plastic. Onze Flag-CiCLO® vlaggen zijn 96% biologisch afbreekbaar in 2 tot 3 jaar, bevatten 0% microplastics en voldoen aan CSRD en ESRS E2-5.",
 };
 
 // The four-phase breakdown of how a Flag-CiCLO® flag returns to nature.
 const PHASES = [
   {
     title: "In gebruik",
-    body: "Je vlag presteert identiek aan polyester: kleurvast, weerbestendig en tot 2 jaar UV-stabiel. Functionele levensduur 3–4 maanden intensief buiten.",
+    body: "Wappert als elke topvlag. Kleurvast, weerbestendig, tot 2 jaar UV-stabiel. Functionele levensduur 3 tot 4 maanden intensief buiten.",
   },
   {
     title: "Start van de afbraak",
-    body: "Na afdanking hechten micro-organismen zich aan de vezels. De CiCLO®-technologie opent de kunststofstructuur zodat de natuur het materiaal herkent als voedsel.",
+    body: "Vlag afgedankt? Nu hechten micro-organismen zich aan de vezels. De CiCLO® technologie opent de kunststofstructuur, zodat de natuur het materiaal herkent als voedsel.",
   },
   {
     title: "Actieve afbraak",
-    body: "In de bodem of in een stortomgeving breken bacteriën en schimmels de vezels in 1–2 jaar verder af — zonder microplastische resten achter te laten.",
+    body: "In de bodem of op de stortplaats breken bacteriën en schimmels de vezels in 1 tot 2 jaar verder af. Zonder één microplastische rest.",
   },
   {
     title: "Volledig opgelost",
-    body: "96% is verdwenen. Wat rest zijn alleen CO₂, water en biomassa. Geen microplastics, geen restafval. Totale doorlooptijd: 2–3 jaar.",
+    body: "96% is verdwenen. Wat rest is CO₂, water en biomassa. Geen microplastics, geen restafval. Totale doorlooptijd: 2 tot 3 jaar.",
   },
 ];
 
 // The brand's own data moment — measured, not promised.
 const STATS = [
   { value: "96%", label: "Biologisch afbreekbaar" },
-  { value: "2–3 jaar", label: "Tot volledig opgelost" },
+  { value: "2 tot 3 jaar", label: "Tot volledig opgelost" },
   { value: "0%", label: "Microplastics" },
-  { value: "3–4 mnd", label: "Functionele levensduur" },
+  { value: "3 tot 4 mnd", label: "Functionele levensduur" },
 ];
 
 // Independent certifications backing the claims.
@@ -56,7 +56,7 @@ const CERTS = [
   },
   {
     name: "ASTM D5988",
-    body: "Genormeerde labtest voor biologische afbreekbaarheid in de bodem — de basis onder onze 96%-claim.",
+    body: "Genormeerde labtest voor biologische afbreekbaarheid in de bodem. De basis onder onze claim van 96%.",
   },
   {
     name: "ASTM D5511",
@@ -78,12 +78,12 @@ const CSRD_POINTS = [
   {
     icon: <Check size={26} />,
     title: "Documentatie inbegrepen",
-    body: "Bij elke bestelling ontvang je de ESRS E2-5-documentatie en certificaten die je één-op-één in je duurzaamheidsverslag opneemt.",
+    body: "Bij elke bestelling ontvang je de documentatie voor ESRS E2-5 en de certificaten. Die neem je direct over in je duurzaamheidsverslag.",
   },
   {
     icon: <Leaf size={26} />,
     title: "Verifieerbaar, geen greenwashing",
-    body: "Alle claims steunen op onafhankelijke ASTM-labtests en internationale certificeringen — controleerbaar door je accountant.",
+    body: "Alle claims steunen op onafhankelijke ASTM labtests en internationale certificeringen. Controleerbaar door je accountant.",
   },
 ];
 
@@ -111,9 +111,9 @@ export default function DuurzaamheidPage() {
               Zero plastic.
             </h1>
             <p className={styles.heroSub}>
-              Zelfde kwaliteit als je huidige vlag — alleen lost deze op in de
-              natuur. 96% biologisch afbreekbaar in 2–3 jaar, 0% microplastics
-              en volledig CSRD-proof.
+              Zelfde kwaliteit als je huidige vlag. Alleen lost deze op in de
+              natuur. 96% biologisch afbreekbaar in 2 tot 3 jaar, 0%
+              microplastics en klaar voor de CSRD.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -160,9 +160,9 @@ export default function DuurzaamheidPage() {
             <h2 id="how-title">Van wapperende vlag tot biomassa.</h2>
             <p className="lead">
               Flag-CiCLO® is biologisch afbreekbaar polyester. De vezel
-              presteert als een gewone vlag, maar bevat een ingrediënt dat
-              micro-organismen in staat stelt het materiaal volledig af te
-              breken — in vier fasen.
+              presteert als een gewone vlag. Alleen bevat hij een ingrediënt dat
+              micro-organismen het materiaal volledig laat afbreken. In vier
+              fasen.
             </p>
           </div>
           <div className={styles.phasesWrap}>
@@ -211,8 +211,8 @@ export default function DuurzaamheidPage() {
               Onderbouwd. <span className={styles.dataAccent}>Niet beloofd.</span>
             </h2>
             <p className={styles.dataBody}>
-              Elk getal is gemeten volgens internationale ASTM-normen in een
-              onafhankelijk laboratorium — geen marketingclaim, maar labresultaat.
+              Elk getal is gemeten volgens internationale ASTM normen in een
+              onafhankelijk laboratorium. Geen marketingclaim. Labresultaat.
             </p>
             <div className={styles.dataStats} aria-label="Kerncijfers">
               {STATS.map((stat) => (
@@ -274,7 +274,7 @@ export default function DuurzaamheidPage() {
             <Badge variant="primary">CSRD &amp; ESRS E2-5</Badge>
             <h2 id="csrd-title">Wat dit betekent voor je verslag.</h2>
             <p className="lead">
-              Onder de CSRD moeten bedrijven hun microplastic-uitstoot
+              Onder de CSRD moeten bedrijven hun uitstoot van microplastics
               rapporteren. Kies je voor onze vlaggen, dan is die uitstoot er
               simpelweg niet.
             </p>
@@ -299,11 +299,11 @@ export default function DuurzaamheidPage() {
           <div className={styles.ctaBand}>
             <div className={styles.ctaInner}>
               <h2 id="cta-title" className={styles.ctaTitle}>
-                Duurzaam wapperen, zwart-op-wit.
+                Duurzaam wapperen, zwart op wit.
               </h2>
               <p className={styles.ctaSub}>
-                Vraag de certificaten en ESRS E2-5-documentatie op, of bestel
-                direct een gratis staal van ons Flag-CiCLO®-doek.
+                Vraag de certificaten en de documentatie voor ESRS E2-5 op. Of
+                bestel direct een gratis staal van ons Flag-CiCLO® doek.
               </p>
               <div className={styles.ctaActions}>
                 <Button

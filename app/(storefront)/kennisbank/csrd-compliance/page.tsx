@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/csrd-compliance" },
-  title: "CSRD-compliance — geldt dit voor jouw bedrijf?",
+  title: "CSRD compliance: geldt dit voor jouw bedrijf?",
   description:
     "Nieuwe EU-regels verplichten rapportage over microplastics, ook uit vlaggen. Check of de CSRD voor jouw bedrijf geldt en regel je compliance in vier simpele stappen.",
 };
@@ -33,14 +33,14 @@ const WHO = [
   {
     icon: <Check size={24} />,
     kicker: "Mogelijk later",
-    title: "MKB (50–250 medewerkers)",
+    title: "MKB (50 tot 250 medewerkers)",
     body: "Beursgenoteerd? Dan volg je later. Niet beursgenoteerd? Je kunt alsnog geraakt worden via je klanten.",
   },
   {
     icon: <Truck size={24} />,
     kicker: "Indirect geraakt",
     title: "Leverancier van grote bedrijven",
-    body: "Je grote klanten moeten over hun keten rapporteren. Ze gaan jou dus vragen stellen — of een alternatief zoeken.",
+    body: "Je grote klanten moeten over hun keten rapporteren. Ze gaan jou dus vragen stellen. Of een alternatief zoeken.",
   },
 ];
 
@@ -54,7 +54,7 @@ const SOLUTIONS = [
   {
     icon: <Check size={24} />,
     title: "Certificaten erbij",
-    body: "Bij elke bestelling ontvang je documentatie met exacte cijfers — klaar om in je rapport op te nemen.",
+    body: "Bij elke bestelling ontvang je documentatie met exacte cijfers. Klaar om in je rapport op te nemen.",
   },
   {
     icon: <Truck size={24} />,
@@ -86,7 +86,7 @@ const STEPS = [
 const FAQ = [
   {
     q: "Ik heb maar 30 medewerkers. Waarom zou ik me hier druk om maken?",
-    a: "Direct onder de CSRD val je waarschijnlijk niet. Maar heb je grote bedrijven als klant? Die moeten wél rapporteren — ook over hun leveranciers. Straks vragen ze jou om data, of ze kiezen een concurrent die wél voorbereid is.",
+    a: "Direct onder de CSRD val je waarschijnlijk niet. Maar heb je grote bedrijven als klant? Die moeten wél rapporteren. Ook over hun leveranciers. Straks vragen ze jou om data, of ze kiezen een concurrent die wél voorbereid is.",
   },
   {
     q: "Wat zijn microplastics eigenlijk? En waarom vlaggen?",
@@ -94,11 +94,11 @@ const FAQ = [
   },
   {
     q: "Zijn jullie vlaggen net zo goed als gewone vlaggen?",
-    a: "Ja. Zelfde kwaliteit, kleuren, levensduur (3–4 maanden bij normaal gebruik) en UV-bestendigheid. Het enige verschil zit in wat er ná gebruik gebeurt: onze vlaggen breken biologisch af zonder microplastics.",
+    a: "Ja. Zelfde kwaliteit, kleuren, levensduur (3 tot 4 maanden bij normaal gebruik) en UV-bestendigheid. Het enige verschil zit in wat er ná gebruik gebeurt: onze vlaggen breken biologisch af zonder microplastics.",
   },
   {
     q: "Wat krijg ik precies als bewijs voor mijn rapportage?",
-    a: "Bij elke bestelling: OEKO-TEX ECO PASSPORT-certificering, ASTM-testresultaten (afbraak in grond, water en rioolzuivering) en een productspecificatie met alle relevante data. Direct bruikbaar onder ESRS E2-5 — accountants en auditors herkennen deze certificeringen.",
+    a: "Bij elke bestelling: OEKO-TEX ECO PASSPORT-certificering, ASTM-testresultaten (afbraak in grond, water en rioolzuivering) en een productspecificatie met alle relevante data. Direct bruikbaar onder ESRS E2-5. Accountants en auditors herkennen deze certificeringen.",
   },
   {
     q: "Zijn jullie vlaggen veel duurder?",
@@ -126,7 +126,7 @@ export default function CsrdCompliancePage() {
             </h1>
             <p className={styles.heroSub}>
               Klinkt gek, maar het is waar: nieuwe EU-regels verplichten
-              bedrijven te rapporteren over microplastics — ook die van je
+              bedrijven te rapporteren over microplastics. Ook die van je
               vlaggen. We leggen uit wat dit voor jou betekent. Spoiler: het is
               makkelijker op te lossen dan je denkt.
             </p>
@@ -156,7 +156,7 @@ export default function CsrdCompliancePage() {
             </div>
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>✓</span>
-              <span className={styles.heroStatLabel}>Oplossing er al</span>
+              <span className={styles.heroStatLabel}>Al opgelost</span>
             </div>
           </div>
         </Container>
@@ -208,7 +208,7 @@ export default function CsrdCompliancePage() {
             <h2 id="consequences-title">Wat zijn de gevolgen?</h2>
             <p className="lead">
               Zowel als je niets doet, als wanneer je wél actie onderneemt. We
-              houden het eerlijk — zonder paniekzaaierij.
+              houden het eerlijk. Zonder paniekzaaierij.
             </p>
           </div>
           <div className={styles.compare}>
@@ -216,7 +216,7 @@ export default function CsrdCompliancePage() {
               <span className={styles.compareTag}>Als je niets doet</span>
               <h3>Risico stapelt op</h3>
               <ul className={styles.compareList}>
-                <li>Boetes bij niet-naleving</li>
+                <li>Boetes bij overtreding</li>
                 <li>Grote klanten kiezen voor voorbereide concurrenten</li>
                 <li>Je mist aanbestedingen die compliance eisen</li>
                 <li>Reputatieschade bij steeds bewustere klanten</li>
@@ -274,7 +274,7 @@ export default function CsrdCompliancePage() {
               Van bestelling naar compliance in vier stappen.
             </h2>
             <p className="lead">
-              Makkelijker dan je denkt — je hoeft zelf niets uit te zoeken.
+              Makkelijker dan je denkt. Je hoeft zelf niets uit te zoeken.
             </p>
           </div>
           <div className={styles.steps}>

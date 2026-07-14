@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-gemeenten" },
-  title: "Voor gemeenten — duurzame gemeentevlaggen zonder microplastics",
+  title: "Voor gemeenten. Duurzame gemeentevlaggen zonder microplastics",
   description:
     "Biologisch afbreekbare gemeentevlaggen: zero microplastics in de openbare ruimte, meetbaar voor MVI-rapportages en geschikt voor aanbestedingen. Complete documentatie inbegrepen.",
 };
@@ -30,7 +30,7 @@ const REASONS = [
   {
     icon: <Leaf size={24} />,
     title: "Voorbeeldfunctie",
-    body: "Laat inwoners en raadsleden zien dat je gemeente concreet actie onderneemt tegen plastic vervuiling — zichtbaar aan het gemeentehuis.",
+    body: "Laat inwoners en raadsleden zien dat je gemeente echt actie onderneemt tegen plastic vervuiling. Zichtbaar aan het gemeentehuis.",
   },
   {
     icon: <Check size={24} />,
@@ -45,7 +45,7 @@ const REASONS = [
   {
     icon: <Recycle size={24} />,
     title: "Vergelijkbare prijs",
-    body: "Slechts enkele euro's meer per vlag dan traditioneel polyester — ook bij volume snel geleverd, in circa 3 werkdagen.",
+    body: "Slechts enkele euro's meer per vlag dan traditioneel polyester. Ook bij volume snel geleverd, in circa 3 werkdagen.",
   },
 ];
 
@@ -54,7 +54,7 @@ const PRODUCTS = [
     icon: <FlagGevel size={24} />,
     kicker: "Gemeentehuizen",
     title: "Gevelvlag",
-    body: "Het gemeentewapen of logo in full-color aan het gemeentehuis of openbare gebouwen — zonder microplastics in de openbare ruimte.",
+    body: "Het gemeentewapen of logo in full-color aan het gemeentehuis of openbare gebouwen. Zonder microplastics in de openbare ruimte.",
     href: "/collectie/gevelvlag",
     label: "Bekijk gevelvlaggen",
   },
@@ -97,7 +97,7 @@ export default function VoorGemeentenPage() {
             </h1>
             <p className={styles.heroSub}>
               Gemeentevlaggen zonder microplastics in de openbare ruimte. 96%
-              lost volledig op in 2–3 jaar na afdanking — transparant richting
+              lost volledig op in 2 tot 3 jaar na afdanking. Transparant richting
               inwoners, meetbaar voor MVI-rapportages en geschikt voor
               aanbestedingen.
             </p>
@@ -149,8 +149,7 @@ export default function VoorGemeentenPage() {
             <h2 id="why-title">Meetbare duurzaamheid, geen mooie woorden.</h2>
             <p className="lead">
               Elke gemeente praat over een schonere leefomgeving. Met
-              Flag-CiCLO®-vlaggen maak je het concreet — en kun je het
-              aantonen.
+              Flag-CiCLO®-vlaggen maak je het concreet. En je kunt het aantonen.
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>
@@ -209,16 +208,16 @@ export default function VoorGemeentenPage() {
               Burgers kijken naar wat je doet, niet naar wat je zegt.
             </h2>
             <p className="lead">
-              Klimaatdoelen, een schonere leefomgeving — elke gemeente heeft
+              Klimaatdoelen, een schonere leefomgeving. Elke gemeente heeft
               ambities. Maar wat hangt er aan het eigen gemeentehuis? Polyester
               vlaggen die bij elke windvlaag microplastics loslaten in de
               openbare ruimte.
             </p>
             <p className="lead">
               Dat kan anders. Zelfde kwaliteit, zelfde kleuren, zelfde
-              levensduur — maar met een verhaal dat je kunt vertellen. Aan de
-              raad, aan inwoners, aan de pers. Duurzaamheid begint bij de
-              details die iedereen kan zien.
+              levensduur. Maar met een verhaal dat je kunt vertellen. Aan de
+              raad, aan inwoners, aan de pers. Duurzaamheid begint bij de details
+              die iedereen kan zien.
             </p>
             <Link href="/duurzaamheid" className={styles.arrowLink}>
               Bekijk de technologie <ArrowRight size={16} />

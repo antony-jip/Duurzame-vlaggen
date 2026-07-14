@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/garantie" },
-  title: "Garantie — kwaliteit zwart-op-wit",
+  title: "Garantie. Kwaliteit zwart op wit",
   description:
     "Transparante garantie op duurzame vlaggen, vlaggenmasten en accessoires. Tot 15 jaar breukgarantie op masten, productiefouten altijd vergoed en reactie binnen 24 uur.",
 };
@@ -38,7 +38,7 @@ const QUALITY = [
   {
     icon: <Recycle size={24} />,
     title: "Printkwaliteit",
-    body: "Full-color sublimatiedruk met scherpe details. Logo's en teksten komen er exact zo uit als je verwacht.",
+    body: "Sublimatiedruk in volle kleur met scherpe details. Logo's en teksten komen er exact zo uit als je verwacht.",
   },
 ];
 
@@ -49,14 +49,14 @@ const TERMS = [
     kicker: "Productgarantie",
     title: "Vlaggen",
     items: [
-      "Levensduur 3–4 maanden bij intensief buitengebruik",
+      "Levensduur 3 tot 4 maanden bij intensief buitengebruik",
       "Kleurvastheid tot 2 jaar UV-bestendig",
       "Productiefouten worden altijd vergoed",
     ],
   },
   {
     icon: <FlagPole size={24} />,
-    kicker: "5–15 jaar breukgarantie",
+    kicker: "5 tot 15 jaar breukgarantie",
     title: "Vlaggenmasten",
     items: [
       "15 jaar breukgarantie op polyester masten",
@@ -104,7 +104,7 @@ const COMPLAINT_STEPS = [
 
 const FAQ = [
   {
-    q: "Waarom gaat mijn vlag maar 3–4 maanden mee?",
+    q: "Waarom gaat mijn vlag maar 3 tot 4 maanden mee?",
     a: "Dat is de standaard levensduur van alle buitenvlaggen, ook traditionele polyester. Wind, regen en UV-straling slijten het doek. Het verschil: onze vlaggen presteren identiek, maar lossen na afdanking volledig op zonder microplastics.",
   },
   {
@@ -141,7 +141,7 @@ export default function GarantiePage() {
             <p className={styles.heroSub}>
               Onze biologisch afbreekbare vlaggen bieden dezelfde kwaliteit als
               traditioneel polyester. Geen compromissen op stevigheid,
-              kleurvastheid of levensduur — en transparante garantie op alles
+              kleurvastheid of levensduur. En transparante garantie op alles
               wat we leveren.
             </p>
             <div className={styles.heroActions}>
@@ -161,7 +161,7 @@ export default function GarantiePage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>3–4 mnd</span>
+              <span className={styles.heroStatValue}>3 tot 4 mnd</span>
               <span className={styles.heroStatLabel}>Levensduur vlag</span>
             </div>
             <div className={styles.heroStat}>
@@ -220,7 +220,7 @@ export default function GarantiePage() {
             <Badge variant="personal">Garantievoorwaarden</Badge>
             <h2 id="terms-title">Precies weten waar je aan toe bent.</h2>
             <p className="lead">
-              Transparante garantie op al onze producten — inclusief de
+              Transparante garantie op al onze producten. Inclusief de
               situaties waarin de garantie vervalt.
             </p>
           </div>
@@ -301,7 +301,7 @@ export default function GarantiePage() {
               </h2>
               <p className={styles.ctaSub}>
                 Stuur ons je ordernummer en een korte beschrijving. Binnen 24
-                uur hoor je van ons — van een mens, niet van een chatbot.
+                uur hoor je van ons. Van een mens, niet van een chatbot.
               </p>
               <div className={styles.ctaActions}>
                 <Button

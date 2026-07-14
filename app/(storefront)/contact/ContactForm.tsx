@@ -44,7 +44,7 @@ export function ContactForm({ defaultProduct }: ContactFormProps) {
     const subjectLabel =
       SUBJECTS.find((s) => s.value === data.get("subject"))?.label ??
       "Contactaanvraag";
-    const productSuffix = defaultProduct ? ` — ${defaultProduct}` : "";
+    const productSuffix = defaultProduct ? `: ${defaultProduct}` : "";
     const body = [
       `Naam: ${data.get("name") ?? ""}`,
       `E-mail: ${data.get("email") ?? ""}`,

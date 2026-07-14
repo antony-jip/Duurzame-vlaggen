@@ -116,9 +116,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "baniervlag",
     name: "Baniervlag",
     category: "vlag",
-    tagline: "Verticale banier die opvalt — biologisch afbreekbaar.",
+    tagline: "Valt op. Valt daarna volledig uiteen. Zonder één stukje plastic.",
     description:
-      "De baniervlag is onze meest gekozen vlag: een verticale banier die je merk laat wapperen bij de ingang, op beurzen of langs de weg. Geprint op Flag-CiCLO®-doek dat in 2–3 jaar biologisch afbreekt, zonder microplastics.",
+      "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek dat in 2 tot 3 jaar volledig composteert. Geen microplastics. Geen compromis.",
     // priceFrom = goedkoopste maat uit het lokale retailmodel (100×200), area-
     // geschaald op de anker-maat 100×250 = €38 (≈ €15,20/m²).
     // TODO: prijs verifiëren met Antony (alleen 100×250 is live geverifieerd).
@@ -168,9 +168,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "mastvlag",
     name: "Mastvlag",
     category: "vlag",
-    tagline: "Klassieke mastvlag voor aan de vlaggenmast.",
+    tagline: "De klassieker aan je mast. Nu zonder plastic nalatenschap.",
     description:
-      "De mastvlag hijs je aan een vlaggenmast en is er in staand en liggend formaat. Duurzaam geprint op biologisch afbreekbaar doek, met een stevige band en koord voor jarenlang gebruik — en een schoon einde.",
+      "Hijs 'm aan je mast, staand of liggend. Gedrukt op biologisch afbreekbaar doek, afgewerkt met een stevige band en koord die jaren meegaan. En als het einde komt, blijft er niets achter. Geen microplastic, geen rommel in de natuur.",
     // priceFrom = kleinste maat uit het lokale retailmodel (100×150).
     // TODO: prijs verifiëren — mastvlag-prijzen zijn area-geschaald op het enige
     // bekende punt 150×225 ≈ €44,50 (live site); zie lib/pricing/local-catalog.
@@ -213,9 +213,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "beachvlag",
     name: "Beachvlag",
     category: "vlag",
-    tagline: "Draagbare beachflag — binnen én buiten.",
+    tagline: "Overal opgezet. Nergens plastic achtergelaten.",
     description:
-      "De beachvlag (beachflag) is licht, draagbaar en pakt overal uit: evenementen, winkels, sportvelden. Verkrijgbaar als straight- en squareflag, geleverd inclusief stok en draagtas, met een duurzame doekprint die netjes afbreekt in plaats van als microplastic achter te blijven.",
+      "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. De doekprint breekt netjes af in plaats van als microplastic in de natuur te belanden.",
     // priceFrom = goedkoopste maat uit het lokale retailmodel (Straight S = €35;
     // dichtstbijzijnde ref-maat 80×220). Zie lib/pricing/local-catalog.
     priceFrom: 35,
@@ -292,9 +292,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "gevelvlag",
     name: "Gevelvlag",
     category: "vlag",
-    tagline: "Gevelvlag die je merk aan de straatkant toont.",
+    tagline: "Je merk aan de straat. Zonder een spoor na te laten.",
     description:
-      "De gevelvlag hangt aan een uithouder aan je gevel en trekt de aandacht van voorbijgangers. Afgewerkt met band, koord en lus, geprint op biologisch afbreekbaar doek — zichtbaar duurzaam, precies wat een CSRD-bewuste organisatie uitstraalt.",
+      "Hangt aan een uithouder aan je gevel en pakt elke voorbijganger. Afgewerkt met band, koord en lus, gedrukt op biologisch afbreekbaar doek. Zichtbaar duurzaam. Precies wat een organisatie die CSRD serieus neemt wil uitstralen.",
     // priceFrom = echte retailprijs kleinste maat (100×70 = €17,50, ref).
     priceFrom: 17.5,
     // Sizes are Probo's own facade-flag presets for Flag-CiCLO®, verified live.
@@ -335,9 +335,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "vlaggenmast",
     name: "Vlaggenmast",
     category: "hardware",
-    tagline: "Aluminium Easylift-vlaggenmast in 4 kleuren.",
+    tagline: "De aluminium Easylift. Vier kleuren. Jaren stevig.",
     description:
-      "Een stevige aluminium vlaggenmast (Easylift) als duurzame basis voor je mastvlag. Hoogwaardig aluminium dat jaren meegaat, inclusief montagebeugels, met 10+ jaar garantie. Online tot 8 meter, hogere masten op aanvraag.",
+      "De stevige aluminium basis onder je mastvlag. Hoogwaardig aluminium dat jaren meegaat, inclusief montagebeugels en meer dan 10 jaar garantie. Online tot 8 meter, hogere masten op aanvraag.",
     // TODO: prijs verifiëren met Antony — catalogus stond op €637, live-config-ref
     // geeft €520 (6 m). Ref-prijzen aangehouden; zie lib/pricing/local-catalog.
     priceFrom: 520,

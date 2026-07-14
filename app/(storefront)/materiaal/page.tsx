@@ -12,9 +12,9 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/materiaal" },
-  title: "Materiaal — biologisch afbreekbaar vlaggendoek",
+  title: "Materiaal. Biologisch afbreekbaar vlaggendoek",
   description:
-    "Flag-CiCLO®-vlaggendoek lost volledig op in 2–3 jaar: geen microplastics, alleen CO₂, water en biomassa. Dezelfde kwaliteit als traditioneel polyester, wel CSRD-proof.",
+    "Flag-CiCLO® vlaggendoek lost volledig op in 2 tot 3 jaar: geen microplastics, alleen CO₂, water en biomassa. Dezelfde kwaliteit als traditioneel polyester, wel klaar voor de CSRD.",
 };
 
 const WAVE_PATH =
@@ -23,7 +23,7 @@ const WAVE_PATH =
 // De levenscyclus van het doek, van mast tot biomassa.
 const PHASES = [
   {
-    meta: "3–4 maanden",
+    meta: "3 tot 4 maanden",
     title: "In gebruik",
     body: "Volledig functioneel, met dezelfde kwaliteit als traditioneel polyester en tot 2 jaar UV-bestendige kleuren.",
   },
@@ -33,12 +33,12 @@ const PHASES = [
     body: "In grond, compost, zee of op de stortplaats komen micro-organismen in contact met de vezels.",
   },
   {
-    meta: "1–2 jaar",
+    meta: "1 tot 2 jaar",
     title: "Actieve afbraak",
-    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen — vergelijkbaar met wol.",
+    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen. Vergelijkbaar met wol.",
   },
   {
-    meta: "2–3 jaar totaal",
+    meta: "2 tot 3 jaar totaal",
     title: "Verdwenen",
     body: "96% is opgelost. Alleen CO₂, water en biomassa blijven over. Geen microplastics.",
   },
@@ -63,10 +63,10 @@ export default function MateriaalPage() {
               <span className={styles.heroAccent}>vlaggendoek</span>.
             </h1>
             <p className={styles.heroSub}>
-              Ons Flag-CiCLO®-materiaal lost volledig op in 2–3 jaar. Geen
-              microplastics, geen schadelijke resten — alleen CO₂, water en
+              Ons Flag-CiCLO® materiaal lost volledig op in 2 tot 3 jaar. Geen
+              microplastics, geen schadelijke resten. Alleen CO₂, water en
               biomassa. Dezelfde kwaliteit als traditioneel polyester, maar dan
-              CSRD-proof.
+              klaar voor de CSRD.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -89,7 +89,7 @@ export default function MateriaalPage() {
               <span className={styles.heroStatLabel}>Afbreekbaar</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>2–3 jaar</span>
+              <span className={styles.heroStatValue}>2 tot 3 jaar</span>
               <span className={styles.heroStatLabel}>Tot volledige afbraak</span>
             </div>
             <div className={styles.heroStat}>
@@ -117,7 +117,7 @@ export default function MateriaalPage() {
             <p className="lead">
               Flag-CiCLO® is polyester met een ingebouwde voedingsbron voor
               micro-organismen. Tijdens gebruik presteert het doek als een
-              gewone vlag — pas na afdanking start het afbraakproces.
+              gewone vlag. Pas na afdanking start het afbraakproces.
             </p>
           </div>
           <div className={styles.steps}>
@@ -170,18 +170,18 @@ export default function MateriaalPage() {
               <h3>Blijft eeuwen bestaan</h3>
               <ul className={styles.compareList}>
                 <li>Blijft 200+ jaar in de natuur als plastic afval</li>
-                <li>Laat microplastic-deeltjes achter bij slijtage</li>
-                <li>Moet als microplastics-bron gerapporteerd worden (CSRD)</li>
-                <li>Mogelijk toekomstige EU-beperkingen door wetgeving</li>
+                <li>Laat deeltjes microplastic achter bij slijtage</li>
+                <li>Moet als bron van microplastics gerapporteerd worden (CSRD)</li>
+                <li>Mogelijk toekomstige beperkingen vanuit de EU door wetgeving</li>
               </ul>
             </div>
             <div className={`${styles.compareCard} ${styles.compareGood}`}>
               <span className={styles.compareTag}>Flag-CiCLO®</span>
               <h3>Lost volledig op</h3>
               <ul className={styles.compareList}>
-                <li>96% verdwenen in 2–3 jaar na afdanking, zonder resten</li>
-                <li>0% microplastics — beschermt bodem en water</li>
-                <li>CSRD-rapporteerbaar: certificaten inbegrepen</li>
+                <li>96% verdwenen in 2 tot 3 jaar na afdanking, zonder resten</li>
+                <li>0% microplastics, beschermt bodem en water</li>
+                <li>Rapporteerbaar voor CSRD: certificaten inbegrepen</li>
                 <li>Zelfde kwaliteit, print en levensduur als polyester</li>
               </ul>
             </div>

@@ -14,9 +14,9 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/certificeringen" },
-  title: "Certificeringen — onafhankelijk getest",
+  title: "Certificeringen. Onafhankelijk getest",
   description:
-    "Geen marketingclaims maar labresultaten: ASTM-afbraaktests in grond, water en op stortplaatsen, plus OEKO-TEX ECO PASSPORT en EU REACH. Bekijk alle certificeringen.",
+    "Geen marketingclaims maar labresultaten: ASTM afbraaktests in grond, water en op stortplaatsen, plus OEKO-TEX ECO PASSPORT en EU REACH. Bekijk alle certificeringen.",
 };
 
 const WAVE_PATH =
@@ -55,7 +55,7 @@ const CERTS = [
   {
     icon: <ShieldCheck size={24} />,
     title: "OEKO-TEX® ECO PASSPORT",
-    body: "Onafhankelijk bewijs dat elke grondstof en elk chemisch bestanddeel veilig is voor mens en milieu — getest op ruim 100 schadelijke stoffen.",
+    body: "Onafhankelijk bewijs dat elke grondstof en elk chemisch bestanddeel veilig is voor mens en milieu. Getest op ruim 100 schadelijke stoffen.",
   },
   {
     icon: <Check size={24} />,
@@ -89,7 +89,7 @@ export default function CertificeringenPage() {
             </h1>
             <p className={styles.heroSub}>
               Gewone vlaggen zijn van plastic en laten bij slijtage duizenden
-              deeltjes achter. Onze vlaggen breken volledig af — net als een
+              deeltjes achter. Onze vlaggen breken volledig af. Net als een
               blad op de bosbodem. Geen mooie marketingpraatjes: erkende
               laboratoria hebben het materiaal meer dan drie jaar getest in
               grond, water en compost.
@@ -142,7 +142,7 @@ export default function CertificeringenPage() {
             <h2 id="tests-title">Getest volgens internationale normen.</h2>
             <p className="lead">
               Onafhankelijke laboratoria testten het materiaal in vier
-              omgevingen, volgens genormeerde ASTM-methodes. Overal dezelfde
+              omgevingen, volgens genormeerde ASTM methodes. Overal dezelfde
               conclusie: het breekt echt af.
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function CertificeringenPage() {
               <p>
                 Het materiaal is letterlijk opgegeten door micro-organismen. De
                 resterende paar procent is omgezet in biomassa (nieuwe cellen).
-                Er blijft geen plastic over — daarom claimen we 96%, en geen
+                Er blijft geen plastic over. Daarom claimen we 96%, en geen
                 100%. Wij beloven niets dat we niet kunnen bewijzen.
               </p>
             </div>
@@ -209,10 +209,10 @@ export default function CertificeringenPage() {
             <Badge variant="primary">Geen microplastics</Badge>
             <h2 id="how-title">Hoe het werkt, in drie zinnen.</h2>
             <p className="lead">
-              CiCLO®-technologie zit verwerkt in de vezels zelf.
+              CiCLO® technologie zit verwerkt in de vezels zelf.
               Micro-organismen herkennen het materiaal daardoor als voedsel en
               eten de vezels op, net als natuurlijk materiaal. Wat overblijft:
-              water, CO₂ en biomassa — geen plastic.
+              water, CO₂ en biomassa. Geen plastic.
             </p>
             <Link
               href="/kennisbank/flag-ciclo-technologie"
@@ -230,7 +230,7 @@ export default function CertificeringenPage() {
           <div className={styles.ctaBand}>
             <div className={styles.ctaInner}>
               <h2 id="cta-title" className={styles.ctaTitle}>
-                Duurzaam wapperen, zwart-op-wit.
+                Duurzaam wapperen, zwart op wit.
               </h2>
               <p className={styles.ctaSub}>
                 Vraag de certificaten en testrapporten op voor je

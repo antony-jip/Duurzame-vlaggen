@@ -77,7 +77,7 @@ export function ProcesStappen() {
           </h2>
           <p className={styles.sub}>
             Configureer je vlag, reken direct online af en wij regelen de rest.
-            Snel, simpel en volledig duurzaam.
+            Snel. Simpel. Volledig duurzaam.
           </p>
         </div>
 

@@ -30,7 +30,7 @@ export default function CookiebeleidPage() {
             </h1>
             <p className={styles.heroSub}>
               Welke cookies we gebruiken, waarom we ze gebruiken en hoe je ze
-              beheert — in gewoon Nederlands.
+              beheert, in gewoon Nederlands.
             </p>
           </div>
         </Container>
@@ -53,8 +53,8 @@ export default function CookiebeleidPage() {
             <p>
               Cookies zijn kleine tekstbestanden die een website bij je bezoek
               op je computer, tablet of smartphone plaatst. Ze zorgen ervoor
-              dat de website goed werkt — bijvoorbeeld door je winkelwagen te
-              onthouden — en geven ons inzicht om de site te verbeteren.
+              dat de website goed werkt (bijvoorbeeld door je winkelwagen te
+              onthouden) en geven ons inzicht om de site te verbeteren.
               Cookies kunnen geen virussen verspreiden en hebben geen toegang
               tot andere informatie op je apparaat.
             </p>

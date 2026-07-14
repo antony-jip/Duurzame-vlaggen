@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank" },
-  title: "Kennisbank — alles over biologisch afbreekbare vlaggen",
+  title: "Kennisbank: alles over biologisch afbreekbare vlaggen",
   description:
     "Van Flag-CiCLO®-technologie en CSRD-compliance tot microplastics en de juiste vlag kiezen: verdiep je in biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
 };
@@ -36,7 +36,7 @@ const ARTICLES = [
     icon: <ShieldCheck size={24} />,
     kicker: "CSRD",
     title: "CSRD-compliance",
-    body: "Nieuwe EU-regels verplichten rapportage over microplastics — ook uit vlaggen. Check of het voor jou geldt en hoe je het regelt.",
+    body: "Nieuwe EU-regels verplichten rapportage over microplastics. Ook die uit je vlaggen. Check of het voor jou geldt en hoe je het regelt.",
     href: "/kennisbank/csrd-compliance",
   },
   {
@@ -50,7 +50,7 @@ const ARTICLES = [
     icon: <FlagMast size={24} />,
     kicker: "Keuzegids",
     title: "De juiste vlag kiezen",
-    body: "Welk formaat past bij welke masthoogte? Een praktische gids voor mast- en baniervlaggen, met alle standaardmaten.",
+    body: "Welk formaat past bij welke masthoogte? Een praktische gids voor mastvlaggen en baniervlaggen, met alle standaardmaten.",
     href: "/kennisbank/vlaggen-kiezen",
   },
 ];
@@ -99,9 +99,9 @@ export default function KennisbankPage() {
               <span className={styles.heroAccent}>verdwijnen</span>.
             </h1>
             <p className={styles.heroSub}>
-              Van CSRD-compliance tot microplastics: ontdek hoe
-              Flag-CiCLO®-technologie jouw organisatie helpt verduurzamen met
-              meetbare resultaten. Eerlijke uitleg, zonder jargon.
+              Van CSRD tot microplastics. Ontdek hoe
+              Flag-CiCLO®-technologie jouw organisatie laat verduurzamen met
+              meetbare resultaten. Eerlijke uitleg. Geen jargon.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -209,8 +209,8 @@ export default function KennisbankPage() {
                 Klaar om te verduurzamen?
               </h2>
               <p className={styles.ctaSub}>
-                Bekijk het assortiment biologisch afbreekbare vlaggen, of stel
-                je vraag — we denken graag met je mee.
+                Bekijk het assortiment biologisch afbreekbare vlaggen. Of stel
+                je vraag. We denken graag met je mee.
               </p>
               <div className={styles.ctaActions}>
                 <Button

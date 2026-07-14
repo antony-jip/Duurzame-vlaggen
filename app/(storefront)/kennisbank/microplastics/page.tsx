@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/microplastics" },
-  title: "Microplastics — de stille vervuiler in je vlaggen",
+  title: "Microplastics: de stille vervuiler in je vlaggen",
   description:
     "Wat zijn microplastics, waar komen ze vandaan en waarom zijn polyester vlaggen een bron? De feiten, de gezondheidsrisico's en wat jouw organisatie eraan kan doen.",
 };
@@ -37,7 +37,7 @@ const SOURCES = [
   {
     icon: <Recycle size={24} />,
     title: "Verpakkingsmateriaal",
-    body: "Plastic verpakkingen breken in het milieu af in steeds kleinere deeltjes — maar verdwijnen nooit echt.",
+    body: "Plastic verpakkingen breken in het milieu af in steeds kleinere deeltjes. Maar verdwijnen nooit echt.",
   },
   {
     icon: <ShieldCheck size={24} />,
@@ -69,7 +69,7 @@ const IMPACT = [
 const STEPS = [
   {
     title: "Inventariseer je bronnen",
-    body: "Breng in kaart welke materialen in je organisatie microplastics kunnen afgeven — van vlaggen tot werkkleding.",
+    body: "Breng in kaart welke materialen in je organisatie microplastics kunnen afgeven, van vlaggen tot werkkleding.",
   },
   {
     title: "Kies alternatieven",
@@ -100,11 +100,11 @@ const FAQ = [
   },
   {
     q: "Wat is het verschil met Flag-CiCLO®-vlaggen?",
-    a: "Flag-CiCLO®-vlaggen breken voor 96% biologisch af in 2–3 jaar en laten geen microplastics achter. Gewone polyester vlaggen blijven honderden jaren in het milieu en geven continu vezels af.",
+    a: "Flag-CiCLO®-vlaggen breken voor 96% biologisch af in 2 tot 3 jaar en laten geen microplastics achter. Gewone polyester vlaggen blijven honderden jaren in het milieu en geven continu vezels af.",
   },
   {
     q: "Moet ik microplastics rapporteren onder de CSRD?",
-    a: "Ja — grote bedrijven moeten onder ESRS E2-5 rapporteren over hun microplastic-uitstoot. Met Flag-CiCLO®-vlaggen voldoe je aan die eis met meetbare resultaten en certificaten voor je duurzaamheidsverslag.",
+    a: "Ja. Grote bedrijven moeten onder ESRS E2-5 rapporteren over hun microplastic-uitstoot. Met Flag-CiCLO®-vlaggen voldoe je aan die eis met meetbare resultaten en certificaten voor je duurzaamheidsverslag.",
   },
 ];
 
@@ -124,7 +124,7 @@ export default function MicroplasticsPage() {
             </h1>
             <p className={styles.heroSub}>
               Elke dag komen miljoenen onzichtbare plastic deeltjes vrij in ons
-              milieu — ook uit vlaggen. Wat zijn microplastics, waarom vormen
+              milieu. Ook uit vlaggen. Wat zijn microplastics, waarom vormen
               ze een probleem en wat kun jij eraan doen?
             </p>
             <div className={styles.heroActions}>
@@ -179,7 +179,7 @@ export default function MicroplasticsPage() {
             <p className="lead">
               Het probleem: eenmaal in het milieu verdwijnen ze niet.
               Microplastics zijn inmiddels aangetroffen in oceanen, drinkwater,
-              voedsel, lucht — en zelfs in menselijk bloed en placenta's. Ze
+              voedsel, lucht, en zelfs in menselijk bloed en placenta's. Ze
               stapelen zich op in de voedselketen en vormen een groeiend
               gezondheidsrisico.
             </p>
@@ -213,7 +213,7 @@ export default function MicroplasticsPage() {
             <h2 id="impact-title">Waarom dit een probleem is.</h2>
             <p className="lead">
               De gevolgen voor milieu, dieren en mensen worden steeds
-              duidelijker — en de wetgever beweegt mee.
+              duidelijker. En de wetgever beweegt mee.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -287,7 +287,7 @@ export default function MicroplasticsPage() {
               </h2>
               <p className={styles.ctaSub}>
                 Flag-CiCLO®-vlaggen zijn 96% biologisch afbreekbaar en laten
-                0% microplastics achter — inclusief certificaten voor je
+                0% microplastics achter. Inclusief certificaten voor je
                 CSRD-rapportage.
               </p>
               <div className={styles.ctaActions}>

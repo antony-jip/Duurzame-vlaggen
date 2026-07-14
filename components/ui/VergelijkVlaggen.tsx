@@ -74,13 +74,13 @@ export function VergelijkVlaggen({
                 Lost volledig op
               </h3>
               <p className={styles.cardText}>
-                96% breekt af in 2&ndash;3 jaar. Geen sporen, geen microplastics.
+                96% breekt af in 2 tot 3 jaar. Geen sporen, geen microplastics.
                 Klaar.
               </p>
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <span className={`${styles.statValue} ${styles.statValueCiclo}`}>
-                    2&ndash;3 jaar
+                    2 tot 3 jaar
                   </span>
                   <span className={styles.statLabel}>Afbraaktijd</span>
                 </div>

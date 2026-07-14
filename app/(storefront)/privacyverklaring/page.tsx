@@ -76,17 +76,17 @@ export default function PrivacyverklaringPage() {
             </p>
             <ul>
               <li>
-                <strong>Contactgegevens</strong> — naam en eventueel
+                <strong>Contactgegevens</strong>: naam en eventueel
                 bedrijfsnaam, e-mailadres, telefoonnummer, factuur- en
                 afleveradres
               </li>
               <li>
-                <strong>Bestelgegevens</strong> — bestelde producten en
+                <strong>Bestelgegevens</strong>: bestelde producten en
                 specificaties, geüploade logo's en ontwerpen, betaalgegevens
                 (verwerkt door onze betaalprovider) en bestelhistorie
               </li>
               <li>
-                <strong>Websitegebruik</strong> — IP-adres, browsertype,
+                <strong>Websitegebruik</strong>: IP-adres, browsertype,
                 bezochte pagina's en verwijzende website
               </li>
             </ul>
@@ -225,7 +225,7 @@ export default function PrivacyverklaringPage() {
             <h2>9. Vragen of klachten?</h2>
             <p>
               Vragen over deze verklaring of over hoe we met je gegevens
-              omgaan? <Link href="/contact">Neem contact op</Link> — we helpen
+              omgaan? <Link href="/contact">Neem contact op</Link>. We helpen
               je graag. Kom je er met ons niet uit, dan heb je altijd het recht
               een klacht in te dienen bij de{" "}
               <a
