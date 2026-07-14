@@ -26,8 +26,13 @@ import {
   DESIGN_SERVICE_PRICE,
   localOptionsSurcharge,
   localUnitPriceWithOptions,
-  localLinePrice,
+  localCartLineTotal,
+  localCustomSizePrice,
 } from "@/lib/pricing/local-catalog";
+
+/** Redelijke grenzen (cm) voor een eigen maat. */
+const CUSTOM_MIN_CM = 20;
+const CUSTOM_MAX_CM = 600;
 
 export interface ConfiguratorLabels {
   size: string;
@@ -45,12 +50,13 @@ export interface ConfiguratorLabels {
 }
 
 /**
- * Beeld per (optielabel → keuze). Waar geen zinnig beeld bestaat, valt de kaart
- * terug op een kleur-swatch of nette tekstkaart. Bestanden staan in
- * `public/configurator/`.
+ * Generiek beeld per (optielabel → keuze), gedeeld tussen producten. Waar geen
+ * zinnig beeld bestaat, valt de kaart terug op een kleur-swatch of nette
+ * tekstkaart. Bestanden staan in `public/configurator/`.
  */
 const OPTION_IMAGES: Record<string, Record<string, string>> = {
   Mastzijde: {
+    // Gevelvlag/beachvlag: neutrale mastzijde-beelden.
     Links: "/configurator/mastzijde/links.webp",
     Rechts: "/configurator/mastzijde/rechts.webp",
   },
@@ -62,14 +68,44 @@ const OPTION_IMAGES: Record<string, Record<string, string>> = {
     Wit: "/configurator/kleur/wit.png",
     Zwart: "/configurator/kleur/zwart.png",
   },
-  Afwerking: {
-    "Zoom met ringen": "/configurator/afwerking/ringen.webp",
-  },
-  Bevestiging: {
-    Karabijnhaken: "/configurator/afwerking/haken.jpeg",
-    Spankoord: "/configurator/afwerking/koord-lus.jpeg",
+};
+
+/**
+ * Product-specifieke beeld-overrides (winnen van de generieke map).
+ * Per productslug → optielabel → keuze. Zo krijgt de baniervlag zijn eigen
+ * mastzijde-/afwerking-/bandkleur-beelden zonder gevelvlag/beachvlag te breken.
+ */
+const PRODUCT_OPTION_IMAGES: Record<
+  string,
+  Record<string, Record<string, string>>
+> = {
+  baniervlag: {
+    Mastzijde: {
+      Links: "/configurator/mastzijde/banier-links.webp",
+      Rechts: "/configurator/mastzijde/banier-rechts.webp",
+    },
+    Afwerking: {
+      Tunnel: "/configurator/afwerking/tunnel.webp",
+      Geen: "/configurator/afwerking/geen.webp",
+    },
+    Kleur: {
+      Wit: "/configurator/kleur/band-wit.webp",
+      Zwart: "/configurator/kleur/band-zwart.webp",
+    },
   },
 };
+
+/** Beeld voor een optie-keuze: eerst de product-override, dan de generieke map. */
+function optionImage(
+  slug: string,
+  label: string,
+  choice: string,
+): string | undefined {
+  return (
+    PRODUCT_OPTION_IMAGES[slug]?.[label]?.[choice] ??
+    OPTION_IMAGES[label]?.[choice]
+  );
+}
 
 /** Kleur-swatches voor keuzes zonder foto (bv. Aluminium, Antraciet). */
 const COLOR_SWATCHES: Record<string, string> = {
@@ -103,17 +139,46 @@ export function ProductConfigurator({
   const [designService, setDesignService] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const size = product.sizes[sizeIndex];
+  // Eigen-maat-modus: vrije breedte × hoogte in cm.
+  const [customMode, setCustomMode] = useState(false);
+  const [customW, setCustomW] = useState("");
+  const [customH, setCustomH] = useState("");
+
+  const presetSize = product.sizes[sizeIndex];
+
+  // Eigen maat valideren: positieve getallen binnen redelijke grenzen.
+  const wNum = Number(customW);
+  const hNum = Number(customH);
+  const customValid =
+    customW.trim() !== "" &&
+    customH.trim() !== "" &&
+    Number.isFinite(wNum) &&
+    Number.isFinite(hNum) &&
+    wNum >= CUSTOM_MIN_CM &&
+    wNum <= CUSTOM_MAX_CM &&
+    hNum >= CUSTOM_MIN_CM &&
+    hNum <= CUSTOM_MAX_CM;
+  const usingCustom = customMode && customValid;
+
+  // Effectieve maat = eigen maat (indien geldig) of de gekozen preset.
+  const size = usingCustom
+    ? {
+        label: `Eigen: ${wNum} × ${hNum} cm`,
+        widthCm: wNum,
+        heightCm: hNum,
+      }
+    : presetSize;
+
+  // In eigen-maat-modus zonder geldige invoer: geen prijs, geen add-to-cart.
+  const priceReady = !customMode || customValid;
 
   // Instant, netwerk-loze berekening uit het eigen lokale prijsmodel.
-  const unitBasis = localUnitPriceWithOptions(product, size, selectedOptions);
+  const optionsSurcharge = localOptionsSurcharge(product, selectedOptions);
+  const unitBasis = usingCustom
+    ? Math.round((localCustomSizePrice(product, wNum, hNum) + optionsSurcharge) * 100) / 100
+    : localUnitPriceWithOptions(product, presetSize, selectedOptions);
   const discount = staffelDiscount(quantity);
-  const lineExVat = localLinePrice({
-    product,
-    size,
-    amount: quantity,
-    selections: selectedOptions,
-  });
+  const lineExVat = localCartLineTotal(unitBasis, quantity);
   const designExVat = designServiceCost(designService);
   const totalExVat = Math.round((lineExVat + designExVat) * 100) / 100;
   const savings = Math.round((unitBasis * quantity - lineExVat) * 100) / 100;
@@ -123,6 +188,7 @@ export function ProductConfigurator({
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
 
   function handleAdd() {
+    if (!priceReady) return;
     const baseOptions = [
       { code: "Formaat", value: size.label },
       ...product.options.map((opt) => ({
@@ -169,7 +235,13 @@ export function ProductConfigurator({
         <fieldset className={styles.group}>
           <legend className={styles.groupLabel}>
             <span>{labels.size}</span>
-            <span className={styles.groupValue}>{size.label}</span>
+            <span className={styles.groupValue}>
+              {usingCustom
+                ? size.label
+                : customMode
+                  ? "Eigen afmeting"
+                  : presetSize.label}
+            </span>
           </legend>
           <div className={styles.choices}>
             {product.sizes.map((s, i) => {
@@ -179,9 +251,10 @@ export function ProductConfigurator({
                   <input
                     type="radio"
                     name="size"
-                    checked={sizeIndex === i}
+                    checked={!customMode && sizeIndex === i}
                     onChange={() => {
                       setSizeIndex(i);
+                      setCustomMode(false);
                       setAdded(false);
                     }}
                   />
@@ -192,6 +265,78 @@ export function ProductConfigurator({
                 </label>
               );
             })}
+          </div>
+
+          {/* Eigen afmeting — vrije breedte × hoogte */}
+          <div className={styles.customSize}>
+            <button
+              type="button"
+              className={styles.customSizeToggle}
+              data-on={customMode}
+              aria-expanded={customMode}
+              onClick={() => {
+                setCustomMode((v) => !v);
+                setAdded(false);
+              }}
+            >
+              <span>Eigen afmeting invoeren?</span>
+              <span className={styles.customSizeToggleIcon} aria-hidden="true">
+                {customMode ? "−" : "+"}
+              </span>
+            </button>
+
+            {customMode && (
+              <div className={styles.customSizePanel}>
+                <p className={styles.customSizeHint}>
+                  Vul je gewenste breedte en hoogte in centimeters in. We rekenen
+                  de prijs per m² en bevestigen de definitieve maatvoering bij je
+                  order.
+                </p>
+                <div className={styles.customSizeFields}>
+                  <label className={styles.customSizeField}>
+                    <span className={styles.customSizeFieldLabel}>Breedte (cm)</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={styles.customSizeInput}
+                      min={CUSTOM_MIN_CM}
+                      max={CUSTOM_MAX_CM}
+                      value={customW}
+                      placeholder="bv. 100"
+                      onChange={(e) => {
+                        setCustomW(e.target.value);
+                        setAdded(false);
+                      }}
+                    />
+                  </label>
+                  <span className={styles.customSizeTimes} aria-hidden="true">
+                    ×
+                  </span>
+                  <label className={styles.customSizeField}>
+                    <span className={styles.customSizeFieldLabel}>Hoogte (cm)</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={styles.customSizeInput}
+                      min={CUSTOM_MIN_CM}
+                      max={CUSTOM_MAX_CM}
+                      value={customH}
+                      placeholder="bv. 250"
+                      onChange={(e) => {
+                        setCustomH(e.target.value);
+                        setAdded(false);
+                      }}
+                    />
+                  </label>
+                </div>
+                {!customValid && (customW.trim() !== "" || customH.trim() !== "") && (
+                  <p className={styles.customSizeError} role="alert">
+                    Vul een breedte en hoogte tussen {CUSTOM_MIN_CM} en{" "}
+                    {CUSTOM_MAX_CM} cm in.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </fieldset>
 
@@ -306,7 +451,7 @@ export function ProductConfigurator({
             <div className={styles.optionCards}>
               {opt.choices.map((choice) => {
                 const selected = selectedOptions[opt.label] === choice;
-                const imgSrc = OPTION_IMAGES[opt.label]?.[choice];
+                const imgSrc = optionImage(product.slug, opt.label, choice);
                 const swatch = COLOR_SWATCHES[choice];
                 const surcharge = localOptionsSurcharge(product, {
                   [opt.label]: choice,
@@ -399,18 +544,27 @@ export function ProductConfigurator({
       <div className={styles.buyBar}>
         <div className={styles.priceBlock}>
           <span className={styles.priceLabel}>{labels.priceLabel}</span>
-          <span className={styles.priceValue}>{fmt(totalExVat)}</span>
+          <span className={styles.priceValue}>
+            {priceReady ? fmt(totalExVat) : "—"}
+          </span>
           <span className={styles.priceNote}>
-            {`${inclVat ? "incl. btw" : "excl. btw"}${
-              designService ? ` · incl. ontwerpservice` : ""
-            } · Richtprijs · definitieve prijs bij afrekenen`}
+            {priceReady
+              ? `${inclVat ? "incl. btw" : "excl. btw"}${
+                  designService ? ` · incl. ontwerpservice` : ""
+                }${usingCustom ? " · eigen maat" : ""} · Richtprijs · definitieve prijs bij afrekenen`
+              : "Vul eerst een geldige eigen afmeting in"}
           </span>
         </div>
 
         <div className={styles.actions}>
           {orderable ? (
             <>
-              <Button size="lg" onClick={handleAdd} icon={<ArrowRight />}>
+              <Button
+                size="lg"
+                onClick={handleAdd}
+                icon={<ArrowRight />}
+                disabled={!priceReady}
+              >
                 {labels.addToCart}
               </Button>
               <Link
@@ -430,7 +584,12 @@ export function ProductConfigurator({
               >
                 {labels.requestQuote}
               </Button>
-              <Button variant="secondary" size="lg" onClick={handleAdd}>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={handleAdd}
+                disabled={!priceReady}
+              >
                 {labels.addToCart}
               </Button>
             </>

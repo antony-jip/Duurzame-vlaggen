@@ -21,6 +21,7 @@ import {
   insertOrderWithItems,
   recordEventOnce,
 } from "@/lib/orders/repository";
+import { sendMateriaalpaspoortEmail } from "@/lib/email/send";
 
 /**
  * Order orchestration — the integration spine that ties Probo, Mollie, VAT and
@@ -396,6 +397,10 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     if (order.status === "awaiting_payment") {
       await advanceOrderStatus(order.id, "paid", { mollie_status: payment.status });
     }
+    // Kernbelofte: elke betaalde bestelling krijgt een materiaalpaspoort per
+    // aparte e-mail. Best-effort en idempotent — faalt stil met log, en mag de
+    // betaal-/Probo-flow nooit blokkeren.
+    await sendMateriaalpaspoortOnce(order.id);
     // Manual-modus (default): de order blijft op `paid` staan voor handmatige
     // afhandeling in de admin. Alleen in probo-modus sturen we hem automatisch
     // door naar Probo.
@@ -409,6 +414,38 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     if (order.status === "awaiting_payment") {
       await advanceOrderStatus(order.id, "payment_failed", { mollie_status: payment.status });
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Materiaalpaspoort-mail (best-effort, idempotent)
+// ---------------------------------------------------------------------------
+
+/**
+ * Verstuur het materiaalpaspoort exact één keer per order. Idempotent via
+ * `recordEventOnce` (source `system`), zodat een dubbele Mollie-webhook niet
+ * twee mails oplevert. Volledig best-effort: elke fout wordt gelogd en
+ * ingeslikt — de betaal-/Probo-flow mag hier nooit op stuklopen.
+ */
+export async function sendMateriaalpaspoortOnce(orderId: string): Promise<void> {
+  try {
+    // Claim het event vóór verzenden → geen dubbele mail bij herhaalde webhook.
+    const event = await recordEventOnce({
+      orderId,
+      source: "system",
+      eventType: "materiaalpaspoort.sent",
+    });
+    if (!event.inserted) return;
+
+    const order = await getOrderById(orderId);
+    if (!order) return;
+    const items = await getOrderItems(orderId);
+    await sendMateriaalpaspoortEmail(order, items);
+  } catch (err) {
+    console.error(
+      `[materiaalpaspoort] Verzenden mislukt voor order ${orderId}:`,
+      err,
+    );
   }
 }
 

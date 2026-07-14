@@ -119,8 +119,9 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "100 × 400 cm", widthCm: 100, heightCm: 400 },
     ],
     options: [
-      { label: "Afwerking", choices: ["Tunnelzoom", "Zoom met ringen"] },
-      { label: "Bevestiging", choices: ["Karabijnhaken", "Spankoord"] },
+      { label: "Mastzijde", choices: ["Links", "Rechts"] },
+      { label: "Afwerking", choices: ["Tunnel", "Geen"] },
+      { label: "Kleur", choices: ["Wit", "Zwart"] },
     ],
     heroImage: img(
       "762-duurzame-baniervlag.webp",
@@ -288,7 +289,21 @@ export const PRODUCTS: CatalogProduct[] = [
       "1705-vlaggenmasten.webp",
       "Aluminium Easylift-vlaggenmasten in verschillende kleuren",
     ),
-    gallery: [],
+    // Eigen praktijkfoto's (lokaal in public/vlaggenmast), geen WordPress-migratie.
+    gallery: [
+      {
+        src: "/vlaggenmast/masten-in-gebruik.jpg",
+        alt: "Aluminium Easylift-vlaggenmasten in gebruik bij een bedrijfspand",
+      },
+      {
+        src: "/vlaggenmast/grondankers.jpg",
+        alt: "Grondankers voor de fundering van een vlaggenmast",
+      },
+      {
+        src: "/vlaggenmast/grondplaat-montage.jpg",
+        alt: "Montage van de grondplaat van een vlaggenmast",
+      },
+    ],
     accent: "copper-rust",
     // NOT a Probo product — own hardware (Easylift). Prices from the live-config
     // ref: 6m €520 / 7m €552,50 / 8m €578,50, coating Zwart/Antraciet +€71,50.

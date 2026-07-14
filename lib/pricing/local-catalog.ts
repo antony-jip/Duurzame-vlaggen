@@ -187,6 +187,47 @@ export function localUnitPrice(product: CatalogProduct, size?: CatalogSize): num
   return round2(pricePerM2 * area);
 }
 
+/**
+ * Ondergrens (ex btw, per stuk) voor een eigen maat — voorkomt onrealistisch
+ * lage prijzen bij hele kleine vlaggen.
+ * // TODO: tarief verifiëren met Antony.
+ */
+export const CUSTOM_SIZE_FLOOR = 20;
+
+/**
+ * €/m²-tarief voor een eigen maat, per product afgeleid uit de bekende
+ * retailprijzen: de goedkoopste maat gedeeld door zijn oppervlak. Zo sluit een
+ * eigen maat aan op de echte prijsstelling van dat product.
+ * // TODO: tarief verifiëren — afgeleid, geen los bevestigd m²-tarief.
+ */
+export function customRatePerM2(product: CatalogProduct): number {
+  let best: { price: number; area: number } | null = null;
+  for (const s of product.sizes) {
+    const area = sizeAreaM2(s);
+    if (area == null || area <= 0) continue;
+    const price = localUnitPrice(product, s);
+    if (best == null || price < best.price) best = { price, area };
+  }
+  if (best == null) return 0;
+  return best.price / best.area;
+}
+
+/**
+ * Ex-btw stukprijs voor een EIGEN (vrije) maat in cm.
+ * prijs = max(m² × €/m²-tarief, ondergrens).
+ * // TODO: tarief verifiëren.
+ */
+export function localCustomSizePrice(
+  product: CatalogProduct,
+  widthCm: number,
+  heightCm: number,
+): number {
+  const area = (widthCm / 100) * (heightCm / 100);
+  if (!Number.isFinite(area) || area <= 0) return round2(CUSTOM_SIZE_FLOOR);
+  const rate = customRatePerM2(product);
+  return round2(Math.max(area * rate, CUSTOM_SIZE_FLOOR));
+}
+
 /** Toeslag (ex btw, per stuk) voor de gekozen opties. */
 export function localOptionsSurcharge(
   product: CatalogProduct,

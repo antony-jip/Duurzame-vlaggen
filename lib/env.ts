@@ -57,6 +57,21 @@ export const serverEnv = {
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
   },
+
+  // Resend — transactional e-mail (materiaalpaspoort). OPTIONAL: unset ⇒ the
+  // paspoort-mail is skipped (logged) rather than crashing the order flow.
+  // Returns null when unset so callers can degrade gracefully.
+  get resendApiKey(): string | null {
+    return process.env.RESEND_API_KEY?.trim() || null;
+  },
+  // Afzender voor uitgaande e-mail, bijv. `Duurzame Vlaggen <hello@duurzame-vlaggen.nl>`.
+  // Valt terug op een net standaardadres wanneer MAIL_FROM niet is gezet.
+  get mailFrom(): string {
+    return (
+      process.env.MAIL_FROM?.trim() ||
+      "Duurzame Vlaggen <hello@duurzame-vlaggen.nl>"
+    );
+  },
 } as const;
 
 /**

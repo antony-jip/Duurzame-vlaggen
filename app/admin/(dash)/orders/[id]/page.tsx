@@ -134,6 +134,16 @@ export default async function AdminOrderDetailPage({
               </Button>
             </form>
           )}
+          <Button
+            as="a"
+            href={`/api/admin/materiaalpaspoort/${order.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="sm"
+            variant="secondary"
+          >
+            Materiaalpaspoort (PDF)
+          </Button>
           {nextStatuses.map((to) => (
             <form action={advanceStatusAction} key={to}>
               <input type="hidden" name="orderId" value={order.id} />

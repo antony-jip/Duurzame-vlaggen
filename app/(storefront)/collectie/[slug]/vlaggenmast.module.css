@@ -19,31 +19,47 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 380px;
+  height: 440px;
   padding: var(--space-md) var(--space-md) 0;
   border-radius: var(--radius-xl);
   overflow: hidden;
   background:
-    linear-gradient(180deg, var(--sage-blue-6) 0%, var(--color-white) 62%);
+    radial-gradient(120% 80% at 78% 8%, rgba(255, 255, 255, 0.75), transparent 55%),
+    linear-gradient(180deg, var(--sage-blue-15) 0%, var(--sage-blue-6) 44%, var(--color-white) 78%);
   border: 1px solid var(--forest-6);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
-/* Grondlijn met een zachte schaduw eronder. */
+/* Grasband onderaan — geeft de mast een plek om op te staan. */
 .ground {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 54px;
-  height: 2px;
-  background: var(--forest-6);
+  bottom: 0;
+  height: 58px;
+  background:
+    linear-gradient(180deg, var(--forest-3) 0%, var(--sage-blue-6) 100%);
+  border-top: 2px solid var(--forest-6);
 }
-.ground::after {
+.ground::before {
+  /* Zachte schaduw waar de mast de grond raakt. */
   content: "";
   position: absolute;
-  inset: 2px 0 auto 0;
-  height: 30px;
-  background: linear-gradient(180deg, var(--forest-3), transparent);
+  bottom: 42px;
+  left: 50%;
+  width: 90px;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(28, 40, 36, 0.22), transparent 70%);
+}
+.ground::after {
+  /* Fijne horizonschijn boven het gras. */
+  content: "";
+  position: absolute;
+  inset: -18px 0 auto 0;
+  height: 18px;
+  background: linear-gradient(180deg, transparent, rgba(44, 95, 79, 0.08));
 }
 
 /* De mast zelf: staat op de grondlijn, groeit met de lengte, kleurt met de coating. */
@@ -51,11 +67,11 @@
   position: absolute;
   bottom: 56px;
   left: 50%;
-  width: 12px;
+  width: 13px;
   transform: translateX(-50%);
-  border-radius: 6px 6px 2px 2px;
+  border-radius: 7px 7px 2px 2px;
   transition: height var(--duration-slow, 420ms) var(--ease-out), background var(--duration-base) var(--ease-out);
-  box-shadow: 0 2px 6px rgba(28, 40, 36, 0.18);
+  box-shadow: 0 3px 10px rgba(28, 40, 36, 0.22);
 }
 .mast[data-color="Wit"] {
   background: linear-gradient(90deg, #fdfdfd 0%, #eef0f1 45%, #d8dbdd 100%);
@@ -87,14 +103,14 @@
 /* Wapperend vlaggetje net onder de top. */
 .flag {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  width: 46px;
-  height: 30px;
+  top: 8px;
+  left: calc(50% + 5px);
+  width: 54px;
+  height: 34px;
   transform-origin: left center;
   background: linear-gradient(135deg, var(--color-terracotta), var(--color-copper-rust));
   border-radius: 2px 10px 10px 2px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 10px rgba(198, 107, 78, 0.35);
   animation: mast-wave 2.6s var(--ease-in-out) infinite;
 }
 @keyframes mast-wave {
@@ -113,34 +129,38 @@
 .person {
   position: absolute;
   bottom: 56px;
-  left: calc(50% + 34px);
+  left: calc(50% + 38px);
   display: flex;
   flex-direction: column;
   align-items: center;
   color: var(--color-forest);
-  opacity: 0.7;
+  opacity: 0.5;
 }
 .personHead {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: currentColor;
 }
 .personBody {
-  width: 13px;
+  width: 15px;
   flex: 1;
   margin-top: 2px;
-  border-radius: 6px 6px 3px 3px;
+  border-radius: 8px 8px 3px 3px;
   background: currentColor;
 }
 .scaleTag {
   position: absolute;
-  bottom: 56px;
-  left: calc(50% + 54px);
+  bottom: 58px;
+  left: calc(50% + 58px);
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--forest-6);
   font-family: var(--font-ui);
   font-size: 10px;
   font-weight: 700;
-  color: var(--color-stone);
+  color: var(--color-forest);
   white-space: nowrap;
 }
 
@@ -175,6 +195,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  /* Ruimte onder de laatste stap zodat de sticky prijsbalk niets afdekt. */
+  padding-bottom: clamp(96px, 15vh, 150px);
 }
 .stepNo {
   display: inline-grid;
@@ -376,6 +398,9 @@
   }
   .stage {
     position: static;
-    height: 320px;
+    height: 360px;
+  }
+  .steps {
+    padding-bottom: clamp(120px, 20vh, 180px);
   }
 }
