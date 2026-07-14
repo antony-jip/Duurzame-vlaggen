@@ -26,6 +26,8 @@ import type { ProboAddress } from "@/lib/probo/products";
 import type { CartItem } from "@/components/cart/types";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getOrCreateCustomerId } from "@/lib/orders/customer";
 
 /**
  * The `items` payload is client-supplied (localStorage → hidden field), so a
@@ -211,12 +213,31 @@ export async function checkoutAction(
     });
   }
 
+  // Ingelogde klant? Koppel de order aan zijn customer-record, zodat de
+  // bestelling in het klantportaal (/account) verschijnt. Geen sessie → gast
+  // (customer_id blijft null; het portaal matcht die order later op e-mail).
+  // Raakt de prijs-/betaal-logica NIET.
+  let customerId: string | null = null;
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.id && user.email) {
+      customerId = await getOrCreateCustomerId(user.id, user.email);
+    }
+  } catch {
+    // Auth/DB niet beschikbaar → gewoon als gast doorgaan.
+    customerId = null;
+  }
+
   const input: CheckoutInput = {
     market,
     email,
     phone: phone || undefined,
     isBusiness,
     vatNumber: vatNumber || null,
+    customerId,
     billingAddress,
     shippingAddress,
     items: draftItems,

@@ -17,6 +17,7 @@ import {
   FlagPole,
 } from "./Icon";
 import { useCart } from "@/components/cart/CartProvider";
+import { AccountLink } from "./AccountLink";
 import { VatToggle } from "./VatToggle";
 import { Price } from "./Price";
 import { getAllProducts } from "@/lib/catalog/products";
@@ -174,6 +175,7 @@ export function Header() {
         </nav>
 
         <div className={styles.actions}>
+          <AccountLink />
           <CartLink />
           <button
             type="button"
@@ -276,6 +278,13 @@ export function Header() {
             </nav>
 
             <div className={styles.overlayFoot}>
+              <Link
+                href="/account"
+                className={styles.overlayAction}
+                onClick={() => setOpen(false)}
+              >
+                Mijn account <ArrowRight size={18} />
+              </Link>
               <Link
                 href="/winkelwagen"
                 className={styles.overlayAction}

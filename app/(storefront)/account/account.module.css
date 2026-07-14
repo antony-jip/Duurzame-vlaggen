@@ -1,0 +1,404 @@
+/* Klantportaal — rustige, merkeigen layout (forest/terracotta/off-white). */
+
+.page {
+  padding-block: var(--space-2xl) var(--space-3xl);
+  min-height: 60vh;
+}
+
+/* --- Kop --- */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.headText h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+  margin: var(--space-xs) 0 0;
+}
+
+.headText p {
+  color: var(--color-stone);
+  margin: var(--space-2xs) 0 0;
+  font-size: 0.95rem;
+}
+
+.logoutForm {
+  margin: 0;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-forest);
+  font-family: var(--font-button);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-bottom: var(--space-md);
+}
+.backLink:hover {
+  text-decoration: underline;
+}
+
+/* --- Login-scherm --- */
+.authScreen {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-2xl) var(--space-3xl);
+}
+
+.authPanel {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-xl);
+  background: var(--color-white);
+  border: 1px solid var(--forest-6, rgba(44, 95, 79, 0.12));
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.authTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+  margin: 0;
+}
+
+.authSub {
+  color: var(--color-stone);
+  font-size: 0.95rem;
+  margin: var(--space-2xs) 0 var(--space-lg);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-2xs);
+  background: var(--off-white-2, #efece7);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 4px);
+  background: transparent;
+  font-family: var(--font-button);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-stone);
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+}
+.tabActive {
+  background: var(--color-white);
+  color: var(--color-forest);
+  box-shadow: var(--shadow-xs);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.error {
+  color: var(--color-error, #b3261e);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.notice {
+  color: var(--color-forest);
+  background: var(--off-white-2, #eef3f0);
+  border: 1px solid var(--forest-6, rgba(44, 95, 79, 0.16));
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* --- Orderlijst (dashboard) --- */
+.orders {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.orderCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  text-decoration: none;
+  color: inherit;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+.orderCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.orderThumbs {
+  display: flex;
+  flex-shrink: 0;
+}
+.orderThumb {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--off-white-2, #efece7);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-left: -12px;
+}
+.orderThumb:first-child {
+  margin-left: 0;
+}
+.orderThumbImg {
+  object-fit: cover;
+}
+
+.orderInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.orderNumber {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+  font-size: 1.05rem;
+}
+.orderMeta {
+  color: var(--color-stone);
+  font-size: 0.88rem;
+}
+
+.orderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.orderTotal {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+}
+
+/* --- Lege staat --- */
+.empty {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-2xl) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  background: var(--off-white-2, #eef3f0);
+  color: var(--color-forest);
+  margin-bottom: var(--space-2xs);
+}
+.empty h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+  margin: 0;
+}
+.empty p {
+  color: var(--color-stone);
+  margin: 0 0 var(--space-sm);
+}
+
+/* --- Orderdetail --- */
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.card {
+  padding: var(--space-lg);
+}
+.card h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-forest);
+  margin: 0 0 var(--space-md);
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px var(--space-md);
+  margin: 0;
+  font-size: 0.92rem;
+}
+.dl dt {
+  color: var(--color-stone);
+}
+.dl dd {
+  margin: 0;
+  text-align: right;
+  color: var(--color-ink, #22302b);
+}
+
+.lineList {
+  display: grid;
+  gap: var(--space-md);
+}
+.line {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+.line:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.lineThumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--off-white-2, #efece7);
+}
+.lineThumbImg {
+  object-fit: cover;
+}
+.lineBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.lineName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+}
+.lineMeta {
+  color: var(--color-stone);
+  font-size: 0.85rem;
+}
+.lineDesign {
+  margin-top: 4px;
+}
+.lineDesignLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-terracotta);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.lineDesignLink:hover {
+  text-decoration: underline;
+}
+.lineRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2xs);
+  flex-shrink: 0;
+}
+.linePrice {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-forest);
+}
+
+/* --- Herbestel-acties --- */
+.reorderBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.totals {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.muted {
+  color: var(--color-stone);
+}
+
+/* --- Tijdlijn --- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+.timelineItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+}
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-forest);
+  flex-shrink: 0;
+}
+.timelineLabel {
+  color: var(--color-ink, #22302b);
+  font-weight: 600;
+}
+.timelineDate {
+  color: var(--color-stone);
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .orderCard {
+    gap: var(--space-md);
+  }
+  .orderThumbs {
+    display: none;
+  }
+  .dl dd {
+    text-align: left;
+  }
+}

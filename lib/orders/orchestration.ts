@@ -319,6 +319,9 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       configuration: {
         code: l.draft.proboProductCode,
         options: l.draft.options,
+        // Menselijk maatlabel — nodig om de regel later te herbestellen in het
+        // klantportaal (reconstructie van maat/afmetingen/prijs).
+        ...(l.draft.sizeLabel ? { sizeLabel: l.draft.sizeLabel } : {}),
         // Human-readable choices + any non-mappable selections, for the admin.
         ...(l.draft.selections ? { selections: l.draft.selections } : {}),
         ...(l.draft.unmapped && l.draft.unmapped.length

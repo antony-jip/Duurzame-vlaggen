@@ -472,11 +472,39 @@
   margin-top: var(--space-xs);
 }
 
+/* Account — subtiele ghost-link naast de winkelmand (witte tekst op forest). */
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-family: var(--font-button);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  text-decoration: none;
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+.account:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
 @media (max-width: 1023px) {
   .nav,
   .offerte,
-  .cartWord {
+  .cartWord,
+  .accountWord {
     display: none;
+  }
+  .account {
+    padding: 10px;
   }
   .toggle {
     display: inline-flex;
