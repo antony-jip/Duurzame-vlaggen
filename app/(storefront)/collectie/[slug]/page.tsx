@@ -19,6 +19,7 @@ import {
 } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
 import { SITE_URL, SITE_NAME, COMPANY_NAME, jsonLd } from "@/lib/seo";
+import { ProcesStappen } from "@/components/ui";
 import { ProductConfigurator } from "./ProductConfigurator";
 import { ProductGallery } from "./ProductGallery";
 import { VlaggenmastConfigurator } from "./VlaggenmastConfigurator";
@@ -119,6 +120,7 @@ export default async function ProductPage({
       : product.gallery;
 
   return (
+    <>
     <Container as="section" className={styles.page}>
       <script
         type="application/ld+json"
@@ -213,5 +215,9 @@ export default async function ProductPage({
         </div>
       </div>
     </Container>
+
+    {/* Vertrouwensblok — zelfde flow op elke productpagina, volle breedte. */}
+    <ProcesStappen />
+    </>
   );
 }

@@ -26,6 +26,7 @@ export { Price } from "./Price";
 export type { PriceProps } from "./Price";
 
 export { VergelijkVlaggen } from "./VergelijkVlaggen";
+export { ProcesStappen } from "./ProcesStappen";
 
 export { VatToggle } from "./VatToggle";
 

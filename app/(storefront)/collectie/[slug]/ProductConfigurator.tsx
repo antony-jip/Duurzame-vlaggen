@@ -92,10 +92,9 @@ const PRODUCT_OPTION_IMAGES: Record<
 > = {
   baniervlag: {
     Mastzijde: {
-      // Staande banier op mast (huisstijl-SVG). Vervang gerust door een eigen
-      // render door hier een .webp/.png op hetzelfde pad te plaatsen.
-      Links: "/configurator/mastzijde/banier-links.svg",
-      Rechts: "/configurator/mastzijde/banier-rechts.svg",
+      // Echte staande-banier-renders (mast links/rechts) van Antony.
+      Links: "/configurator/mastzijde/banier-links.jpg",
+      Rechts: "/configurator/mastzijde/banier-rechts.jpg",
     },
     Afwerking: {
       Tunnel: "/configurator/afwerking/tunnel.webp",

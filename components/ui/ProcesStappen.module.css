@@ -1,0 +1,340 @@
+/* ==========================================================================
+   ProcesStappen — "Van ontwerp naar levering in 3 simpele stappen"
+   Compacte forest wapper-band met micro-animaties (CSS-only).
+   ========================================================================== */
+
+.section {
+  position: relative;
+  padding-block: clamp(44px, 6vw, 72px) clamp(104px, 13vw, 152px);
+  background: linear-gradient(160deg, #2c5f4f 0%, #24503f 100%);
+  overflow: hidden;
+}
+
+/* Golf-overgang bovenaan — off-white uit de pagina erboven. */
+.topWave {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: clamp(24px, 3.5vw, 40px);
+  display: block;
+  z-index: 1;
+}
+
+/* ---- Onder-golf: water met microplastic-deeltjes, áchter de groene hem ----
+   Alles statisch behalve een naadloze sheen + zacht dobberen — geen tegelende
+   drift, dus geen naad-artefacten. */
+.water {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: clamp(64px, 8vw, 100px);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+/* Basis-waterlaag met een zachte, naadloze sheen die heen en weer schuift. */
+.waterFill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    #6f9fb2 0%,
+    #93bccb 38%,
+    #6f9fb2 72%,
+    #93bccb 100%
+  );
+  background-size: 220% 100%;
+  animation: water-sheen 9s var(--ease-in-out) infinite alternate;
+}
+@keyframes water-sheen {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+/* Schuim (bodem, naar off-white) en groene hem (top) — statisch, full-width. */
+.waveFoam {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.waveGreen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Microplastic-deeltjes die zachtjes in het water dobberen. */
+.speck {
+  position: absolute;
+  width: 6px;
+  height: 4px;
+  border-radius: 1px;
+  opacity: 0.6;
+  animation: speck-bob 6s var(--ease-in-out) infinite alternate;
+}
+@keyframes speck-bob {
+  from {
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    transform: translateY(-5px) rotate(38deg);
+  }
+}
+.speck1 {
+  left: 13%;
+  top: 44%;
+  background: var(--color-terracotta);
+  animation-duration: 5.5s;
+}
+.speck2 {
+  left: 33%;
+  top: 52%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-sage-blue);
+  animation-duration: 7s;
+  animation-delay: -2s;
+}
+.speck3 {
+  left: 55%;
+  top: 42%;
+  width: 7px;
+  height: 4px;
+  background: #c9a24f;
+  animation-duration: 6.4s;
+  animation-delay: -3.5s;
+}
+.speck4 {
+  left: 74%;
+  top: 53%;
+  width: 4px;
+  height: 6px;
+  background: var(--color-terracotta);
+  animation-duration: 8s;
+  animation-delay: -1s;
+}
+.speck5 {
+  left: 89%;
+  top: 46%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-sage-blue);
+  animation-duration: 6.8s;
+  animation-delay: -4.5s;
+}
+
+.head {
+  text-align: center;
+  max-width: 600px;
+  margin-inline: auto;
+  margin-bottom: clamp(24px, 3.5vw, 38px);
+}
+.title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.03;
+  color: #fff;
+  font-size: clamp(24px, 3.2vw, 36px);
+}
+.titleAccent {
+  display: block;
+  color: var(--color-terracotta);
+}
+.sub {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---- Kaartenrij met verbindingslijn ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.8vw, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+}
+/* Verbindingslijn tussen de kaarten (desktop). */
+.card:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 78px;
+  right: calc(-1 * clamp(14px, 1.8vw, 24px) / 2 - 1px);
+  width: clamp(14px, 1.8vw, 24px);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  z-index: 0;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--forest-6);
+  overflow: hidden;
+}
+.photo {
+  object-fit: cover;
+  transition: transform var(--duration-slow, 480ms) var(--ease-out);
+}
+.card:hover .photo {
+  transform: scale(1.06);
+}
+/* Genummerde accent-cirkel, binnen de foto (niet afgeknipt door de kaartrand). */
+.badgeNum {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  border: 2.5px solid var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.card:hover .badgeNum {
+  transform: scale(1.12);
+}
+.card[data-accent="forest"] .badgeNum {
+  background: var(--color-forest);
+}
+.card[data-accent="sage-blue"] .badgeNum {
+  background: var(--color-sage-blue);
+}
+.card[data-accent="terracotta"] .badgeNum {
+  background: var(--color-terracotta);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+  padding: var(--space-md) var(--space-md) var(--space-lg);
+}
+.cardTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 17px;
+  color: var(--color-charcoal);
+}
+.cardBody {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-stone);
+  max-width: 30ch;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.card:hover .pill {
+  transform: translateY(-1px);
+}
+.card[data-accent="forest"] .pill {
+  background: var(--forest-6);
+  color: var(--color-forest);
+}
+.card[data-accent="sage-blue"] .pill {
+  background: var(--sage-blue-6);
+  color: var(--color-sage-blue);
+}
+.card[data-accent="terracotta"] .pill {
+  background: var(--terracotta-6);
+  color: var(--color-terracotta);
+}
+
+/* Scroll-gedreven entree: kaarten stijgen op als ze in beeld komen. Alleen waar
+   ondersteund; anders staan ze gewoon zichtbaar (geen JS nodig). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      animation: proces-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 26%;
+    }
+  }
+}
+@keyframes proces-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .photo,
+  .badgeNum,
+  .pill {
+    transition: none;
+  }
+  .waveWater,
+  .waveFoam,
+  .speck {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin-inline: auto;
+  }
+  .card:not(:last-child)::after {
+    display: none;
+  }
+}
