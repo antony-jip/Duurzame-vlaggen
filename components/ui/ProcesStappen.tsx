@@ -110,7 +110,7 @@ export function ProcesStappen() {
           precies wat wij níét achterlaten. Groen staat vóór, water erachter. */}
       <div className={styles.water} aria-hidden="true">
         {/* Eén SVG → gegarandeerde schildervolgorde: blauw water achter, groene
-            golf eroverheen, off-white eronder naar de footer. */}
+            golven eroverheen (boven én onder), naadloos in de forest-footer. */}
         <svg
           className={styles.waterSvg}
           viewBox="0 0 1440 160"
@@ -124,15 +124,15 @@ export function ProcesStappen() {
           </defs>
           {/* Blauw water (basis, achter alles). */}
           <rect x="0" y="0" width="1440" height="160" fill="url(#dv-water)" />
-          {/* Off-white bodem → overgang naar de footer. */}
+          {/* Golvende groene bodem → naadloos verder in de forest-footer. */}
           <path
-            d="M0,120 C300,102 540,134 720,120 C900,106 1140,138 1440,120 L1440,160 L0,160 Z"
-            fill="var(--color-off-white)"
+            d="M0,108 C240,88 480,128 720,108 C960,88 1200,128 1440,108 L1440,160 L0,160 Z"
+            fill="#2c5f4f"
           />
           {/* Golvende groene hem — de sectie, vóór (over) het water. */}
           <path
-            d="M0,0 L1440,0 L1440,34 C1140,54 900,20 720,38 C540,56 300,22 0,36 Z"
-            fill="#24503f"
+            d="M0,0 L1440,0 L1440,44 C1200,64 960,26 720,46 C480,66 240,28 0,44 Z"
+            fill="#2c5f4f"
           />
         </svg>
         {/* Microplastic-deeltjes die in de blauwe strook dobberen. */}
@@ -141,6 +141,11 @@ export function ProcesStappen() {
         <span className={`${styles.speck} ${styles.speck3}`} />
         <span className={`${styles.speck} ${styles.speck4}`} />
         <span className={`${styles.speck} ${styles.speck5}`} />
+        <span className={`${styles.speck} ${styles.speck6}`} />
+        <span className={`${styles.speck} ${styles.speck7}`} />
+        <span className={`${styles.speck} ${styles.speck8}`} />
+        <span className={`${styles.speck} ${styles.speck9}`} />
+        <span className={`${styles.speck} ${styles.speck10}`} />
       </div>
     </section>
   );

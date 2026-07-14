@@ -5,8 +5,12 @@
 
 .section {
   position: relative;
-  padding-block: clamp(44px, 6vw, 72px) clamp(104px, 13vw, 152px);
-  background: linear-gradient(160deg, #2c5f4f 0%, #24503f 100%);
+  z-index: 1;
+  /* Overlap de off-white golf van de footer met de groene onderrand van de
+     waterband, zodat het naadloos in de forest-footer overloopt (geen wit). */
+  margin-bottom: calc(-1 * clamp(22px, 3vw, 38px));
+  padding-block: clamp(44px, 6vw, 72px) clamp(150px, 18vw, 192px);
+  background: var(--color-forest);
   overflow: hidden;
 }
 
@@ -21,66 +25,34 @@
   z-index: 1;
 }
 
-/* ---- Onder-golf: water met microplastic-deeltjes, áchter de groene hem ----
-   Alles statisch behalve een naadloze sheen + zacht dobberen — geen tegelende
-   drift, dus geen naad-artefacten. */
+/* ---- Waterstrook met microplastic-deeltjes, áchter de golvende groene randen.
+   Eén SVG regelt de schildervolgorde (blauw achter, groen ervoor); alleen de
+   deeltjes bewegen (zacht dobberen) — geen tegelende drift, dus geen naad. */
 .water {
   position: absolute;
   left: 0;
   bottom: -1px;
   width: 100%;
-  height: clamp(64px, 8vw, 100px);
+  height: clamp(104px, 12vw, 132px);
   overflow: hidden;
   pointer-events: none;
   z-index: 1;
 }
-/* Basis-waterlaag met een zachte, naadloze sheen die heen en weer schuift. */
-.waterFill {
+.waterSvg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    105deg,
-    #6f9fb2 0%,
-    #93bccb 38%,
-    #6f9fb2 72%,
-    #93bccb 100%
-  );
-  background-size: 220% 100%;
-  animation: water-sheen 9s var(--ease-in-out) infinite alternate;
-}
-@keyframes water-sheen {
-  from {
-    background-position: 0% 0;
-  }
-  to {
-    background-position: 100% 0;
-  }
-}
-/* Schuim (bodem, naar off-white) en groene hem (top) — statisch, full-width. */
-.waveFoam {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-.waveGreen {
-  position: absolute;
-  left: 0;
-  top: 0;
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* Microplastic-deeltjes die zachtjes in het water dobberen. */
+/* Microplastic-deeltjes die zachtjes in de blauwe strook dobberen. */
 .speck {
   position: absolute;
   width: 6px;
   height: 4px;
   border-radius: 1px;
-  opacity: 0.6;
+  opacity: 0.65;
   animation: speck-bob 6s var(--ease-in-out) infinite alternate;
 }
 @keyframes speck-bob {
@@ -91,49 +63,27 @@
     transform: translateY(-5px) rotate(38deg);
   }
 }
-.speck1 {
-  left: 13%;
-  top: 44%;
-  background: var(--color-terracotta);
-  animation-duration: 5.5s;
-}
+.speck1 { left: 8%; top: 40%; background: var(--color-terracotta); animation-duration: 5.5s; }
 .speck2 {
-  left: 33%;
-  top: 52%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-sage-blue);
-  animation-duration: 7s;
-  animation-delay: -2s;
+  left: 19%; top: 52%; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-sage-blue); animation-duration: 7s; animation-delay: -2s;
 }
-.speck3 {
-  left: 55%;
-  top: 42%;
-  width: 7px;
-  height: 4px;
-  background: #c9a24f;
-  animation-duration: 6.4s;
-  animation-delay: -3.5s;
-}
-.speck4 {
-  left: 74%;
-  top: 53%;
-  width: 4px;
-  height: 6px;
-  background: var(--color-terracotta);
-  animation-duration: 8s;
-  animation-delay: -1s;
-}
+.speck3 { left: 28%; top: 44%; width: 7px; height: 4px; background: #c9a24f; animation-duration: 6.4s; animation-delay: -3.5s; }
+.speck4 { left: 37%; top: 56%; width: 4px; height: 6px; background: var(--color-terracotta); animation-duration: 8s; animation-delay: -1s; }
 .speck5 {
-  left: 89%;
-  top: 46%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-sage-blue);
-  animation-duration: 6.8s;
-  animation-delay: -4.5s;
+  left: 46%; top: 42%; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-sage-blue); animation-duration: 6.8s; animation-delay: -4.5s;
+}
+.speck6 { left: 55%; top: 54%; background: #c9a24f; animation-duration: 6.1s; animation-delay: -2.5s; }
+.speck7 {
+  left: 64%; top: 45%; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-terracotta); animation-duration: 7.4s; animation-delay: -5s;
+}
+.speck8 { left: 73%; top: 57%; width: 7px; height: 4px; background: var(--color-sage-blue); animation-duration: 6.7s; animation-delay: -1.5s; }
+.speck9 { left: 83%; top: 43%; width: 4px; height: 6px; background: #c9a24f; animation-duration: 7.8s; animation-delay: -3s; }
+.speck10 {
+  left: 92%; top: 53%; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-terracotta); animation-duration: 6.3s; animation-delay: -4s;
 }
 
 .head {
