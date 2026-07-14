@@ -114,7 +114,10 @@
 }
 .titleAccent {
   display: block;
-  color: var(--color-terracotta);
+  background: linear-gradient(96deg, var(--color-terracotta), #e3a184);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .sub {
   margin-top: 8px;
@@ -125,6 +128,7 @@
 
 /* ---- Kaartenrij met verbindingslijn ---- */
 .grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(14px, 1.8vw, 24px);
@@ -132,32 +136,35 @@
   padding: 0;
   list-style: none;
 }
+/* Gestippelde routelijn op de hoogte van de genummerde stap-badges. Loopt
+   áchter de kaarten (z-index 0) en is dus alleen zichtbaar in de tussenruimtes:
+   een subtiele stappen-flow van 1 → 2 → 3. */
+.grid::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 29px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 0;
+  border-top: 2px dotted rgba(255, 255, 255, 0.42);
+}
 .card {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   background: var(--color-white);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 10px 26px rgba(20, 43, 35, 0.32);
   transition:
     transform var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out);
 }
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
-}
-/* Verbindingslijn tussen de kaarten (desktop). */
-.card:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 78px;
-  right: calc(-1 * clamp(14px, 1.8vw, 24px) / 2 - 1px);
-  width: clamp(14px, 1.8vw, 24px);
-  height: 2px;
-  background: rgba(255, 255, 255, 0.28);
-  z-index: 0;
+  box-shadow: 0 20px 44px rgba(20, 43, 35, 0.42);
 }
 
 .media {
@@ -173,7 +180,8 @@
 .card:hover .photo {
   transform: scale(1.06);
 }
-/* Genummerde accent-cirkel, binnen de foto (niet afgeknipt door de kaartrand). */
+/* Genummerde stap-badge — één cohérente forest-behandeling over alle drie, zodat
+   1 · 2 · 3 als één stappen-reeks leest (binnen de foto, niet afgeknipt). */
 .badgeNum {
   position: absolute;
   top: 12px;
@@ -188,21 +196,13 @@
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 15px;
+  background: linear-gradient(150deg, #3a7563, var(--color-forest));
   border: 2.5px solid var(--color-white);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 3px 10px rgba(20, 43, 35, 0.35);
   transition: transform var(--duration-base) var(--ease-out);
 }
 .card:hover .badgeNum {
   transform: scale(1.12);
-}
-.card[data-accent="forest"] .badgeNum {
-  background: var(--color-forest);
-}
-.card[data-accent="sage-blue"] .badgeNum {
-  background: var(--color-sage-blue);
-}
-.card[data-accent="terracotta"] .badgeNum {
-  background: var(--color-terracotta);
 }
 
 .body {
@@ -229,14 +229,24 @@
 .pill {
   display: inline-flex;
   align-items: center;
-  margin-top: 2px;
-  padding: 6px 14px;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 6px 13px;
   border-radius: 999px;
   font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   transition: transform var(--duration-base) var(--ease-out);
+}
+/* Statusstip in de accentkleur — geeft de pill een consistente huisstijl-chip-look. */
+.pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 .card:hover .pill {
   transform: translateY(-1px);
@@ -296,7 +306,7 @@
     max-width: 360px;
     margin-inline: auto;
   }
-  .card:not(:last-child)::after {
+  .grid::before {
     display: none;
   }
 }

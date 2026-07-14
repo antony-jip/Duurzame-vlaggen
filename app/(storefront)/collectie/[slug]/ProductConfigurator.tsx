@@ -98,6 +98,36 @@ const PRODUCT_OPTION_IMAGES: Record<
   string,
   Record<string, Record<string, string>>
 > = {
+  mastvlag: {
+    Mastzijde: {
+      // Eigen mastvlag-renders (doek links/rechts van de mast) van Antony.
+      Links: "/configurator/mastzijde/mastvlag-links.webp",
+      Rechts: "/configurator/mastzijde/mastvlag-rechts.webp",
+    },
+    Afwerking: {
+      "Haken (Clips)": "/configurator/afwerking/mastvlag-haken.jpeg",
+      "Koord/Lus": "/configurator/afwerking/mastvlag-koord-lus.jpeg",
+    },
+    Kleur: {
+      Wit: "/configurator/kleur/mastvlag-wit.jpeg",
+      Zwart: "/configurator/kleur/mastvlag-zwart.jpeg",
+    },
+  },
+  gevelvlag: {
+    Mastzijde: {
+      // TODO: Links-render van Antony opnieuw inladen — de geplakte afbeelding is
+      // in de paste-cache overschreven; tijdelijk de generieke mast-links-render.
+      Links: "/configurator/mastzijde/links.webp",
+      Rechts: "/configurator/mastzijde/gevelvlag-rechts.png",
+    },
+    Afwerking: {
+      "Koord/Lus": "/configurator/afwerking/gevelvlag-koord-lus.png",
+    },
+    Kleur: {
+      Wit: "/configurator/kleur/gevelvlag-wit.png",
+      Zwart: "/configurator/kleur/gevelvlag-zwart.png",
+    },
+  },
   baniervlag: {
     Mastzijde: {
       // Echte staande-banier-renders (mast links/rechts) van Antony.
@@ -134,6 +164,81 @@ const PRODUCT_OPTION_IMAGES: Record<
       "Rotator Voetplaat": "/configurator/beach/acc-rotator-voetplaat.jpg",
       // "Zonder" valt bewust terug op de huisstijl-glyph.
     },
+  },
+};
+
+/**
+ * "Soort"-kaarten: producten waarvan het model in het maatlabel zit
+ * ("Straight S — …"/"Square S — …") krijgen een keuzestap vóór het formaat, zodat
+ * je eerst de soort kiest en daarna alleen de maten van dát model ziet. Sleutel =
+ * modelnaam (eerste woord van het label); beelden staan in `public/configurator/`.
+ */
+const SOORT_CARDS: Record<
+  string,
+  Record<string, { title: string; blurb: string; img: string }>
+> = {
+  beachvlag: {
+    Straight: {
+      title: "Straightflag",
+      blurb: "Gebogen sail — strak, hoog silhouet",
+      img: "/configurator/beach/soort-straight.png",
+    },
+    Square: {
+      title: "Squareflag",
+      blurb: "Rechthoekig — maximaal printvlak",
+      img: "/configurator/beach/soort-square.png",
+    },
+  },
+};
+
+/** Modelnaam van een maat ("Straight S — …" → "Straight"), of null. */
+function sizeModel(size: CatalogSize): string | null {
+  return splitSizeLabel(size.label).name?.split(" ")[0] ?? null;
+}
+
+/**
+ * Silhouet-beelden per maat (persoon van 1,80 m naast de vlag), getoond op de
+ * formaat-kaart. Sleutel = productslug → exact maatlabel. Bestanden in
+ * `public/configurator/beach/formaat/`.
+ */
+/**
+ * Beachvlag-mastzijde-renders per model + zijde. De toggle-slider toont de
+ * juiste kant (mast links/rechts) van het gekozen model (straight/square).
+ */
+const BEACH_MASTZIJDE: Record<string, Record<string, string>> = {
+  Straight: {
+    Links: "/configurator/beach/mastzijde-straight-links.webp",
+    Rechts: "/configurator/beach/mastzijde-straight-rechts.webp",
+  },
+  Square: {
+    Links: "/configurator/beach/mastzijde-square-links.webp",
+    Rechts: "/configurator/beach/mastzijde-square-rechts.webp",
+  },
+};
+
+/** Beachvlag-samenstelling per model + keuze (alleen doek / + stok / + stok + tas). */
+const BEACH_SAMENSTELLING: Record<string, Record<string, string>> = {
+  Straight: {
+    "Vlag + stok + tas": "/configurator/beach/samenstelling/straight-stok-tas.webp",
+    "Vlag + stok": "/configurator/beach/samenstelling/straight-stok.webp",
+    "Alleen vlag": "/configurator/beach/samenstelling/straight-alleen.webp",
+  },
+  Square: {
+    "Vlag + stok + tas": "/configurator/beach/samenstelling/square-stok-tas.webp",
+    "Vlag + stok": "/configurator/beach/samenstelling/square-stok.webp",
+    "Alleen vlag": "/configurator/beach/samenstelling/square-alleen.webp",
+  },
+};
+
+const SIZE_SILHOUETTES: Record<string, Record<string, string>> = {
+  beachvlag: {
+    "Straight Small — 80 × 220 cm": "/configurator/beach/formaat/straight-small.webp",
+    "Straight Medium S — 65 × 315 cm": "/configurator/beach/formaat/straight-medium-s.webp",
+    "Straight Medium L — 80 × 315 cm": "/configurator/beach/formaat/straight-medium-l.webp",
+    "Straight Large — 90 × 430 cm": "/configurator/beach/formaat/straight-large.webp",
+    "Square Small — 75 × 200 cm": "/configurator/beach/formaat/square-small.webp",
+    "Square Medium — 75 × 300 cm": "/configurator/beach/formaat/square-medium.webp",
+    "Square Large — 75 × 400 cm": "/configurator/beach/formaat/square-large.webp",
   },
 };
 
@@ -289,6 +394,18 @@ export function ProductConfigurator({
   );
 
   const [sizeIndex, setSizeIndex] = useState(defaultSizeIndex);
+
+  // "Soort"-stap: producten met een model in het maatlabel (beachvlag:
+  // Straight/Square) kiezen eerst de soort en zien daarna alleen die maten.
+  const soortMeta = SOORT_CARDS[product.slug];
+  const soortModels = soortMeta
+    ? [...new Set(product.sizes.map(sizeModel).filter((m): m is string => !!m))]
+    : [];
+  const hasSoort = soortModels.length > 1;
+  const [selectedModel, setSelectedModel] = useState<string | null>(
+    () => sizeModel(product.sizes[defaultSizeIndex]) ?? soortModels[0] ?? null,
+  );
+
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
     () =>
       Object.fromEntries(
@@ -337,13 +454,21 @@ export function ProductConfigurator({
   // In eigen-maat-modus zonder geldige invoer: geen prijs, geen add-to-cart.
   const priceReady = !customMode || customValid;
 
+  // Op-aanvraag-maat (geen Probo-preset): niet online bestelbaar → offerte-CTA.
+  const sizeQuoteOnly = !usingCustom && !!presetSize?.quoteOnly;
+
   // Eigen maat alleen aanbieden waar dat echt besteld kan worden (custom-size
   // producten of offerte-flow) — preset-producten stranden bij het afrekenen.
   const customAllowed = supportsCustomSize(product.slug);
 
   // Schaal-preview voor alle vlagproducten met echte afmetingen.
   const showPreview =
-    product.category === "vlag" && size.widthCm != null && size.heightCm != null;
+    product.category === "vlag" &&
+    // Beachvlag toont de schaal al via de silhouet-formaatkaarten → geen los
+    // preview-paneel (en dus ook geen preview-animatie).
+    product.slug !== "beachvlag" &&
+    size.widthCm != null &&
+    size.heightCm != null;
   const mastInfo =
     product.slug === "mastvlag"
       ? !usingCustom && presetSize.mastCm
@@ -373,7 +498,7 @@ export function ProductConfigurator({
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
 
   function handleAdd() {
-    if (!priceReady) return;
+    if (!priceReady || sizeQuoteOnly) return;
     const baseOptions = [
       { code: "Formaat", value: size.label },
       // Niet-gekozen optionele opties (accessoires) blijven van de regel af.
@@ -406,6 +531,21 @@ export function ProductConfigurator({
   );
   const nextTier = STAFFEL_TIERS.find((t) => t.qty > quantity);
 
+  // Soort kiezen → spring naar de eerste maat van dat model.
+  function pickModel(model: string) {
+    const firstIdx = product.sizes.findIndex((s) => sizeModel(s) === model);
+    setSelectedModel(model);
+    if (firstIdx >= 0) setSizeIndex(firstIdx);
+    setCustomMode(false);
+    setAdded(false);
+  }
+
+  // Stapnummering schuift op wanneer er een Soort-stap vóór het formaat staat.
+  const sizeStepNo = hasSoort ? 2 : 1;
+  const optionsStepNo = sizeStepNo + 1;
+  const quantityStepNo =
+    sizeStepNo + (product.options.length > 0 ? 1 : 0) + 1;
+
   return (
     <div className={styles.configurator} data-accent={product.accent}>
       {!orderable && (
@@ -418,7 +558,70 @@ export function ProductConfigurator({
       )}
 
       <div className={styles.steps}>
-        {/* Stap 1 — Formaat, met een live schaal-preview (vlag + mast/gevel/stok
+        {/* Soort-stap — kies eerst het model (Straight/Square), dan pas de maat. */}
+        {hasSoort && (
+          <section className={styles.step}>
+            <header className={styles.stepHead}>
+              <span className={styles.stepDot}>1</span>
+              <span className={styles.stepTitle}>Soort</span>
+              <span className={styles.stepPick}>
+                {soortMeta?.[selectedModel ?? ""]?.title ?? selectedModel}
+              </span>
+            </header>
+            <div
+              className={styles.optionGrid}
+              role="radiogroup"
+              aria-label="Soort beachvlag"
+            >
+              {soortModels.map((model) => {
+                const meta = soortMeta?.[model];
+                const selected = selectedModel === model;
+                return (
+                  <label
+                    key={model}
+                    className={styles.optionCard}
+                    data-selected={selected}
+                  >
+                    <input
+                      type="radio"
+                      name="soort"
+                      checked={selected}
+                      onChange={() => pickModel(model)}
+                    />
+                    <span className={styles.optionCardMedia} data-square="true">
+                      {meta?.img ? (
+                        <Image
+                          src={meta.img}
+                          alt={`Soort: ${meta.title}`}
+                          fill
+                          sizes="(max-width: 860px) 45vw, 220px"
+                          className={styles.optionCardImg}
+                        />
+                      ) : (
+                        <span className={styles.optionCardFallback} aria-hidden="true">
+                          {model}
+                        </span>
+                      )}
+                      <span className={styles.optionCardCheck} aria-hidden="true">
+                        <Check size={14} />
+                      </span>
+                    </span>
+                    <span className={styles.optionCardFoot} data-stack="true">
+                      <span className={styles.optionCardName}>
+                        {meta?.title ?? model}
+                      </span>
+                      {meta?.blurb && (
+                        <span className={styles.optionCardSub}>{meta.blurb}</span>
+                      )}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Stap — Formaat, met een live schaal-preview (vlag + mast/gevel/stok
             + mens van 1,80 m) ernaast. */}
         <div className={showPreview ? styles.withPreview : undefined}>
         {showPreview && (
@@ -430,6 +633,7 @@ export function ProductConfigurator({
             bandkleur={
               selectedOptions["Bandkleur"] ??
               selectedOptions["Band- en koordkleur"] ??
+              selectedOptions["Kleur"] ??
               null
             }
             sizeLabel={usingCustom ? `${wNum} × ${hNum} cm` : size.label}
@@ -438,7 +642,7 @@ export function ProductConfigurator({
         )}
         <section className={styles.step}>
           <header className={styles.stepHead}>
-            <span className={styles.stepDot}>1</span>
+            <span className={styles.stepDot}>{sizeStepNo}</span>
             <span className={styles.stepTitle}>{labels.size}</span>
             <span className={styles.stepPick}>
               {usingCustom ? size.label : customMode ? "Eigen afmeting" : presetSize.label}
@@ -446,9 +650,11 @@ export function ProductConfigurator({
           </header>
 
           <div className={styles.sizeList} role="radiogroup" aria-label={labels.size}>
-            {groupSizes(product.sizes).map((group) => (
+            {groupSizes(product.sizes)
+              .filter((group) => !hasSoort || group.key === selectedModel)
+              .map((group) => (
               <div key={group.key} className={styles.sizeGroup}>
-                {group.title && (
+                {group.title && !hasSoort && (
                   <span className={styles.sizeGroupLabel}>{group.title}</span>
                 )}
                 <div className={styles.sizeGrid}>
@@ -456,17 +662,58 @@ export function ProductConfigurator({
                     const unit = localUnitPriceWithOptions(product, s, mergedSelections);
                     const selected = !customMode && sizeIndex === i;
                     const { name, dims } = splitSizeLabel(s.label);
+                    // Binnen een gekozen soort is de modelnaam overbodig: "Straight
+                    // Medium S" → "Medium S".
+                    const shortName =
+                      hasSoort && name ? name.split(" ").slice(1).join(" ") : name;
+                    const sil = SIZE_SILHOUETTES[product.slug]?.[s.label];
+                    const pickSize = () => {
+                      setSizeIndex(i);
+                      setCustomMode(false);
+                      setAdded(false);
+                    };
+                    if (sil) {
+                      // Formaat-kaart met silhouet (persoon van 1,80 m naast de vlag).
+                      return (
+                        <label
+                          key={s.label}
+                          className={styles.sizeCard}
+                          data-selected={selected}
+                          data-quote={s.quoteOnly || undefined}
+                        >
+                          <input
+                            type="radio"
+                            name="size"
+                            checked={selected}
+                            onChange={pickSize}
+                          />
+                          <span className={styles.sizeCardMedia}>
+                            <Image
+                              src={sil}
+                              alt={`Formaat ${shortName ?? dims}`}
+                              fill
+                              sizes="(max-width: 860px) 45vw, 200px"
+                              className={styles.sizeCardImg}
+                            />
+                            <span className={styles.optionCardCheck} aria-hidden="true">
+                              <Check size={14} />
+                            </span>
+                          </span>
+                          <span className={styles.sizeCardName}>{shortName ?? dims}</span>
+                          <span className={styles.sizeCardDims}>{dims}</span>
+                          <span className={styles.sizeCardPrice} data-quote={s.quoteOnly || undefined}>
+                            {s.quoteOnly ? "Op aanvraag" : fmt(unit)}
+                          </span>
+                        </label>
+                      );
+                    }
                     return (
                       <label key={s.label} className={styles.sizeRow} data-selected={selected}>
                         <input
                           type="radio"
                           name="size"
                           checked={selected}
-                          onChange={() => {
-                            setSizeIndex(i);
-                            setCustomMode(false);
-                            setAdded(false);
-                          }}
+                          onChange={pickSize}
                         />
                         <span className={styles.sizeLabelText}>{name ?? dims}</span>
                         {(name || s.mastAdvies) && (
@@ -562,13 +809,17 @@ export function ProductConfigurator({
         {product.options.length > 0 && (
           <section className={styles.step}>
             <header className={styles.stepHead}>
-              <span className={styles.stepDot}>2</span>
+              <span className={styles.stepDot}>{optionsStepNo}</span>
               <span className={styles.stepTitle}>Uitvoering</span>
             </header>
 
             <div className={styles.optionList}>
               {product.options.map((opt) => {
                 const isMulti = MULTI_OPTIONS.has(opt.label);
+                // Beachvlag-mastzijde = productfoto + Links⇄Rechts toggle-slider
+                // (functioneel: stuurt de live preview), i.p.v. twee losse kaarten.
+                const isBeachMast =
+                  product.slug === "beachvlag" && opt.label === "Mastzijde";
                 const picked = isMulti
                   ? (multiChoices[opt.label] ?? []).join(" · ")
                   : selectedOptions[opt.label];
@@ -578,9 +829,54 @@ export function ProductConfigurator({
                     {opt.label}
                     <span className={styles.optionRowPick}>{picked || "Geen"}</span>
                   </span>
+                  {isBeachMast ? (
+                    <div className={styles.mastToggle}>
+                      <span className={styles.mastToggleMedia}>
+                        <Image
+                          src={
+                            BEACH_MASTZIJDE[selectedModel ?? "Straight"]?.[
+                              selectedOptions[opt.label] ?? "Links"
+                            ] ||
+                            (selectedModel && soortMeta?.[selectedModel]?.img) ||
+                            product.heroImage.src
+                          }
+                          alt={`Beachvlag ${selectedModel ?? ""} — mast ${selectedOptions[opt.label]?.toLowerCase() ?? "links"}`}
+                          fill
+                          sizes="(max-width: 860px) 60vw, 240px"
+                          className={styles.optionCardImg}
+                        />
+                      </span>
+                      <div
+                        className={styles.segControl}
+                        role="radiogroup"
+                        aria-label={opt.label}
+                      >
+                        {opt.choices.map((choice) => (
+                          <button
+                            key={choice}
+                            type="button"
+                            role="radio"
+                            aria-checked={selectedOptions[opt.label] === choice}
+                            className={styles.segOption}
+                            data-on={selectedOptions[opt.label] === choice}
+                            onClick={() => {
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [opt.label]: choice,
+                              }));
+                              setAdded(false);
+                            }}
+                          >
+                            {choice}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
                   <div
                     className={styles.optionGrid}
                     data-dense={opt.choices.length > 4}
+                    data-cols={opt.label === "Samenstelling" ? "3" : undefined}
                     role={isMulti ? "group" : "radiogroup"}
                     aria-label={opt.label}
                   >
@@ -588,8 +884,14 @@ export function ProductConfigurator({
                       const selected = isMulti
                         ? (multiChoices[opt.label] ?? []).includes(choice)
                         : selectedOptions[opt.label] === choice;
-                      // Beeld-volgorde: productfoto → huisstijl-glyph → generiek beeld.
+                      // Beeld-volgorde: model-specifieke beach-samenstelling →
+                      // productfoto → huisstijl-glyph → generiek beeld.
                       const productImg =
+                        (product.slug === "beachvlag" &&
+                        opt.label === "Samenstelling" &&
+                        selectedModel
+                          ? BEACH_SAMENSTELLING[selectedModel]?.[choice]
+                          : undefined) ??
                         PRODUCT_OPTION_IMAGES[product.slug]?.[opt.label]?.[choice];
                       const glyph = productImg
                         ? null
@@ -626,7 +928,10 @@ export function ProductConfigurator({
                               setAdded(false);
                             }}
                           />
-                          <span className={styles.optionCardMedia}>
+                          <span
+                            className={styles.optionCardMedia}
+                            data-square={product.slug === "beachvlag" ? "true" : undefined}
+                          >
                             {imgSrc ? (
                               <Image
                                 src={imgSrc}
@@ -662,6 +967,7 @@ export function ProductConfigurator({
                       );
                     })}
                   </div>
+                  )}
                 </div>
                 );
               })}
@@ -672,7 +978,7 @@ export function ProductConfigurator({
         {/* Stap 3 — Aantal + bulkkorting */}
         <section className={styles.step}>
           <header className={styles.stepHead}>
-            <span className={styles.stepDot}>{product.options.length > 0 ? 3 : 2}</span>
+            <span className={styles.stepDot}>{quantityStepNo}</span>
             <span className={styles.stepTitle}>{labels.quantity}</span>
             {discount > 0 && (
               <span className={styles.stepPick}>−{Math.round(discount * 100)}% korting</span>
@@ -819,18 +1125,31 @@ export function ProductConfigurator({
       <div className={styles.buyBar}>
         <div className={styles.priceBlock}>
           <span className={styles.priceLabel}>{labels.priceLabel}</span>
-          <span className={styles.priceValue}>{priceReady ? fmt(totalExVat) : "—"}</span>
+          <span className={styles.priceValue}>
+            {sizeQuoteOnly ? "Op aanvraag" : priceReady ? fmt(totalExVat) : "—"}
+          </span>
           <span className={styles.priceNote}>
-            {priceReady
-              ? `${inclVat ? "incl. btw" : "excl. btw"}${
-                  designService ? " · incl. ontwerpservice" : ""
-                }${usingCustom ? " · eigen maat" : ""}`
-              : "Vul eerst een geldige eigen afmeting in"}
+            {sizeQuoteOnly
+              ? "Deze maat bestel je op aanvraag (niet online)"
+              : priceReady
+                ? `${inclVat ? "incl. btw" : "excl. btw"}${
+                    designService ? " · incl. ontwerpservice" : ""
+                  }${usingCustom ? " · eigen maat" : ""}`
+                : "Vul eerst een geldige eigen afmeting in"}
           </span>
         </div>
 
         <div className={styles.actions}>
-          {orderable ? (
+          {sizeQuoteOnly ? (
+            <Button
+              as="a"
+              href={`/contact?product=${product.slug}&maat=${encodeURIComponent(presetSize.label)}`}
+              size="lg"
+              icon={<ArrowRight />}
+            >
+              {labels.requestQuote}
+            </Button>
+          ) : orderable ? (
             <Button
               variant="cart"
               size="lg"

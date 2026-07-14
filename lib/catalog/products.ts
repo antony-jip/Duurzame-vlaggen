@@ -24,6 +24,12 @@ export interface CatalogSize {
   mastAdvies?: string;
   /** Indicatieve masthoogte (cm) voor de schaal-preview. */
   mastCm?: number;
+  /**
+   * Maat bestaat wél in ons assortiment maar heeft (nog) geen live-geverifieerde
+   * Probo-preset → niet online bestelbaar, alleen op aanvraag/offerte. De prijs
+   * blijft indicatief; de configurator blokkeert "In winkelmand" en toont contact.
+   */
+  quoteOnly?: boolean;
 }
 
 export interface CatalogOption {
@@ -179,7 +185,11 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "350 × 225 cm", widthCm: 350, heightCm: 225, mastAdvies: "mast 10 m", mastCm: 1000 },
     ],
     options: [
-      { label: "Band- en koordkleur", choices: ["Wit", "Zwart"] },
+      { label: "Mastzijde", choices: ["Links", "Rechts"] },
+      // Bevestiging aan de mast: met haken/clips of met koord en lus.
+      { label: "Afwerking", choices: ["Haken (Clips)", "Koord/Lus"] },
+      // Kleur van band, koord en garen (zie render-beelden), niet van het doek.
+      { label: "Kleur", choices: ["Wit", "Zwart"] },
     ],
     heroImage: img(
       "758-duurzame-mastvlag.webp",
@@ -213,15 +223,27 @@ export const PRODUCTS: CatalogProduct[] = [
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
     // Sizes are Probo's own presets for the Flag-CiCLO® material, verified live.
     sizes: [
-      { label: "Straight S — 40 × 235 cm", widthCm: 40, heightCm: 235 },
-      { label: "Straight M — 65 × 315 cm", widthCm: 65, heightCm: 315 },
-      { label: "Straight L — 90 × 430 cm", widthCm: 90, heightCm: 430 },
-      { label: "Square S — 75 × 200 cm", widthCm: 75, heightCm: 200 },
-      { label: "Square M — 75 × 300 cm", widthCm: 75, heightCm: 300 },
-      { label: "Square L — 75 × 400 cm", widthCm: 75, heightCm: 400 },
+      // Straight = de echte oude-site-maten. 65×315 en 90×430 zijn live-geverifieerde
+      // Probo-presets (online bestelbaar); 80×220 en 80×315 bestaan wél maar hebben
+      // geen geverifieerde preset → quoteOnly (op aanvraag) tot Probo bevestigt.
+      { label: "Straight Small — 80 × 220 cm", widthCm: 80, heightCm: 220, quoteOnly: true },
+      { label: "Straight Medium S — 65 × 315 cm", widthCm: 65, heightCm: 315, popular: true },
+      { label: "Straight Medium L — 80 × 315 cm", widthCm: 80, heightCm: 315, quoteOnly: true },
+      { label: "Straight Large — 90 × 430 cm", widthCm: 90, heightCm: 430 },
+      // Square = Probo's geverifieerde square-presets (alle online bestelbaar).
+      { label: "Square Small — 75 × 200 cm", widthCm: 75, heightCm: 200 },
+      { label: "Square Medium — 75 × 300 cm", widthCm: 75, heightCm: 300 },
+      { label: "Square Large — 75 × 400 cm", widthCm: 75, heightCm: 400 },
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
+      // Wat zit erbij: alleen het doek, met stok, of compleet met stok + draagtas.
+      // "Vlag + stok + tas" is de geverifieerde standaard-samenstelling (flag-stick-
+      // bag-deluxe). Zie probo-mapping voor de open Probo-/prijs-verificatie.
+      {
+        label: "Samenstelling",
+        choices: ["Vlag + stok + tas", "Vlag + stok", "Alleen vlag"],
+      },
       // Volledige accessoire-assortiment van de oude site (namen + prijzen ECHT).
       // Optionele keuze: in de configurator kun je hem ook weer uitzetten.
       {
@@ -283,8 +305,13 @@ export const PRODUCTS: CatalogProduct[] = [
     ],
     options: [
       // Probo's only facade-flag finishing is "band, koord en lus" (fixed in the
-      // mapping); the customer choices are the pole side + our bracket cross-sell.
+      // mapping); de klant kiest de mastzijde, ziet de vaste afwerking + de
+      // band-/koordkleur, en kan optioneel onze uithouder als cross-sell bijkopen.
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
+      // Vaste afwerking (band, koord en lus) — één keuze, puur ter illustratie.
+      { label: "Afwerking", choices: ["Koord/Lus"] },
+      // Kleur van band, koord en lus (zie render-beelden), niet van het doek.
+      { label: "Kleur", choices: ["Wit", "Zwart"] },
       { label: "Uithouder", choices: ["Zonder", "Met uithouder"] },
     ],
     heroImage: img(

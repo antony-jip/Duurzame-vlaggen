@@ -131,10 +131,18 @@ const MAPPINGS: Record<string, ProductMapping> = {
     options: {
       // Mast flags finish with band + cord; the band/cord colour maps to Probo's
       // colour code (white/black). Cord length is fixed at 200 cm (confirmed).
-      "Band- en koordkleur": {
+      // De colour-optie draagt de live-geverifieerde band-and-cord-keten.
+      Kleur: {
         Wit: [{ code: "band-and-cord" }, { code: "white" }, { code: "200cm" }],
         Zwart: [{ code: "band-and-cord" }, { code: "black" }, { code: "200cm" }],
       },
+      // Mastzijde en Afwerking (Haken/Clips vs Koord/Lus) hebben (nog) geen
+      // live-geverifieerde flag-ciclo-code. De band-and-cord-keten hierboven gaat
+      // uit van koord/lus; bij "Haken (Clips)" reist de klantkeuze als `unmapped`
+      // mee op de orderregel zodat de studio de haken-afwerking handmatig regelt.
+      // TODO: met Antony/Probo verifiëren of flag-ciclo een haken-/pole-side-code kent.
+      Mastzijde: null,
+      Afwerking: null,
       // "Ontwerpservice" is our own design service — no Probo equivalent.
       Ontwerpservice: null,
     },
@@ -150,7 +158,8 @@ const MAPPINGS: Record<string, ProductMapping> = {
     mode: "preset-size",
     base: [{ code: "flag-ciclo" }],
     sizePresets: {
-      "40x235": { code: "40x235cm" },
+      // Alleen live-geverifieerde Probo-presets. 80×220 en 80×315 (oude-site-maten)
+      // hebben géén preset → quoteOnly in de catalogus, komen hier bewust niet in.
       "65x315": { code: "65x315cm" },
       "90x430": { code: "90x430cm" },
       "75x200": { code: "75x200cm", productCode: "beachflag-square" },
@@ -159,11 +168,17 @@ const MAPPINGS: Record<string, ProductMapping> = {
     },
     options: {
       Mastzijde: MASTZIJDE,
+      // Samenstelling: online sturen we altijd de geverifieerde volledige
+      // samenstelling (flag-stick-bag-deluxe, zie tail). "Vlag + stok" en "Alleen
+      // vlag" hebben nog geen geverifieerde Probo-code én geen aparte prijs → de
+      // keuze reist als `unmapped` mee op de orderregel; de studio stemt af/factureert.
+      // TODO: met Antony/Probo de composition-codes + prijzen per samenstelling verifiëren.
+      Samenstelling: null,
       // Accessoires (grondpen/kruisvoet/voetplaat/waterzak/rotator/…) zijn
       // cross-sell met eigen Probo-codes → buiten scope, alleen op de orderregel.
       Accessoires: null,
     },
-    tail: [{ code: "flag-stick-bag-deluxe" }], // vlag, stok en draagtas
+    tail: [{ code: "flag-stick-bag-deluxe" }], // vlag, stok en draagtas (standaard)
   },
   gevelvlag: {
     productCode: "facade-flag",
@@ -176,6 +191,13 @@ const MAPPINGS: Record<string, ProductMapping> = {
     },
     options: {
       Mastzijde: MASTZIJDE,
+      // Afwerking is vast "band, koord en lus" (zit al in `tail`) → herkend maar
+      // stuurt zelf niets, zodat het niet dubbel gaat of als unmapped verschijnt.
+      Afwerking: { "Koord/Lus": [] },
+      // Band-/koord-/luskleur: nog geen live-geverifieerde facade-strap-colour-code
+      // → reist als `unmapped` mee op de orderregel (nooit gokken richting Probo).
+      // TODO: met Antony/Probo verifiëren of landscape-strap-cord-loop een kleur kent.
+      Kleur: null,
       // The wall bracket is cross-sell hardware (facade-pole-* accessories at
       // Probo, separate codes) → not sent, recorded on the order line.
       Uithouder: null,

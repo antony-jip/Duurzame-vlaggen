@@ -21,7 +21,7 @@ interface Stap {
 const STAPPEN: Stap[] = [
   {
     n: 1,
-    accent: "forest",
+    accent: "terracotta",
     image: {
       src: "/proces/configureren.jpg",
       alt: "Ontwerp wordt in de configurator opgezet achter een beeldscherm",
@@ -43,7 +43,7 @@ const STAPPEN: Stap[] = [
   },
   {
     n: 3,
-    accent: "terracotta",
+    accent: "forest",
     image: {
       src: "/proces/levering.jpg",
       alt: "Ingepakte bestelling wordt overhandigd aan de bezorger",

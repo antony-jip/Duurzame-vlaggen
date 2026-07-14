@@ -394,6 +394,89 @@
   grid-template-columns: repeat(auto-fill, minmax(122px, 1fr));
   gap: 8px;
 }
+
+/* Formaat-kaart met silhouet (beachvlag): letter + vlag/persoon-beeld + maat. */
+.sizeCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.sizeCard:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.sizeCard input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.sizeCard[data-selected="true"] {
+  border-color: var(--accent);
+  background: var(--forest-2);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.sizeCard:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.sizeCard[data-quote="true"] {
+  border-style: dashed;
+}
+.sizeCardMedia {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--forest-2);
+}
+.sizeCardImg {
+  object-fit: contain;
+  padding: 6px;
+}
+.sizeCard[data-selected="true"] .optionCardCheck {
+  opacity: 1;
+  transform: scale(1);
+}
+.sizeCardName {
+  margin-top: 4px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.sizeCard[data-selected="true"] .sizeCardName {
+  color: var(--accent);
+}
+.sizeCardDims {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-stone);
+}
+.sizeCardPrice {
+  margin-top: 2px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--color-charcoal);
+  font-variant-numeric: tabular-nums;
+}
+.sizeCardPrice[data-quote="true"] {
+  font-size: 12px;
+  color: var(--accent);
+}
 /* Compacte, rustige maat-pill: label, evt. afmeting, prijs — gecentreerd. */
 .sizeRow {
   position: relative;
@@ -614,6 +697,9 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-sm);
 }
+.optionGrid[data-cols="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
 /* Bij 5+ keuzes (bv. beachvlag-accessoires): vier compacte kaarten per rij. */
 .optionGrid[data-dense="true"] {
   grid-template-columns: repeat(4, 1fr);
@@ -655,6 +741,61 @@
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
+}
+.optionCardMedia[data-square="true"] {
+  aspect-ratio: 1 / 1;
+}
+
+/* Mastzijde-toggle (beachvlag): productfoto + Links⇄Rechts schakelaar */
+.mastToggle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.mastToggleMedia {
+  position: relative;
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid var(--forest-6);
+  background: var(--forest-3);
+}
+.segControl {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--forest-3);
+  border: 1.5px solid var(--forest-6);
+  border-radius: 999px;
+}
+.segOption {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 9px 26px;
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.segOption:hover {
+  color: var(--accent);
+}
+.segOption[data-on="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+.segOption[data-on="true"]:hover {
+  color: #fff;
 }
 .optionCard:hover .optionCardMedia {
   border-color: var(--accent);
@@ -730,6 +871,17 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 6px;
+}
+.optionCardFoot[data-stack="true"] {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+.optionCardSub {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--color-stone);
 }
 .optionCardName {
   font-family: var(--font-heading);
@@ -1097,7 +1249,14 @@
     transform: scaleX(0.96);
   }
 }
-/* Beachflag-silhouetten: ronde vaan (straight) of licht afgeronde rechthoek. */
+/* Beachflag-silhouetten: ronde vaan (straight) of licht afgeronde rechthoek.
+   Beachvlaggen staan stil (geen wapper- én geen sheen-animatie) — bewust rustig. */
+.banierDoek[data-vorm="straight"],
+.banierDoek[data-vorm="square"],
+.banierDoek[data-vorm="straight"]::after,
+.banierDoek[data-vorm="square"]::after {
+  animation: none;
+}
 .banierDoek[data-vorm="straight"] {
   border-radius: 3px 85% 14px 3px / 3px 38% 10px 3px;
 }

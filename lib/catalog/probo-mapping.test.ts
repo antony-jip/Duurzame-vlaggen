@@ -73,7 +73,9 @@ describe("buildProboOptions — mastvlag", () => {
       heightCm: 150,
       amount: 1,
       selections: {
-        "Band- en koordkleur": "Wit",
+        Mastzijde: "Links",
+        Afwerking: "Koord/Lus",
+        Kleur: "Wit",
         Ontwerpservice: "Eigen ontwerp",
       },
     });
@@ -87,7 +89,10 @@ describe("buildProboOptions — mastvlag", () => {
       { code: "white" },
       { code: "200cm" },
     ]);
+    // Mastzijde en Afwerking hebben geen geverifieerde code → ride-along unmapped.
     expect(res!.unmapped).toEqual([
+      { label: "Mastzijde", value: "Links" },
+      { label: "Afwerking", value: "Koord/Lus" },
       { label: "Ontwerpservice", value: "Eigen ontwerp" },
     ]);
   });
@@ -97,7 +102,7 @@ describe("buildProboOptions — mastvlag", () => {
       widthCm: 150,
       heightCm: 225,
       amount: 1,
-      selections: { "Band- en koordkleur": "Zwart", Ontwerpservice: "Laat ontwerpen" },
+      selections: { Kleur: "Zwart", Ontwerpservice: "Laat ontwerpen" },
     });
     expect(res!.options).toContainEqual({ code: "black" });
   });
@@ -152,7 +157,7 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
     ).toBeNull();
   });
 
-  it("covers every catalogue size with a preset", () => {
+  it("covers every online-bestelbare size with a preset (quoteOnly excluded)", () => {
     const product = getProduct("beachvlag")!;
     for (const size of product.sizes) {
       const res = buildProboOptions("beachvlag", {
@@ -161,8 +166,13 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
         amount: 1,
         selections: { Mastzijde: "Links", Accessoires: "Grondpen" },
       });
-      expect(res, `size ${size.label}`).not.toBeNull();
-      expect(res!.productCode).toMatch(/^beachflag-(straight|square)$/);
+      if (size.quoteOnly) {
+        // Op-aanvraag-maten (geen geverifieerde Probo-preset) horen null te geven.
+        expect(res, `quoteOnly size ${size.label}`).toBeNull();
+      } else {
+        expect(res, `size ${size.label}`).not.toBeNull();
+        expect(res!.productCode).toMatch(/^beachflag-(straight|square)$/);
+      }
     }
   });
 });

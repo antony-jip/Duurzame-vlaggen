@@ -46,14 +46,13 @@ const RETAIL_PRICES: Record<string, Record<string, number>> = {
     "225 × 150 cm": 59.5, // ECHT (ref, "Grote Gevelvlag")
   },
   beachvlag: {
-    // Straight S 40×235 heeft geen exacte ref-maat; dichtstbijzijnde straight-ref
-    // is de kleinste (80×220 = €35). Breedte wijkt sterk af (40 vs 80).
-    "Straight S — 40 × 235 cm": 35, // TODO: prijs verifiëren (ref-maat 80×220 = €35)
-    "Straight M — 65 × 315 cm": 45, // ECHT (ref 65×315)
-    "Straight L — 90 × 430 cm": 65, // ECHT (ref 90×430)
-    "Square S — 75 × 200 cm": 45, // ECHT (ref 75×200)
-    "Square M — 75 × 300 cm": 55, // ECHT (ref 75×300)
-    "Square L — 75 × 400 cm": 65, // ECHT (ref 75×400)
+    "Straight Small — 80 × 220 cm": 35, // ECHT (ref 80×220)
+    "Straight Medium S — 65 × 315 cm": 45, // ECHT (ref 65×315)
+    "Straight Medium L — 80 × 315 cm": 55, // TODO: prijs verifiëren (tussen 65×315=€45 en 90×430=€65)
+    "Straight Large — 90 × 430 cm": 65, // ECHT (ref 90×430)
+    "Square Small — 75 × 200 cm": 45, // ECHT (ref 75×200)
+    "Square Medium — 75 × 300 cm": 55, // ECHT (ref 75×300)
+    "Square Large — 75 × 400 cm": 65, // ECHT (ref 75×400)
   },
   baniervlag: {
     // TODO: prijs verifiëren — geen exacte ref-prijzen bekend. Area-scaling
