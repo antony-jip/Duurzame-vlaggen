@@ -104,20 +104,24 @@ const MAPPINGS: Record<string, ProductMapping> = {
     mode: "custom-size",
     base: [{ code: "finishing-all-sides" }],
     options: {
-      // flag-ciclo has NO tunnel/sleeve ("Tunnelzoom") finish (verified: none of
-      // the 7 finishing types is a tunnel). The nearest orderable finish is a
-      // plain hem; "Zoom met ringen" maps to band + plastic rings in every corner.
-      // The customer's original label is also kept on the order line.
+      // De configurator biedt Tunnel/Geen. flag-ciclo heeft GEEN echte
+      // tunnel-/sleeve-finish (live geverifieerd: geen van de 7 finishing-types
+      // is een tunnel); de dichtstbijzijnde bestelbare afwerking is een gewone
+      // zoom ("hem"). Beide keuzes bestellen we daarom als zoom — de originele
+      // klantkeuze staat óók op de orderregel, zodat de studio een tunnel
+      // handmatig kan afhandelen.
+      // TODO: met Antony verifiëren hoe de tunnel-afwerking bij Probo echt
+      // besteld moet worden (evt. apart product of handmatige order).
       Afwerking: {
-        Tunnelzoom: [{ code: "hem" }],
-        "Zoom met ringen": [
-          { code: "band-and-plastic-rings" },
-          { code: "every-corner" },
-        ],
+        Tunnel: [{ code: "hem" }],
+        Geen: [{ code: "hem" }],
       },
-      // Mounting hardware (Karabijnhaken / Spankoord) exists only as optional
-      // cross-sell accessories with non-matching names → not sent to Probo.
-      Bevestiging: null,
+      // Mastzijde en Bandkleur hebben (nog) geen live-geverifieerde
+      // flag-ciclo-codes → nooit gokken richting Probo; ze reizen als
+      // `unmapped` mee op de orderregel voor de studio.
+      // TODO: verifiëren of flag-ciclo custom-size een pole-side/bandkleur kent.
+      Mastzijde: null,
+      Bandkleur: null,
     },
   },
   mastvlag: {
@@ -155,9 +159,9 @@ const MAPPINGS: Record<string, ProductMapping> = {
     },
     options: {
       Mastzijde: MASTZIJDE,
-      // Feet (Grondpin/Kruisvoet/Watertank) are cross-sell accessories with
-      // separate Probo codes → out of scope for now, recorded on the order line.
-      Voet: null,
+      // Accessoires (grondpen/kruisvoet/voetplaat/waterzak/rotator/…) zijn
+      // cross-sell met eigen Probo-codes → buiten scope, alleen op de orderregel.
+      Accessoires: null,
     },
     tail: [{ code: "flag-stick-bag-deluxe" }], // vlag, stok en draagtas
   },
@@ -187,6 +191,17 @@ export const MAPPED_SLUGS: readonly string[] = Object.keys(MAPPINGS);
 /** True when `slug` has a confirmed Probo option mapping. */
 export function hasProboMapping(slug: string): boolean {
   return slug in MAPPINGS;
+}
+
+/**
+ * True when het product een vrije eigen maat aankan: custom-size-producten
+ * (numerieke width/height richting Probo) en quote-only-producten (offerte).
+ * Preset-size-producten (beachvlag/gevelvlag) kunnen dat NIET — een onbekende
+ * maat heeft geen preset-code en zou pas bij het afrekenen stranden.
+ */
+export function supportsCustomSize(slug: string): boolean {
+  const mapping = MAPPINGS[slug];
+  return !mapping || mapping.mode === "custom-size";
 }
 
 /**
@@ -235,6 +250,14 @@ export function buildProboOptions(
       continue;
     }
     options.push(...choiceCodes[chosen]);
+  }
+  // Vangnet: selecties waarvan het label helemaal niet (meer) in de mapping
+  // staat — bv. na een catalogus-wijziging — mogen nooit stilletjes verdwijnen.
+  // Ze reizen als `unmapped` mee op de orderregel voor de admin.
+  for (const [label, chosen] of Object.entries(input.selections)) {
+    if (!(label in mapping.options)) {
+      unmapped.push({ label, value: chosen });
+    }
   }
 
   options.push(...(mapping.tail ?? []));

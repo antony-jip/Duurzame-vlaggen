@@ -63,13 +63,19 @@ const RETAIL_PRICES: Record<string, Record<string, number>> = {
     "100 × 300 cm": 45.5, // TODO: prijs verifiëren (≈ €45,60 area-scaled)
     "100 × 350 cm": 53.5, // TODO: prijs verifiëren (≈ €53,20 area-scaled)
     "100 × 400 cm": 60.5, // TODO: prijs verifiëren (≈ €60,80 area-scaled)
+    "125 × 300 cm": 57, // TODO: prijs verifiëren (= €57,00 area-scaled)
+    "125 × 350 cm": 66.5, // TODO: prijs verifiëren (≈ €66,50 area-scaled)
+    "125 × 400 cm": 76, // TODO: prijs verifiëren (= €76,00 area-scaled)
   },
   mastvlag: {
-    // TODO: prijs verifiëren — enige bekende punt: 150×225 ≈ €44,50 (live site).
-    // Area-scaling geankerd daarop (≈ €13,19/m²), floor op €0,50.
-    "100 × 150 cm": 19.5, // TODO: prijs verifiëren (≈ €19,78 area-scaled)
-    "150 × 225 cm": 44.5, // ~ECHT (live site, band+koord)
-    "225 × 350 cm": 103.5, // TODO: prijs verifiëren (≈ €103,83 area-scaled)
+    // TODO: prijs verifiëren — enige bekende punt: 225×150 ≈ €44,50 (live site).
+    // Area-scaling geankerd daarop (≈ €13,19/m²), afgerond op €0,50.
+    // Labels zijn breedte × hoogte.
+    "150 × 100 cm": 19.5, // TODO: prijs verifiëren (≈ €19,78 area-scaled)
+    "180 × 120 cm": 28.5, // TODO: prijs verifiëren (≈ €28,49 area-scaled)
+    "225 × 150 cm": 44.5, // ~ECHT (live site, band+koord)
+    "300 × 200 cm": 79, // TODO: prijs verifiëren (≈ €79,14 area-scaled)
+    "350 × 225 cm": 103.5, // TODO: prijs verifiëren (≈ €103,83 area-scaled)
   },
 };
 
@@ -101,8 +107,21 @@ const OPTION_SURCHARGES: Record<
     Kleur: { Wit: 0, Aluminium: 0, Zwart: 71.5, Antraciet: 71.5 },
   },
   beachvlag: {
-    // Losse voet als cross-sell per vlag (ref-accessoireprijzen).
-    Voet: { Grondpin: 11, Kruisvoet: 27, Watertank: 7 },
+    // Accessoire als cross-sell per vlag — prijzen ECHT (oude site, stap 7).
+    Accessoires: {
+      Grondpen: 11,
+      Grondplug: 14,
+      Kruisvoet: 27,
+      "Metalen Standaard": 28,
+      "Voetplaat 5 kg": 31,
+      "Voetplaat 15 kg": 70,
+      "Parasolvoet Zwart": 33,
+      "Parasolvoet Wit": 40,
+      "Waterzak Grijs": 7,
+      "Waterzak Zwart": 8,
+      "Rotator Parasol": 8,
+      "Rotator Voetplaat": 8,
+    },
   },
   // TODO: prijs verifiëren — gevelvlag "Met uithouder" heeft nog geen bekende
   // meerprijs; nu €0 tot Antony de uithouder-prijs bevestigt.
@@ -230,7 +249,13 @@ export function localCustomSizePrice(
   return round2(Math.max(area * rate, CUSTOM_SIZE_FLOOR));
 }
 
-/** Toeslag (ex btw, per stuk) voor de gekozen opties. */
+/**
+ * Toeslag (ex btw, per stuk) voor de gekozen opties.
+ *
+ * Multi-keuzes (bv. meerdere beachvlag-accessoires) reizen als ÉÉN waarde met
+ * " · " als scheider ("Grondpen · Waterzak Grijs") — dezelfde string staat ook
+ * op de orderregel. Elke deelkeuze telt hier los mee in de toeslag.
+ */
 export function localOptionsSurcharge(
   product: CatalogProduct,
   selections: Record<string, string> = {},
@@ -239,8 +264,12 @@ export function localOptionsSurcharge(
   if (!table) return 0;
   let total = 0;
   for (const [label, value] of Object.entries(selections)) {
-    const add = table[label]?.[value];
-    if (add) total += add;
+    const choices = table[label];
+    if (!choices) continue;
+    for (const part of String(value).split(" · ")) {
+      const add = choices[part];
+      if (add) total += add;
+    }
   }
   return round2(total);
 }

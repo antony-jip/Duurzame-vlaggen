@@ -15,39 +15,54 @@ import { getAllProducts, getProduct, isOrderable } from "./products";
  */
 
 describe("buildProboOptions — baniervlag", () => {
-  it("maps size + 'Zoom met ringen' to the validated Probo chain", () => {
+  it("maps size + 'Tunnel' to the validated chain; Mastzijde/Bandkleur ride along unmapped", () => {
     const res = buildProboOptions("baniervlag", {
-      widthCm: 250,
-      heightCm: 100,
+      widthCm: 100,
+      heightCm: 300,
       amount: 2,
-      selections: { Afwerking: "Zoom met ringen", Bevestiging: "Karabijnhaken" },
+      selections: { Mastzijde: "Links", Afwerking: "Tunnel", Bandkleur: "Wit" },
     });
     expect(res).not.toBeNull();
     expect(res!.productCode).toBe("flag-ciclo");
     expect(res!.options).toEqual([
-      { code: "width", value: "250" },
-      { code: "height", value: "100" },
+      { code: "width", value: "100" },
+      { code: "height", value: "300" },
       { code: "amount", value: "2" },
       { code: "finishing-all-sides" },
-      { code: "band-and-plastic-rings" },
-      { code: "every-corner" },
+      { code: "hem" },
     ]);
-    // Bevestiging has no Probo equivalent → recorded, not sent.
-    expect(res!.unmapped).toEqual([
-      { label: "Bevestiging", value: "Karabijnhaken" },
-    ]);
-    expect(res!.options.some((o) => o.code === "Karabijnhaken")).toBe(false);
+    // Mastzijde/Bandkleur hebben (nog) geen geverifieerde code → recorded, not sent.
+    expect(res!.unmapped).toEqual(
+      expect.arrayContaining([
+        { label: "Mastzijde", value: "Links" },
+        { label: "Bandkleur", value: "Wit" },
+      ]),
+    );
+    expect(res!.options.some((o) => o.code === "Links" || o.code === "Wit")).toBe(false);
   });
 
-  it("maps 'Tunnelzoom' to a plain hem (no true tunnel in Probo)", () => {
+  it("maps 'Geen' afwerking to a plain hem too (no raw-cut code verified)", () => {
     const res = buildProboOptions("baniervlag", {
-      widthCm: 300,
-      heightCm: 100,
+      widthCm: 125,
+      heightCm: 400,
       amount: 1,
-      selections: { Afwerking: "Tunnelzoom", Bevestiging: "Spankoord" },
+      selections: { Afwerking: "Geen" },
     });
     expect(res!.options).toContainEqual({ code: "hem" });
     expect(res!.options).not.toContainEqual({ code: "band-and-plastic-rings" });
+  });
+
+  it("records selections whose label is missing from the mapping (never silently drops)", () => {
+    const res = buildProboOptions("baniervlag", {
+      widthCm: 100,
+      heightCm: 200,
+      amount: 1,
+      selections: { Afwerking: "Tunnel", Ontwerpservice: "Ja (+€ 85,00)" },
+    });
+    expect(res!.unmapped).toContainEqual({
+      label: "Ontwerpservice",
+      value: "Ja (+€ 85,00)",
+    });
   });
 });
 
@@ -94,7 +109,7 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
       widthCm: 65,
       heightCm: 315,
       amount: 2,
-      selections: { Mastzijde: "Links", Voet: "Kruisvoet" },
+      selections: { Mastzijde: "Links", Accessoires: "Kruisvoet" },
     });
     expect(res).not.toBeNull();
     expect(res!.productCode).toBe("beachflag-straight");
@@ -105,8 +120,8 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
       { code: "left" },
       { code: "flag-stick-bag-deluxe" },
     ]);
-    // Voet is a cross-sell accessory → recorded, not sent.
-    expect(res!.unmapped).toEqual([{ label: "Voet", value: "Kruisvoet" }]);
+    // Accessoire is cross-sell → recorded, not sent.
+    expect(res!.unmapped).toEqual([{ label: "Accessoires", value: "Kruisvoet" }]);
   });
 
   it("overrides to beachflag-square for a square size + maps Rechts", () => {
@@ -114,7 +129,7 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
       widthCm: 75,
       heightCm: 300,
       amount: 1,
-      selections: { Mastzijde: "Rechts", Voet: "Grondpin" },
+      selections: { Mastzijde: "Rechts", Accessoires: "Grondpen" },
     });
     expect(res!.productCode).toBe("beachflag-square");
     expect(res!.options).toEqual([
@@ -144,7 +159,7 @@ describe("buildProboOptions — beachvlag (preset sizes)", () => {
         widthCm: size.widthCm!,
         heightCm: size.heightCm!,
         amount: 1,
-        selections: { Mastzijde: "Links", Voet: "Grondpin" },
+        selections: { Mastzijde: "Links", Accessoires: "Grondpen" },
       });
       expect(res, `size ${size.label}`).not.toBeNull();
       expect(res!.productCode).toMatch(/^beachflag-(straight|square)$/);

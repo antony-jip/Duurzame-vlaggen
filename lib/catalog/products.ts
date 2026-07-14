@@ -20,6 +20,10 @@ export interface CatalogSize {
   heightCm?: number;
   /** Highlight this size as the most-chosen option in the configurator. */
   popular?: boolean;
+  /** Koopadvies bij de maat, bv. "mast 6/7 m" (oude site) — toont in de pill. */
+  mastAdvies?: string;
+  /** Indicatieve masthoogte (cm) voor de schaal-preview. */
+  mastCm?: number;
 }
 
 export interface CatalogOption {
@@ -121,11 +125,16 @@ export const PRODUCTS: CatalogProduct[] = [
       { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true },
       { label: "100 × 350 cm", widthCm: 100, heightCm: 350 },
       { label: "100 × 400 cm", widthCm: 100, heightCm: 400 },
+      // Brede banieren (125 cm) voor de grotere masten.
+      { label: "125 × 300 cm", widthCm: 125, heightCm: 300 },
+      { label: "125 × 350 cm", widthCm: 125, heightCm: 350 },
+      { label: "125 × 400 cm", widthCm: 125, heightCm: 400 },
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
       { label: "Afwerking", choices: ["Tunnel", "Geen"] },
-      { label: "Kleur", choices: ["Wit", "Zwart"] },
+      // Kleur van band en garen (zie de render-beelden), niet van het doek.
+      { label: "Bandkleur", choices: ["Wit", "Zwart"] },
     ],
     heroImage: img(
       "762-duurzame-baniervlag.webp",
@@ -161,11 +170,13 @@ export const PRODUCTS: CatalogProduct[] = [
     // bekende punt 150×225 ≈ €44,50 (live site); zie lib/pricing/local-catalog.
     priceFrom: 19.5,
     sizes: [
-      // Mastvlag = hijsvlag (liggend): label is hoogte × breedte (NL-conventie,
-      // zoals de Nederlandse vlag), dus breedte = 150/225/350, hoogte = 100/150/225.
-      { label: "100 × 150 cm", widthCm: 150, heightCm: 100 },
-      { label: "150 × 225 cm", widthCm: 225, heightCm: 150 },
-      { label: "225 × 350 cm", widthCm: 350, heightCm: 225 },
+      // Mastvlag = hijsvlag (liggend). Labels zijn breedte × hoogte; het
+      // mastadvies per maat komt 1-op-1 van de oude site.
+      { label: "150 × 100 cm", widthCm: 150, heightCm: 100, mastAdvies: "mast 2/3 m", mastCm: 300 },
+      { label: "180 × 120 cm", widthCm: 180, heightCm: 120, mastAdvies: "vlaggenstok 4/5 m", mastCm: 450 },
+      { label: "225 × 150 cm", widthCm: 225, heightCm: 150, mastAdvies: "mast 6/7 m", mastCm: 650, popular: true },
+      { label: "300 × 200 cm", widthCm: 300, heightCm: 200, mastAdvies: "mast 8/9 m", mastCm: 850 },
+      { label: "350 × 225 cm", widthCm: 350, heightCm: 225, mastAdvies: "mast 10 m", mastCm: 1000 },
     ],
     options: [
       { label: "Band- en koordkleur", choices: ["Wit", "Zwart"] },
@@ -211,20 +222,39 @@ export const PRODUCTS: CatalogProduct[] = [
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
-      { label: "Voet", choices: ["Grondpin", "Kruisvoet", "Watertank"] },
+      // Volledige accessoire-assortiment van de oude site (namen + prijzen ECHT).
+      // Optionele keuze: in de configurator kun je hem ook weer uitzetten.
+      {
+        label: "Accessoires",
+        choices: [
+          "Grondpen",
+          "Grondplug",
+          "Kruisvoet",
+          "Metalen Standaard",
+          "Voetplaat 5 kg",
+          "Voetplaat 15 kg",
+          "Parasolvoet Zwart",
+          "Parasolvoet Wit",
+          "Waterzak Grijs",
+          "Waterzak Zwart",
+          "Rotator Parasol",
+          "Rotator Voetplaat",
+        ],
+      },
     ],
-    heroImage: img(
-      "1400-duurzame-square-beachvlaggen.webp",
-      "Duurzame square beachvlaggen buiten opgesteld",
-    ),
+    // Eigen merkfoto's van beide modellen op het strand (van de oude site).
+    heroImage: {
+      src: "/beachvlag/straightflag-strand.webp",
+      alt: "Duurzame straightflag beachvlag op het strand",
+    },
     gallery: [
+      {
+        src: "/beachvlag/squareflag-strand.webp",
+        alt: "Duurzame squareflag beachvlag op het strand",
+      },
       img(
-        "1403-squareflag-duurzame-vlaggen.webp",
-        "Squareflag met duurzame doekprint",
-      ),
-      img(
-        "1401-duurzame-squareflag-eerste-foto.webp",
-        "Duurzame squareflag in gebruik",
+        "1400-duurzame-square-beachvlaggen.webp",
+        "Duurzame square beachvlaggen buiten opgesteld",
       ),
     ],
     accent: "terracotta",
