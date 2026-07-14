@@ -11,7 +11,19 @@
   margin-bottom: calc(-1 * clamp(22px, 3vw, 38px));
   padding-block: clamp(44px, 6vw, 72px) clamp(150px, 18vw, 192px);
   background: var(--color-forest);
-  overflow: hidden;
+}
+/* Solide groene cap ónder de sectie — dekt de laatste off-white golf van de
+   footer af, zonder de golvende waterrand te platten. */
+.section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: clamp(44px, 6vw, 76px);
+  background: var(--color-forest);
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Golf-overgang bovenaan — off-white uit de pagina erboven. */
