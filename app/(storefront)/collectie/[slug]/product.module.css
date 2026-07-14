@@ -53,6 +53,39 @@
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   animation: blob-drift 16s var(--ease-in-out) infinite alternate;
+  /* Nu een <button> → reset de knop-defaults. */
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  cursor: zoom-in;
+  text-align: left;
+}
+.visual:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 4px;
+}
+/* Vergroot-glyph rechtsonder op het hero-beeld. */
+.visualZoom {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-forest);
+  box-shadow: var(--shadow-md);
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.visual:hover .visualZoom,
+.visual:focus-visible .visualZoom {
+  opacity: 1;
 }
 @keyframes blob-drift {
   0% {
@@ -106,6 +139,7 @@
   background: var(--color-copper-rust);
 }
 
+/* ---- Galerij met vergroten (lightbox) ---- */
 .thumbs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -119,9 +153,40 @@
   box-shadow: var(--shadow-sm);
   background: var(--forest-6);
   transition: transform var(--duration-base) var(--ease-out);
+  cursor: zoom-in;
+  border: none;
+  padding: 0;
+  width: 100%;
+  display: block;
 }
 .thumb:hover {
   transform: translateY(-3px) rotate(-1deg);
+}
+.thumb:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+/* Vergroot-glyph rechtsonder op de thumbnail. */
+.thumbZoom {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-forest);
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.thumb:hover .thumbZoom,
+.thumb:focus-visible .thumbZoom {
+  opacity: 1;
 }
 
 /* Trust-chips — merkkleur-blokjes taal, forest getint. */
@@ -258,28 +323,37 @@
   margin-top: 2px;
 }
 
-.groups {
+/* ---- Stappen ---- */
+.steps {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
 }
-
-.group {
-  border: none;
-  padding: 0;
-  margin: 0;
-  min-inline-size: 0;
+.step {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
-.groupLabel {
+.stepHead {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: var(--space-sm);
-  width: 100%;
-  padding: 0;
+}
+.stepDot {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+}
+.stepTitle {
   font-family: var(--font-ui);
   font-weight: 700;
   font-size: 12px;
@@ -287,177 +361,160 @@
   letter-spacing: 0.08em;
   color: var(--color-charcoal);
 }
-.groupValue {
+.stepPick {
+  margin-left: auto;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 13px;
-  text-transform: none;
   letter-spacing: -0.01em;
   color: var(--accent);
 }
 
-/* Tactiele keuzekaarten als toegankelijke radio-pillen. */
-.choices {
-  display: flex;
-  flex-wrap: wrap;
+/* ---- Stap 1: formaatlijst (2 kolommen) ---- */
+.sizeList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-xs);
 }
-.choice {
-  position: relative;
+@media (max-width: 460px) {
+  .sizeList {
+    grid-template-columns: 1fr;
+  }
 }
-.choice input {
+.sizeRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 10px var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.sizeRow:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.sizeRow input {
   position: absolute;
   opacity: 0;
   inset: 0;
   cursor: pointer;
 }
-.choicePill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 0 var(--space-lg);
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--forest-6);
-  background: var(--color-white);
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  color: var(--color-charcoal);
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-}
-.choicePill:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
-.choice input:checked + .choicePill {
+.sizeRow[data-selected="true"] {
   border-color: var(--accent);
   background: var(--accent-soft);
-  color: var(--accent);
   box-shadow: inset 0 0 0 1.5px var(--accent);
 }
-.choice input:focus-visible + .choicePill {
+.sizeRow input:focus-visible + .sizeShape {
   outline: 3px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
-
-/* Aantal-stepper — ruime touch-targets (≥44px). */
-.quantity {
-  display: inline-flex;
-  align-items: stretch;
-  border: 1.5px solid var(--forest-6);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  width: fit-content;
-  background: var(--color-white);
-}
-.qtyBtn {
-  width: 56px;
-  min-height: 56px;
+/* Mini-vormvoorbeeld (proportioneel op de echte cm-maten). */
+.sizeShape {
   display: grid;
   place-items: center;
-  background: var(--color-white);
-  cursor: pointer;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--accent);
-  border: none;
-  transition: background var(--duration-fast) var(--ease-out);
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
 }
-.qtyBtn:hover:not(:disabled) {
-  background: var(--accent-soft);
+.sizeShapeInner {
+  display: block;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.85;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
-.qtyBtn:disabled {
-  color: var(--color-stone);
-  cursor: not-allowed;
-}
-.qtyInput {
-  width: 64px;
-  text-align: center;
-  border: none;
-  border-inline: 1.5px solid var(--forest-6);
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--color-charcoal);
-  background: var(--color-white);
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-.qtyInput::-webkit-outer-spin-button,
-.qtyInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* ==========================================================================
-   Formaat-pillen met stukprijs
-   ========================================================================== */
-.sizePill {
-  display: inline-flex;
+.sizeMeta {
+  display: flex;
   flex-direction: column;
-  gap: 2px;
-  align-items: flex-start;
-  min-height: 52px;
-  padding: 8px var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--forest-6);
-  background: var(--color-white);
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+  gap: 1px;
+  min-width: 0;
 }
-.sizePill:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
-.sizePillLabel {
+.sizeLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: -0.01em;
   color: var(--color-charcoal);
 }
-.sizePillPrice {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-stone);
-  font-variant-numeric: tabular-nums;
-}
-.choice input:checked + .sizePill {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: inset 0 0 0 1.5px var(--accent);
-}
-.choice input:checked + .sizePill .sizePillLabel,
-.choice input:checked + .sizePill .sizePillPrice {
+.sizeRow[data-selected="true"] .sizeLabel {
   color: var(--accent);
 }
-.choice input:focus-visible + .sizePill {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
+.sizePopular {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+.sizeSub {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-stone);
+}
+.sizePrice {
+  margin-left: auto;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  font-variant-numeric: tabular-nums;
+}
+.sizeRow[data-selected="true"] .sizePrice {
+  color: var(--accent);
+}
+.sizeTick {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.sizeRow[data-selected="true"] .sizeTick {
+  opacity: 1;
+  transform: scale(1);
+}
+/* Op smalle schermen verdwijnt de losse prijskolom (staat al in de subregel). */
+@media (max-width: 460px) {
+  .sizePrice {
+    display: none;
+  }
 }
 
-/* ==========================================================================
-   Eigen afmeting — vrije breedte × hoogte
-   ========================================================================== */
-.customSize {
-  margin-top: var(--space-xs);
-}
-.customSizeToggle {
+/* ---- Eigen afmeting ---- */
+.customToggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 4px;
+  align-self: flex-start;
+  padding: 6px 4px;
   background: none;
   border: none;
   cursor: pointer;
@@ -465,18 +522,16 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
-.customSizeToggle:hover {
+.customToggle:hover {
   color: var(--color-charcoal);
 }
-.customSizeToggle:focus-visible {
+.customToggle:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
-.customSizeToggleIcon {
+.customToggleIcon {
   display: grid;
   place-items: center;
   width: 20px;
@@ -487,10 +542,8 @@
   font-size: 15px;
   font-weight: 800;
   line-height: 1;
-  text-decoration: none;
 }
-.customSizePanel {
-  margin-top: var(--space-sm);
+.customPanel {
   padding: var(--space-md);
   border-radius: var(--radius-md);
   border: 1.5px solid var(--forest-6);
@@ -499,26 +552,26 @@
   flex-direction: column;
   gap: var(--space-sm);
 }
-.customSizeHint {
+.customHint {
   font-family: var(--font-ui);
   font-size: 12px;
   line-height: 1.5;
   color: var(--color-stone);
   margin: 0;
 }
-.customSizeFields {
+.customFields {
   display: flex;
   align-items: flex-end;
   gap: var(--space-sm);
   flex-wrap: wrap;
 }
-.customSizeField {
+.customField {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
-.customSizeFieldLabel {
+.customFieldLabel {
   font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 700;
@@ -526,7 +579,7 @@
   letter-spacing: 0.08em;
   color: var(--color-stone);
 }
-.customSizeInput {
+.customInput {
   width: 120px;
   max-width: 40vw;
   min-height: 48px;
@@ -541,24 +594,24 @@
   -moz-appearance: textfield;
   appearance: textfield;
 }
-.customSizeInput::-webkit-outer-spin-button,
-.customSizeInput::-webkit-inner-spin-button {
+.customInput::-webkit-outer-spin-button,
+.customInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.customSizeInput:focus-visible {
+.customInput:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
   border-color: var(--accent);
 }
-.customSizeTimes {
+.customTimes {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 18px;
   color: var(--color-stone);
   padding-bottom: 12px;
 }
-.customSizeError {
+.customError {
   margin: 0;
   font-family: var(--font-ui);
   font-size: 12px;
@@ -566,137 +619,44 @@
   color: var(--color-terracotta);
 }
 
-/* ==========================================================================
-   Staffelkorting — klikbare tier-kaarten
-   ========================================================================== */
-.staffelGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-xs);
-}
-.staffelCard {
-  position: relative;
+/* ---- Stap 2: opties als compacte beeldkaarten ---- */
+.optionList {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 14px 6px 10px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--forest-6);
-  background: var(--color-white);
-  cursor: pointer;
-  text-align: center;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+  gap: var(--space-md);
 }
-.staffelCard:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
-.staffelCard[data-active="true"] {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: inset 0 0 0 1.5px var(--accent);
-}
-.staffelCard:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-}
-.staffelQty {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 17px;
-  letter-spacing: -0.02em;
-  color: var(--color-charcoal);
-}
-.staffelCard[data-active="true"] .staffelQty {
-  color: var(--accent);
-}
-.staffelPer {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-charcoal);
-  font-variant-numeric: tabular-nums;
-}
-.staffelDisc {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent);
-}
-.staffelPopular {
-  position: absolute;
-  top: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--font-ui);
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.staffelCheck {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-}
-
-.customQtyRow {
+.optionRow {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.optionRowLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--space-sm);
-  margin-top: var(--space-sm);
-}
-.customQtyLabel {
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-stone);
+  color: var(--color-charcoal);
 }
-.savings {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  background: var(--forest-3);
-  border: 1px solid var(--forest-6);
+.optionRowPick {
   font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   letter-spacing: -0.01em;
-  color: var(--color-forest);
+  color: var(--accent);
 }
-
-/* ==========================================================================
-   Optie-beeldkaarten (1:1)
-   ========================================================================== */
-.optionCards {
+.optionGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-sm);
 }
 .optionCard {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   cursor: pointer;
 }
 .optionCard input {
@@ -707,14 +667,9 @@
   height: 100%;
   cursor: pointer;
 }
-.optionCardInner {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 .optionCardMedia {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1.5px solid var(--forest-6);
@@ -727,6 +682,14 @@
 .optionCard:hover .optionCardMedia {
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+.optionCard[data-selected="true"] .optionCardMedia {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.optionCard input:focus-visible + .optionCardMedia {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 .optionCardImg {
   object-fit: cover;
@@ -766,32 +729,24 @@
     opacity var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
 }
-.optionCard input:checked + .optionCardInner .optionCardMedia {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 2px var(--accent);
-}
-.optionCard input:checked + .optionCardInner .optionCardCheck {
+.optionCard[data-selected="true"] .optionCardCheck {
   opacity: 1;
   transform: scale(1);
 }
-.optionCard input:focus-visible + .optionCardInner .optionCardMedia {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-}
-.optionCardText {
+.optionCardFoot {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 6px;
 }
-.optionCardLabel {
+.optionCardName {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 14px;
   letter-spacing: -0.01em;
   color: var(--color-charcoal);
 }
-.optionCard input:checked + .optionCardInner .optionCardLabel {
+.optionCard[data-selected="true"] .optionCardName {
   color: var(--accent);
 }
 .optionCardSurcharge {
@@ -803,10 +758,186 @@
   white-space: nowrap;
 }
 
-/* ==========================================================================
-   Ontwerpservice-toggle
-   ========================================================================== */
-.designToggle {
+/* ---- Stap 3: aantal + bulkkorting ---- */
+.qtyRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+}
+.quantity {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+  background: var(--color-white);
+}
+.qtyBtn {
+  width: 52px;
+  min-height: 52px;
+  display: grid;
+  place-items: center;
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent);
+  border: none;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.qtyBtn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.qtyBtn:disabled {
+  color: var(--color-stone);
+  cursor: not-allowed;
+}
+.qtyInput {
+  width: 60px;
+  text-align: center;
+  border: none;
+  border-inline: 1.5px solid var(--forest-6);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--color-charcoal);
+  background: var(--color-white);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.savings {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
+}
+/* "Neem er N → −x%"-duwtje richting de eerstvolgende staffel. */
+.staffelNudge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--forest-6);
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+.staffelNudge:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.staffelNudge:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.staffelToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-stone);
+}
+.staffelToggle:hover {
+  color: var(--accent);
+}
+.staffelToggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.staffelToggleIcon {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.staffelToggleIcon[data-on="true"] {
+  transform: rotate(180deg);
+}
+.staffelStrip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-xs);
+}
+.staffelCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.staffelCell:hover {
+  border-color: var(--accent);
+}
+.staffelCell[data-active="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.staffelCell:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.staffelCellQty {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+}
+.staffelCell[data-active="true"] .staffelCellQty {
+  color: var(--accent);
+}
+.staffelCellPer {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-stone);
+  font-variant-numeric: tabular-nums;
+}
+.staffelCellDisc {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* ---- Ontwerpservice add-on ---- */
+.addon {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -822,36 +953,36 @@
     border-color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out);
 }
-.designToggle:hover {
+.addon:hover {
   border-color: var(--accent);
 }
-.designToggle[data-on="true"] {
+.addon[data-on="true"] {
   border-color: var(--accent);
   background: var(--accent-soft);
 }
-.designToggle:focus-visible {
+.addon:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
-.designText {
+.addonText {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.designTitle {
+.addonTitle {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: -0.01em;
   color: var(--color-charcoal);
 }
-.designSub {
+.addonSub {
   font-family: var(--font-ui);
   font-size: 12px;
   font-weight: 600;
   color: var(--color-stone);
 }
-.designSwitch {
+.addonSwitch {
   position: relative;
   flex-shrink: 0;
   width: 46px;
@@ -860,10 +991,10 @@
   background: var(--forest-6);
   transition: background var(--duration-fast) var(--ease-out);
 }
-.designToggle[data-on="true"] .designSwitch {
+.addon[data-on="true"] .addonSwitch {
   background: var(--accent);
 }
-.designKnob {
+.addonKnob {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -874,8 +1005,31 @@
   box-shadow: var(--shadow-sm);
   transition: transform var(--duration-fast) var(--ease-out);
 }
-.designToggle[data-on="true"] .designKnob {
+.addon[data-on="true"] .addonKnob {
   transform: translateX(20px);
+}
+
+/* ---- Geruststellingsstrip vlak boven de CTA ---- */
+.reassure {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.reassure li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-forest);
+}
+.reassure svg {
+  flex-shrink: 0;
+  color: var(--accent);
 }
 
 /* ---- Sticky buy-bar (prijs + CTA) ---- */
@@ -950,12 +1104,133 @@
   font-weight: 600;
 }
 
-@media (max-width: 560px) {
-  .staffelGrid {
-    grid-template-columns: repeat(3, 1fr);
+/* ==========================================================================
+   Lightbox — schermvullende galerij-vergroting
+   ========================================================================== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 1000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(20, 28, 25, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: lightbox-in var(--duration-base) var(--ease-out);
+}
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
   }
-  .optionCards {
-    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  to {
+    opacity: 1;
+  }
+}
+.lightboxFigure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  max-width: min(1100px, 90vw);
+  max-height: 90vh;
+}
+.lightboxImgWrap {
+  position: relative;
+  width: min(1100px, 90vw);
+  height: min(78vh, 800px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  background: #fff;
+}
+.lightboxImg {
+  object-fit: contain;
+}
+.lightboxCaption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.lightboxCounter {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-variant-numeric: tabular-nums;
+}
+.lightboxClose {
+  position: absolute;
+  top: clamp(12px, 3vw, 28px);
+  right: clamp(12px, 3vw, 28px);
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.lightboxClose:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+.lightboxNav {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.lightboxNav:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.05);
+}
+.lightboxPrev svg {
+  transform: rotate(180deg);
+}
+.lightboxClose:focus-visible,
+.lightboxNav:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .lightboxNav {
+    position: absolute;
+    bottom: clamp(12px, 4vw, 28px);
+    z-index: 2;
+  }
+  .lightboxPrev {
+    left: 24px;
+  }
+  .lightboxNext {
+    right: 24px;
+  }
+  .lightboxImgWrap {
+    height: 64vh;
+  }
+}
+
+@media (max-width: 560px) {
+  .staffelStrip {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

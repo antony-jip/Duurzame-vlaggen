@@ -34,11 +34,11 @@ export const metadata: Metadata = {
   // Title template lives here only, so per-page titles read "<Page> | Duurzame
   // Vlaggen". The homepage sets an absolute title to avoid a doubled suffix.
   title: {
-    default: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    default: "Duurzame Vlaggen — biologisch afbreekbaar",
     template: "%s | Duurzame Vlaggen",
   },
   description:
-    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd door Sign Company B.V.",
+    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd.",
   keywords: [
     "duurzame vlaggen",
     "biologisch afbreekbare vlaggen",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "nl_NL",
     url: SITE_URL,
-    title: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    title: "Duurzame Vlaggen — biologisch afbreekbaar",
     description:
       "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd.",
     images: [
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    title: "Duurzame Vlaggen — biologisch afbreekbaar",
     description:
       "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof en binnen 5 werkdagen geleverd.",
     images: [OG_IMAGE],

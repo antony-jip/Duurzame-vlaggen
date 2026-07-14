@@ -1,24 +1,28 @@
 "use client";
 
 /**
- * Rijke product-configurator: maat + staffelkorting + geïllustreerde
- * optie-beeldkaarten + ontwerpservice, met een INSTANT prijs en add-to-cart.
+ * Product-configurator — rustige, stapsgewijze flow met een INSTANT prijs.
  *
- * De prijs komt uit het EIGEN lokale prijsmodel (`@/lib/pricing/local-catalog`):
- * geen debounce, geen loading-spinner, geen netwerk-call. Voor een orderbaar
- * product (`orderable === true`) leidt "In winkelmand"; bij een quote-only
- * product (bv. vlaggenmast) leidt de offerte-flow.
+ * Herontwerp (2026-07): weg met de lompe grote foto-optiekaarten en het
+ * dominante 5-kaarts staffelblok. In de plaats:
+ *  - genummerde stappen (formaat → afwerking → aantal) met lichte hiërarchie,
+ *  - een scanbare formaatlijst met mini-vormvoorbeeld + "Meest gekozen",
+ *  - compacte segmented controls met kleine SVG-glyphs voor de opties,
+ *  - een rustige aantal-stepper met bulkkorting als subtiele, uitklapbare strip.
+ *
+ * De prijs komt onveranderd uit het EIGEN lokale prijsmodel
+ * (`@/lib/pricing/local-catalog`): geen debounce, geen netwerk-call.
  */
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./product.module.css";
-import { Badge, Button, Check, ArrowRight, Leaf } from "@/components/ui";
+import { Badge, Button, Check, ArrowRight, Leaf, Truck, ShieldCheck } from "@/components/ui";
 import { useCart, VAT_RATE } from "@/components/cart/CartProvider";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
-import type { CatalogProduct } from "@/lib/catalog/products";
+import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
 import {
   STAFFEL_TIERS,
   staffelDiscount,
@@ -49,14 +53,21 @@ export interface ConfiguratorLabels {
   priceLoading: string;
 }
 
+/** Kleur-swatches voor kleur-keuzes zonder eigen beeld (bv. Aluminium). */
+const COLOR_SWATCHES: Record<string, string> = {
+  Wit: "#f4f4f2",
+  Zwart: "#1c1c1c",
+  Aluminium: "linear-gradient(135deg, #dcdfe1 0%, #a9adb0 100%)",
+  Antraciet: "#3a3d40",
+};
+
 /**
  * Generiek beeld per (optielabel → keuze), gedeeld tussen producten. Waar geen
- * zinnig beeld bestaat, valt de kaart terug op een kleur-swatch of nette
- * tekstkaart. Bestanden staan in `public/configurator/`.
+ * beeld bestaat, valt de kaart terug op een kleur-swatch of tekstkaart.
+ * Bestanden staan in `public/configurator/`.
  */
 const OPTION_IMAGES: Record<string, Record<string, string>> = {
   Mastzijde: {
-    // Gevelvlag/beachvlag: neutrale mastzijde-beelden.
     Links: "/configurator/mastzijde/links.webp",
     Rechts: "/configurator/mastzijde/rechts.webp",
   },
@@ -71,9 +82,9 @@ const OPTION_IMAGES: Record<string, Record<string, string>> = {
 };
 
 /**
- * Product-specifieke beeld-overrides (winnen van de generieke map).
- * Per productslug → optielabel → keuze. Zo krijgt de baniervlag zijn eigen
- * mastzijde-/afwerking-/bandkleur-beelden zonder gevelvlag/beachvlag te breken.
+ * Product-specifieke beeld-overrides (winnen van de generieke map): per
+ * productslug → optielabel → keuze. Zo krijgt de baniervlag zijn eigen
+ * mastzijde-/afwerking-/bandkleur-beelden.
  */
 const PRODUCT_OPTION_IMAGES: Record<
   string,
@@ -81,8 +92,10 @@ const PRODUCT_OPTION_IMAGES: Record<
 > = {
   baniervlag: {
     Mastzijde: {
-      Links: "/configurator/mastzijde/banier-links.webp",
-      Rechts: "/configurator/mastzijde/banier-rechts.webp",
+      // Staande banier op mast (huisstijl-SVG). Vervang gerust door een eigen
+      // render door hier een .webp/.png op hetzelfde pad te plaatsen.
+      Links: "/configurator/mastzijde/banier-links.svg",
+      Rechts: "/configurator/mastzijde/banier-rechts.svg",
     },
     Afwerking: {
       Tunnel: "/configurator/afwerking/tunnel.webp",
@@ -96,24 +109,11 @@ const PRODUCT_OPTION_IMAGES: Record<
 };
 
 /** Beeld voor een optie-keuze: eerst de product-override, dan de generieke map. */
-function optionImage(
-  slug: string,
-  label: string,
-  choice: string,
-): string | undefined {
+function optionImage(slug: string, label: string, choice: string): string | undefined {
   return (
-    PRODUCT_OPTION_IMAGES[slug]?.[label]?.[choice] ??
-    OPTION_IMAGES[label]?.[choice]
+    PRODUCT_OPTION_IMAGES[slug]?.[label]?.[choice] ?? OPTION_IMAGES[label]?.[choice]
   );
 }
-
-/** Kleur-swatches voor keuzes zonder foto (bv. Aluminium, Antraciet). */
-const COLOR_SWATCHES: Record<string, string> = {
-  Wit: "#f4f4f2",
-  Zwart: "#1c1c1c",
-  Aluminium: "linear-gradient(135deg, #dcdfe1 0%, #a9adb0 100%)",
-  Antraciet: "#3a3d40",
-};
 
 export function ProductConfigurator({
   product,
@@ -128,7 +128,14 @@ export function ProductConfigurator({
 }) {
   const { addItem, inclVat } = useCart();
 
-  const [sizeIndex, setSizeIndex] = useState(0);
+  // Standaard-formaat = de "Meest gekozen" maat als die bestaat, anders de eerste.
+  const defaultSizeIndex = Math.max(
+    0,
+    product.sizes.findIndex((s) => s.popular),
+  );
+  const portrait = isPortrait(product.sizes[defaultSizeIndex] ?? product.sizes[0]);
+
+  const [sizeIndex, setSizeIndex] = useState(defaultSizeIndex);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
     () =>
       Object.fromEntries(
@@ -137,6 +144,7 @@ export function ProductConfigurator({
   );
   const [quantity, setQuantity] = useState(1);
   const [designService, setDesignService] = useState(false);
+  const [showStaffel, setShowStaffel] = useState(false);
   const [added, setAdded] = useState(false);
 
   // Eigen-maat-modus: vrije breedte × hoogte in cm.
@@ -218,6 +226,7 @@ export function ProductConfigurator({
     (acc, t) => (quantity >= t.qty ? t.qty : acc),
     STAFFEL_TIERS[0].qty,
   );
+  const nextTier = STAFFEL_TIERS.find((t) => t.qty > quantity);
 
   return (
     <div className={styles.configurator} data-accent={product.accent}>
@@ -230,37 +239,53 @@ export function ProductConfigurator({
         </p>
       )}
 
-      <div className={styles.groups}>
-        {/* Formaat — keuzepillen met stukprijs per maat */}
-        <fieldset className={styles.group}>
-          <legend className={styles.groupLabel}>
-            <span>{labels.size}</span>
-            <span className={styles.groupValue}>
-              {usingCustom
-                ? size.label
-                : customMode
-                  ? "Eigen afmeting"
-                  : presetSize.label}
+      <div className={styles.steps}>
+        {/* Stap 1 — Formaat */}
+        <section className={styles.step}>
+          <header className={styles.stepHead}>
+            <span className={styles.stepDot}>1</span>
+            <span className={styles.stepTitle}>{labels.size}</span>
+            <span className={styles.stepPick}>
+              {usingCustom ? size.label : customMode ? "Eigen afmeting" : presetSize.label}
             </span>
-          </legend>
-          <div className={styles.choices}>
+          </header>
+
+          <div className={styles.sizeList} role="radiogroup" aria-label={labels.size}>
             {product.sizes.map((s, i) => {
               const unit = localUnitPriceWithOptions(product, s, selectedOptions);
+              const selected = !customMode && sizeIndex === i;
               return (
-                <label key={s.label} className={styles.choice}>
+                <label key={s.label} className={styles.sizeRow} data-selected={selected}>
                   <input
                     type="radio"
                     name="size"
-                    checked={!customMode && sizeIndex === i}
+                    checked={selected}
                     onChange={() => {
                       setSizeIndex(i);
                       setCustomMode(false);
                       setAdded(false);
                     }}
                   />
-                  <span className={styles.sizePill}>
-                    <span className={styles.sizePillLabel}>{s.label}</span>
-                    <span className={styles.sizePillPrice}>{fmt(unit)}</span>
+                  <span className={styles.sizeShape} aria-hidden="true">
+                    <span
+                      className={styles.sizeShapeInner}
+                      style={sizeShapeStyle(s)}
+                    />
+                  </span>
+                  <span className={styles.sizeMeta}>
+                    <span className={styles.sizeLabel}>
+                      {s.label}
+                      {s.popular && (
+                        <span className={styles.sizePopular}>Meest gekozen</span>
+                      )}
+                    </span>
+                    <span className={styles.sizeSub}>
+                      {portrait ? "Staand" : "Liggend"}
+                    </span>
+                  </span>
+                  <span className={styles.sizePrice}>{fmt(unit)}</span>
+                  <span className={styles.sizeTick} aria-hidden="true">
+                    <Check size={14} />
                   </span>
                 </label>
               );
@@ -268,130 +293,160 @@ export function ProductConfigurator({
           </div>
 
           {/* Eigen afmeting — vrije breedte × hoogte */}
-          <div className={styles.customSize}>
-            <button
-              type="button"
-              className={styles.customSizeToggle}
-              data-on={customMode}
-              aria-expanded={customMode}
-              onClick={() => {
-                setCustomMode((v) => !v);
-                setAdded(false);
-              }}
-            >
-              <span>Eigen afmeting invoeren?</span>
-              <span className={styles.customSizeToggleIcon} aria-hidden="true">
-                {customMode ? "−" : "+"}
-              </span>
-            </button>
+          <button
+            type="button"
+            className={styles.customToggle}
+            data-on={customMode}
+            aria-expanded={customMode}
+            onClick={() => {
+              setCustomMode((v) => !v);
+              setAdded(false);
+            }}
+          >
+            <span className={styles.customToggleIcon} aria-hidden="true">
+              {customMode ? "−" : "+"}
+            </span>
+            <span>Eigen afmeting invoeren</span>
+          </button>
 
-            {customMode && (
-              <div className={styles.customSizePanel}>
-                <p className={styles.customSizeHint}>
-                  Vul je gewenste breedte en hoogte in centimeters in. We rekenen
-                  de prijs per m² en bevestigen de definitieve maatvoering bij je
-                  order.
-                </p>
-                <div className={styles.customSizeFields}>
-                  <label className={styles.customSizeField}>
-                    <span className={styles.customSizeFieldLabel}>Breedte (cm)</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className={styles.customSizeInput}
-                      min={CUSTOM_MIN_CM}
-                      max={CUSTOM_MAX_CM}
-                      value={customW}
-                      placeholder="bv. 100"
-                      onChange={(e) => {
-                        setCustomW(e.target.value);
-                        setAdded(false);
-                      }}
-                    />
-                  </label>
-                  <span className={styles.customSizeTimes} aria-hidden="true">
-                    ×
-                  </span>
-                  <label className={styles.customSizeField}>
-                    <span className={styles.customSizeFieldLabel}>Hoogte (cm)</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className={styles.customSizeInput}
-                      min={CUSTOM_MIN_CM}
-                      max={CUSTOM_MAX_CM}
-                      value={customH}
-                      placeholder="bv. 250"
-                      onChange={(e) => {
-                        setCustomH(e.target.value);
-                        setAdded(false);
-                      }}
-                    />
-                  </label>
-                </div>
-                {!customValid && (customW.trim() !== "" || customH.trim() !== "") && (
-                  <p className={styles.customSizeError} role="alert">
-                    Vul een breedte en hoogte tussen {CUSTOM_MIN_CM} en{" "}
-                    {CUSTOM_MAX_CM} cm in.
-                  </p>
-                )}
+          {customMode && (
+            <div className={styles.customPanel}>
+              <p className={styles.customHint}>
+                Vul je gewenste breedte en hoogte in centimeters in. We rekenen de
+                prijs per m² en bevestigen de definitieve maatvoering bij je order.
+              </p>
+              <div className={styles.customFields}>
+                <label className={styles.customField}>
+                  <span className={styles.customFieldLabel}>Breedte (cm)</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={styles.customInput}
+                    min={CUSTOM_MIN_CM}
+                    max={CUSTOM_MAX_CM}
+                    value={customW}
+                    placeholder="bv. 100"
+                    onChange={(e) => {
+                      setCustomW(e.target.value);
+                      setAdded(false);
+                    }}
+                  />
+                </label>
+                <span className={styles.customTimes} aria-hidden="true">×</span>
+                <label className={styles.customField}>
+                  <span className={styles.customFieldLabel}>Hoogte (cm)</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={styles.customInput}
+                    min={CUSTOM_MIN_CM}
+                    max={CUSTOM_MAX_CM}
+                    value={customH}
+                    placeholder="bv. 250"
+                    onChange={(e) => {
+                      setCustomH(e.target.value);
+                      setAdded(false);
+                    }}
+                  />
+                </label>
               </div>
-            )}
-          </div>
-        </fieldset>
+              {!customValid && (customW.trim() !== "" || customH.trim() !== "") && (
+                <p className={styles.customError} role="alert">
+                  Vul een breedte en hoogte tussen {CUSTOM_MIN_CM} en {CUSTOM_MAX_CM} cm in.
+                </p>
+              )}
+            </div>
+          )}
+        </section>
 
-        {/* Staffelkorting — klikbare tier-kaarten + eigen aantal */}
-        <fieldset className={styles.group}>
-          <legend className={styles.groupLabel}>
-            <span>Aantal &amp; staffelkorting</span>
+        {/* Stap 2 — Afwerking & opties */}
+        {product.options.length > 0 && (
+          <section className={styles.step}>
+            <header className={styles.stepHead}>
+              <span className={styles.stepDot}>2</span>
+              <span className={styles.stepTitle}>Afwerking</span>
+            </header>
+
+            <div className={styles.optionList}>
+              {product.options.map((opt) => (
+                <div key={opt.label} className={styles.optionRow}>
+                  <span className={styles.optionRowLabel}>
+                    {opt.label}
+                    <span className={styles.optionRowPick}>{selectedOptions[opt.label]}</span>
+                  </span>
+                  <div className={styles.optionGrid} role="radiogroup" aria-label={opt.label}>
+                    {opt.choices.map((choice) => {
+                      const selected = selectedOptions[opt.label] === choice;
+                      const imgSrc = optionImage(product.slug, opt.label, choice);
+                      const swatch = COLOR_SWATCHES[choice];
+                      const surcharge = localOptionsSurcharge(product, {
+                        [opt.label]: choice,
+                      });
+                      return (
+                        <label key={choice} className={styles.optionCard} data-selected={selected}>
+                          <input
+                            type="radio"
+                            name={opt.label}
+                            checked={selected}
+                            onChange={() => {
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [opt.label]: choice,
+                              }));
+                              setAdded(false);
+                            }}
+                          />
+                          <span className={styles.optionCardMedia}>
+                            {imgSrc ? (
+                              <Image
+                                src={imgSrc}
+                                alt={`${opt.label}: ${choice}`}
+                                fill
+                                sizes="(max-width: 860px) 45vw, 180px"
+                                className={styles.optionCardImg}
+                              />
+                            ) : swatch ? (
+                              <span
+                                className={styles.optionCardSwatch}
+                                style={{ background: swatch }}
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <span className={styles.optionCardFallback} aria-hidden="true">
+                                {choice}
+                              </span>
+                            )}
+                            <span className={styles.optionCardCheck} aria-hidden="true">
+                              <Check size={14} />
+                            </span>
+                          </span>
+                          <span className={styles.optionCardFoot}>
+                            <span className={styles.optionCardName}>{choice}</span>
+                            {surcharge > 0 && (
+                              <span className={styles.optionCardSurcharge}>+{fmt(surcharge)}</span>
+                            )}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Stap 3 — Aantal + bulkkorting */}
+        <section className={styles.step}>
+          <header className={styles.stepHead}>
+            <span className={styles.stepDot}>{product.options.length > 0 ? 3 : 2}</span>
+            <span className={styles.stepTitle}>{labels.quantity}</span>
             {discount > 0 && (
-              <span className={styles.groupValue}>
-                −{Math.round(discount * 100)}%
-              </span>
+              <span className={styles.stepPick}>−{Math.round(discount * 100)}% korting</span>
             )}
-          </legend>
+          </header>
 
-          <div className={styles.staffelGrid}>
-            {STAFFEL_TIERS.map((tier) => {
-              const perUnit = unitBasis * (1 - tier.discount);
-              const active = activeTierQty === tier.qty;
-              return (
-                <button
-                  key={tier.qty}
-                  type="button"
-                  className={styles.staffelCard}
-                  data-active={active}
-                  aria-pressed={active}
-                  onClick={() => {
-                    setQuantity(tier.qty);
-                    setAdded(false);
-                  }}
-                >
-                  {tier.popular && (
-                    <span className={styles.staffelPopular}>Meest gekozen</span>
-                  )}
-                  <span className={styles.staffelQty}>
-                    {tier.qty}
-                    {tier.qty >= 50 ? "+" : ""} st
-                  </span>
-                  <span className={styles.staffelPer}>{fmt(perUnit)} p.s.</span>
-                  <span className={styles.staffelDisc}>
-                    {tier.discount > 0
-                      ? `−${Math.round(tier.discount * 100)}%`
-                      : "geen korting"}
-                  </span>
-                  {active && (
-                    <span className={styles.staffelCheck} aria-hidden="true">
-                      <Check size={13} />
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className={styles.customQtyRow}>
-            <span className={styles.customQtyLabel}>{labels.quantity}</span>
+          <div className={styles.qtyRow}>
             <div className={styles.quantity}>
               <button
                 type="button"
@@ -413,9 +468,7 @@ export function ProductConfigurator({
                 aria-label={labels.quantity}
                 onChange={(e) => {
                   const next = Number(e.target.value);
-                  setQuantity(
-                    Number.isFinite(next) && next >= 1 ? Math.floor(next) : 1,
-                  );
+                  setQuantity(Number.isFinite(next) && next >= 1 ? Math.floor(next) : 1);
                   setAdded(false);
                 }}
               />
@@ -431,165 +484,129 @@ export function ProductConfigurator({
                 +
               </button>
             </div>
-            {savings > 0 && (
-              <span className={styles.savings}>
-                Je bespaart {fmt(savings)}
-              </span>
-            )}
-          </div>
-        </fieldset>
 
-        {/* Opties als beeldkaarten */}
-        {product.options.map((opt) => (
-          <fieldset key={opt.label} className={styles.group}>
-            <legend className={styles.groupLabel}>
-              <span>{opt.label}</span>
-              <span className={styles.groupValue}>
-                {selectedOptions[opt.label]}
-              </span>
-            </legend>
-            <div className={styles.optionCards}>
-              {opt.choices.map((choice) => {
-                const selected = selectedOptions[opt.label] === choice;
-                const imgSrc = optionImage(product.slug, opt.label, choice);
-                const swatch = COLOR_SWATCHES[choice];
-                const surcharge = localOptionsSurcharge(product, {
-                  [opt.label]: choice,
-                });
+            {savings > 0 ? (
+              <span className={styles.savings}>Je bespaart {fmt(savings)}</span>
+            ) : nextTier ? (
+              <button
+                type="button"
+                className={styles.staffelNudge}
+                onClick={() => {
+                  setQuantity(nextTier.qty);
+                  setAdded(false);
+                }}
+              >
+                Neem er {nextTier.qty} → −{Math.round(nextTier.discount * 100)}%
+              </button>
+            ) : null}
+          </div>
+
+          {/* Bulkkorting — subtiele, uitklapbare strip i.p.v. een dominant blok. */}
+          <button
+            type="button"
+            className={styles.staffelToggle}
+            aria-expanded={showStaffel}
+            onClick={() => setShowStaffel((v) => !v)}
+          >
+            <span>Staffelkorting bekijken</span>
+            <span className={styles.staffelToggleIcon} data-on={showStaffel} aria-hidden="true">
+              ⌄
+            </span>
+          </button>
+          {showStaffel && (
+            <div className={styles.staffelStrip}>
+              {STAFFEL_TIERS.map((tier) => {
+                const perUnit = unitBasis * (1 - tier.discount);
+                const active = activeTierQty === tier.qty;
                 return (
-                  <label key={choice} className={styles.optionCard}>
-                    <input
-                      type="radio"
-                      name={opt.label}
-                      checked={selected}
-                      onChange={() => {
-                        setSelectedOptions((prev) => ({
-                          ...prev,
-                          [opt.label]: choice,
-                        }));
-                        setAdded(false);
-                      }}
-                    />
-                    <span className={styles.optionCardInner}>
-                      <span className={styles.optionCardMedia}>
-                        {imgSrc ? (
-                          <Image
-                            src={imgSrc}
-                            alt={`${opt.label}: ${choice}`}
-                            fill
-                            sizes="(max-width: 860px) 40vw, 160px"
-                            className={styles.optionCardImg}
-                          />
-                        ) : swatch ? (
-                          <span
-                            className={styles.optionCardSwatch}
-                            style={{ background: swatch }}
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <span className={styles.optionCardFallback} aria-hidden="true">
-                            {choice}
-                          </span>
-                        )}
-                        <span className={styles.optionCardCheck} aria-hidden="true">
-                          <Check size={14} />
-                        </span>
-                      </span>
-                      <span className={styles.optionCardText}>
-                        <span className={styles.optionCardLabel}>{choice}</span>
-                        {surcharge > 0 && (
-                          <span className={styles.optionCardSurcharge}>
-                            +{fmt(surcharge)}
-                          </span>
-                        )}
-                      </span>
+                  <button
+                    key={tier.qty}
+                    type="button"
+                    className={styles.staffelCell}
+                    data-active={active}
+                    aria-pressed={active}
+                    onClick={() => {
+                      setQuantity(tier.qty);
+                      setAdded(false);
+                    }}
+                  >
+                    <span className={styles.staffelCellQty}>
+                      {tier.qty}
+                      {tier.qty >= 50 ? "+" : ""} st
                     </span>
-                  </label>
+                    <span className={styles.staffelCellPer}>{fmt(perUnit)}</span>
+                    <span className={styles.staffelCellDisc}>
+                      {tier.discount > 0 ? `−${Math.round(tier.discount * 100)}%` : "—"}
+                    </span>
+                  </button>
                 );
               })}
             </div>
-          </fieldset>
-        ))}
+          )}
+        </section>
 
-        {/* Ontwerpservice-toggle */}
-        <fieldset className={styles.group}>
-          <legend className={styles.groupLabel}>
-            <span>Ontwerpservice</span>
-          </legend>
-          <button
-            type="button"
-            className={styles.designToggle}
-            role="switch"
-            aria-checked={designService}
-            data-on={designService}
-            onClick={() => {
-              setDesignService((v) => !v);
-              setAdded(false);
-            }}
-          >
-            <span className={styles.designText}>
-              <span className={styles.designTitle}>Laat je vlag door ons ontwerpen</span>
-              <span className={styles.designSub}>
-                Vast bedrag · {fmt(DESIGN_SERVICE_PRICE)} · eenmalig per order
-              </span>
+        {/* Ontwerpservice — lichte add-on */}
+        <button
+          type="button"
+          className={styles.addon}
+          role="switch"
+          aria-checked={designService}
+          data-on={designService}
+          onClick={() => {
+            setDesignService((v) => !v);
+            setAdded(false);
+          }}
+        >
+          <span className={styles.addonText}>
+            <span className={styles.addonTitle}>Laat je vlag door ons ontwerpen</span>
+            <span className={styles.addonSub}>
+              Vast bedrag · {fmt(DESIGN_SERVICE_PRICE)} · eenmalig per order
             </span>
-            <span className={styles.designSwitch} aria-hidden="true">
-              <span className={styles.designKnob} />
-            </span>
-          </button>
-        </fieldset>
+          </span>
+          <span className={styles.addonSwitch} aria-hidden="true">
+            <span className={styles.addonKnob} />
+          </span>
+        </button>
       </div>
 
-      {/* Sticky buy bar — live price + CTAs, stays in view while configuring */}
+      {/* Geruststelling vlak boven de CTA — de sterkste conversie-drivers. */}
+      <ul className={styles.reassure}>
+        <li>
+          <Leaf size={15} aria-hidden="true" /> Biologisch afbreekbaar doek
+        </li>
+        <li>
+          <Truck size={15} aria-hidden="true" /> Levering in ± 5 werkdagen
+        </li>
+        <li>
+          <ShieldCheck size={15} aria-hidden="true" /> Veilig betalen via iDEAL
+        </li>
+      </ul>
+
+      {/* Sticky buy bar — live price + CTA's */}
       <div className={styles.buyBar}>
         <div className={styles.priceBlock}>
           <span className={styles.priceLabel}>{labels.priceLabel}</span>
-          <span className={styles.priceValue}>
-            {priceReady ? fmt(totalExVat) : "—"}
-          </span>
+          <span className={styles.priceValue}>{priceReady ? fmt(totalExVat) : "—"}</span>
           <span className={styles.priceNote}>
             {priceReady
               ? `${inclVat ? "incl. btw" : "excl. btw"}${
-                  designService ? ` · incl. ontwerpservice` : ""
-                }${usingCustom ? " · eigen maat" : ""} · Richtprijs · definitieve prijs bij afrekenen`
+                  designService ? " · incl. ontwerpservice" : ""
+                }${usingCustom ? " · eigen maat" : ""} · richtprijs`
               : "Vul eerst een geldige eigen afmeting in"}
           </span>
         </div>
 
         <div className={styles.actions}>
           {orderable ? (
-            <>
-              <Button
-                size="lg"
-                onClick={handleAdd}
-                icon={<ArrowRight />}
-                disabled={!priceReady}
-              >
-                {labels.addToCart}
-              </Button>
-              <Link
-                href={`/contact?product=${product.slug}`}
-                className={styles.quoteLink}
-              >
-                {labels.requestQuote}
-              </Link>
-            </>
+            <Button size="lg" onClick={handleAdd} icon={<ArrowRight />} disabled={!priceReady}>
+              {labels.addToCart}
+            </Button>
           ) : (
             <>
-              <Button
-                as="a"
-                href={`/contact?product=${product.slug}`}
-                size="lg"
-                icon={<ArrowRight />}
-              >
+              <Button as="a" href={`/contact?product=${product.slug}`} size="lg" icon={<ArrowRight />}>
                 {labels.requestQuote}
               </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={handleAdd}
-                disabled={!priceReady}
-              >
+              <Button variant="secondary" size="lg" onClick={handleAdd} disabled={!priceReady}>
                 {labels.addToCart}
               </Button>
             </>
@@ -607,4 +624,25 @@ export function ProductConfigurator({
       )}
     </div>
   );
+}
+
+/** Staand als de hoogte groter is dan de breedte (of geen afmetingen bekend). */
+function isPortrait(size?: CatalogSize): boolean {
+  if (!size?.widthCm || !size?.heightCm) return true;
+  return size.heightCm >= size.widthCm;
+}
+
+/**
+ * Mini-vormvoorbeeld per maat: een proportioneel rechthoekje binnen een vast
+ * kadertje, zodat je de verhouding (staand/liggend, hoe langgerekt) meteen ziet.
+ */
+function sizeShapeStyle(size: CatalogSize): React.CSSProperties {
+  const w = size.widthCm ?? 1;
+  const h = size.heightCm ?? 1;
+  const max = 30; // px binnen het 34px-kadertje
+  const ratio = w / h;
+  if (ratio >= 1) {
+    return { width: `${max}px`, height: `${Math.max(6, max / ratio)}px` };
+  }
+  return { width: `${Math.max(6, max * ratio)}px`, height: `${max}px` };
 }

@@ -80,7 +80,9 @@ export function Footer() {
               wapperen zonder de planeet te belasten.
             </p>
             <address className={styles.contact}>
-              <span>Sign Company B.V.</span>
+              <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
+                Sign Company B.V.
+              </a>
               <span>Enkhuizen, Nederland</span>
               <a href="mailto:info@duurzame-vlaggen.nl">
                 info@duurzame-vlaggen.nl
@@ -144,7 +146,11 @@ export function Footer() {
 
         <div className={styles.bottom}>
           <span>
-            &copy; {year} Sign Company B.V. — Alle rechten voorbehouden.
+            &copy; {year}{" "}
+            <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
+              Sign Company B.V.
+            </a>{" "}
+            — Alle rechten voorbehouden.
           </span>
           <div className={styles.bottomLinks}>
             <Link href="/privacyverklaring">Privacy</Link>

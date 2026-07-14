@@ -43,7 +43,7 @@ const NAV_LINKS = [
 const TOPBAR_USPS = [
   "Direct online bestellen",
   "Levertijd 5 werkdagen (NL)",
-  "Gratis digitale drukproef",
+  "Biologisch afbreekbaar doek",
 ] as const;
 
 /* Productcategorieën als directe shop-navigatie (afgeleid van de catalogus). */
@@ -300,7 +300,7 @@ export function Header() {
                 Offerte aanvragen <ArrowRight size={18} />
               </Link>
               <p className={styles.overlayNote}>
-                Sign Company B.V. — biologisch afbreekbare vlaggen, CSRD-proof
+                Duurzame Vlaggen — biologisch afbreekbare vlaggen, CSRD-proof
                 geleverd binnen 5 werkdagen.
               </p>
             </div>

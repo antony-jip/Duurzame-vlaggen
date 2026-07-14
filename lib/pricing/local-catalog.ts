@@ -57,9 +57,11 @@ const RETAIL_PRICES: Record<string, Record<string, number>> = {
   },
   baniervlag: {
     // TODO: prijs verifiëren — geen exacte ref-prijzen bekend. Area-scaling
-    // geankerd op de kleinste maat (100×250 = €38 ≈ €15,20/m²), floor op €0,50.
-    "100 × 250 cm": 38, // anker (= priceFrom)
+    // geankerd op 100×250 = €38 (≈ €15,20/m²), afgerond op €0,50.
+    "100 × 200 cm": 30.5, // TODO: prijs verifiëren (≈ €30,40 area-scaled) = priceFrom
+    "100 × 250 cm": 38, // anker
     "100 × 300 cm": 45.5, // TODO: prijs verifiëren (≈ €45,60 area-scaled)
+    "100 × 350 cm": 53.5, // TODO: prijs verifiëren (≈ €53,20 area-scaled)
     "100 × 400 cm": 60.5, // TODO: prijs verifiëren (≈ €60,80 area-scaled)
   },
   mastvlag: {

@@ -97,7 +97,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               </dl>
 
               <div className={styles.promise}>
-                <p className={styles.promiseTitle}>Sign Company B.V.</p>
+                <p className={styles.promiseTitle}>Duurzame Vlaggen</p>
                 <p className={styles.promiseBody}>
                   Levering binnen 5 werkdagen door heel Nederland (buitenland:
                   1,5 week). Bij elke bestelling ontvang je de certificaten en

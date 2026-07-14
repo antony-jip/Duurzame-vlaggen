@@ -18,6 +18,8 @@ export interface CatalogSize {
   /** width × height in cm, if applicable. */
   widthCm?: number;
   heightCm?: number;
+  /** Highlight this size as the most-chosen option in the configurator. */
+  popular?: boolean;
 }
 
 export interface CatalogOption {
@@ -107,15 +109,17 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Verticale banier die opvalt — biologisch afbreekbaar.",
     description:
       "De baniervlag is onze meest gekozen vlag: een verticale banier die je merk laat wapperen bij de ingang, op beurzen of langs de weg. Geprint op Flag-CiCLO®-doek dat in 2–3 jaar biologisch afbreekt, zonder microplastics.",
-    // priceFrom = echte goedkoopste config (Probo-inkoop kleinste maat × 1,5,
-    // naar beneden afgerond op €0,50): Tunnelzoom/hem 250×100 = €25,46 × 1,5
-    // = €38,19 → €38,00. Live geverifieerd 2026-07-13.
-    priceFrom: 38,
+    // priceFrom = goedkoopste maat uit het lokale retailmodel (100×200), area-
+    // geschaald op de anker-maat 100×250 = €38 (≈ €15,20/m²).
+    // TODO: prijs verifiëren met Antony (alleen 100×250 is live geverifieerd).
+    priceFrom: 30.5,
     badge: "Populair",
     sizes: [
       // Baniervlag = verticale banier (staand): label breedte × hoogte.
+      { label: "100 × 200 cm", widthCm: 100, heightCm: 200 },
       { label: "100 × 250 cm", widthCm: 100, heightCm: 250 },
-      { label: "100 × 300 cm", widthCm: 100, heightCm: 300 },
+      { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true },
+      { label: "100 × 350 cm", widthCm: 100, heightCm: 350 },
       { label: "100 × 400 cm", widthCm: 100, heightCm: 400 },
     ],
     options: [

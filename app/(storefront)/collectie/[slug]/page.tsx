@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ComponentType } from "react";
 import styles from "./product.module.css";
 import {
   Badge,
@@ -10,11 +8,6 @@ import {
   Leaf,
   Recycle,
   Truck,
-  FlagBanier,
-  FlagMast,
-  FlagBeach,
-  FlagGevel,
-  FlagPole,
   Price,
 } from "@/components/ui";
 import {
@@ -27,16 +20,8 @@ import {
 import { getMessages } from "@/lib/i18n";
 import { SITE_URL, SITE_NAME, COMPANY_NAME, jsonLd } from "@/lib/seo";
 import { ProductConfigurator } from "./ProductConfigurator";
+import { ProductGallery } from "./ProductGallery";
 import { VlaggenmastConfigurator } from "./VlaggenmastConfigurator";
-
-/* Vlagtype-pictogrammen — merkeigen producticonen, zoals op de homepage. */
-const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
-  baniervlag: FlagBanier,
-  mastvlag: FlagMast,
-  beachvlag: FlagBeach,
-  gevelvlag: FlagGevel,
-  vlaggenmast: FlagPole,
-};
 
 /** Pre-render every known product slug. */
 export function generateStaticParams() {
@@ -99,7 +84,6 @@ export default async function ProductPage({
 
   const { catalog, dict } = await getMessages();
   const orderable = isOrderable(product);
-  const FlagIcon = FLAG_ICONS[product.slug] ?? FlagMast;
 
   // Product-structured data: naam, beschrijving, beeld, merk en een
   // AggregateOffer met de vanaf-prijs (ex btw) in EUR. Bestelbare vlaggen zijn
@@ -147,40 +131,15 @@ export default async function ProductPage({
       </nav>
 
       <div className={styles.layout}>
-        {/* Media */}
+        {/* Media — hero + thumbnails met lightbox */}
         <div className={styles.media}>
-          <div className={`${styles.visual} ${accentClass[product.accent]}`}>
-            <span
-              className={styles.accentChip}
-              data-accent={product.accent}
-              aria-hidden="true"
-            >
-              <FlagIcon size={30} />
-            </span>
-            <Image
-              src={product.heroImage.src}
-              alt={product.heroImage.alt}
-              fill
-              priority
-              sizes="(max-width: 860px) 100vw, 50vw"
-              className={styles.photo}
-            />
-          </div>
-          {gallery.length > 0 && (
-            <div className={styles.thumbs}>
-              {gallery.map((image) => (
-                <div key={image.src} className={styles.thumb}>
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 860px) 33vw, 16vw"
-                    className={styles.photo}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <ProductGallery
+            heroImage={product.heroImage}
+            thumbs={gallery}
+            slug={product.slug}
+            accent={product.accent}
+            accentClass={accentClass[product.accent]}
+          />
           <ul className={styles.trustRow}>
             <li>
               <Leaf size={16} aria-hidden="true" />

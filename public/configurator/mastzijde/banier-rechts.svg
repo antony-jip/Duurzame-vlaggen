@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Baniervlag met de mast aan de rechterzijde">
+  <rect width="320" height="320" fill="#b4d0e2"/>
+  <!-- mast -->
+  <g>
+    <circle cx="257" cy="20" r="6" fill="#d7dcdf"/>
+    <rect x="252" y="22" width="10" height="278" rx="5" fill="#e2e7ea"/>
+    <rect x="256.6" y="22" width="3.4" height="278" rx="1.7" fill="#c2c8cc"/>
+    <!-- beugels naar het doek -->
+    <rect x="232" y="58" width="20" height="3.4" rx="1.7" fill="#c2c8cc"/>
+    <rect x="232" y="150" width="20" height="3.4" rx="1.7" fill="#c2c8cc"/>
+    <rect x="232" y="242" width="20" height="3.4" rx="1.7" fill="#c2c8cc"/>
+  </g>
+  <!-- banier (staand) met lichte zoomrand -->
+  <rect x="86" y="40" width="150" height="250" rx="7" fill="#2c5f4f"/>
+  <rect x="229" y="40" width="7" height="250" rx="3.5" fill="#25503f"/>
+  <!-- merknaam -->
+  <text x="157" y="150" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">Duurzame</text>
+  <text x="157" y="180" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">vlaggen</text>
+  <!-- logomerk -->
+  <g transform="translate(131,206)">
+    <rect width="52" height="52" rx="13" fill="#c66b4e"/>
+    <path d="M13 40 C13 23 25 13 41 12 C36 27 26 36 13 40 Z" fill="#ffffff"/>
+    <path d="M41 12 C33 16 27 23 23 32" stroke="#2c5f4f" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

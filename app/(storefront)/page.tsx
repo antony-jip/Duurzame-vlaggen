@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   // Absolute title — the root layout template would otherwise double the suffix
   // ("… | Sign Company | Duurzame Vlaggen").
   title: {
-    absolute: "Duurzame Vlaggen — biologisch afbreekbaar | Sign Company",
+    absolute: "Duurzame Vlaggen — biologisch afbreekbaar",
   },
   description:
     "Laat je merk wapperen zonder de planeet te belasten. Biologisch afbreekbare banier-, mast-, gevelvlaggen en beachflags. CSRD-proof en binnen 5 werkdagen geleverd.",
