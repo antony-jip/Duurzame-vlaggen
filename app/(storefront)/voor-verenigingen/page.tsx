@@ -13,6 +13,7 @@ import {
   FlagGevel,
   FlagMast,
   FlagBanier,
+  VergelijkVlaggen,
 } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -245,6 +246,8 @@ export default function VoorVerenigingenPage() {
           </div>
         </Container>
       </section>
+
+      <VergelijkVlaggen />
 
       {/* CTA — clubofferte. */}
       <section className={styles.sectionTight} aria-labelledby="cta-title">

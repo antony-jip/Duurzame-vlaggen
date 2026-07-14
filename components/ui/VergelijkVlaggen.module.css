@@ -1,0 +1,147 @@
+/* "Traditioneel vs. Duurzaam" — twee vergelijkingskaarten met SVG-illustraties. */
+.wrap {
+  padding-block: clamp(48px, 6vw, 88px);
+  background: var(--color-off-white, #f7f5f2);
+}
+
+.title {
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -0.03em;
+  color: var(--color-charcoal, #3a3a3a);
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.title span {
+  color: var(--color-terracotta, #c66b4e);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2.5vw, 28px);
+  align-items: stretch;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--radius-2xl, 20px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(44, 95, 79, 0.06));
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+/* De duurzame kaart krijgt lichte nadruk. */
+.ciclo {
+  box-shadow: var(--shadow-lg, 0 12px 32px rgba(44, 95, 79, 0.14));
+  border-color: color-mix(in srgb, var(--color-forest, #2c5f4f) 22%, transparent);
+}
+
+.figure {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-off-white, #f7f5f2);
+}
+.illu {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Toon het bovenste, veelzeggende deel van de scène netjes uitgesneden. */
+  max-height: 340px;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08));
+}
+.badgePoly {
+  background: #c0392b;
+}
+.badgeCiclo {
+  background: var(--color-forest, #2c5f4f);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(20px, 2.5vw, 32px);
+  flex: 1;
+}
+.cardTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(20px, 2.2vw, 26px);
+  letter-spacing: -0.02em;
+  color: #c0392b;
+}
+.cardTitleCiclo {
+  color: var(--color-forest, #2c5f4f);
+}
+.cardText {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-stone, #8b8d7a);
+  max-width: 42ch;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.statValue {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #c0392b;
+}
+.statValueCiclo {
+  color: var(--color-forest, #2c5f4f);
+}
+.statLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-stone, #8b8d7a);
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .illu {
+    max-height: 280px;
+  }
+}

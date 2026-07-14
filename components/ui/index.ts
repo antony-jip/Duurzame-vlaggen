@@ -25,6 +25,8 @@ export { Footer } from "./Footer";
 export { Price } from "./Price";
 export type { PriceProps } from "./Price";
 
+export { VergelijkVlaggen } from "./VergelijkVlaggen";
+
 export { VatToggle } from "./VatToggle";
 
 export * from "./Icon";
