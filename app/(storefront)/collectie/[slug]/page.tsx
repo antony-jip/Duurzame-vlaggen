@@ -27,6 +27,7 @@ import {
 import { getMessages } from "@/lib/i18n";
 import { SITE_URL, SITE_NAME, COMPANY_NAME, jsonLd } from "@/lib/seo";
 import { ProductConfigurator } from "./ProductConfigurator";
+import { VlaggenmastConfigurator } from "./VlaggenmastConfigurator";
 
 /* Vlagtype-pictogrammen — merkeigen producticonen, zoals op de homepage. */
 const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
@@ -225,6 +226,9 @@ export default async function ProductPage({
             </div>
           </dl>
 
+          {product.category === "hardware" ? (
+            <VlaggenmastConfigurator product={product} catalog={catalog} />
+          ) : (
           <ProductConfigurator
             product={product}
             orderable={orderable}
@@ -246,6 +250,7 @@ export default async function ProductPage({
                 "Online bestellen kan binnenkort. Voeg toe aan je winkelmand en vraag nu vrijblijvend een offerte aan.",
             }}
           />
+          )}
         </div>
       </div>
     </Container>
