@@ -78,6 +78,19 @@
   box-shadow: var(--shadow-sage-md);
 }
 
+/* Winkelmand-CTA: sage blue als koopkleur, hover volgt het primary-patroon. */
+.cart {
+  background: var(--color-sage-blue);
+  color: #fff;
+  box-shadow: var(--shadow-sage-md);
+}
+.cart:hover {
+  background: var(--color-terracotta);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-terracotta-md);
+}
+
 .tertiary {
   background: transparent;
   color: var(--color-charcoal);

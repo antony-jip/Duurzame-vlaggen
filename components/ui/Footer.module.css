@@ -148,6 +148,14 @@
   font-size: 12px;
   letter-spacing: 0.02em;
 }
+/* De bedrijfsnaam-link erft anders de donkergroene globale linkkleur —
+   onleesbaar op de donkere footer. */
+.bottom a {
+  color: rgba(255, 255, 255, 0.7);
+}
+.bottom a:hover {
+  color: #fff;
+}
 .bottomLinks {
   display: flex;
   gap: var(--space-lg);

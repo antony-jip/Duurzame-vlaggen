@@ -23,7 +23,7 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./vlaggenmast.module.css";
 import pstyles from "./product.module.css";
-import { Badge, Button, Check, ArrowRight, Leaf, Truck, User } from "@/components/ui";
+import { Badge, Button, Check, ArrowRight, Leaf, ShieldCheck, Truck, User } from "@/components/ui";
 import { useCart, VAT_RATE } from "@/components/cart/CartProvider";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
@@ -130,9 +130,8 @@ export function VlaggenmastConfigurator({
         <span className={pstyles.noticeIcon} aria-hidden="true">
           <Leaf size={18} />
         </span>
-        Stel je Easylift-mast samen. De vlaggenmast leveren we op maat en offerte:
-        voeg toe aan je winkelmand en je ontvangt een vrijblijvende offerte met de
-        definitieve prijs en planning.
+        Stel je Easylift-mast samen en voeg toe aan je winkelmand. Je ontvangt een
+        vrijblijvende offerte met de definitieve prijs en planning.
       </p>
 
       <div className={styles.wrap}>
@@ -155,49 +154,47 @@ export function VlaggenmastConfigurator({
           <span className={styles.ground} />
         </div>
 
-        {/* ---- Stappen ---- */}
+        {/* ---- Stappen — zelfde taal als de vlag-configurator ---- */}
         <div className={styles.steps}>
           {/* 1 — Lengte */}
-          <fieldset className={pstyles.group}>
-            <legend className={pstyles.groupLabel}>
-              <span>
-                <span className={styles.stepNo}>1</span>Lengte
-              </span>
-              <span className={pstyles.groupValue}>{size.label}</span>
-            </legend>
-            <div className={pstyles.choices}>
+          <section className={pstyles.step}>
+            <header className={pstyles.stepHead}>
+              <span className={pstyles.stepDot}>1</span>
+              <span className={pstyles.stepTitle}>Lengte</span>
+              <span className={pstyles.stepPick}>{size.label}</span>
+            </header>
+            <div className={pstyles.sizeList} role="radiogroup" aria-label="Lengte">
               {product.sizes.map((s, i) => {
-                const unit = localUnitPrice(product, s) + coating;
+                const unit = round2(localUnitPrice(product, s) + coating);
+                const selected = lengthIndex === i;
                 return (
-                  <label key={s.label} className={pstyles.choice}>
+                  <label key={s.label} className={pstyles.sizeRow} data-selected={selected}>
                     <input
                       type="radio"
                       name="mast-lengte"
-                      checked={lengthIndex === i}
+                      checked={selected}
                       onChange={() => {
                         setLengthIndex(i);
                         setAdded(false);
                       }}
                     />
-                    <span className={pstyles.sizePill}>
-                      <span className={pstyles.sizePillLabel}>{s.label}</span>
-                      <span className={pstyles.sizePillPrice}>{fmt(round2(unit))}</span>
-                    </span>
+                    <span className={pstyles.sizeLabelText}>{s.label}</span>
+                    <span className={pstyles.sizeSub}>Easylift, aluminium</span>
+                    <span className={pstyles.sizePrice}>{fmt(unit)}</span>
                   </label>
                 );
               })}
             </div>
-          </fieldset>
+          </section>
 
           {/* 2 — Kleur & coating */}
-          <fieldset className={pstyles.group}>
-            <legend className={pstyles.groupLabel}>
-              <span>
-                <span className={styles.stepNo}>2</span>Kleur &amp; coating
-              </span>
-              <span className={pstyles.groupValue}>{color}</span>
-            </legend>
-            <div className={styles.colorGrid}>
+          <section className={pstyles.step}>
+            <header className={pstyles.stepHead}>
+              <span className={pstyles.stepDot}>2</span>
+              <span className={pstyles.stepTitle}>Kleur &amp; coating</span>
+              <span className={pstyles.stepPick}>{color}</span>
+            </header>
+            <div className={styles.colorGrid} role="radiogroup" aria-label="Kleur en coating">
               {colorChoices.map((choice) => {
                 const surcharge = localOptionsSurcharge(product, { Kleur: choice });
                 return (
@@ -228,19 +225,18 @@ export function VlaggenmastConfigurator({
                 );
               })}
             </div>
-          </fieldset>
+          </section>
 
           {/* 3 — Aantal + mast-staffel */}
-          <fieldset className={pstyles.group}>
-            <legend className={pstyles.groupLabel}>
-              <span>
-                <span className={styles.stepNo}>3</span>Aantal masten
-              </span>
+          <section className={pstyles.step}>
+            <header className={pstyles.stepHead}>
+              <span className={pstyles.stepDot}>3</span>
+              <span className={pstyles.stepTitle}>Aantal masten</span>
               {mastDiscountRate > 0 && (
-                <span className={pstyles.groupValue}>−{Math.round(mastDiscountRate * 100)}% mastkorting</span>
+                <span className={pstyles.stepPick}>−{Math.round(mastDiscountRate * 100)}% mastkorting</span>
               )}
-            </legend>
-            <div className={pstyles.customQtyRow}>
+            </header>
+            <div className={pstyles.qtyRow}>
               <div className={pstyles.quantity}>
                 <button
                   type="button"
@@ -281,22 +277,19 @@ export function VlaggenmastConfigurator({
               {mastDiscount > 0 ? (
                 <span className={pstyles.savings}>Je bespaart {fmt(mastDiscount)}</span>
               ) : (
-                <span className={styles.hint}>
-                  Vanaf 3 masten krijg je 5% mastkorting op de hardware.
-                </span>
+                <span className={styles.hint}>Vanaf 3 masten: 5% mastkorting.</span>
               )}
             </div>
-          </fieldset>
+          </section>
 
           {/* 4 — Service & plaatsing */}
-          <fieldset className={pstyles.group}>
-            <legend className={pstyles.groupLabel}>
-              <span>
-                <span className={styles.stepNo}>4</span>Service &amp; plaatsing
-              </span>
-              <span className={pstyles.groupValue}>{fmt(serviceCost)}</span>
-            </legend>
-            <div className={styles.serviceGrid}>
+          <section className={pstyles.step}>
+            <header className={pstyles.stepHead}>
+              <span className={pstyles.stepDot}>4</span>
+              <span className={pstyles.stepTitle}>Service &amp; plaatsing</span>
+              <span className={pstyles.stepPick}>{fmt(serviceCost)}</span>
+            </header>
+            <div className={styles.serviceGrid} role="radiogroup" aria-label="Service en plaatsing">
               <label className={styles.serviceCard}>
                 <input
                   type="radio"
@@ -355,14 +348,27 @@ export function VlaggenmastConfigurator({
               De servicekosten zijn een indicatie. De definitieve prijs en planning
               bevestigen we in de offerte.
             </p>
-          </fieldset>
+          </section>
         </div>
       </div>
+
+      {/* Geruststelling vlak boven de CTA — zelfde strip als op de vlag-pagina's. */}
+      <ul className={pstyles.reassure}>
+        <li>
+          <ShieldCheck size={15} aria-hidden="true" /> 10+ jaar garantie
+        </li>
+        <li>
+          <Check size={15} aria-hidden="true" /> Inclusief montagebeugels
+        </li>
+        <li>
+          <Truck size={15} aria-hidden="true" /> Geleverd door heel Nederland
+        </li>
+      </ul>
 
       {/* ---- Sticky prijsbalk ---- */}
       <div className={pstyles.buyBar}>
         <div className={pstyles.priceBlock}>
-          <span className={pstyles.priceLabel}>Richtprijs totaal</span>
+          <span className={pstyles.priceLabel}>Totaal</span>
           <span className={pstyles.priceValue}>{fmt(totalEx)}</span>
           <span className={pstyles.priceNote}>
             {`${quantity} mast${quantity > 1 ? "en" : ""} · incl. ${serviceLabel.toLowerCase()} · ${btwLabel} · definitieve prijs in de offerte`}
@@ -375,7 +381,7 @@ export function VlaggenmastConfigurator({
               <Check size={13} aria-hidden="true" /> Je bespaart {fmt(mastDiscount)}
             </span>
           )}
-          <Button size="lg" onClick={handleAdd} icon={<ArrowRight />}>
+          <Button variant="cart" size="lg" onClick={handleAdd} icon={<ArrowRight />}>
             In winkelmand
           </Button>
           <Link href={`/contact?product=${product.slug}`} className={pstyles.quoteLink}>

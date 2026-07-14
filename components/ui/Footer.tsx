@@ -150,7 +150,7 @@ export function Footer() {
             <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
               Sign Company B.V.
             </a>{" "}
-            — Alle rechten voorbehouden.
+            · Alle rechten voorbehouden.
           </span>
           <div className={styles.bottomLinks}>
             <Link href="/privacyverklaring">Privacy</Link>

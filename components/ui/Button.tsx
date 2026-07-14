@@ -5,7 +5,7 @@ import type {
 } from "react";
 import styles from "./Button.module.css";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary";
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "cart";
 export type ButtonSize = "sm" | "md" | "lg";
 
 interface CommonProps {

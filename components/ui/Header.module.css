@@ -4,8 +4,8 @@
    lives in the forest footer; up here the coloured mark + Sora wordmark reads
    as the nameplate. */
 .header {
-  position: sticky;
-  top: 0;
+  /* Bewust niet sticky: scrollt gewoon mee, de pagina houdt alle ruimte. */
+  position: relative;
   z-index: var(--z-sticky);
   /* Flat forest — flows seamlessly into the hero block for the clean look. */
   background: var(--color-forest);

@@ -190,26 +190,11 @@
   }
 }
 
-/* ---- Rechterkolom: genummerde stappen ---- */
+/* ---- Rechterkolom: genummerde stappen (opmaak uit product.module.css) ---- */
 .steps {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  /* Ruimte onder de laatste stap zodat de sticky prijsbalk niets afdekt. */
-  padding-bottom: clamp(96px, 15vh, 150px);
-}
-.stepNo {
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-forest);
-  color: #fff;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 800;
-  margin-right: 8px;
 }
 
 /* ---- Coating-kaarten ---- */
@@ -376,20 +361,20 @@
   color: var(--color-stone);
 }
 
-/* Voordeel-chip in de buy-bar. */
+/* Voordeel-chip in de buy-bar — besparing = succes → sage blue (huisstijl). */
 .savingChip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: var(--forest-3);
-  border: 1px solid var(--forest-6);
+  background: var(--sage-blue-6);
+  border: 1px solid var(--sage-blue-15);
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 13px;
   letter-spacing: -0.01em;
-  color: var(--color-forest);
+  color: var(--color-sage-blue);
 }
 
 @media (max-width: 860px) {
@@ -399,8 +384,5 @@
   .stage {
     position: static;
     height: 360px;
-  }
-  .steps {
-    padding-bottom: clamp(120px, 20vh, 180px);
   }
 }

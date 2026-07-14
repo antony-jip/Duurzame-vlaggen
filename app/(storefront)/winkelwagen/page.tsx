@@ -220,9 +220,8 @@ export default function WinkelwagenPage() {
             </span>
           </div>
           <p className={styles.summaryNote}>
-            Prijzen zijn indicatief en {inclVat ? "inclusief" : "exclusief"} btw.
-            Verzendkosten en de definitieve prijs volgen bij het afrekenen of in
-            de offerte.
+            Prijzen zijn {inclVat ? "inclusief" : "exclusief"} btw.
+            Verzendkosten zie je bij het afrekenen.
           </p>
           <Button as="a" href="/afrekenen" size="lg" fullWidth icon={<ArrowRight />}>
             Naar afrekenen

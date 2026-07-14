@@ -370,31 +370,46 @@
   color: var(--accent);
 }
 
-/* ---- Stap 1: formaatlijst (2 kolommen) ---- */
+/* ---- Stap 1: formaatlijst, gegroepeerd (breedte of model) in 2 kolommen ---- */
 .sizeList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.sizeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sizeGroupLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+.sizeGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-xs);
+  grid-template-columns: repeat(auto-fill, minmax(122px, 1fr));
+  gap: 8px;
 }
-@media (max-width: 460px) {
-  .sizeList {
-    grid-template-columns: 1fr;
-  }
-}
+/* Compacte, rustige maat-pill: label, evt. afmeting, prijs — gecentreerd. */
 .sizeRow {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
-  padding: 10px var(--space-md);
+  gap: 1px;
+  padding: 10px 10px 9px;
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--forest-6);
+  border: 1px solid var(--forest-6);
   background: var(--color-white);
   cursor: pointer;
+  text-align: center;
   transition:
     border-color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
 }
 .sizeRow:hover {
@@ -410,102 +425,49 @@
 .sizeRow[data-selected="true"] {
   border-color: var(--accent);
   background: var(--accent-soft);
-  box-shadow: inset 0 0 0 1.5px var(--accent);
 }
-.sizeRow input:focus-visible + .sizeShape {
+.sizeRow:has(input:focus-visible) {
   outline: 3px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
+  outline-offset: 2px;
 }
-/* Mini-vormvoorbeeld (proportioneel op de echte cm-maten). */
-.sizeShape {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-}
-.sizeShapeInner {
-  display: block;
-  border-radius: 2px;
-  background: var(--accent);
-  opacity: 0.85;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-}
-.sizeMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-.sizeLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.01em;
+/* Maat of modelnaam nooit midden in het label laten afbreken ("100 × 400" / "cm"). */
+.sizeLabelText {
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
   color: var(--color-charcoal);
 }
-.sizeRow[data-selected="true"] .sizeLabel {
-  color: var(--accent);
+.sizeRow[data-selected="true"] .sizeLabelText {
+  font-weight: 700;
+  color: var(--color-forest);
 }
+/* "Meest gekozen" als klein, stil tekstlabel in de pill (terracotta = warmte). */
 .sizePopular {
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
   font-family: var(--font-ui);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.4;
+  letter-spacing: 0.07em;
+  color: var(--color-terracotta);
+  white-space: nowrap;
 }
 .sizeSub {
   font-family: var(--font-ui);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-stone);
+  white-space: nowrap;
 }
 .sizePrice {
-  margin-left: auto;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  color: var(--color-charcoal);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--color-stone);
   font-variant-numeric: tabular-nums;
 }
 .sizeRow[data-selected="true"] .sizePrice {
-  color: var(--accent);
-}
-.sizeTick {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  opacity: 0;
-  transform: scale(0.6);
-  transition:
-    opacity var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-}
-.sizeRow[data-selected="true"] .sizeTick {
-  opacity: 1;
-  transform: scale(1);
-}
-/* Op smalle schermen verdwijnt de losse prijskolom (staat al in de subregel). */
-@media (max-width: 460px) {
-  .sizePrice {
-    display: none;
-  }
+  color: var(--color-forest);
 }
 
 /* ---- Eigen afmeting ---- */
@@ -652,6 +614,21 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-sm);
 }
+/* Bij 5+ keuzes (bv. beachvlag-accessoires): vier compacte kaarten per rij. */
+.optionGrid[data-dense="true"] {
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+}
+@media (max-width: 700px) {
+  .optionGrid[data-dense="true"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 460px) {
+  .optionGrid[data-dense="true"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .optionCard {
   position: relative;
   display: flex;
@@ -711,6 +688,21 @@
   letter-spacing: -0.01em;
   color: var(--color-forest);
   background: var(--accent-soft);
+}
+/* Huisstijl-lijnillustratie als optiebeeld (voet, uithouder, mastzijde). */
+.optionCardGlyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  color: var(--color-forest);
+  background: var(--forest-3);
+}
+.optionCardGlyph svg {
+  width: 100%;
+  height: 100%;
+  max-width: 120px;
 }
 .optionCardCheck {
   position: absolute;
@@ -812,39 +804,40 @@
   -webkit-appearance: none;
   margin: 0;
 }
+/* Besparing = succes → sage blue (huisstijl: success-kleur). */
 .savings {
   display: inline-flex;
   align-items: center;
   padding: 8px 14px;
   border-radius: var(--radius-md);
-  background: var(--forest-3);
-  border: 1px solid var(--forest-6);
+  background: var(--sage-blue-6);
+  border: 1px solid var(--sage-blue-15);
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 14px;
   letter-spacing: -0.01em;
-  color: var(--color-forest);
+  color: var(--color-sage-blue);
 }
-/* "Neem er N → −x%"-duwtje richting de eerstvolgende staffel. */
+/* "Neem er N"-duwtje = conversie → terracotta (huisstijl: energie/warmte). */
 .staffelNudge {
   display: inline-flex;
   align-items: center;
   padding: 8px 14px;
   border-radius: var(--radius-md);
-  border: 1.5px dashed var(--forest-6);
+  border: 1.5px dashed var(--terracotta-15);
   background: none;
   cursor: pointer;
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--color-terracotta);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out);
 }
 .staffelNudge:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+  border-color: var(--color-terracotta);
+  background: var(--terracotta-6);
 }
 .staffelNudge:focus-visible {
   outline: 3px solid var(--accent);
@@ -956,9 +949,10 @@
 .addon:hover {
   border-color: var(--accent);
 }
+/* Ontwerpservice = persoonlijk → sage purple (huisstijl: personal, spaarzaam). */
 .addon[data-on="true"] {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+  border-color: var(--color-sage-purple);
+  background: var(--sage-purple-6);
 }
 .addon:focus-visible {
   outline: 3px solid var(--accent);
@@ -992,7 +986,7 @@
   transition: background var(--duration-fast) var(--ease-out);
 }
 .addon[data-on="true"] .addonSwitch {
-  background: var(--accent);
+  background: var(--color-sage-purple);
 }
 .addonKnob {
   position: absolute;
@@ -1007,6 +1001,262 @@
 }
 .addon[data-on="true"] .addonKnob {
   transform: translateX(20px);
+}
+
+/* ==========================================================================
+   Banier-preview — live schaal-visual (doek + mast + mens van 1,80 m).
+   Zelfde sfeer als de vlaggenmast-stage: lucht, grasband, zachte schaduw.
+   ========================================================================== */
+/* Preview sticky naast de stappen (zoals de vlaggenmast-configurator). */
+.withPreview {
+  display: grid;
+  grid-template-columns: minmax(176px, 216px) 1fr;
+  gap: clamp(18px, 2.5vw, 30px);
+  align-items: start;
+}
+.banierStage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 292px;
+  padding: var(--space-md) var(--space-md) 0;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 78% 8%, rgba(255, 255, 255, 0.75), transparent 55%),
+    linear-gradient(180deg, var(--sage-blue-15) 0%, var(--sage-blue-6) 44%, var(--color-white) 78%);
+  border: 1px solid var(--forest-6);
+  box-shadow: var(--shadow-md);
+}
+.banierGround {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 36px;
+  background: linear-gradient(180deg, var(--forest-6) 0%, var(--forest-3) 100%);
+  border-top: 2px solid var(--forest-15, var(--forest-6));
+}
+.banierScene {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 34px;
+  margin-bottom: 35px; /* voetje óp de grondlijn */
+}
+/* Mast + doek als één blokje; flex-direction bepaalt de mastzijde. */
+.banierUnit {
+  display: flex;
+  align-items: flex-start;
+  transition: height var(--duration-slow, 420ms) var(--ease-out);
+}
+.banierPole {
+  flex-shrink: 0;
+  width: 5px;
+  height: 100%;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(90deg, #e9eced 0%, #b9bec1 46%, #979da0 100%);
+  box-shadow: 0 2px 6px rgba(28, 40, 36, 0.22);
+}
+.banierDoek {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin-top: 7px; /* doek hangt net onder de masttop */
+  border-radius: 2px 8px 8px 2px;
+  color: rgba(255, 255, 255, 0.9);
+  /* Altijd merkgroen doek (zoals de mockups), los van het pagina-accent. */
+  background: linear-gradient(160deg, var(--color-forest) 0%, #234c3f 130%);
+  box-shadow: 0 6px 14px rgba(44, 95, 79, 0.28);
+  transition:
+    width var(--duration-slow, 420ms) var(--ease-out),
+    height var(--duration-slow, 420ms) var(--ease-out),
+    margin-top var(--duration-slow, 420ms) var(--ease-out);
+  animation: banier-flutter 2.9s var(--ease-in-out) infinite;
+}
+/* Wapperen: het doek zit vast aan de mastzijde (transform-origin), alleen de
+   vrije kant ademt mee met de wind. */
+.banierDoek[data-mast="links"] {
+  transform-origin: left center;
+  border-radius: 2px 8px 8px 2px;
+}
+.banierDoek[data-mast="rechts"] {
+  transform-origin: right center;
+  border-radius: 8px 2px 2px 8px;
+}
+@keyframes banier-flutter {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.96);
+  }
+}
+/* Beachflag-silhouetten: ronde vaan (straight) of licht afgeronde rechthoek. */
+.banierDoek[data-vorm="straight"] {
+  border-radius: 3px 85% 14px 3px / 3px 38% 10px 3px;
+}
+.banierDoek[data-vorm="straight"][data-mast="rechts"] {
+  border-radius: 85% 3px 3px 14px / 38% 3px 3px 10px;
+}
+.banierDoek[data-vorm="square"] {
+  border-radius: 3px 10px 10px 3px;
+}
+.banierDoek[data-vorm="square"][data-mast="rechts"] {
+  border-radius: 10px 3px 3px 10px;
+}
+/* Gevelvlag hangt aan de uithouder: vast aan de bovenkant, wappert onderlangs. */
+.banierDoek[data-vorm="gevel"] {
+  transform-origin: top center;
+  border-radius: 3px 3px 9px 9px;
+  animation-name: gevel-flutter;
+}
+@keyframes gevel-flutter {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.955);
+  }
+}
+/* Gevel-scene: wandje + uithouder-arm. */
+.gevelUnit {
+  position: relative;
+  display: block;
+}
+.gevelWand {
+  position: absolute;
+  top: -14px;
+  bottom: 0;
+  left: 0;
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(90deg, #eceae6 0%, #d8d4cd 100%);
+  border: 1px solid rgba(58, 58, 58, 0.1);
+  box-shadow: 2px 0 6px rgba(28, 40, 36, 0.08);
+}
+.gevelArm {
+  position: absolute;
+  top: 3px;
+  left: 13px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #b9bec1, #979da0);
+  box-shadow: 0 2px 5px rgba(28, 40, 36, 0.25);
+}
+/* … plus een lichtgolf die als rimpeling over de stof loopt. */
+.banierDoek::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.2) 46%,
+    rgba(255, 255, 255, 0.05) 54%,
+    transparent 68%
+  );
+  background-size: 220% 100%;
+  animation: banier-sheen 3.4s linear infinite;
+}
+@keyframes banier-sheen {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -130% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banierDoek,
+  .banierDoek::after {
+    animation: none;
+  }
+  .banierUnit,
+  .banierDoek {
+    transition: none;
+  }
+}
+/* Band-/garenstrook langs de mastzijde van het doek. */
+.banierBand {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+.banierBand[data-kleur="Wit"] {
+  background: #f4f4f2;
+}
+.banierBand[data-kleur="Zwart"] {
+  background: #1c1c1c;
+}
+/* Mens-op-schaal (± 1,80 m) — zelfde figuurtje als bij de vlaggenmast. */
+.banierPerson {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-forest);
+  opacity: 0.5;
+  transition: height var(--duration-slow, 420ms) var(--ease-out);
+}
+.banierPersonHead {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.banierPersonBody {
+  width: 14px;
+  flex: 1;
+  margin-top: 2px;
+  border-radius: 7px 7px 3px 3px;
+  background: currentColor;
+}
+/* Onder het poppetje, óp de grasband — blijft zo altijd binnen het kader. */
+.banierScaleTag {
+  position: absolute;
+  bottom: -29px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--forest-6);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-forest);
+  white-space: nowrap;
+  opacity: 1;
+}
+/* Kolom: maatregel-tekst boven het animatie-kader. */
+.banierPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.banierCaption {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-forest);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 860px) {
+  .withPreview {
+    grid-template-columns: 1fr;
+  }
+  .banierStage {
+    height: 240px;
+  }
 }
 
 /* ---- Geruststellingsstrip vlak boven de CTA ---- */
