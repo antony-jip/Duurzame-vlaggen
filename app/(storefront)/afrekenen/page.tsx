@@ -48,7 +48,10 @@ function flagSize(item: {
 
 /** Is the attached artwork a raster image (vs PDF)? Filename is leading; the
  *  url covers storage links and inline data-URLs (local preview fallback). */
-function isImageArtwork(fileName?: string | null, fileUrl?: string | null): boolean {
+function isImageArtwork(
+  fileName?: string | null,
+  fileUrl?: string | null,
+): boolean {
   return (
     /\.(jpe?g|png)$/i.test(fileName ?? "") ||
     /\.(jpe?g|png)$/i.test(fileUrl ?? "") ||
@@ -61,17 +64,22 @@ function AddressFields({
   prefix,
   errors,
   requireCompany,
+  values,
 }: {
   prefix: string;
   errors: Record<string, string> | undefined;
   requireCompany: boolean;
+  /** Wat de klant instuurde; wordt de defaultValue zodat React het niet wist. */
+  values: Record<string, string> | undefined;
 }) {
   const err = (name: string) => errors?.[`${prefix}${name}`];
+  const val = (name: string) => values?.[`${prefix}${name}`];
   return (
     <>
       <Field
         id={`${prefix}company_name`}
         name={`${prefix}company_name`}
+        defaultValue={val("company_name")}
         label="Bedrijfsnaam"
         autoComplete="organization"
         required={requireCompany}
@@ -81,6 +89,7 @@ function AddressFields({
         <Field
           id={`${prefix}first_name`}
           name={`${prefix}first_name`}
+          defaultValue={val("first_name")}
           label="Voornaam"
           autoComplete="given-name"
           required
@@ -89,6 +98,7 @@ function AddressFields({
         <Field
           id={`${prefix}last_name`}
           name={`${prefix}last_name`}
+          defaultValue={val("last_name")}
           label="Achternaam"
           autoComplete="family-name"
           required
@@ -99,6 +109,7 @@ function AddressFields({
         <Field
           id={`${prefix}street`}
           name={`${prefix}street`}
+          defaultValue={val("street")}
           label="Straat"
           autoComplete="address-line1"
           required
@@ -107,6 +118,7 @@ function AddressFields({
         <Field
           id={`${prefix}house_number`}
           name={`${prefix}house_number`}
+          defaultValue={val("house_number")}
           label="Huisnr."
           required
           errorText={err("house_number")}
@@ -116,6 +128,7 @@ function AddressFields({
         <Field
           id={`${prefix}postal_code`}
           name={`${prefix}postal_code`}
+          defaultValue={val("postal_code")}
           label="Postcode"
           autoComplete="postal-code"
           required
@@ -124,6 +137,7 @@ function AddressFields({
         <Field
           id={`${prefix}city`}
           name={`${prefix}city`}
+          defaultValue={val("city")}
           label="Plaats"
           autoComplete="address-level2"
           required
@@ -135,7 +149,7 @@ function AddressFields({
         id={`${prefix}country`}
         name={`${prefix}country`}
         label="Land"
-        defaultValue="NL"
+        defaultValue={val("country") ?? "NL"}
         required
         errorText={err("country")}
       >
@@ -177,13 +191,19 @@ export default function AfrekenenPage() {
   // when we have nothing to submit and no result yet.
   if (items.length === 0 && state.status !== "quote") {
     return (
-      <Container as="section" className={styles.page} aria-labelledby="checkout-title">
+      <Container
+        as="section"
+        className={styles.page}
+        aria-labelledby="checkout-title"
+      >
         <div className={styles.empty}>
           <span aria-hidden="true">
             <Leaf size={30} />
           </span>
           <h1 id="checkout-title">Je winkelmand is leeg</h1>
-          <p className="text-sm">Voeg eerst een product toe om af te rekenen.</p>
+          <p className="text-sm">
+            Voeg eerst een product toe om af te rekenen.
+          </p>
           <Button as="a" href="/collectie" size="lg" icon={<ArrowRight />}>
             Bekijk de collectie
           </Button>
@@ -194,7 +214,11 @@ export default function AfrekenenPage() {
 
   if (state.status === "quote") {
     return (
-      <Container as="section" className={styles.page} aria-labelledby="checkout-title">
+      <Container
+        as="section"
+        className={styles.page}
+        aria-labelledby="checkout-title"
+      >
         <div className={styles.empty}>
           <Badge variant="success">Offerte aangevraagd</Badge>
           <h1 id="checkout-title">Bedankt voor je aanvraag</h1>
@@ -214,7 +238,11 @@ export default function AfrekenenPage() {
   ).join(", ");
 
   return (
-    <Container as="section" className={styles.page} aria-labelledby="checkout-title">
+    <Container
+      as="section"
+      className={styles.page}
+      aria-labelledby="checkout-title"
+    >
       <div className={styles.head}>
         <Badge variant="success">Afrekenen</Badge>
         <h1 id="checkout-title">Afrekenen</h1>
@@ -230,7 +258,10 @@ export default function AfrekenenPage() {
           <input type="hidden" name="items" value={JSON.stringify(items)} />
 
           {state.status === "error" && state.message && (
-            <p className={`${styles.banner} ${styles.bannerError}`} role="alert">
+            <p
+              className={`${styles.banner} ${styles.bannerError}`}
+              role="alert"
+            >
               {state.message}
             </p>
           )}
@@ -241,6 +272,7 @@ export default function AfrekenenPage() {
             <Field
               id="email"
               name="email"
+              defaultValue={state.values?.email}
               type="email"
               label="E-mailadres"
               autoComplete="email"
@@ -251,6 +283,7 @@ export default function AfrekenenPage() {
             <Field
               id="phone"
               name="phone"
+              defaultValue={state.values?.phone}
               type="tel"
               label="Telefoonnummer"
               autoComplete="tel"
@@ -270,6 +303,7 @@ export default function AfrekenenPage() {
               <Field
                 id="vatNumber"
                 name="vatNumber"
+                defaultValue={state.values?.vatNumber}
                 label="Btw-nummer"
                 placeholder="NL123456789B01"
                 required
@@ -285,6 +319,7 @@ export default function AfrekenenPage() {
               prefix="shipping_"
               errors={state.fieldErrors}
               requireCompany={isBusiness}
+              values={state.values}
             />
           </fieldset>
 
@@ -307,6 +342,7 @@ export default function AfrekenenPage() {
                 prefix="billing_"
                 errors={state.fieldErrors}
                 requireCompany={isBusiness}
+                values={state.values}
               />
             )}
           </fieldset>
@@ -371,7 +407,12 @@ export default function AfrekenenPage() {
                   )}
                 </div>
                 <span>
-                  <Price amount={localCartLineTotal(item.unitPriceEstimate, item.amount)} />
+                  <Price
+                    amount={localCartLineTotal(
+                      item.unitPriceEstimate,
+                      item.amount,
+                    )}
+                  />
                 </span>
               </div>
             );
@@ -384,16 +425,16 @@ export default function AfrekenenPage() {
             </span>
           </div>
           <p className={styles.summaryNote}>
-            Indicatief en {inclVat ? "inclusief" : "exclusief"} btw. Verzendkosten
-            en btw worden bij de definitieve bevestiging berekend.
+            Indicatief en {inclVat ? "inclusief" : "exclusief"} btw.
+            Verzendkosten en btw worden bij de definitieve bevestiging berekend.
           </p>
 
           {hasQuoteOnly && (
             <p className={`${styles.banner} ${styles.bannerQuote}`}>
               {quoteOnlyNames} {quoteOnlyItems.length > 1 ? "zijn" : "is"} nog
-              niet online bestelbaar en blokkeert online afrekenen. Bij verzenden
-              ontvangen we je gegevens en sturen we je voor je hele winkelmand een
-              offerte.
+              niet online bestelbaar en blokkeert online afrekenen. Bij
+              verzenden ontvangen we je gegevens en sturen we je voor je hele
+              winkelmand een offerte.
             </p>
           )}
 

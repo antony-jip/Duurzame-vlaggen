@@ -17,6 +17,7 @@
 
 import { redirect } from "next/navigation";
 import type { CheckoutState } from "./checkout-state";
+import { HttpError } from "@/lib/http";
 import { getMessages } from "@/lib/i18n";
 import {
   placeOrder,
@@ -59,6 +60,21 @@ function str(formData: FormData, key: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+/**
+ * Alles wat de klant intikte, terug te geven aan het formulier zodat React het
+ * bij een fout niet wist (zie `CheckoutState.values`). `items` blijft eruit: dat
+ * is de winkelmand-payload, geen invoerveld, en die staat toch al in de state
+ * van de client.
+ */
+function echoValues(formData: FormData): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (key === "items") continue;
+    if (typeof value === "string") out[key] = value;
+  }
+  return out;
+}
+
 function readAddress(formData: FormData, prefix: string): ProboAddress {
   return {
     company_name: str(formData, `${prefix}company_name`) || undefined,
@@ -77,7 +93,9 @@ function readAddress(formData: FormData, prefix: string): ProboAddress {
  * Resolve a cart line's flag dimensions (cm) — prefer the stored fields, fall
  * back to parsing the human `sizeLabel` (e.g. "250 × 100 cm") for older carts.
  */
-function resolveSize(item: CartItem): { widthCm: number; heightCm: number } | null {
+function resolveSize(
+  item: CartItem,
+): { widthCm: number; heightCm: number } | null {
   if (item.widthCm && item.heightCm) {
     return { widthCm: item.widthCm, heightCm: item.heightCm };
   }
@@ -116,7 +134,11 @@ export async function checkoutAction(
 
   const items = parseItems(str(formData, "items"));
   if (items.length === 0) {
-    return { status: "error", message: dict.errors.cartEmpty };
+    return {
+      status: "error",
+      message: dict.errors.cartEmpty,
+      values: echoValues(formData),
+    };
   }
 
   // --- Contact ---
@@ -150,7 +172,12 @@ export async function checkoutAction(
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { status: "error", fieldErrors, message: dict.errors.generic };
+    return {
+      status: "error",
+      fieldErrors,
+      message: dict.errors.generic,
+      values: echoValues(formData),
+    };
   }
 
   const shippingAddress = readAddress(formData, "shipping_");
@@ -186,7 +213,11 @@ export async function checkoutAction(
     if (!mapped) {
       // A product marked orderable in the cart but without a usable mapping/size
       // is a data error — never send raw Dutch labels to Probo.
-      return { status: "error", message: dict.errors.generic };
+      return {
+        status: "error",
+        message: dict.errors.generic,
+        values: echoValues(formData),
+      };
     }
     draftItems.push({
       // The mapping decides the effective code (a Squareflag size routes to
@@ -238,12 +269,41 @@ export async function checkoutAction(
   try {
     const result = await placeOrder(input);
     checkoutUrl = result.checkoutUrl;
-  } catch {
-    return { status: "error", message: dict.errors.generic };
+  } catch (err) {
+    // Log de échte oorzaak, altijd. Dit stond hier als kale `catch {}`, en dan
+    // ziet een mislukte betaling er in de logs uit alsof er niets gebeurde —
+    // terwijl de klant een generieke foutmelding krijgt.
+    //
+    // `err.message` van een HttpError is alleen "POST … → HTTP 422"; de reden
+    // (verkeerde sleutel, onbereikbare webhook-URL, geen methodes actief) zit in
+    // `body`. Die moet dus mee, anders is deze log alsnog nutteloos.
+    const detail =
+      err instanceof HttpError
+        ? { status: err.status, mollie: err.body }
+        : {
+            fout:
+              err instanceof Error
+                ? `${err.name}: ${err.message}`
+                : String(err),
+          };
+    console.error("[checkout] placeOrder faalde", {
+      market,
+      regels: draftItems.length,
+      ...detail,
+    });
+    return {
+      status: "error",
+      message: dict.errors.generic,
+      values: echoValues(formData),
+    };
   }
 
   // redirect() throws — must live outside the try/catch above.
   if (checkoutUrl) redirect(checkoutUrl);
 
-  return { status: "error", message: dict.errors.paymentFailed };
+  return {
+    status: "error",
+    message: dict.errors.paymentFailed,
+    values: echoValues(formData),
+  };
 }

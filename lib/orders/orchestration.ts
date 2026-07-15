@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Market } from "@/config/domains";
-import { publicEnv } from "@/lib/env";
+import { publicEnv, serverEnv } from "@/lib/env";
 import type { Json, OrderRow } from "@/lib/db/types";
 
 import type { ProboAddress, ProboOptionInput } from "@/lib/catalog/probo-mapping";
@@ -204,7 +204,14 @@ export interface PlaceOrderResult {
  */
 export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult> {
   const quote = await buildLocalQuote(input);
+
+  // Raak de config aan vóór de eerste schrijfactie. Beide getters throwen als de
+  // variabele ontbreekt, en dat gebeurde eerder pas bij `createPayment` — dus ná
+  // de insert. Resultaat: een weesorder op `cart` zonder betaling, bij élke
+  // poging, terwijl de klant "er is iets misgegaan" zag. Ontbreekt er iets, dan
+  // klapt het nu voordat er een rij bestaat.
   const appUrl = publicEnv.appUrl;
+  void serverEnv.mollieApiKey;
 
   const order = await insertOrderWithItems(
     {

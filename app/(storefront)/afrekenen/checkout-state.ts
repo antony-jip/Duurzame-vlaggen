@@ -18,6 +18,18 @@ export interface CheckoutState {
   message?: string;
   /** Per-field validation errors, keyed by form field name. */
   fieldErrors?: Record<string, string>;
+  /**
+   * De ingevulde waarden, teruggekaatst naar het formulier.
+   *
+   * React wist een formulier zodra de action klaar is: de velden vallen terug op
+   * hun `defaultValue`. Bij een fout was dat leeg, en dan mocht de klant zijn
+   * hele adres opnieuw intikken — precies op het moment dat hij toch al
+   * geïrriteerd is. Door hier terug te geven wat hij instuurde, reset React naar
+   * die waarden in plaats van naar niets.
+   *
+   * Alleen gevuld op de foutpaden; bij succes volgt een redirect.
+   */
+  values?: Record<string, string>;
 }
 
 export const initialCheckoutState: CheckoutState = { status: "idle" };
