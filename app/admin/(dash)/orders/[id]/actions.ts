@@ -86,3 +86,61 @@ export async function advanceStatusAction(formData: FormData): Promise<void> {
   await advanceOrderStatus(orderId, to);
   revalidateOrder(orderId);
 }
+
+/* ── Handmatige afhandeling (FULFILMENT_MODE "manual") ─────────────────────
+ * We bestellen zelf in het Probo-portaal; er is geen API-call en dus ook geen
+ * callback die de order verder duwt. Deze twee acties zijn de handbediening.
+ */
+
+/**
+ * "Markeer besteld": order is met de hand bij Probo geplaatst. De track &
+ * trace-link is optioneel — die heb je vaak pas later, en dan wil je de order
+ * nu al kunnen afvinken.
+ */
+export async function markeerBesteldAction(formData: FormData): Promise<void> {
+  await requireAdminUser();
+  const orderId = String(formData.get("orderId") ?? "");
+  const trackingUrl = String(formData.get("trackingUrl") ?? "").trim();
+
+  const order = await getOrderById(orderId);
+  if (!order) throw new Error("Order niet gevonden");
+
+  // Link eerst wegschrijven: mislukt de statusovergang, dan is de link niet weg.
+  if (trackingUrl) {
+    // Alleen http(s) opslaan — dit veld gaat richting de klant.
+    if (!/^https?:\/\//i.test(trackingUrl)) {
+      throw new Error("De track & trace-link moet met http:// of https:// beginnen.");
+    }
+    await updateOrder(order.id, { tracking_url: trackingUrl });
+  }
+
+  // Idempotent: al besteld ⇒ alleen de link bijwerken, geen tweede overgang.
+  if (order.status === "paid") {
+    await advanceOrderStatus(order.id, "sent_to_probo");
+  }
+
+  revalidateOrder(order.id);
+}
+
+/** "Markeer verzonden": pakket is de deur uit. */
+export async function markeerVerzondenAction(formData: FormData): Promise<void> {
+  await requireAdminUser();
+  const orderId = String(formData.get("orderId") ?? "");
+  const trackingUrl = String(formData.get("trackingUrl") ?? "").trim();
+
+  const order = await getOrderById(orderId);
+  if (!order) throw new Error("Order niet gevonden");
+
+  if (trackingUrl) {
+    if (!/^https?:\/\//i.test(trackingUrl)) {
+      throw new Error("De track & trace-link moet met http:// of https:// beginnen.");
+    }
+    await updateOrder(order.id, { tracking_url: trackingUrl });
+  }
+
+  if (order.status !== "shipped") {
+    await advanceOrderStatus(order.id, "shipped");
+  }
+
+  revalidateOrder(order.id);
+}

@@ -9,10 +9,10 @@ import type { OrderEventRow, OrderStatus } from "@/lib/db/types";
 import { STATUS_LABELS, formatMoney, formatDateTime } from "../../../format";
 import { requireAdminPage } from "../../../auth";
 import {
-  refreshProboStatusAction,
-  sendToProboAction,
   refreshPaymentAction,
   advanceStatusAction,
+  markeerBesteldAction,
+  markeerVerzondenAction,
 } from "./actions";
 import styles from "../../admin.module.css";
 
@@ -20,6 +20,18 @@ export const metadata: Metadata = {
   title: "Orderdetail · Admin",
   robots: { index: false, follow: false },
 };
+
+/**
+ * Probo's bestelportaal. We bestellen met de hand (FULFILMENT_MODE "manual"),
+ * dus dit is een gewone link — geen API-call.
+ */
+const PROBO_PORTAAL_URL = "https://www.proboprints.com/";
+
+/**
+ * Statussen die de drie fulfilment-stappen NIET dekken (annuleren, betaling
+ * mislukt). Die horen als losse knop, zodat de hoofdflow drie stappen blijft.
+ */
+const STAP_STATUSSEN = new Set<OrderStatus>(["sent_to_probo", "shipped"]);
 
 /**
  * Semantic status pill — mirrors the palette used in the orders table so the
@@ -90,6 +102,19 @@ export default async function AdminOrderDetailPage({
 
   const [items, events] = await Promise.all([getOrderItems(order.id), getOrderEvents(order.id)]);
   const nextStatuses = ALLOWED_TRANSITIONS[order.status];
+  const overigeStatussen = nextStatuses.filter((s) => !STAP_STATUSSEN.has(s));
+
+  // De drie stappen leiden we af uit de status, niet uit losse vlaggen: de
+  // statusmachine is de bron van waarheid.
+  const betaald =
+    Boolean(order.paid_at) ||
+    (["paid", "sent_to_probo", "probo_accepted", "in_production", "shipped"] as OrderStatus[]).includes(
+      order.status,
+    );
+  const besteld = (
+    ["sent_to_probo", "probo_accepted", "in_production", "shipped"] as OrderStatus[]
+  ).includes(order.status);
+  const verzonden = order.status === "shipped";
 
   return (
     <section className={styles.detail}>
@@ -106,26 +131,11 @@ export default async function AdminOrderDetailPage({
         </div>
       </div>
 
-      {/* Acties */}
+      {/* Documenten + betaling. De Probo-API-knoppen zijn hier weg: we bestellen
+          handmatig (FULFILMENT_MODE "manual"). Zie het Fulfilment-blok hieronder. */}
       <Card className={styles.actions}>
-        <h2 className={styles.sectionTitle}>Acties</h2>
+        <h2 className={styles.sectionTitle}>Documenten</h2>
         <div className={styles.actionRow}>
-          {order.status === "paid" && (
-            <form action={sendToProboAction}>
-              <input type="hidden" name="orderId" value={order.id} />
-              <Button type="submit" size="sm">
-                Verstuur naar Probo
-              </Button>
-            </form>
-          )}
-          {order.probo_order_id && (
-            <form action={refreshProboStatusAction}>
-              <input type="hidden" name="orderId" value={order.id} />
-              <Button type="submit" size="sm" variant="secondary">
-                Ververs Probo-status
-              </Button>
-            </form>
-          )}
           {order.mollie_payment_id && (
             <form action={refreshPaymentAction}>
               <input type="hidden" name="orderId" value={order.id} />
@@ -164,22 +174,99 @@ export default async function AdminOrderDetailPage({
           >
             Materiaalpaspoort (PDF)
           </Button>
-          {nextStatuses.map((to) => (
-            <form action={advanceStatusAction} key={to}>
-              <input type="hidden" name="orderId" value={order.id} />
-              <input type="hidden" name="to" value={to} />
-              <Button type="submit" size="sm" variant="tertiary">
-                → {STATUS_LABELS[to]}
-              </Button>
-            </form>
-          ))}
-          {nextStatuses.length === 0 &&
-            !order.probo_order_id &&
-            !order.mollie_payment_id &&
-            order.status !== "paid" && (
-              <span className={styles.muted}>Geen acties beschikbaar (eindstatus).</span>
-            )}
         </div>
+      </Card>
+
+      {/* Fulfilment — de handbediening. We bestellen zelf in het Probo-portaal,
+          dus er is geen callback die de order verder duwt. */}
+      <Card className={styles.actions}>
+        <div className={styles.fulfilKop}>
+          <h2 className={styles.sectionTitle}>Fulfilment</h2>
+          <Button
+            as="a"
+            href={PROBO_PORTAAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="sm"
+          >
+            Bestellen bij Probo →
+          </Button>
+        </div>
+
+        <ol className={styles.stappen}>
+          <li className={betaald ? styles.stapAf : styles.stapOpen}>
+            <span className={styles.stapDot} aria-hidden="true" />
+            <span className={styles.stapLabel}>Betaald</span>
+            {order.paid_at && (
+              <span className={styles.muted}>{formatDateTime(order.paid_at)}</span>
+            )}
+          </li>
+
+          <li className={besteld ? styles.stapAf : styles.stapOpen}>
+            <span className={styles.stapDot} aria-hidden="true" />
+            <span className={styles.stapLabel}>Besteld bij Probo</span>
+            {order.ordered_at && (
+              <span className={styles.muted}>{formatDateTime(order.ordered_at)}</span>
+            )}
+            {betaald && !verzonden && (
+              <form action={markeerBesteldAction} className={styles.stapForm}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <input
+                  type="url"
+                  name="trackingUrl"
+                  className={styles.trackInput}
+                  placeholder="Plak de Probo track & trace-link…"
+                  defaultValue={order.tracking_url ?? ""}
+                />
+                <Button type="submit" size="sm" variant="secondary">
+                  {besteld ? "Link bijwerken" : "Markeer besteld"}
+                </Button>
+              </form>
+            )}
+          </li>
+
+          <li className={verzonden ? styles.stapAf : styles.stapOpen}>
+            <span className={styles.stapDot} aria-hidden="true" />
+            <span className={styles.stapLabel}>Verzonden</span>
+            {order.shipped_at && (
+              <span className={styles.muted}>{formatDateTime(order.shipped_at)}</span>
+            )}
+            {besteld && !verzonden && (
+              <form action={markeerVerzondenAction} className={styles.stapForm}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <Button type="submit" size="sm" variant="secondary">
+                  Markeer verzonden
+                </Button>
+              </form>
+            )}
+          </li>
+        </ol>
+
+        {order.tracking_url && (
+          <p className={styles.trackRegel}>
+            Track &amp; trace:{" "}
+            <a href={order.tracking_url} target="_blank" rel="noopener noreferrer">
+              {order.tracking_url}
+            </a>
+          </p>
+        )}
+
+        {/* De statusmachine blijft leidend; deze knoppen zijn de uitweg voor de
+            randgevallen (annuleren, betaling mislukt) die de drie stappen niet
+            dekken. */}
+        {overigeStatussen.length > 0 && (
+          <div className={styles.actionRow}>
+            {overigeStatussen.map((to) => (
+              <form action={advanceStatusAction} key={to}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <input type="hidden" name="to" value={to} />
+                <Button type="submit" size="sm" variant="tertiary">
+                  → {STATUS_LABELS[to]}
+                </Button>
+              </form>
+            ))}
+          </div>
+        )}
       </Card>
 
       <div className={styles.detailGrid}>
@@ -299,13 +386,7 @@ export default async function AdminOrderDetailPage({
                     <td className={styles.right}>{formatMoney(it.line_price, order.currency)}</td>
                     <td>
                       {it.file_url ? (
-                        <a
-                          href={it.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.artworkLink}
-                          title="Aangeleverd ontwerp openen/downloaden"
-                        >
+                        <div className={styles.artworkBlok}>
                           {/(\.png|\.jpe?g|\.webp)$/i.test(it.file_url) ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -318,8 +399,22 @@ export default async function AdminOrderDetailPage({
                               PDF
                             </span>
                           )}
-                          <span>Bekijk</span>
-                        </a>
+                          <div>
+                            {/* `download` forceert opslaan i.p.v. openen: dit
+                                bestand moet naar de studio, niet naar een tab. */}
+                            <a
+                              href={it.file_url}
+                              download
+                              className={styles.artworkLink}
+                              title="Aangeleverd ontwerp downloaden"
+                            >
+                              Ontwerp downloaden
+                            </a>
+                            <span className={styles.artworkNaam}>
+                              {decodeURIComponent(it.file_url.split("/").pop() ?? "")}
+                            </span>
+                          </div>
+                        </div>
                       ) : (
                         <span className={styles.muted}>—</span>
                       )}

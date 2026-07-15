@@ -275,16 +275,17 @@ export async function generatePakbon(
       }
     }
 
-    // Klant-artwork hoort de inpakker te kunnen herkennen.
+    // Klant-artwork: mét bestandsnaam, zodat de inpakker kan controleren dat het
+    // juiste bestand geprint is. Zonder naam is "eigen ontwerp" niet te checken.
     if (item.file_url) {
-      page.drawText("Eigen ontwerp aangeleverd", {
-        x: MARGIN + 8,
-        y,
-        size: 9,
-        font,
-        color: FOREST,
-      });
-      y -= 12;
+      const bestand = decodeURIComponent(item.file_url.split("/").pop() ?? "");
+      const tekst = bestand
+        ? `Eigen ontwerp · ${bestand}`
+        : "Eigen ontwerp aangeleverd";
+      for (const regel of wrap(tekst, font, 9, CONTENT_W - 80)) {
+        page.drawText(regel, { x: MARGIN + 8, y, size: 9, font, color: FOREST });
+        y -= 12;
+      }
     }
 
     y -= 6;
