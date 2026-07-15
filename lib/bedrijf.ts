@@ -6,17 +6,21 @@
  * naam, adres, btw-nummer en KvK-nummer bevatten.
  *
  * Handelsnaam-constructie: "Duurzame Vlaggen" is een handelsnaam van
- * Sign Company B.V. Op een factuur hoort de rechtspersoon te staan, met de
+ * Sign Company VOF. Op een factuur hoort de rechtspersoon te staan, met de
  * handelsnaam erbij — vandaar beide velden.
+ *
+ * LET OP: de site noemt op ~20 plekken "Sign Company B.V." (footer, AV,
+ * privacyverklaring, over-ons, metadata). Dat is de verkeerde rechtsvorm en
+ * moet mee — een VOF is geen B.V.
  */
 
 export const BEDRIJF = {
   /** Handelsnaam waaronder de webshop opereert. */
   handelsnaam: "Duurzame Vlaggen",
   /** De rechtspersoon achter de handelsnaam. Hoort op factuur en AV. */
-  rechtspersoon: "Sign Company B.V.",
+  rechtspersoon: "Sign Company VOF",
   /** Regel zoals we het naar buiten schrijven. */
-  tenaamstelling: "Duurzame Vlaggen · onderdeel van Sign Company B.V.",
+  tenaamstelling: "Duurzame Vlaggen · onderdeel van Sign Company VOF",
 
   /**
    * Btw-identificatienummer. Geverifieerd met de Nederlandse 11-proef
@@ -25,16 +29,16 @@ export const BEDRIJF = {
   btwNummer: "NL006284267B01",
 
   /**
-   * KvK-nummer.
+   * KvK-nummer, overgenomen uit de algemene voorwaarden
+   * (app/(storefront)/algemene-voorwaarden/page.tsx) — de enige plek waar het
+   * al stond, en met 8 cijfers het enige geldige formaat.
    *
-   * LET OP: aangeleverd als "360.111.150" = 9 cijfers, terwijl een Nederlands
-   * KvK-nummer er 8 heeft. Waarschijnlijk een typefout (vermoedelijk 36011115).
-   * Nog te bevestigen door Antony — zie docs/GO-LIVE.md #7. Tot die tijd staat
-   * `kvkBevestigd` op false en laat de factuur het nummer bewust weg in plaats
-   * van een mogelijk fout nummer te drukken.
+   * TE BEVESTIGEN: Antony noemde mondeling "360.111.150" (9 cijfers). Eén cijfer
+   * verschil met de AV. Een Nederlands KvK-nummer heeft er 8, dus de AV wint
+   * voorlopig. Klopt de AV niet, dan moet die pagina óók aangepast.
    */
-  kvkNummer: "360111150",
-  kvkBevestigd: false,
+  kvkNummer: "36011150",
+  kvkBevestigd: true,
 
   /** Geverifieerd met mod-97 (2026-07-15): rest 1 ⇒ geldig. */
   iban: "NL71 RABO 0148 1208 81",
@@ -45,13 +49,12 @@ export const BEDRIJF = {
   website: "duurzame-vlaggen.nl",
 
   /**
-   * Vestigingsadres. Enkhuizen is bevestigd als magazijn/HQ (docs/CONTENT-MAP.md),
-   * het straatadres nog niet — zie GO-LIVE.md #7. Leeg laten is beter dan
-   * verzinnen: een factuuradres moet kloppen.
+   * Vestigingsadres, overgenomen uit de algemene voorwaarden — daar stond het
+   * al, dus GO-LIVE.md #7 ("adres nog bevestigen") is op dit punt achterhaald.
    */
   adres: {
-    straat: null as string | null,
-    postcode: null as string | null,
+    straat: "De Drie Kronen 115" as string | null,
+    postcode: "1601 MT" as string | null,
     plaats: "Enkhuizen",
     land: "Nederland",
   },
