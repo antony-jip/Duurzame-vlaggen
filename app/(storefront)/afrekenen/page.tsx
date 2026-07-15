@@ -32,7 +32,13 @@ const COUNTRIES = [
 ];
 
 /** A reusable Probo-shape address block. */
-function AddressFields({
+/**
+ * Naam en bedrijfsnaam van één adres. Los, omdat ze bij het VERZENDadres naar
+ * Contactgegevens verhuizen: wie je bent is geen adresgegeven. De veldnamen
+ * blijven `shipping_first_name` e.d., zodat de server-action, de validatie en
+ * het datamodel er niets van merken.
+ */
+function NaamVelden({
   prefix,
   errors,
   requireCompany,
@@ -41,22 +47,12 @@ function AddressFields({
   prefix: string;
   errors: Record<string, string> | undefined;
   requireCompany: boolean;
-  /** Wat de klant instuurde; wordt de defaultValue zodat React het niet wist. */
   values: Record<string, string> | undefined;
 }) {
   const err = (name: string) => errors?.[`${prefix}${name}`];
   const val = (name: string) => values?.[`${prefix}${name}`];
   return (
     <>
-      <Field
-        id={`${prefix}company_name`}
-        name={`${prefix}company_name`}
-        defaultValue={val("company_name")}
-        label="Bedrijfsnaam"
-        autoComplete="organization"
-        required={requireCompany}
-        errorText={err("company_name")}
-      />
       <div className={styles.row}>
         <Field
           id={`${prefix}first_name`}
@@ -77,6 +73,46 @@ function AddressFields({
           errorText={err("last_name")}
         />
       </div>
+      <Field
+        id={`${prefix}company_name`}
+        name={`${prefix}company_name`}
+        defaultValue={val("company_name")}
+        label="Bedrijfsnaam"
+        autoComplete="organization"
+        required={requireCompany}
+        errorText={err("company_name")}
+      />
+    </>
+  );
+}
+
+function AddressFields({
+  prefix,
+  errors,
+  requireCompany,
+  values,
+  zonderNaam = false,
+}: {
+  prefix: string;
+  errors: Record<string, string> | undefined;
+  requireCompany: boolean;
+  /** Wat de klant instuurde; wordt de defaultValue zodat React het niet wist. */
+  values: Record<string, string> | undefined;
+  /** Naam/bedrijfsnaam overslaan omdat ze elders al gevraagd worden. */
+  zonderNaam?: boolean;
+}) {
+  const err = (name: string) => errors?.[`${prefix}${name}`];
+  const val = (name: string) => values?.[`${prefix}${name}`];
+  return (
+    <>
+      {!zonderNaam && (
+        <NaamVelden
+          prefix={prefix}
+          errors={errors}
+          requireCompany={requireCompany}
+          values={values}
+        />
+      )}
       <div className={styles.rowThreeOne}>
         <Field
           id={`${prefix}street`}
@@ -228,19 +264,6 @@ export default function AfrekenenPage() {
 
       <div className={styles.layout}>
         <div className={styles.hoofdkolom}>
-          {/* Winkelmand en afrekenen zijn één pagina: de mand was een extra stap
-              die vrijwel hetzelfde toonde als deze samenvatting (dezelfde regels,
-              aantalkiezer, mockup en subtotaal). Hier bewerk je je bestelling én
-              reken je af, zonder tussenstop. */}
-          <Card className={styles.bestelling} elevation="raised">
-            <h2 className={styles.legend}>Je bestelling</h2>
-            <div className={styles.regels}>
-              {items.map((item) => (
-                <WinkelmandRegel key={item.id} item={item} />
-              ))}
-            </div>
-          </Card>
-
         <form
           id="checkout-form"
           action={formAction}
@@ -282,6 +305,15 @@ export default function AfrekenenPage() {
               helperText="Optioneel, voor vragen over je bestelling."
               errorText={state.fieldErrors?.phone}
             />
+            {/* Naam en bedrijfsnaam horen bij wie je bent, niet bij waar het
+                pakket heen moet. De veldnamen blijven `shipping_*`, zodat de
+                server-action en het datamodel ongemoeid blijven. */}
+            <NaamVelden
+              prefix="shipping_"
+              errors={state.fieldErrors}
+              requireCompany={isBusiness}
+              values={state.values}
+            />
             <label className={styles.toggle}>
               <input
                 type="checkbox"
@@ -312,6 +344,7 @@ export default function AfrekenenPage() {
               errors={state.fieldErrors}
               requireCompany={isBusiness}
               values={state.values}
+              zonderNaam
             />
           </fieldset>
 
@@ -344,7 +377,17 @@ export default function AfrekenenPage() {
         {/* Overzicht: alleen geld en betalen. De regels staan hierboven,
             bewerkbaar. */}
         <Card as="aside" className={styles.summary} elevation="raised">
-          <h2>Overzicht</h2>
+          {/* Je bestelling hoort bij het geld, niet bij het formulier: rechts
+              zie je wat je koopt en wat het kost, links vul je in. Zo is de
+              hoofdkolom één ononderbroken taak. */}
+          <h2 className={styles.zijKop}>Je bestelling</h2>
+          <div className={styles.zijRegels}>
+            {items.map((item) => (
+              <WinkelmandRegel key={item.id} item={item} compact />
+            ))}
+          </div>
+
+          <h2 className={styles.zijKop}>Overzicht</h2>
           <div className={styles.summaryRow}>
             <span>Subtotaal</span>
             <span>

@@ -26,9 +26,9 @@
   align-items: start;
 }
 
-/* Genummerde stappen. De teller staat op de hele kolom, niet op de form: de
-   eerste stap ("Je bestelling") valt buiten het formulier. */
+/* Genummerde stappen via een counter op de form. */
 .form {
+  counter-reset: step;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
@@ -141,73 +141,20 @@
 }
 
 /* Besteloverzicht */
+/* Loopt mee tijdens het invullen; met een lange bestelling scrollt hij zelf.
+   Zonder max-height duwt een mand met vijf regels de betaalknop buiten beeld. */
 .summary {
   position: sticky;
-  top: var(--space-lg);
+  top: var(--space-md);
+  max-height: calc(100vh - var(--space-lg));
+  overflow-y: auto;
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
-.summary h2 {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-xs);
-}
-.summaryLine {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-md);
-  font-size: 14px;
-}
-.summaryLine .qty {
-  color: var(--color-stone);
-}
-
-/* Compacte aantal-stepper per regel (zelfde patroon als de winkelmand,
-   kleiner gemaat voor het overzicht). */
-.quantity {
-  margin-top: 6px;
-  display: inline-flex;
-  align-items: stretch;
-  border: 1.5px solid var(--forest-15);
-  border-radius: var(--radius-sm, 6px);
-  overflow: hidden;
-  background: var(--color-white);
-}
-.qtyBtn {
-  width: 30px;
-  min-height: 30px;
-  display: grid;
-  place-items: center;
-  background: var(--color-white);
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-forest);
-  border: none;
-}
 .qtyBtn:hover:not(:disabled) {
   background: var(--forest-6);
-}
-.qtyBtn:disabled {
-  color: var(--color-stone);
-  cursor: not-allowed;
-}
-.qtyValue {
-  min-width: 34px;
-  display: grid;
-  place-items: center;
-  border-inline: 1.5px solid var(--forest-15);
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 13px;
-}
-.summaryDivider {
-  border: none;
-  border-top: 1px solid var(--forest-6);
-  margin-block: var(--space-xs);
 }
 .summaryRow {
   display: flex;
@@ -289,23 +236,10 @@
    ========================================================================== */
 
 .hoofdkolom {
-  counter-reset: step;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
   min-width: 0;
-}
-
-.bestelling {
-  counter-increment: step;
-  padding: var(--space-lg);
-}
-
-.regels {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
 }
 
 /* ── Totalen + gratis verzending ──────────────────────────────────────────── */
@@ -361,4 +295,30 @@
   gap: 8px;
   color: var(--color-forest);
   font-size: 13px;
+}
+
+/* ── Zijkolom ─────────────────────────────────────────────────────────────
+   Hier staat wat je koopt en wat het kost; links vul je in. */
+
+.zijKop {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+/* De tweede kop krijgt lucht en een lijn: het zijn twee blokken in één kaart. */
+.zijKop + * {
+  margin-top: 0;
+}
+.zijRegels + .zijKop {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--forest-6);
+}
+
+.zijRegels {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-xs);
 }
