@@ -32,6 +32,15 @@ export type OrderStatus =
   | "probo_rejected"
   | "cancelled";
 
+/** Dimensie van een GSC-snapshot (migratie 20260715090000). */
+export type GscDimensie = "query" | "pagina";
+
+/** Waar een opgepakte kans vandaan kwam. */
+export type KansBron = "doel" | "kans";
+
+/** Stand van een opgepakte kans. `benut` = doorgevoerd. */
+export type KansStatus = "opgepakt" | "benut";
+
 export type Database = {
   public: {
     Tables: {
@@ -245,6 +254,58 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["media_assets"]["Insert"]>;
         Relationships: [];
       };
+      gsc_snapshots: {
+        Row: {
+          dag: string;
+          markt: string;
+          dimensie: GscDimensie;
+          sleutel: string;
+          clicks: number;
+          impressies: number;
+          ctr: number;
+          positie: number;
+          captured_at: string;
+        };
+        Insert: {
+          dag: string;
+          markt?: string;
+          dimensie: GscDimensie;
+          sleutel: string;
+          clicks?: number;
+          impressies?: number;
+          ctr?: number;
+          positie?: number;
+          captured_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["gsc_snapshots"]["Insert"]>;
+        Relationships: [];
+      };
+      seo_kans_acties: {
+        Row: {
+          id: string;
+          sleutel: string;
+          bron: KansBron;
+          status: KansStatus;
+          positie_bij: number | null;
+          impressies_bij: number | null;
+          notitie: string | null;
+          aangemaakt_op: string;
+          benut_op: string | null;
+        };
+        Insert: {
+          id?: string;
+          sleutel: string;
+          bron?: KansBron;
+          status: KansStatus;
+          positie_bij?: number | null;
+          impressies_bij?: number | null;
+          notitie?: string | null;
+          aangemaakt_op?: string;
+          benut_op?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["seo_kans_acties"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;
@@ -261,6 +322,8 @@ export type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItemRow = Database["public"]["Tables"]["order_items"]["Row"];
 export type OrderEventRow = Database["public"]["Tables"]["order_events"]["Row"];
 export type MediaAssetRow = Database["public"]["Tables"]["media_assets"]["Row"];
+export type GscSnapshotRow = Database["public"]["Tables"]["gsc_snapshots"]["Row"];
+export type SeoKansActieRow = Database["public"]["Tables"]["seo_kans_acties"]["Row"];
 
 export type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
 export type OrderItemInsert = Database["public"]["Tables"]["order_items"]["Insert"];

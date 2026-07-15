@@ -407,6 +407,113 @@
   margin-top: 2px;
 }
 
+/* --- Acties: prompt kopiëren + benut-toggle --- */
+
+.balk {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
+}
+
+.acties {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.actieKnop {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-forest);
+  background: rgba(44, 95, 79, 0.08);
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.actieKnop:hover {
+  background: rgba(44, 95, 79, 0.16);
+}
+
+.schakel {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-stone);
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.schakel:hover {
+  color: var(--color-forest);
+  background: var(--color-off-white);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-stone);
+  background: var(--color-off-white);
+  border: 1px solid rgba(58, 58, 58, 0.12);
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.toggleAan {
+  color: var(--color-white);
+  background: var(--color-forest);
+  border-color: var(--color-forest);
+}
+
+.toggleDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* Benutte rijen blijven leesbaar maar zakken naar de achtergrond. */
+.rijBenut td {
+  opacity: 0.55;
+}
+
+.effectGoed,
+.effectVlak {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.effectGoed {
+  color: var(--color-forest);
+}
+
+.effectVlak {
+  color: var(--color-stone);
+}
+
 /* --- Tabel --- */
 
 .tabel {

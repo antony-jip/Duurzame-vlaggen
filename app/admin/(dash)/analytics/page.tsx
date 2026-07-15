@@ -11,6 +11,10 @@ import {
 } from "@/lib/analytics/zoekverkeer";
 import { bepaalMigratieRisico } from "@/lib/analytics/migratie";
 import { haalNummer1Meter, type Stand } from "@/lib/analytics/naar-nummer1";
+import { bouwDoelPrompt, bouwWerklijstPrompt } from "@/lib/analytics/prompts";
+import { haalKansStanden } from "@/lib/analytics/kans-acties";
+import { haalNieuweZoekwoorden } from "@/lib/analytics/snapshot";
+import { PromptKnop, BenutToggle } from "./KansActies";
 import styles from "./analytics.module.css";
 
 export const metadata: Metadata = {
@@ -94,12 +98,14 @@ function Leeg({ tekst }: { tekst: string }) {
 export default async function AnalyticsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string }>;
+  searchParams: Promise<{ range?: string; toon?: string }>;
 }) {
   await requireAdminPage();
 
-  const { range: rawRange } = await searchParams;
+  const { range: rawRange, toon } = await searchParams;
   const range: Range = RANGES.includes(rawRange as Range) ? (rawRange as Range) : "28d";
+  /** Benutte doelen verbergen is de standaard: je wilt zien wat er nog ligt. */
+  const toonBenut = toon === "alles";
 
   if (!gscGeconfigureerd()) {
     return (
@@ -157,6 +163,19 @@ export default async function AnalyticsPage({
   const migratie = bepaalMigratieRisico(d.allePaginas);
   const meterRes = await veilig(() => haalNummer1Meter());
   const meter = meterRes.data;
+
+  // Beide raken de database; die kan los stuk zijn van GSC (bijv. ontbrekende
+  // service-role key), dus apart afgeschermd zodat de meter blijft staan.
+  const standenRes = await veilig(() => haalKansStanden());
+  const standen = standenRes.data ?? new Map();
+  const nieuwRes = await veilig(() => haalNieuweZoekwoorden(30));
+  const nieuweWoorden = nieuwRes.data ?? [];
+
+  // Doelen splitsen op benut, zodat "wat ligt er nog" de standaardweergave is.
+  const alleDoelen = meter?.doelen ?? [];
+  const benutteDoelen = alleDoelen.filter((d) => standen.get(d.woord)?.status === "benut");
+  const openDoelen = alleDoelen.filter((d) => standen.get(d.woord)?.status !== "benut");
+  const zichtbareDoelen = toonBenut ? alleDoelen : openDoelen;
   const kansenTotaal =
     d.kansen.lageCtr.length +
     d.kansen.bijnaPagina1.length +
@@ -228,6 +247,21 @@ export default async function AnalyticsPage({
             <span className={`${styles.legDot} ${styles.meter_onzichtbaar}`} /> Nog niet in beeld
           </p>
 
+          <div className={styles.balk}>
+            <PromptKnop
+              prompt={bouwWerklijstPrompt(zichtbareDoelen)}
+              label={`Kopieer werklijst (${zichtbareDoelen.length})`}
+            />
+            <Link
+              href={`/admin/analytics?range=${range}${toonBenut ? "" : "&toon=alles"}`}
+              className={styles.schakel}
+            >
+              {toonBenut
+                ? `Verberg benutte (${benutteDoelen.length})`
+                : `Toon ook benutte (${benutteDoelen.length})`}
+            </Link>
+          </div>
+
           <table className={styles.tabel}>
             <thead>
               <tr>
@@ -236,38 +270,108 @@ export default async function AnalyticsPage({
                 <th className={styles.num}>Naar #1</th>
                 <th className={styles.num}>Vert.</th>
                 <th>Pagina die het moet pakken</th>
+                <th>Actie</th>
               </tr>
             </thead>
             <tbody>
-              {meter.doelen.map((doel) => (
-                <tr key={doel.woord}>
-                  <td>
-                    {doel.woord}
-                    <span className={styles.groep}>{doel.groep}</span>
-                  </td>
-                  <td className={styles.num}>
-                    <span className={`${styles.standPill} ${styles[`meter_${doel.stand as Stand}`]}`}>
-                      {doel.positie ?? "—"}
-                    </span>
-                  </td>
-                  <td className={styles.num}>
-                    {doel.afstand === null ? (
-                      <span className={styles.zacht}>bouwen</span>
-                    ) : doel.afstand === 0 ? (
-                      <strong>#1</strong>
-                    ) : (
-                      `${doel.afstand}`
-                    )}
-                  </td>
-                  <td className={styles.num}>{nf.format(doel.impressies)}</td>
-                  <td className={styles.pad}>
-                    {doel.pagina}
-                    {doel.verkeerdePagina && (
-                      <span className={styles.mismatch}>
-                        nu: {doel.rankendePagina}
+              {zichtbareDoelen.map((doel) => {
+                const kansStand = standen.get(doel.woord);
+                const isBenut = kansStand?.status === "benut";
+                return (
+                  <tr key={doel.woord} className={isBenut ? styles.rijBenut : undefined}>
+                    <td>
+                      {doel.woord}
+                      <span className={styles.groep}>{doel.groep}</span>
+                    </td>
+                    <td className={styles.num}>
+                      <span
+                        className={`${styles.standPill} ${styles[`meter_${doel.stand as Stand}`]}`}
+                      >
+                        {doel.positie ?? "—"}
                       </span>
-                    )}
-                  </td>
+                    </td>
+                    <td className={styles.num}>
+                      {doel.afstand === null ? (
+                        <span className={styles.zacht}>bouwen</span>
+                      ) : doel.afstand === 0 ? (
+                        <strong>#1</strong>
+                      ) : (
+                        `${doel.afstand}`
+                      )}
+                      {/* Stand bij het benutten vs. nu: hielp het? */}
+                      {isBenut && kansStand?.positieBij != null && doel.positie !== null && (
+                        <span
+                          className={
+                            doel.positie < kansStand.positieBij
+                              ? styles.effectGoed
+                              : styles.effectVlak
+                          }
+                        >
+                          was {kansStand.positieBij}
+                        </span>
+                      )}
+                    </td>
+                    <td className={styles.num}>{nf.format(doel.impressies)}</td>
+                    <td className={styles.pad}>
+                      {doel.pagina}
+                      {doel.verkeerdePagina && (
+                        <span className={styles.mismatch}>nu: {doel.rankendePagina}</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className={styles.acties}>
+                        <PromptKnop prompt={bouwDoelPrompt(doel)} />
+                        <BenutToggle
+                          sleutel={doel.woord}
+                          bron="doel"
+                          positie={doel.positie}
+                          impressies={doel.impressies}
+                          benut={isBenut}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {standenRes.fout && (
+            <p className={styles.foutTekst}>
+              De benut-status kon niet geladen worden ({standenRes.fout}). Draai de migratie en
+              controleer SUPABASE_SERVICE_ROLE_KEY.
+            </p>
+          )}
+        </section>
+      )}
+
+      {/* ── Nieuwe zoekwoorden. Leunt op de dagelijkse snapshot-cron: zonder
+          eigen historie kun je niet weten wat nieuw is. ── */}
+      {nieuweWoorden.length > 0 && (
+        <section className={styles.kaart}>
+          <div className={styles.kaartKop}>
+            <h2 className={styles.kaartTitel}>Nieuw in Google</h2>
+            <span className={styles.badge}>{nieuweWoorden.length} sinds 30 dagen</span>
+          </div>
+          <p className={styles.uitleg}>
+            Zoekwoorden waarop je voor het eerst vertoond bent. Vers signaal: hier beweegt
+            Google, dus hier is een duw het meest waard.
+          </p>
+          <table className={styles.tabel}>
+            <thead>
+              <tr>
+                <th>Zoekwoord</th>
+                <th className={styles.num}>Vert.</th>
+                <th className={styles.num}>Positie</th>
+                <th className={styles.num}>Eerst gezien</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nieuweWoorden.slice(0, 15).map((w) => (
+                <tr key={w.sleutel}>
+                  <td>{w.sleutel}</td>
+                  <td className={styles.num}>{nf.format(w.impressies)}</td>
+                  <td className={styles.num}>{w.positie}</td>
+                  <td className={styles.num}>{w.eersteDag}</td>
                 </tr>
               ))}
             </tbody>
