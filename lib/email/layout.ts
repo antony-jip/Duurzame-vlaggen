@@ -70,7 +70,11 @@ export function blok(html: string): string {
  * factuur, zodat mail en document herkenbaar één merk zijn.
  */
 export function mailLayout({ titel, ondertitel, inhoud, knop }: LayoutOpties): string {
-  const logoUrl = `${SITE_URL}/logo-mark.png`;
+  // Het volledige woordmerk in de LICHTE variant: gemaakt voor donkere vlakken,
+  // en de kopband is forest. Bewust het statische bestand en niet Next's
+  // /_next/image: die URL bevat een deployment-id en is bij de volgende deploy
+  // dood — in een al verstuurde mail zie je dan een gebroken plaatje.
+  const logoUrl = `${SITE_URL}/logo-full-light.png`;
 
   const knopHtml = knop
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 18px;">
@@ -92,19 +96,13 @@ export function mailLayout({ titel, ondertitel, inhoud, knop }: LayoutOpties): s
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:${WHITE};border-radius:14px;overflow:hidden;">
 
-        <!-- Kopband -->
-        <tr><td style="background:${FOREST};padding:26px 28px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="vertical-align:middle;">
-                <div style="font-family:${FONT};font-size:22px;font-weight:700;color:${WHITE};line-height:1.25;">${titel}</div>
-                ${ondertitel ? `<div style="font-family:${FONT};font-size:13px;color:${OFFWHITE};margin-top:4px;">${ondertitel}</div>` : ""}
-              </td>
-              <td align="right" style="vertical-align:middle;width:52px;">
-                <img src="${logoUrl}" width="44" height="44" alt="Duurzame Vlaggen" style="display:block;border:0;"/>
-              </td>
-            </tr>
-          </table>
+        <!-- Kopband: woordmerk bovenaan, titel eronder — de opbouw van
+             briefpapier. Het merk is ~10:1, dus naast de titel zou het of
+             onleesbaar klein worden of de hele band opeten. -->
+        <tr><td style="background:${FOREST};padding:24px 28px 26px;">
+          <img src="${logoUrl}" width="168" height="16" alt="Duurzame Vlaggen" style="display:block;border:0;margin:0 0 16px;"/>
+          <div style="font-family:${FONT};font-size:22px;font-weight:700;color:${WHITE};line-height:1.25;">${titel}</div>
+          ${ondertitel ? `<div style="font-family:${FONT};font-size:13px;color:${OFFWHITE};margin-top:4px;">${ondertitel}</div>` : ""}
         </td></tr>
 
         <!-- Terracotta accentlijn, zoals op de factuur -->

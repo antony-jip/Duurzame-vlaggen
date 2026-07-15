@@ -165,9 +165,11 @@ export async function generatePakbon(
 
   let logoDrawn = false;
   try {
-    const logoBytes = await readFile(path.join(process.cwd(), "public", "logo-mark.png"));
+    // Het volledige woordmerk, lichte variant — gemaakt voor donkere vlakken en
+    // de kopband is forest. Op ~10:1 stuurt de HOOGTE de breedte.
+    const logoBytes = await readFile(path.join(process.cwd(), "public", "logo-full-light.png"));
     const logo = await doc.embedPng(logoBytes);
-    const targetH = 44;
+    const targetH = 15;
     const scale = targetH / logo.height;
     const w = logo.width * scale;
     page.drawImage(logo, {

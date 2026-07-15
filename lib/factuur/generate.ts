@@ -158,9 +158,11 @@ export async function generateFactuur(
 
   let logoDrawn = false;
   try {
-    const logoBytes = await readFile(path.join(process.cwd(), "public", "logo-mark.png"));
+    // Volledig woordmerk (lichte variant) op de forest kopband; ~10:1, dus de
+    // hoogte bepaalt de breedte.
+    const logoBytes = await readFile(path.join(process.cwd(), "public", "logo-full-light.png"));
     const logo = await doc.embedPng(logoBytes);
-    const targetH = 46;
+    const targetH = 16;
     const scale = targetH / logo.height;
     const w = logo.width * scale;
     page.drawImage(logo, {
