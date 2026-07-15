@@ -151,25 +151,31 @@
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  /* De rand van de kaart valt weg tegen de off-white achtergrond zodra de
+     inhoud scrollt; een subtiele lijn houdt hem herkenbaar als één blok. */
+  border: 1px solid var(--forest-6);
 }
-.qtyBtn:hover:not(:disabled) {
+/* Scrollbalk alleen als het nodig is, en ingetogen. */
+.summary::-webkit-scrollbar {
+  width: 6px;
+}
+.summary::-webkit-scrollbar-thumb {
   background: var(--forest-6);
+  border-radius: 999px;
 }
 .summaryRow {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 15px;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--color-stone);
 }
-.summaryRow.total {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: -0.01em;
-}
-.summaryRow.total span:last-child {
-  color: var(--color-forest);
+/* Het bedrag mag zwart, het label grijs: je scant de kolom rechts. */
+.summaryRow > span:last-child {
+  color: var(--color-charcoal);
+  font-variant-numeric: tabular-nums;
 }
 .summaryNote {
   font-size: 13px;
