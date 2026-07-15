@@ -14,6 +14,8 @@ import {
   markeerBesteldAction,
   markeerVerzondenAction,
 } from "./actions";
+import { MailKlant } from "./MailKlant";
+import { isEmailConfigured } from "@/lib/email/client";
 import styles from "../../admin.module.css";
 
 export const metadata: Metadata = {
@@ -267,6 +269,15 @@ export default async function AdminOrderDetailPage({
             ))}
           </div>
         )}
+      </Card>
+
+      {/* Mail de klant — expliciete actie, dus met zichtbare uitkomst. */}
+      <Card className={styles.actions}>
+        <MailKlant
+          orderId={order.id}
+          email={order.email}
+          mailIngesteld={isEmailConfigured()}
+        />
       </Card>
 
       <div className={styles.detailGrid}>

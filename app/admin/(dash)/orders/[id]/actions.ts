@@ -22,6 +22,9 @@ import {
 import { getProboOrderStatus } from "@/lib/probo/orders";
 import type { OrderStatus } from "@/lib/db/types";
 import { requireAdminUser } from "../../../auth";
+import { sendKlantMail } from "@/lib/email/send";
+import { isEmailConfigured } from "@/lib/email/client";
+import type { MailSoort } from "@/lib/email/templates";
 
 function revalidateOrder(id: string): void {
   revalidatePath(`/admin/orders/${id}`);
@@ -143,4 +146,61 @@ export async function markeerVerzondenAction(formData: FormData): Promise<void> 
   }
 
   revalidateOrder(order.id);
+}
+
+/* ── Klantmail ───────────────────────────────────────────────────────────── */
+
+/**
+ * Voorkom HTML-injectie in het vrije bericht. De tekst gaat rechtstreeks de
+ * mail-HTML in, dus een klant-naam of een geplakt stuk tekst met `<` mag daar
+ * niets kunnen breken.
+ */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export interface MailState {
+  ok?: boolean;
+  fout?: string;
+}
+
+/**
+ * Verstuur een klantmail. Geeft — anders dan de automatische paspoortmail — een
+ * echte fout terug: dit is een expliciete klik, dus je wilt weten of het lukte.
+ */
+export async function stuurKlantMailAction(
+  _prev: MailState,
+  formData: FormData,
+): Promise<MailState> {
+  await requireAdminUser();
+
+  const orderId = String(formData.get("orderId") ?? "");
+  const soort = String(formData.get("soort") ?? "") as MailSoort;
+  const bericht = String(formData.get("bericht") ?? "").trim();
+
+  if (!["in_productie", "verzonden", "vraag"].includes(soort)) {
+    return { fout: `Onbekend mailtype: ${soort}` };
+  }
+  if (soort === "vraag" && !bericht) {
+    return { fout: "Schrijf eerst een bericht." };
+  }
+
+  const order = await getOrderById(orderId);
+  if (!order) return { fout: "Order niet gevonden." };
+
+  if (!isEmailConfigured()) {
+    return { fout: "E-mail is niet ingesteld (RESEND_API_KEY ontbreekt)." };
+  }
+
+  const res = await sendKlantMail(order, soort, escapeHtml(bericht));
+  if (!res.sent) {
+    return { fout: res.reason ?? "Versturen mislukt." };
+  }
+
+  revalidateOrder(orderId);
+  return { ok: true };
 }

@@ -5,6 +5,7 @@ import type { OrderRow, OrderItemRow } from "@/lib/db/types";
 import { generateMateriaalpaspoort } from "@/lib/materiaalpaspoort/generate";
 
 import { getResendClient } from "./client";
+import { bouwMail, type MailSoort } from "./templates";
 
 /**
  * Transactionele e-mails. Alles best-effort: ontbreekt de mailconfig of faalt
@@ -97,5 +98,42 @@ export async function sendMateriaalpaspoortEmail(
       err,
     );
     return { sent: false, reason: "exception" };
+  }
+}
+
+/**
+ * Stuur een klantmail vanuit de order-detailpagina.
+ *
+ * Anders dan het materiaalpaspoort is dit een EXPLICIETE actie: Antony klikt op
+ * verstuur. Daarom geeft deze functie een echte fout terug in plaats van stil te
+ * loggen — je wilt weten of je mail is aangekomen.
+ */
+export async function sendKlantMail(
+  order: OrderRow,
+  soort: MailSoort,
+  bericht = "",
+): Promise<SendResult> {
+  const resend = getResendClient();
+  if (!resend) return { sent: false, reason: "not_configured" };
+
+  const mail = bouwMail(soort, order, bericht);
+
+  try {
+    const { error } = await resend.emails.send({
+      from: serverEnv.mailFrom,
+      to: order.email,
+      subject: mail.onderwerp,
+      html: mail.html,
+      text: mail.tekst,
+    });
+    if (error) {
+      console.error(`[email] Resend-fout bij ${soort} voor ${order.order_number}:`, error);
+      return { sent: false, reason: error.message ?? "provider_error" };
+    }
+    console.info(`[email] ${soort} verstuurd naar ${order.email} (${order.order_number}).`);
+    return { sent: true };
+  } catch (err) {
+    console.error(`[email] Onverwachte fout bij ${soort} voor ${order.order_number}:`, err);
+    return { sent: false, reason: err instanceof Error ? err.message : "exception" };
   }
 }
