@@ -570,18 +570,15 @@
 .address {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  font-style: normal;
+  line-height: 1.55;
   font-size: 0.88rem;
+  color: var(--color-charcoal);
 }
 
 .address > div {
   display: flex;
   gap: var(--space-sm);
-}
-
-.addressKey {
-  color: var(--color-stone);
-  min-width: 110px;
 }
 
 .json {
@@ -752,13 +749,11 @@
 
 /* --- Klant-artwork: download i.p.v. een linkje in de tabel --- */
 
-.artworkBlok {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Blok, anders vloeit de bestandsnaam achter de downloadlink aan en lees je
+   "Ontwerp downloadenb4881e81-…". */
 .artworkNaam {
+  display: block;
+  margin-top: 2px;
   font-family: var(--font-body);
   font-size: 12px;
   color: var(--color-stone);
@@ -873,4 +868,407 @@
   font-weight: 600;
   color: var(--color-forest);
   margin: 0;
+}
+
+/* ==========================================================================
+   Orderregels — inkooplijstje voor Probo
+
+   We bestellen met de hand via het Probo-portaal, dus deze kolom is het
+   werkblad tijdens het inkopen: eerst wat je moet aanklikken, dan wat je zelf
+   moet regelen. Stond hier eerst als kale JSON-dump.
+   ========================================================================== */
+
+/* Eén kaart per orderregel: links het ontwerp en de bedragen, rechts het
+   inkooplijstje. Een tabel met acht kolommen kreeg dit niet leesbaar. */
+.regels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.regel {
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.regelKop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 12px 16px;
+  background: var(--forest-3);
+  border-bottom: 1px solid var(--forest-6);
+}
+.regelTitel {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.regelNaam {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-charcoal);
+}
+.regelType {
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--color-stone);
+}
+.regelAantal {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--color-forest);
+  white-space: nowrap;
+}
+
+.regelBody {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: var(--space-lg);
+  padding: var(--space-md) 16px;
+  align-items: start;
+}
+
+.regelZij {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.regelBedragen {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: var(--space-sm) 0 0;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--forest-6);
+  font-size: 0.82rem;
+}
+.regelBedragen > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.regelBedragen dt {
+  color: var(--color-stone);
+}
+.regelBedragen dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-charcoal);
+}
+.regelPrijs {
+  color: var(--color-forest);
+  font-weight: 800;
+}
+
+@media (max-width: 860px) {
+  .regelBody {
+    grid-template-columns: 1fr;
+  }
+}
+
+.probo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.proboKop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+}
+.proboKop > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.proboLabel {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+
+/* De code die je letterlijk in het Probo-portaal zoekt — mag opvallen. */
+.proboCode {
+  font-family: ui-monospace, monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-forest);
+}
+.proboMaat {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+.proboOpties {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.proboOptie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--color-white);
+  border: 1px solid var(--forest-6);
+}
+.proboOptieTekst {
+  font-weight: 600;
+  color: var(--color-charcoal);
+}
+/* De kale code blijft zichtbaar: hierop wordt ingekocht, dus de omschrijving
+   mag nooit het origineel verbergen. */
+.proboOptieCode {
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--color-stone);
+  white-space: nowrap;
+}
+
+/* Wat de Probo-order NIET dekt. Terracotta, want dit is het enige deel waar
+   vergeten direct een verkeerde vlag oplevert. */
+.proboHand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--terracotta-3);
+  border: 1px solid var(--terracotta-15);
+  border-left: 3px solid var(--color-terracotta);
+}
+.proboHandKop {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-terracotta);
+}
+.proboHandLijst {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.82rem;
+  color: var(--color-charcoal);
+}
+
+.proboKlant {
+  font-size: 0.8rem;
+  color: var(--color-stone);
+}
+.proboKlant summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-stone);
+}
+.proboKlant > ul {
+  margin-top: 6px;
+}
+
+/* Ontwerp-voorbeeld — de echte eerste PDF-pagina, groot genoeg om te beoordelen
+   zonder het bestand eerst te downloaden. */
+.artworkBlok {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: flex-start;
+}
+
+.previewLink {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--forest-6);
+  /* Ruit: laat zien waar het doek transparant is. */
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, var(--forest-3) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--forest-3) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--forest-3) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--forest-3) 75%);
+  background-size: 14px 14px;
+  background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+  transition: border-color 120ms ease;
+}
+.previewLink:hover {
+  border-color: var(--color-forest);
+}
+
+.previewBeeld {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+}
+
+.previewSkelet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 120px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--forest-6);
+  background: var(--forest-3);
+}
+.previewSkeletTekst {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-stone);
+}
+
+/* Eén overzichtskaart i.p.v. vier losse blokken naast elkaar; die lieten een
+   half scherm leeg zodra Adressen als enige op de tweede rij viel. */
+.overzicht {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.overzichtKolom {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+/* De eerste kop in een kolom lijnt uit met de andere kolommen. */
+.overzichtKolom > .subheading:first-child {
+  margin-top: 0;
+}
+
+.totaalRegel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--forest-6);
+  font-size: 0.88rem;
+  color: var(--color-stone);
+}
+.totaalRegel strong {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+
+/* Mollie-id: nodig voor support, maar geen hoofdrol. Breekt netjes af i.p.v.
+   de kolom op te rekken. */
+.mollieId {
+  margin-top: var(--space-sm);
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  color: var(--color-stone);
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   Orderdetail als dashboard: werk links, bediening rechts.
+   ========================================================================== */
+
+.dash {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.dashMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+/* Loopt mee tijdens het scrollen: je leest links het inkooplijstje en vinkt
+   rechts af, zonder heen en weer te springen. */
+.dashZij {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  position: sticky;
+  top: var(--space-md);
+  max-height: calc(100vh - var(--space-lg));
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* In de smalle zijkolom is één kolom het enige dat past. */
+.dashZij .overzicht {
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+.dashZij .actionRow {
+  flex-direction: column;
+  align-items: stretch;
+}
+.dashZij .actionRow form,
+.dashZij .actionRow a,
+.dashZij .actionRow button {
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .dash {
+    grid-template-columns: 1fr;
+  }
+  .dashZij {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  .dashZij .overzicht {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .dashZij .actionRow {
+    flex-direction: row;
+  }
+  .dashZij .actionRow form,
+  .dashZij .actionRow a,
+  .dashZij .actionRow button {
+    width: auto;
+  }
 }

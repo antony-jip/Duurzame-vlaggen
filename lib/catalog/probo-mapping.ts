@@ -234,6 +234,48 @@ const MAPPINGS: Record<string, ProductMapping> = {
   },
 };
 
+/**
+ * Menselijke omschrijving per Probo-code. Sinds de handmatige flow zijn de codes
+ * documentatie voor een mens (zie de kop van dit bestand); dit is de vertaling
+ * terug, voor de admin en de pakbon. Een onbekende code valt terug op zichzelf:
+ * liever de kale code tonen dan een gok, want hierop wordt echt ingekocht.
+ */
+const CODE_LABELS: Record<string, string> = {
+  "flag-ciclo": "Doek: Flag-CiCLO®",
+  "finishing-all-sides": "Rondom afwerken",
+  hem: "Zoom",
+  "band-and-cord": "Band met koord",
+  "band-and-plastic-rings": "Band met plastic ringen",
+  "landscape-strap-cord-loop": "Afwerking: band, koord en lus",
+  "flag-stick-bag-deluxe": "Samenstelling: vlag, stok en draagtas",
+  white: "Kleur: wit",
+  black: "Kleur: zwart",
+  "200cm": "Koordlengte: 200 cm",
+  left: "Mastzijde: links",
+  right: "Mastzijde: rechts",
+};
+
+/** Maatpresets heten `65x315cm`; die zijn te talrijk voor een vaste tabel. */
+const MAATPRESET_RE = /^(\d+)x(\d+)cm$/;
+
+/**
+ * Zet één Probo-optie om in een regel die je kunt lezen terwijl je in het
+ * Probo-portaal zit. Geeft de kale code terug als er geen omschrijving bekend is.
+ */
+export function beschrijfProboOptie(optie: ProboOption): string {
+  const { code, value } = optie;
+  if (code === "width") return `Breedte: ${value} cm`;
+  if (code === "height") return `Hoogte: ${value} cm`;
+  if (code === "amount") return `Aantal: ${value}`;
+
+  const maat = MAATPRESET_RE.exec(code);
+  if (maat) return `Maat: ${maat[1]} × ${maat[2]} cm`;
+
+  const label = CODE_LABELS[code];
+  if (!label) return value === undefined ? code : `${code}: ${value}`;
+  return value === undefined ? label : `${label}: ${value}`;
+}
+
 /** Slugs with a confirmed Probo option mapping (i.e. orderable online). */
 export const MAPPED_SLUGS: readonly string[] = Object.keys(MAPPINGS);
 
