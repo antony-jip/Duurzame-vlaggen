@@ -17,7 +17,13 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = 
   // Retry: a failed payment may be re-attempted.
   payment_failed: ["awaiting_payment", "cancelled"],
   paid: ["sent_to_probo", "cancelled"],
-  sent_to_probo: ["probo_accepted", "probo_rejected"],
+  // `shipped` hoort hier vanwege de HANDMATIGE afhandeling (FULFILMENT_MODE
+  // "manual", de standaard): we bestellen zelf in het Probo-portaal, dus er komt
+  // geen callback die de order via probo_accepted/in_production verder duwt.
+  // Zonder deze overgang blijft een handmatige order op sent_to_probo hangen.
+  // De API-route (probo_accepted → in_production → shipped) blijft intact voor
+  // als FULFILMENT_MODE ooit weer op "probo" gaat.
+  sent_to_probo: ["probo_accepted", "probo_rejected", "shipped"],
   probo_accepted: ["in_production", "cancelled"],
   probo_rejected: ["cancelled"],
   in_production: ["shipped"],

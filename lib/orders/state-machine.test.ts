@@ -24,6 +24,21 @@ describe("order state machine", () => {
     }
   });
 
+  it("allows the manual path: paid → besteld → verzonden", () => {
+    // Handmatige afhandeling (FULFILMENT_MODE "manual", de standaard): we
+    // bestellen zelf in het Probo-portaal, dus er komt geen callback die de
+    // order via probo_accepted/in_production verder duwt. Zonder deze overgang
+    // blijft elke handmatige order op sent_to_probo hangen.
+    expect(canTransition("paid", "sent_to_probo")).toBe(true);
+    expect(canTransition("sent_to_probo", "shipped")).toBe(true);
+  });
+
+  it("keeps the API path intact next to the manual one", () => {
+    // De kortere handmatige route mag de Probo-callback-route niet verdringen.
+    expect(canTransition("sent_to_probo", "probo_accepted")).toBe(true);
+    expect(canTransition("sent_to_probo", "probo_rejected")).toBe(true);
+  });
+
   it("rejects backward transitions", () => {
     expect(canTransition("paid", "cart")).toBe(false);
     expect(canTransition("shipped", "in_production")).toBe(false);

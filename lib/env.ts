@@ -72,6 +72,32 @@ export const serverEnv = {
       "Duurzame Vlaggen <hello@duurzame-vlaggen.nl>"
     );
   },
+
+  // ── Google Search Console (admin-analytics) ────────────────────────────────
+  // Alle drie OPTIONEEL: niet gezet ⇒ de analytics-pagina toont een
+  // setup-melding in plaats van te crashen. Read-only service-account.
+  get gscClientEmail(): string | null {
+    return process.env.GSC_CLIENT_EMAIL?.trim() || null;
+  },
+  /**
+   * De private key uit de service-account-JSON. In een .env/Vercel-veld staan
+   * de regeleindes als LETTERLIJKE `\n`-tekens; zonder deze vervanging weigert
+   * `crypto.createSign().sign()` de sleutel. Beide andere sites doen hetzelfde.
+   */
+  get gscPrivateKey(): string | null {
+    const raw = process.env.GSC_PRIVATE_KEY;
+    if (!raw) return null;
+    return raw.replace(/\\n/g, "\n");
+  },
+  /**
+   * De property zoals Search Console 'm kent. Twee vormen:
+   *  - domein-property:  `sc-domain:duurzame-vlaggen.nl`  (alle subdomeinen+protocollen)
+   *  - url-prefix:       `https://duurzame-vlaggen.nl/`
+   * De domein-property heeft de voorkeur: die overleeft de WP→Next-migratie.
+   */
+  get gscSiteUrl(): string | null {
+    return process.env.GSC_SITE_URL?.trim() || null;
+  },
 } as const;
 
 /**
