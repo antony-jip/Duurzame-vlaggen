@@ -136,6 +136,16 @@ export default async function AdminOrderDetailPage({
           )}
           <Button
             as="a"
+            href={`/api/admin/pakbon/${order.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="sm"
+            variant="secondary"
+          >
+            Pakbon (PDF)
+          </Button>
+          <Button
+            as="a"
             href={`/api/admin/materiaalpaspoort/${order.id}`}
             target="_blank"
             rel="noopener noreferrer"
