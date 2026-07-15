@@ -45,6 +45,10 @@ export interface CartContextValue {
   toggleVat: () => void;
   /** Add a line; merges into an identical existing line by bumping its amount. */
   addItem: (item: Omit<CartItem, "id">) => void;
+  /** Staat het winkelmand-paneel open? */
+  paneelOpen: boolean;
+  /** Open/sluit het paneel. `addItem` opent het zelf al. */
+  setPaneelOpen: (open: boolean) => void;
   /** Remove a line by id. */
   removeItem: (id: string) => void;
   /** Set a line's quantity (clamped to at least 1). */
@@ -130,7 +134,12 @@ export function CartProvider({
     }
   }, [items, hydrated]);
 
+  // Het paneel is de winkelmand: na toevoegen zie je meteen wat erin zit en ga
+  // je in één klik door. Er is geen mandpagina meer om op te landen.
+  const [paneelOpen, setPaneelOpen] = useState(false);
+
   const addItem = useCallback((item: Omit<CartItem, "id">) => {
+    setPaneelOpen(true);
     setItems((prev) => {
       const sig = lineSignature(item);
       const existing = prev.find((it) => lineSignature(it) === sig);
@@ -204,8 +213,10 @@ export function CartProvider({
       updateAmount,
       setItemFile,
       clear,
+      paneelOpen,
+      setPaneelOpen,
     };
-  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemFile, clear]);
+  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemFile, clear, paneelOpen]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

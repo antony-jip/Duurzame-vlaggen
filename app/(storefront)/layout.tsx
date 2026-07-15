@@ -1,5 +1,6 @@
 import { Header, Footer } from "@/components/ui";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { CartPaneel } from "@/components/cart/CartPaneel";
 import { getUiCatalog } from "@/lib/i18n";
 import { SITE_URL, SITE_NAME, LOGO_URL, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
@@ -64,6 +65,9 @@ export default async function StorefrontLayout({
       <Header />
       <main id="main">{children}</main>
       <Footer />
+      {/* Het winkelmand-paneel schuift open zodra er iets in de mand gaat, dus
+          het moet op elke storefront-pagina bestaan. */}
+      <CartPaneel />
     </CartProvider>
   );
 }
