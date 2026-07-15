@@ -65,3 +65,44 @@ export interface CartItem {
    */
   previewUrl?: string | null;
 }
+
+/**
+ * Wat de checkout-action écht van een regel nodig heeft.
+ *
+ * De afrekenpagina serialiseert de winkelmand naar een verborgen veld, dus die
+ * payload gaat integraal mee in de server-action. Dat was `JSON.stringify(items)`
+ * — inclusief `previewUrl`, een base64-PNG van maximaal 3MB die de server nooit
+ * leest. Next kapt action-bodies af op 1MB (docs: 01-app/02-guides/server-actions),
+ * en `next.config` verhoogt dat niet, dus één foto-zware PDF gaf een harde 500 op
+ * de betaalknop.
+ *
+ * Dit type is daarom de grens: alleen wat `checkoutAction` daadwerkelijk uitleest.
+ * `unitPriceEstimate` hoort er bewust óók niet in — de prijs wordt server-side
+ * herberekend uit de catalogus (`buildLocalQuote`), nooit uit de client-payload.
+ */
+export interface CheckoutLine {
+  slug: string;
+  name: string;
+  proboProductCode: string | null;
+  options: CartOption[];
+  amount: number;
+  sizeLabel: string;
+  widthCm?: number;
+  heightCm?: number;
+  fileUrl?: string | null;
+}
+
+/** Winkelmand → checkout-payload: alleen de velden die de server uitleest. */
+export function toCheckoutLines(items: CartItem[]): CheckoutLine[] {
+  return items.map((it) => ({
+    slug: it.slug,
+    name: it.name,
+    proboProductCode: it.proboProductCode,
+    options: it.options,
+    amount: it.amount,
+    sizeLabel: it.sizeLabel,
+    widthCm: it.widthCm,
+    heightCm: it.heightCm,
+    fileUrl: it.fileUrl,
+  }));
+}

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
 import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
+import { toCheckoutLines } from "@/components/cart/types";
 import {
   localShipping,
   FREE_SHIPPING_THRESHOLD,
@@ -270,7 +271,15 @@ export default function AfrekenenPage() {
           className={styles.form}
           noValidate
         >
-          <input type="hidden" name="items" value={JSON.stringify(items)} />
+          {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
+              inclusief previewUrl: een base64-PNG tot 3MB die de server nooit
+              las. Next kapt action-bodies af op 1MB, dus een foto-zware PDF gaf
+              een harde 500 op de betaalknop. */}
+          <input
+            type="hidden"
+            name="items"
+            value={JSON.stringify(toCheckoutLines(items))}
+          />
 
           {state.status === "error" && state.message && (
             <p

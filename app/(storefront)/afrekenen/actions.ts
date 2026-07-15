@@ -25,7 +25,7 @@ import {
   type OrderItemDraft,
 } from "@/lib/orders/orchestration";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
-import type { CartItem } from "@/components/cart/types";
+import type { CheckoutLine } from "@/components/cart/types";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -94,7 +94,7 @@ function readAddress(formData: FormData, prefix: string): ProboAddress {
  * back to parsing the human `sizeLabel` (e.g. "250 × 100 cm") for older carts.
  */
 function resolveSize(
-  item: CartItem,
+  item: CheckoutLine,
 ): { widthCm: number; heightCm: number } | null {
   if (item.widthCm && item.heightCm) {
     return { widthCm: item.widthCm, heightCm: item.heightCm };
@@ -105,7 +105,7 @@ function resolveSize(
 }
 
 /** Storefront selections (label → value) from a cart line, minus the size row. */
-function selectionsOf(item: CartItem): Record<string, string> {
+function selectionsOf(item: CheckoutLine): Record<string, string> {
   const out: Record<string, string> = {};
   for (const o of item.options) {
     if (o.code === "Formaat") continue;
@@ -114,11 +114,11 @@ function selectionsOf(item: CartItem): Record<string, string> {
   return out;
 }
 
-function parseItems(raw: string): CartItem[] {
+function parseItems(raw: string): CheckoutLine[] {
   try {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed as CartItem[];
+    return parsed as CheckoutLine[];
   } catch {
     return [];
   }
