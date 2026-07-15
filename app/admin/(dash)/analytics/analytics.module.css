@@ -1,0 +1,556 @@
+/* ==========================================================================
+   Analytics — Search Console-inzichten in de back-office.
+   Zelfde ingetogen toon als de orders-pagina: rustige vlakken, geen
+   decoratieve motion, alles uit de V5.0-tokens. Grafieken zijn pure CSS;
+   er zit bewust geen chart-library in deze stack.
+   ========================================================================== */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  max-width: 1180px;
+}
+
+/* --- Kop + periodekiezer --- */
+
+.kop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.titel {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.periode {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-stone);
+  margin: 4px 0 0;
+}
+
+.ranges {
+  display: flex;
+  gap: 4px;
+  background: var(--color-white);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.rangeLink {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-stone);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.rangeLink:hover {
+  color: var(--color-forest);
+  background: var(--color-off-white);
+}
+
+.rangeActief {
+  background: var(--color-forest);
+  color: var(--color-off-white);
+}
+
+.rangeActief:hover {
+  background: var(--color-forest);
+  color: var(--color-off-white);
+}
+
+/* --- Kaart --- */
+
+.kaart {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.kaartKop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.kaartTitel {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin: 0 0 var(--space-xs);
+}
+
+.kaartKop .kaartTitel {
+  margin: 0;
+}
+
+/* Migratie-risico: aflopende tijd, dus warm en opvallend. */
+.kaartAlarm {
+  border-left: 3px solid var(--color-terracotta);
+}
+
+.kaartFout {
+  border-left: 3px solid var(--color-copper-rust);
+}
+
+.foutTekst {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-copper-rust);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.uitleg {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-stone);
+  line-height: 1.55;
+  margin: 0 0 var(--space-sm);
+  max-width: 76ch;
+}
+
+.uitleg code,
+.lijst code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  background: var(--color-off-white);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--color-charcoal);
+}
+
+.subTitel {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin: var(--space-md) 0 var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-forest);
+  background: rgba(44, 95, 79, 0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.badgeAlarm {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-terracotta);
+  background: rgba(198, 107, 78, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* --- Kansen-pills: kleur = soort kans --- */
+
+.pill {
+  font-family: var(--font-eyebrow);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.pillCtr {
+  color: var(--color-copper-rust);
+  background: rgba(164, 107, 74, 0.12);
+}
+
+.pillBijna {
+  color: var(--color-sage-blue);
+  background: rgba(92, 138, 157, 0.12);
+}
+
+.pillKanni {
+  color: var(--color-sage-purple);
+  background: rgba(139, 123, 168, 0.14);
+}
+
+.pillDup {
+  color: var(--color-terracotta);
+  background: rgba(198, 107, 78, 0.1);
+}
+
+/* --- KPI's --- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm);
+  background: var(--color-off-white);
+  border-radius: var(--radius-md);
+}
+
+.kpiLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+
+.kpiWaarde {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  line-height: 1.1;
+}
+
+.delta {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.deltaGoed {
+  color: var(--color-forest);
+}
+
+.deltaSlecht {
+  color: var(--color-terracotta);
+}
+
+.deltaVlak {
+  color: var(--color-stone);
+}
+
+/* --- Grafiek: staafjes per dag, klikken genest in vertoningen --- */
+
+.grafiek {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 132px;
+  padding: var(--space-xs) 0;
+}
+
+.staafKolom {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  min-width: 2px;
+}
+
+.staafImpressies {
+  width: 100%;
+  background: rgba(92, 138, 157, 0.3);
+  border-radius: 2px 2px 0 0;
+  display: flex;
+  align-items: flex-end;
+  min-height: 1px;
+}
+
+.staafClicks {
+  width: 100%;
+  background: var(--color-forest);
+  border-radius: 2px 2px 0 0;
+}
+
+.legenda {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-stone);
+  margin: 0;
+}
+
+.legImpressies,
+.legClicks {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.legImpressies {
+  background: rgba(92, 138, 157, 0.3);
+}
+
+.legClicks {
+  background: var(--color-forest);
+  margin-left: var(--space-sm);
+}
+
+/* --- Naar #1: de kansen-meter --- */
+
+.meter {
+  display: flex;
+  gap: 3px;
+  height: 40px;
+  margin: var(--space-sm) 0 var(--space-xs);
+}
+
+.meterDeel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  min-width: 28px;
+  transition: flex-grow var(--duration-base) var(--ease-out);
+}
+
+.meterCijfer {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+/* Groen = binnen, blauw = dichtbij, koper = ver, grijs = nog niets. */
+.meter_top3 {
+  background: var(--color-forest);
+}
+
+.meter_pagina1 {
+  background: var(--color-sage-blue);
+}
+
+.meter_zichtbaar {
+  background: var(--color-copper-rust);
+}
+
+.meter_onzichtbaar {
+  background: var(--color-stone);
+}
+
+.legDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-left: var(--space-sm);
+}
+
+.legenda .legDot:first-child {
+  margin-left: 0;
+}
+
+.standPill {
+  display: inline-block;
+  min-width: 38px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-white);
+  text-align: center;
+}
+
+/* "Nog niet in beeld" krijgt geen zware vulling — het is een lege plek, geen alarm. */
+.standPill.meter_onzichtbaar {
+  background: transparent;
+  color: var(--color-stone);
+  border: 1px dashed rgba(139, 141, 122, 0.5);
+}
+
+.groep {
+  display: block;
+  font-family: var(--font-eyebrow);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+  margin-top: 2px;
+}
+
+.mismatch {
+  display: block;
+  font-size: 11px;
+  color: var(--color-terracotta);
+  margin-top: 2px;
+}
+
+/* --- Tabel --- */
+
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.tabel th {
+  text-align: left;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-stone);
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(58, 58, 58, 0.1);
+  white-space: nowrap;
+}
+
+.tabel td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(58, 58, 58, 0.06);
+  color: var(--color-charcoal);
+  vertical-align: top;
+}
+
+.tabel tr:last-child td {
+  border-bottom: none;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pad {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--color-stone);
+  word-break: break-all;
+}
+
+.voorstel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--color-forest);
+  word-break: break-all;
+}
+
+.besluit {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-terracotta);
+  background: rgba(198, 107, 78, 0.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* --- Lijsten --- */
+
+.lijst {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-charcoal);
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.subLijst {
+  list-style: none;
+  margin: 2px 0 var(--space-xs);
+  padding-left: 0;
+}
+
+.miniLijst {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.miniLijst li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(58, 58, 58, 0.06);
+  color: var(--color-charcoal);
+}
+
+.miniLijst li:last-child {
+  border-bottom: none;
+}
+
+.miniNaam {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.zacht {
+  color: var(--color-stone);
+  font-size: 12px;
+}
+
+.leeg {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-stone);
+  font-style: italic;
+  margin: 0;
+  padding: var(--space-xs) 0;
+}
+
+/* --- Layout --- */
+
+.tweeKolom {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-sm);
+  }
+
+  .kop {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ranges {
+    width: 100%;
+    overflow-x: auto;
+  }
+}

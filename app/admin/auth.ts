@@ -12,6 +12,19 @@ import { serverEnv } from "@/lib/env";
  * token with Supabase rather than trusting a possibly-forged cookie.
  */
 
+/**
+ * Is er precies één beheerder? Dan hoeft het e-mailadres niet getypt te worden:
+ * de server leidt het af uit ADMIN_EMAILS en de login vraagt alleen een
+ * wachtwoord. Bij meerdere beheerders kan dat niet — dan moet het formulier wél
+ * vragen wie je bent, anders logt de tweede in als de eerste.
+ *
+ * Staat hier en niet in `actions.ts`: dat bestand is `"use server"`, waar elke
+ * export een async server-action moet zijn.
+ */
+export function enkeleAdmin(): boolean {
+  return serverEnv.adminEmails.length === 1;
+}
+
 /** Returns the signed-in admin user, or null when not authenticated/allowlisted. */
 export async function getAdminUser(): Promise<User | null> {
   const supabase = await createSupabaseServerClient();
