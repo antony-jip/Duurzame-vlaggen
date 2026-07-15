@@ -6,7 +6,11 @@ import styles from "./CartPaneel.module.css";
 import { Button, ArrowRight, Leaf, Price } from "@/components/ui";
 import { useCart } from "./CartProvider";
 import { WinkelmandRegel } from "./WinkelmandRegel";
-import { localShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/pricing/local-catalog";
+import {
+  localShipping,
+  ontwerpserviceVoorOrder,
+  FREE_SHIPPING_THRESHOLD,
+} from "@/lib/pricing/local-catalog";
 
 /**
  * Het winkelmand-paneel: schuift open zodra er iets in de mand gaat.
@@ -24,6 +28,14 @@ export function CartPaneel() {
   const sluitRef = useRef<HTMLButtonElement>(null);
 
   const verzending = localShipping(subtotal);
+  // Zelfde regel als de kassa, anders belooft dit paneel een ander bedrag.
+  const ontwerpservice = ontwerpserviceVoorOrder(
+    items.map((it) => ({
+      selections: Object.fromEntries(
+        it.options.map((o) => [o.code, String(o.value ?? "")]),
+      ),
+    })),
+  );
   const tekort = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const voortgang = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   const aantal = items.reduce((n, it) => n + it.amount, 0);
@@ -105,10 +117,18 @@ export function CartPaneel() {
               )}
             </span>
           </div>
+          {ontwerpservice > 0 && (
+            <div className={styles.rij}>
+              <span>Ontwerpservice</span>
+              <span>
+                <Price amount={ontwerpservice} />
+              </span>
+            </div>
+          )}
           <div className={styles.totaalRij}>
             <span>Totaal</span>
             <strong>
-              <Price amount={subtotal + verzending} />
+              <Price amount={subtotal + verzending + ontwerpservice} />
             </strong>
           </div>
 

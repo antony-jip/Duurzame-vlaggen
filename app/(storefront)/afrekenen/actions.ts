@@ -228,6 +228,10 @@ export async function checkoutAction(
       amount: it.amount,
       // Maatlabel meesturen zodat buildLocalQuote de juiste CatalogSize vindt.
       sizeLabel: it.sizeLabel,
+      // En de afmetingen, want een eigen maat ("Eigen: 245 × 130 cm") staat niet
+      // in de catalogus: zonder deze velden valt de prijs terug op priceFrom.
+      widthCm: size?.widthCm,
+      heightCm: size?.heightCm,
       options: mapped.options,
       selections,
       unmapped: mapped.unmapped,

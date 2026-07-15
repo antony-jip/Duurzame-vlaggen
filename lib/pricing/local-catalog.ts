@@ -19,6 +19,10 @@
  */
 
 import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
+// `supportsCustomSize` woont bij de mapping omdat dáár vastligt welke producten
+// een vrije maat aankunnen (custom-size vs preset-size). Geen cyclus: dat is een
+// plat data-module zonder imports.
+import { supportsCustomSize } from "@/lib/catalog/probo-mapping";
 import { SELLER_COUNTRY, VAT_RATES } from "@/lib/vat/rates";
 
 /** Rond af op 2 decimalen via hele centen (dodge floating-point drift). */
@@ -210,6 +214,30 @@ export function designServiceCost(enabled: boolean): number {
   return enabled ? DESIGN_SERVICE_PRICE : 0;
 }
 
+/**
+ * Koos de klant de ontwerpservice op deze regel?
+ *
+ * De configurator zet hem als optie met een menselijke waarde
+ * (`Ontwerpservice: "Ja (+€ 85,00)"`), want dat label reist mee naar de
+ * orderregel. Hij zit bewust NIET in `unitPriceEstimate`: het is een eenmalig
+ * bedrag per order, geen stukprijs. Daardoor verdween hij compleet — de
+ * configurator toonde €85, de winkelmand niet, en gefactureerd werd hij nooit.
+ */
+export function heeftOntwerpservice(selections?: Record<string, string>): boolean {
+  return /^ja\b/i.test(selections?.Ontwerpservice?.trim() ?? "");
+}
+
+/**
+ * Eenmalige ontwerpservice (ex btw) voor een hele bestelling: het vaste bedrag
+ * zodra één regel hem heeft. Eenmalig per order, niet per regel en niet per stuk
+ * — zo staat het ook in de configurator ("eenmalig per order").
+ */
+export function ontwerpserviceVoorOrder(
+  regels: Array<{ selections?: Record<string, string> }>,
+): number {
+  return regels.some((r) => heeftOntwerpservice(r.selections)) ? DESIGN_SERVICE_PRICE : 0;
+}
+
 /** Zoek een maat op zijn label binnen een product. */
 export function getSize(
   product: CatalogProduct,
@@ -332,18 +360,52 @@ export function localUnitPriceWithOptions(
 }
 
 /**
+ * Ex-btw stukprijs voor een regel, of de maat nu uit de catalogus komt of vrij
+ * is ingevuld.
+ *
+ * Dit sluit een lek. `getSize()` matcht op label, en een eigen maat heet
+ * "Eigen: 245 × 130 cm" — dat staat nooit in `product.sizes`. `size` bleef dus
+ * undefined en `localUnitPrice` viel door naar `priceFrom`: een mastvlag van
+ * 400 × 200 cm werd afgerekend voor €23 in plaats van €122,67. De configurator
+ * rekende het wél goed (via `localCustomSizePrice`), maar `buildLocalQuote`
+ * riep die functie nooit aan, dus verloor elke bestelling met een eigen maat
+ * geld — bij élke bestelling opnieuw.
+ *
+ * Vandaar de afmetingen als expliciete invoer: is er geen catalogusmaat maar
+ * wél breedte/hoogte, dan rekenen we per m², precies zoals de configurator.
+ */
+export function localUnitPriceForLine(input: {
+  product: CatalogProduct;
+  size?: CatalogSize;
+  widthCm?: number;
+  heightCm?: number;
+  selections?: Record<string, string>;
+}): number {
+  const { product, size, widthCm, heightCm, selections } = input;
+  const surcharge = localOptionsSurcharge(product, selections);
+
+  if (!size && widthCm && heightCm && supportsCustomSize(product.slug)) {
+    return round2(localCustomSizePrice(product, widthCm, heightCm) + surcharge);
+  }
+  return round2(localUnitPrice(product, size) + surcharge);
+}
+
+/**
  * Ex-btw regelprijs = (stukprijs + optie-toeslagen) × aantal × (1 − staffel).
  * De staffelkorting hoort bij het aantal en wordt hier verwerkt.
  */
 export function localLinePrice(input: {
   product: CatalogProduct;
   size?: CatalogSize;
+  /** Vrije maat in cm — nodig zodra `size` ontbreekt (eigen maat). */
+  widthCm?: number;
+  heightCm?: number;
   amount: number;
   selections?: Record<string, string>;
 }): number {
-  const { product, size, amount, selections } = input;
+  const { product, size, widthCm, heightCm, amount, selections } = input;
   const qty = Math.max(1, amount);
-  const unit = localUnitPriceWithOptions(product, size, selections);
+  const unit = localUnitPriceForLine({ product, size, widthCm, heightCm, selections });
   return round2(unit * qty * (1 - staffelDiscount(qty)));
 }
 

@@ -20,6 +20,7 @@ import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
 import { toCheckoutLines } from "@/components/cart/types";
 import {
   localShipping,
+  ontwerpserviceVoorOrder,
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/pricing/local-catalog";
 import { checkoutAction } from "./actions";
@@ -227,6 +228,18 @@ export default function AfrekenenPage() {
   const tekortVoorGratis = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const gratisVoortgang = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
+  // Eenmalige ontwerpservice, met dezelfde regel als buildLocalQuote. Móet hier
+  // staan: hij wordt nu wél gefactureerd, en een klant mag nooit €85 afrekenen
+  // die hij niet ziet.
+  const ontwerpservice = ontwerpserviceVoorOrder(
+    items.map((it) => ({
+      selections: Object.fromEntries(
+        it.options.map((o) => [o.code, String(o.value ?? "")]),
+      ),
+    })),
+  );
+  const teBetalen = subtotal + verzending + ontwerpservice;
+
   if (state.status === "quote") {
     return (
       <Container
@@ -413,10 +426,18 @@ export default function AfrekenenPage() {
               )}
             </span>
           </div>
+          {ontwerpservice > 0 && (
+            <div className={styles.summaryRow}>
+              <span>Ontwerpservice</span>
+              <span>
+                <Price amount={ontwerpservice} />
+              </span>
+            </div>
+          )}
           <div className={styles.totaalRij}>
             <span>Totaal</span>
             <strong>
-              <Price amount={subtotal + verzending} />
+              <Price amount={teBetalen} />
             </strong>
           </div>
           <p className={styles.summaryNote}>

@@ -9,7 +9,12 @@ import { createPayment, getPayment } from "@/lib/mollie/payments";
 import { computeVat } from "@/lib/vat";
 import { computeOrderTotals } from "@/lib/pricing";
 import { getProduct } from "@/lib/catalog/products";
-import { getSize, localLinePrice, localShipping } from "@/lib/pricing/local-catalog";
+import {
+  getSize,
+  localLinePrice,
+  localShipping,
+  ontwerpserviceVoorOrder,
+} from "@/lib/pricing/local-catalog";
 
 import {
   advanceOrderStatus,
@@ -60,6 +65,13 @@ export interface OrderItemDraft {
    */
   sizeLabel?: string;
   /**
+   * Afmetingen in cm. Nodig voor een EIGEN maat: die heet "Eigen: 245 × 130 cm"
+   * en staat dus niet in `product.sizes`, waardoor `getSize` niets vindt en de
+   * prijs zonder deze velden terugvalt op `priceFrom`.
+   */
+  widthCm?: number;
+  heightCm?: number;
+  /**
    * Human-readable storefront selections (Dutch labels → chosen value), stored
    * on the order line for the admin. NOT sent to Probo — `options` is.
    */
@@ -109,6 +121,8 @@ export interface QuoteLine {
 export interface Quote {
   currency: string;
   lines: QuoteLine[];
+  /** Eenmalige ontwerpservice (ex btw); 0 wanneer niet gekozen. */
+  designService: number;
   shippingPrice: number;
   packagingPrice: number;
   vat: Awaited<ReturnType<typeof computeVat>>;
@@ -138,10 +152,14 @@ export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
     }
     const size = draft.sizeLabel ? getSize(product, draft.sizeLabel) : undefined;
 
-    // localLinePrice vouwt het aantal al in de regelprijs (× amount).
+    // localLinePrice vouwt het aantal al in de regelprijs (× amount). De
+    // afmetingen gaan mee zodat een eigen maat per m² rekent i.p.v. terug te
+    // vallen op priceFrom.
     const linePrice = localLinePrice({
       product,
       size,
+      widthCm: draft.widthCm,
+      heightCm: draft.heightCm,
       amount: draft.amount,
       selections: draft.selections,
     });
@@ -169,9 +187,19 @@ export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
     shippingCountry: input.shippingAddress.country ?? null,
   });
 
+  // Eenmalig per order zodra één regel de ontwerpservice heeft. Werd de klant
+  // wél getoond in de configurator, maar zat niet in `unitPriceEstimate` en dus
+  // in geen enkel totaal: €85 die nooit gefactureerd werd.
+  const designService = ontwerpserviceVoorOrder(
+    lines.map((l) => ({ selections: l.draft.selections })),
+  );
+
   const totals = computeOrderTotals({
-    // linePrice is al de regeltotaal (aantal ingevouwen) → amount 1.
-    lines: lines.map((l) => ({ unitPrice: l.linePrice, amount: 1 })),
+    lines: [
+      // linePrice is al de regeltotaal (aantal ingevouwen) → amount 1.
+      ...lines.map((l) => ({ unitPrice: l.linePrice, amount: 1 })),
+      ...(designService > 0 ? [{ unitPrice: designService, amount: 1 }] : []),
+    ],
     shippingPrice,
     packagingPrice,
     vatRatePct: vat.rate,
@@ -180,6 +208,7 @@ export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
   return {
     currency: "EUR",
     lines,
+    designService,
     shippingPrice,
     packagingPrice,
     vat,
