@@ -189,6 +189,19 @@ export function staffelDiscount(qty: number): number {
   return discount;
 }
 
+/**
+ * De eerstvolgende staffel boven `qty`, of null wanneer de hoogste al gehaald is.
+ * Voor de winkelmand: die korting wordt al gerekend, maar zonder dit weet de
+ * klant niet dat er twee stuks tussen hem en een lagere stukprijs staan.
+ */
+export function volgendeStaffel(
+  qty: number,
+): { qty: number; discount: number; erbij: number } | null {
+  const huidig = staffelDiscount(qty);
+  const next = STAFFEL_TIERS.find((t) => t.qty > qty && t.discount > huidig);
+  return next ? { qty: next.qty, discount: next.discount, erbij: next.qty - qty } : null;
+}
+
 /** Vaste prijs (ex btw) van de optionele ontwerpservice. */
 export const DESIGN_SERVICE_PRICE = 85;
 

@@ -1,0 +1,203 @@
+/* ==========================================================================
+   WinkelmandRegel — één bewerkbare regel: het ontwerp op de vlag, de keuzes,
+   het aantal en de prijs. Overgenomen uit de oude /winkelwagen-pagina toen mand
+   en afrekenen tot één pagina werden samengevoegd.
+   ========================================================================== */
+
+.regel {
+  display: grid;
+  grid-template-columns: 132px 1fr auto;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  align-items: start;
+  padding-inline: 0;
+}
+/* Alleen een lijn tússen regels; geen doos om elke regel. */
+.regel + .regel {
+  border-top: 1px solid var(--forest-6);
+}
+.thumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.thumbPhoto {
+  object-fit: cover;
+}
+.thumbFallback {
+  position: absolute;
+  inset: 0;
+}
+.thumbFallback::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.08) 2px,
+    transparent 2px,
+    transparent 26px
+  );
+}
+.accentForest {
+  background: linear-gradient(135deg, #2c5f4f 0%, #3d7a64 100%);
+}
+.accentTerracotta {
+  background: linear-gradient(135deg, #c66b4e 0%, #a8543b 100%);
+}
+.accentSageBlue {
+  background: linear-gradient(135deg, #5c8a9d 0%, #497486 100%);
+}
+.accentSagePurple {
+  background: linear-gradient(135deg, #8b7ba8 0%, #6f6191 100%);
+}
+.accentCopperRust {
+  background: linear-gradient(135deg, #a46b4a 0%, #c66b4e 100%);
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.naam {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.meta {
+  font-size: 13px;
+  color: var(--color-stone);
+}
+.quoteTag {
+  margin-top: 4px;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+.prijs {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
+  white-space: nowrap;
+}
+.quantity {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1.5px solid var(--forest-15);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-white);
+}
+.qtyBtn {
+  width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-forest);
+  border: none;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.qtyValue {
+  min-width: 46px;
+  display: grid;
+  place-items: center;
+  border-inline: 1.5px solid var(--forest-15);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+}
+.remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-stone);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+.kortingBadge {
+  align-self: flex-end;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-forest);
+  white-space: nowrap;
+}
+/* Een aanbod, geen alarm: stille tekstlink in plaats van een gestreept kader. */
+.staffelNudge {
+  align-self: flex-end;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-stone);
+  font-family: var(--font-body);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--forest-6);
+  text-underline-offset: 3px;
+  transition: color var(--duration-base) var(--ease-out);
+}
+.staffelNudge:hover {
+  color: var(--color-forest);
+  text-decoration-color: currentColor;
+}
+.mockup {
+  --proof-h: 132px;
+  justify-self: center;
+}
+
+/* ── Compact: in het winkelmand-paneel ────────────────────────────────────
+   De drie kolommen (beeld / tekst / bedieningen) passen niet in ~440px: de
+   naam liep over de prijs en de maat brak per woord af. Hier staat het beeld
+   links en valt alles daaronder. */
+.compact {
+  grid-template-columns: 76px 1fr;
+  gap: var(--space-sm);
+  padding-block: var(--space-md);
+}
+.compact .mockup {
+  --proof-h: 76px;
+}
+.compact .thumb {
+  width: 76px;
+  height: 76px;
+}
+/* Bedieningen onder de tekst, over de volle breedte naast het beeld. */
+.compact .controls {
+  grid-column: 2;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+.compact .prijs {
+  order: -1;
+}
+.compact .kortingBadge,
+.compact .staffelNudge,
+.compact .remove {
+  align-self: center;
+}

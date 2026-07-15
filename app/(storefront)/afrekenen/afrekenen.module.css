@@ -26,12 +26,12 @@
   align-items: start;
 }
 
-/* Genummerde stappen via een counter op de form. */
+/* Genummerde stappen. De teller staat op de hele kolom, niet op de form: de
+   eerste stap ("Je bestelling") valt buiten het formulier. */
 .form {
-  counter-reset: step;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-md);
 }
 
 .fieldset {
@@ -39,8 +39,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  border: none;
-  padding: 0;
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-2xl);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
   margin: 0;
   min-inline-size: 0;
 }
@@ -278,4 +281,84 @@
   .rowThreeOne {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   Mand + afrekenen op één pagina: bestelling bovenaan (bewerkbaar), gegevens
+   eronder, geld rechts. De aparte /winkelwagen-stap is vervallen.
+   ========================================================================== */
+
+.hoofdkolom {
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.bestelling {
+  counter-increment: step;
+  padding: var(--space-lg);
+}
+
+.regels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* ── Totalen + gratis verzending ──────────────────────────────────────────── */
+
+.totaalRij {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--forest-6);
+}
+.totaalRij strong {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+
+.gratis {
+  color: var(--color-forest);
+  font-weight: 700;
+}
+
+.gratisNudge {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-stone);
+}
+
+.balk {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--forest-6);
+  overflow: hidden;
+}
+.balkVulling {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-forest);
+  transition: width var(--duration-slow, 400ms) var(--ease-out);
+}
+
+.gratisGehaald {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-forest);
+  font-size: 13px;
 }

@@ -16,8 +16,11 @@ import {
   Price,
 } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
-import { ArtworkProof } from "@/components/cart/ArtworkProof";
-import { localCartLineTotal } from "@/lib/pricing/local-catalog";
+import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
+import {
+  localShipping,
+  FREE_SHIPPING_THRESHOLD,
+} from "@/lib/pricing/local-catalog";
 import { checkoutAction } from "./actions";
 import { initialCheckoutState } from "./checkout-state";
 
@@ -27,37 +30,6 @@ const COUNTRIES = [
   { code: "DE", label: "Duitsland" },
   { code: "FR", label: "Frankrijk" },
 ];
-
-/**
- * Flag dimensions for the artwork preview — same fallback as the winkelmand:
- * prefer the fields on the line, else parse the human `sizeLabel` (carts
- * persisted before those fields existed). Returns empty when unknown.
- */
-function flagSize(item: {
-  widthCm?: number;
-  heightCm?: number;
-  sizeLabel: string;
-}): { widthCm?: number; heightCm?: number } {
-  if (item.widthCm && item.heightCm) {
-    return { widthCm: item.widthCm, heightCm: item.heightCm };
-  }
-  const m = /(\d+)\s*[×x]\s*(\d+)\s*cm/i.exec(item.sizeLabel);
-  if (m) return { widthCm: Number(m[1]), heightCm: Number(m[2]) };
-  return {};
-}
-
-/** Is the attached artwork a raster image (vs PDF)? Filename is leading; the
- *  url covers storage links and inline data-URLs (local preview fallback). */
-function isImageArtwork(
-  fileName?: string | null,
-  fileUrl?: string | null,
-): boolean {
-  return (
-    /\.(jpe?g|png)$/i.test(fileName ?? "") ||
-    /\.(jpe?g|png)$/i.test(fileUrl ?? "") ||
-    /^data:image\//i.test(fileUrl ?? "")
-  );
-}
 
 /** A reusable Probo-shape address block. */
 function AddressFields({
@@ -164,7 +136,7 @@ function AddressFields({
 }
 
 export default function AfrekenenPage() {
-  const { items, subtotal, hydrated, inclVat, clear, updateAmount } = useCart();
+  const { items, subtotal, hydrated, inclVat, clear } = useCart();
   const [state, formAction, isPending] = useActionState(
     checkoutAction,
     initialCheckoutState,
@@ -212,6 +184,12 @@ export default function AfrekenenPage() {
     );
   }
 
+  // Dezelfde verzendregel als buildLocalQuote, zodat de pagina niets anders
+  // belooft dan er wordt afgerekend. Alles ex btw; Price zet het om.
+  const verzending = localShipping(subtotal);
+  const tekortVoorGratis = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const gratisVoortgang = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+
   if (state.status === "quote") {
     return (
       <Container
@@ -249,6 +227,20 @@ export default function AfrekenenPage() {
       </div>
 
       <div className={styles.layout}>
+        <div className={styles.hoofdkolom}>
+          {/* Winkelmand en afrekenen zijn één pagina: de mand was een extra stap
+              die vrijwel hetzelfde toonde als deze samenvatting (dezelfde regels,
+              aantalkiezer, mockup en subtotaal). Hier bewerk je je bestelling én
+              reken je af, zonder tussenstop. */}
+          <Card className={styles.bestelling} elevation="raised">
+            <h2 className={styles.legend}>Je bestelling</h2>
+            <div className={styles.regels}>
+              {items.map((item) => (
+                <WinkelmandRegel key={item.id} item={item} />
+              ))}
+            </div>
+          </Card>
+
         <form
           id="checkout-form"
           action={formAction}
@@ -347,87 +339,64 @@ export default function AfrekenenPage() {
             )}
           </fieldset>
         </form>
+        </div>
 
-        {/* Order summary */}
+        {/* Overzicht: alleen geld en betalen. De regels staan hierboven,
+            bewerkbaar. */}
         <Card as="aside" className={styles.summary} elevation="raised">
-          <h2>Overzicht bestelling</h2>
-          {items.map((item) => {
-            const size = flagSize(item);
-            return (
-              <div key={item.id} className={styles.summaryLine}>
-                <div>
-                  {item.name}{" "}
-                  <span className={styles.qty}>({item.sizeLabel})</span>
-                  {/* Aantal per regel; het verborgen items-veld en het
-                      subtotaal rekenen automatisch mee (client component). */}
-                  <div
-                    className={styles.quantity}
-                    role="group"
-                    aria-label={`Aantal ${item.name}`}
-                  >
-                    <button
-                      type="button"
-                      className={styles.qtyBtn}
-                      onClick={() => updateAmount(item.id, item.amount - 1)}
-                      disabled={item.amount <= 1}
-                      aria-label="Aantal verlagen"
-                    >
-                      −
-                    </button>
-                    <span className={styles.qtyValue} aria-live="polite">
-                      {item.amount}
-                    </span>
-                    <button
-                      type="button"
-                      className={styles.qtyBtn}
-                      onClick={() => updateAmount(item.id, item.amount + 1)}
-                      aria-label="Aantal verhogen"
-                    >
-                      +
-                    </button>
-                  </div>
-                  {/* Mini-mockup van het aangeleverde ontwerp, op de échte
-                      verhouding van deze regel — zelfde render als de
-                      winkelmand. Puur weergave. */}
-                  {item.fileUrl && size.widthCm && size.heightCm && (
-                    <div style={{ marginTop: 4 }}>
-                      <ArtworkProof
-                        mode="mockup"
-                        small
-                        src={item.previewUrl ?? item.fileUrl}
-                        isImage={
-                          !!item.previewUrl ||
-                          isImageArtwork(item.fileName, item.fileUrl)
-                        }
-                        widthCm={size.widthCm}
-                        heightCm={size.heightCm}
-                        alt={`Je ontwerp op de ${item.name} van ${item.sizeLabel}`}
-                      />
-                    </div>
-                  )}
-                </div>
-                <span>
-                  <Price
-                    amount={localCartLineTotal(
-                      item.unitPriceEstimate,
-                      item.amount,
-                    )}
-                  />
-                </span>
-              </div>
-            );
-          })}
-          <hr className={styles.summaryDivider} />
-          <div className={`${styles.summaryRow} ${styles.total}`}>
+          <h2>Overzicht</h2>
+          <div className={styles.summaryRow}>
             <span>Subtotaal</span>
             <span>
               <Price amount={subtotal} />
             </span>
           </div>
+          <div className={styles.summaryRow}>
+            <span>Verzendkosten</span>
+            <span>
+              {verzending === 0 ? (
+                <span className={styles.gratis}>Gratis</span>
+              ) : (
+                <Price amount={verzending} />
+              )}
+            </span>
+          </div>
+          <div className={styles.totaalRij}>
+            <span>Totaal</span>
+            <strong>
+              <Price amount={subtotal + verzending} />
+            </strong>
+          </div>
           <p className={styles.summaryNote}>
-            Indicatief en {inclVat ? "inclusief" : "exclusief"} btw.
-            Verzendkosten en btw worden bij de definitieve bevestiging berekend.
+            Prijzen zijn {inclVat ? "inclusief" : "exclusief"} btw.
           </p>
+
+          {/* Gratis-verzending-drempel: zonder dit merkt de klant pas op de
+              laatste stap dat hij er net onder zit. */}
+          {verzending > 0 ? (
+            <div className={styles.gratisNudge}>
+              <span>
+                Nog <Price amount={tekortVoorGratis} /> en je verzending is gratis
+              </span>
+              <span
+                className={styles.balk}
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(gratisVoortgang)}
+                aria-label="Voortgang naar gratis verzending"
+              >
+                <span
+                  className={styles.balkVulling}
+                  style={{ width: `${gratisVoortgang}%` }}
+                />
+              </span>
+            </div>
+          ) : (
+            <p className={styles.gratisGehaald}>
+              <Leaf size={15} aria-hidden="true" /> Je verzending is gratis.
+            </p>
+          )}
 
           {hasQuoteOnly && (
             <p className={`${styles.banner} ${styles.bannerQuote}`}>
@@ -462,8 +431,8 @@ export default function AfrekenenPage() {
               <Truck size={16} aria-hidden="true" /> Binnen 5 werkdagen geleverd
             </li>
           </ul>
-          <Link href="/winkelwagen" className="text-sm">
-            Terug naar winkelmand
+          <Link href="/collectie" className="text-sm">
+            Verder winkelen
           </Link>
         </Card>
       </div>

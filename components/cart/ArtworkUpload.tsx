@@ -26,6 +26,7 @@ export function ArtworkUpload({
   previewUrl,
   widthCm,
   heightCm,
+  toonPreview = true,
 }: {
   itemId: string;
   fileUrl?: string | null;
@@ -36,6 +37,12 @@ export function ArtworkUpload({
   previewUrl?: string | null;
   widthCm?: number;
   heightCm?: number;
+  /**
+   * Eigen thumbnail tonen? Uit wanneer de aanroeper het ontwerp al groter laat
+   * zien (de winkelmand toont het op de vlag), anders staat hetzelfde beeld er
+   * twee keer.
+   */
+  toonPreview?: boolean;
 }) {
   const { setItemFile } = useCart();
   const [modalOpen, setModalOpen] = useState(false);
@@ -113,20 +120,22 @@ export function ArtworkUpload({
       {fileUrl ? (
         <div className={styles.done}>
           {/* Preview zodat de klant zijn ontwerp terugziet. */}
-          <a
-            href={fileUrl}
-            target="_blank"
-            rel="noreferrer"
-            className={styles.preview}
-            aria-label={`Ontwerp openen: ${fileName ?? "bestand"}`}
-          >
-            {thumbSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={thumbSrc} alt={`Voorbeeld van ${fileName ?? "je ontwerp"}`} />
-            ) : (
-              <span className={styles.pdfBadge}>PDF</span>
-            )}
-          </a>
+          {toonPreview && (
+            <a
+              href={fileUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.preview}
+              aria-label={`Ontwerp openen: ${fileName ?? "bestand"}`}
+            >
+              {thumbSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={thumbSrc} alt={`Voorbeeld van ${fileName ?? "je ontwerp"}`} />
+              ) : (
+                <span className={styles.pdfBadge}>PDF</span>
+              )}
+            </a>
+          )}
           <div className={styles.doneMeta}>
             <span className={styles.doneLabel}>
               {warnings.length > 0 ? (
