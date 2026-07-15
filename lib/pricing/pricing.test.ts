@@ -1,26 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { computeLinePrice, computeOrderTotals } from "@/lib/pricing";
-
-describe("computeLinePrice", () => {
-  it("applies a 50% markup to a round base price", () => {
-    expect(computeLinePrice(10, 50)).toBe(15);
-  });
-
-  it("rounds to 2 decimals (cents) — 3.33 + 50%", () => {
-    // 3.33 * 1.5 = 4.995 → 5.00 (rounds up at the half-cent).
-    expect(computeLinePrice(3.33, 50)).toBe(5);
-  });
-
-  it("handles a 0% markup as a pass-through", () => {
-    expect(computeLinePrice(12.34, 0)).toBe(12.34);
-  });
-
-  it("avoids floating-point drift", () => {
-    // 0.1 * 1.5 = 0.15 exactly after round2, not 0.150000000000000002.
-    expect(computeLinePrice(0.1, 50)).toBe(0.15);
-  });
-});
+import { computeOrderTotals } from "@/lib/pricing";
 
 describe("computeOrderTotals", () => {
   it("computes known totals with packaging folded into shipping and 21% VAT", () => {

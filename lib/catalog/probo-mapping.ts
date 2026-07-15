@@ -2,11 +2,15 @@
  * Storefront-choice → Probo options mapping for orderable products.
  *
  * The configurator and cart store a customer's choices as Dutch labels
- * (e.g. Afwerking = "Zoom met ringen"). Probo's configure/price/order API wants
- * option *codes* (e.g. `band-and-plastic-rings`). This module is the single
- * translation layer, used by the live-price server action and by checkout when
- * building the order — so a valid Probo options array is produced in exactly one
- * place.
+ * (e.g. Afwerking = "Zoom met ringen"). Probo wants option *codes* (e.g.
+ * `band-and-plastic-rings`). This module is the single translation layer, used
+ * door de checkout bij het opbouwen van de order.
+ *
+ * LET OP — dit is GEEN API-koppeling meer. De Probo-API-client is verwijderd
+ * (2026-07-15): we bestellen handmatig via het Probo-portaal. Deze mapping
+ * blijft bestaan omdat het resultaat op `order_items.configuration` wordt
+ * opgeslagen, en dát is hoe je in de admin en op de pakbon ziet wát je moet
+ * inkopen. De codes zijn dus documentatie voor een mens, geen payload meer.
  *
  * Two product shapes exist (both verified LIVE against the Probo TEST API,
  * 2026-07-13):
@@ -27,11 +31,34 @@
  * from server actions and — should it ever be needed — the client.
  */
 
-/** A Probo option selection (code + optional value). Mirrors `ProboOptionInput`. */
+/**
+ * Bezorgadres, in de vorm die het Probo-portaal aanhoudt. Woonde eerst in
+ * lib/probo/products.ts; die API-client is weg, maar deze vorm staat in
+ * `orders.billing_address`/`shipping_address` (JSONB) en wordt door de
+ * storefront, de admin en de pakbon gelezen. Verander de veldnamen dus niet
+ * zonder migratie.
+ */
+export interface ProboAddress {
+  company_name?: string;
+  first_name?: string;
+  last_name?: string;
+  street?: string;
+  house_number?: string;
+  addition?: string;
+  postal_code?: string;
+  city?: string;
+  country?: string;
+}
+
+/** Eén optiekeuze op een regel, als code + waarde. */
 export interface ProboOption {
   code: string;
+  /** Sommige opties zijn vlaggetjes en dragen geen waarde. */
   value?: string | number;
 }
+
+/** Oude naam uit lib/probo/products.ts, behouden voor de bestaande importeurs. */
+export type ProboOptionInput = ProboOption;
 
 export interface BuildProboOptionsInput {
   /** Flag width in cm → Probo `width` (custom-size) or preset lookup key. */

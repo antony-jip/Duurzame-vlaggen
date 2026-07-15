@@ -9,7 +9,7 @@ import { getOrderItems } from "@/lib/orders/repository";
 import { getProduct } from "@/lib/catalog/products";
 import { orderItemToCartLine, orderItemsToCartLines } from "@/lib/orders/reorder";
 import type { OrderItemRow } from "@/lib/db/types";
-import type { ProboAddress } from "@/lib/probo/products";
+import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 import { ReorderButton } from "../../ReorderButton";
 import {
   CUSTOMER_STATUS_LABELS,

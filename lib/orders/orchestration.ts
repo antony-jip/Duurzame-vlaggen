@@ -1,15 +1,13 @@
 import "server-only";
 
 import type { Market } from "@/config/domains";
-import { publicEnv, fulfilmentMode } from "@/lib/env";
+import { publicEnv } from "@/lib/env";
 import type { Json, OrderRow } from "@/lib/db/types";
 
-import { configureProduct, getPrice } from "@/lib/probo/products";
-import type { ProboAddress, ProboOptionInput } from "@/lib/probo/products";
-import { createProboOrder } from "@/lib/probo/orders";
+import type { ProboAddress, ProboOptionInput } from "@/lib/catalog/probo-mapping";
 import { createPayment, getPayment } from "@/lib/mollie/payments";
 import { computeVat } from "@/lib/vat";
-import { computeLinePrice, computeOrderTotals } from "@/lib/pricing";
+import { computeOrderTotals } from "@/lib/pricing";
 import { getProduct } from "@/lib/catalog/products";
 import { getSize, localLinePrice, localShipping } from "@/lib/pricing/local-catalog";
 
@@ -24,35 +22,28 @@ import {
 import { sendMateriaalpaspoortEmail } from "@/lib/email/send";
 
 /**
- * Order orchestration — the integration spine that ties Probo, Mollie, VAT and
- * pricing to the datamodel and the state machine (spec §6–§11).
+ * Order orchestration — de ruggengraat die Mollie, btw en prijzen aan het
+ * datamodel en de state-machine knoopt.
  *
  * Flow:
- *   buildQuote   configure + price each line, compute VAT + totals
- *   placeOrder   persist the order, create a Mollie payment → checkout URL
- *   handleMolliePayment   (webhook) paid → Probo test order; failed → mark failed
- *   handleProboStatus     (webhook) accept/production/shipped → advance status
+ *   buildLocalQuote      regelprijzen uit het lokale prijsmodel, btw + totalen
+ *   placeOrder           order wegschrijven, Mollie-payment → checkout-URL
+ *   handleMolliePayment  (webhook) betaald → order op `paid` voor handmatige
+ *                        afhandeling in de admin; mislukt → als failed markeren
  *
- * Money is ex-VAT `numeric(12,2)`. All external responses are validated in their
- * client modules; here we only orchestrate.
+ * Bestellen bij Probo gebeurt met de hand via hun portaal. De API-koppeling is
+ * verwijderd (2026-07-15); wat een bestelling nodig heeft staat op
+ * `order_items.configuration` (zie lib/catalog/probo-mapping).
+ *
+ * Bedragen zijn ex btw, `numeric(12,2)`.
  */
-
-/** Default resale markup on the Probo purchase price (spec §10). */
-export const DEFAULT_MARKUP_PCT = 50;
-
-/**
- * Probo order type. The whole current build targets a non-billable test order
- * (`order_type:"test"`). Override with PROBO_ORDER_TYPE=normal once live.
- */
-const PROBO_ORDER_TYPE: "test" | "normal" =
-  process.env.PROBO_ORDER_TYPE === "normal" ? "normal" : "test";
 
 // ---------------------------------------------------------------------------
 // Inputs
 // ---------------------------------------------------------------------------
 
 export interface OrderItemDraft {
-  /** Probo product `code` (e.g. "window-decal"). */
+  /** Probo-productcode (bijv. "flag-ciclo") — voor de inkoop met de hand. */
   proboProductCode: string;
   /** Our own product category label (e.g. "baniervlag"). */
   productType: string;
@@ -79,14 +70,12 @@ export interface OrderItemDraft {
    */
   unmapped?: Array<{ label: string; value: string }>;
   /**
-   * Public URL of the customer's uploaded artwork (order-artwork bucket).
-   * Passed to Probo as `files:[{uri}]`. Null/undefined for quote-only lines.
+   * Publieke URL van het aangeleverde ontwerp (order-artwork bucket).
+   * Null/undefined voor offerte-only regels.
    */
   fileUrl?: string | null;
-  /** Resale markup %; defaults to {@link DEFAULT_MARKUP_PCT}. */
+  /** Opslag %; in de handmatige flow altijd 0 (basePrice == linePrice). */
   markupPct?: number;
-  /** Uploader session refs for products that need customer artwork. */
-  uploaders?: Array<{ id: number; external_id: number }>;
 }
 
 export interface CheckoutInput {
@@ -127,87 +116,14 @@ export interface Quote {
 }
 
 /**
- * Configure + price every line, then compute VAT and order totals.
+ * Bouwt de quote voor een bestelling: regelprijzen, btw en totalen.
  *
- * - Each line is configured (validates it is orderable + yields a
- *   `calculation_id`) and priced individually for its `basePrice`.
- * - Order-level shipping/packaging come from a single combined price call for
- *   all lines to one delivery, so shipping is not counted per line.
- */
-export async function buildQuote(input: CheckoutInput): Promise<Quote> {
-  if (input.items.length === 0) {
-    throw new Error("buildQuote: no items");
-  }
-
-  const delivery = { address: input.shippingAddress };
-
-  const lines: QuoteLine[] = [];
-  for (const draft of input.items) {
-    const products = [{ code: draft.proboProductCode, options: draft.options }];
-
-    const configured = await configureProduct({ products });
-    if (!configured.calculationId) {
-      throw new Error(
-        `buildQuote: product ${draft.proboProductCode} is not fully configured (no calculation_id)`,
-      );
-    }
-
-    const price = await getPrice({ products, deliveries: [delivery] });
-    const markupPct = draft.markupPct ?? DEFAULT_MARKUP_PCT;
-    const linePrice = computeLinePrice(price.purchasePrice, markupPct);
-
-    lines.push({
-      draft,
-      calculationId: configured.calculationId,
-      basePrice: price.purchasePrice,
-      markupPct,
-      linePrice,
-    });
-  }
-
-  // Combined price call → order-level shipping + packaging (one delivery).
-  const combined = await getPrice({
-    products: input.items.map((it) => ({ code: it.proboProductCode, options: it.options })),
-    deliveries: [delivery],
-  });
-
-  const vat = await computeVat({
-    isBusiness: Boolean(input.isBusiness),
-    vatNumber: input.vatNumber ?? null,
-    market: input.market,
-    shippingCountry: input.shippingAddress.country ?? null,
-  });
-
-  const totals = computeOrderTotals({
-    // Probo prices each line for its full quantity → treat linePrice as the
-    // line total (amount already folded into the Probo `amount` option).
-    lines: lines.map((l) => ({ unitPrice: l.linePrice, amount: 1 })),
-    shippingPrice: combined.shippingPrice,
-    packagingPrice: combined.packagingPrice,
-    vatRatePct: vat.rate,
-  });
-
-  return {
-    currency: combined.currency,
-    lines,
-    shippingPrice: combined.shippingPrice,
-    packagingPrice: combined.packagingPrice,
-    vat,
-    totals,
-  };
-}
-
-/**
- * Lokale variant van {@link buildQuote} voor de "manual" fulfilment-modus.
- *
- * Spiegelt buildQuote — zelfde {@link Quote}-vorm, dezelfde `computeVat` en
- * `computeOrderTotals` — maar rekent de regelprijzen met het lokale prijsmodel
- * (`@/lib/pricing/local-catalog`) in plaats van live Probo-calls:
+ * Rekent volledig met het lokale prijsmodel (`@/lib/pricing/local-catalog`):
  *
  *  - regelprijs via `localLinePrice` (product uit `getProduct`, maat uit `getSize`),
  *  - verzendkosten via `localShipping(subtotaal)`, packaging altijd 0,
- *  - GEEN `configureProduct`/`getPrice` — er is dus geen Probo `calculation_id`
- *    (leeg) en geen aparte inkoopprijs/markup (basePrice == linePrice, markup 0).
+ *  - geen inkoopprijs en geen markup (basePrice == linePrice, markupPct 0),
+ *    want er is geen live inkoopcalculatie: `calculationId` blijft leeg.
  */
 export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
   if (input.items.length === 0) {
@@ -287,9 +203,7 @@ export interface PlaceOrderResult {
  * the order to `awaiting_payment`. Returns the checkout URL for redirect.
  */
 export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult> {
-  // Manual-modus (default): lokale prijs, geen Probo. Probo-modus: live quote.
-  const quote =
-    fulfilmentMode() === "manual" ? await buildLocalQuote(input) : await buildQuote(input);
+  const quote = await buildLocalQuote(input);
   const appUrl = publicEnv.appUrl;
 
   const order = await insertOrderWithItems(
@@ -399,14 +313,10 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     }
     // Kernbelofte: elke betaalde bestelling krijgt een materiaalpaspoort per
     // aparte e-mail. Best-effort en idempotent — faalt stil met log, en mag de
-    // betaal-/Probo-flow nooit blokkeren.
+    // betaalflow nooit blokkeren.
     await sendMateriaalpaspoortOnce(order.id);
-    // Manual-modus (default): de order blijft op `paid` staan voor handmatige
-    // afhandeling in de admin. Alleen in probo-modus sturen we hem automatisch
-    // door naar Probo.
-    if (fulfilmentMode() === "probo") {
-      await sendOrderToProbo(order.id);
-    }
+    // De order blijft op `paid` staan: inkoop en verzending gaan met de hand,
+    // vanuit de admin.
     return;
   }
 
@@ -452,127 +362,3 @@ export async function sendMateriaalpaspoortOnce(orderId: string): Promise<void> 
 // ---------------------------------------------------------------------------
 // Submit to Probo
 // ---------------------------------------------------------------------------
-
-/**
- * Submit a paid order to Probo (`order_type:"test"` for now). Advances the order
- * to `sent_to_probo` and stores the returned Probo order id. Idempotent: skips
- * if the order already left `paid`.
- */
-export async function sendOrderToProbo(orderId: string): Promise<void> {
-  const order = await getOrderById(orderId);
-  if (!order) throw new Error(`sendOrderToProbo: order ${orderId} not found`);
-  if (order.status !== "paid") return; // already sent or not payable
-
-  const items = await getOrderItems(orderId);
-  const appUrl = publicEnv.appUrl;
-
-  const result = await createProboOrder({
-    orderType: PROBO_ORDER_TYPE,
-    // Our order id is echoed back by Probo to correlate async callbacks.
-    id: order.id,
-    reference: order.order_number,
-    contact_email: order.email,
-    callback_url: [`${appUrl}/api/webhooks/probo`],
-    // Probo's POST /order requires the delivery to specify HOW/WHEN it ships;
-    // an address-only delivery is rejected (HTTP 400 "required key
-    // [shipping_method_preset] / [delivery_date_preset] not found"). We default
-    // to the cheapest method and the first possible date, which matches the
-    // delivery buildQuote priced against (Probo returns options cheapest-first).
-    deliveries: [
-      {
-        address: (order.shipping_address ?? {}) as ProboAddress,
-        shipping_method_preset: "cheapest",
-        delivery_date_preset: "first_possible",
-      },
-    ],
-    products: items.map((it) => {
-      const config = (it.configuration ?? {}) as { code?: string; options?: ProboOptionInput[] };
-      return {
-        code: it.probo_product_code,
-        options: config.options ?? [],
-        // Customer artwork is supplied to Probo by public URL (order-artwork
-        // bucket). See ProboFileInput / lib/probo/orders.ts.
-        files: it.file_url ? [{ uri: it.file_url }] : undefined,
-        uploaders:
-          it.uploader_id !== null && it.uploader_external_id !== null
-            ? [{ id: it.uploader_id, external_id: it.uploader_external_id }]
-            : undefined,
-      };
-    }),
-  });
-
-  await advanceOrderStatus(order.id, "sent_to_probo", {
-    probo_order_id: result.proboOrderId,
-    probo_status: result.status,
-  });
-
-  await recordEventOnce({
-    orderId: order.id,
-    source: "probo",
-    eventType: "order.submitted",
-    externalId: result.proboOrderId,
-    data: { status: result.status },
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Probo status webhook
-// ---------------------------------------------------------------------------
-
-export interface ProboStatusUpdate {
-  /** Our order id (echoed by Probo) — the primary correlation key. */
-  ourOrderId?: string | null;
-  /** Probo's supplier_order_number, if provided. */
-  supplierOrderNumber?: string | null;
-  /** Raw Probo status string. */
-  status: string;
-  carrier?: string | null;
-  trackingUrl?: string | null;
-}
-
-/** Map a raw Probo status onto our order status (forward-only). */
-function mapProboStatus(raw: string): OrderRow["status"] | null {
-  const s = raw.toLowerCase();
-  if (s.includes("reject") || s.includes("declin") || s.includes("cancel")) return "probo_rejected";
-  if (s.includes("accept")) return "probo_accepted";
-  if (s.includes("production") || s.includes("printing")) return "in_production";
-  if (s.includes("ship") || s.includes("deliver") || s.includes("sent")) return "shipped";
-  return null;
-}
-
-/**
- * Handle an inbound Probo status callback. Correlates by our order id (preferred)
- * or the stored Probo order id, records the event idempotently, and advances the
- * order status when the mapped target is a legal forward transition.
- */
-export async function handleProboStatus(update: ProboStatusUpdate): Promise<void> {
-  const order = update.ourOrderId ? await getOrderById(update.ourOrderId) : null;
-  if (!order) return;
-
-  const target = mapProboStatus(update.status);
-
-  const event = await recordEventOnce({
-    orderId: order.id,
-    source: "probo",
-    eventType: `status.${update.status.toLowerCase()}`,
-    externalId: update.supplierOrderNumber ?? update.ourOrderId ?? null,
-    data: { status: update.status, carrier: update.carrier, trackingUrl: update.trackingUrl },
-  });
-  if (!event.inserted) return;
-
-  const extra: Record<string, unknown> = {
-    probo_status: update.status,
-  };
-  if (update.supplierOrderNumber) extra.probo_order_id = update.supplierOrderNumber;
-  if (update.carrier) extra.carrier = update.carrier;
-  if (update.trackingUrl) extra.tracking_url = update.trackingUrl;
-
-  if (target && order.status !== target) {
-    try {
-      await advanceOrderStatus(order.id, target, extra);
-    } catch {
-      // Illegal/duplicate transition (e.g. out-of-order callback) — record only.
-      await advanceOrderStatus(order.id, order.status, extra).catch(() => {});
-    }
-  }
-}

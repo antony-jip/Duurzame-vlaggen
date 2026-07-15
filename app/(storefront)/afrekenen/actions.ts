@@ -16,13 +16,14 @@
  */
 
 import { redirect } from "next/navigation";
+import type { CheckoutState } from "./checkout-state";
 import { getMessages } from "@/lib/i18n";
 import {
   placeOrder,
   type CheckoutInput,
   type OrderItemDraft,
 } from "@/lib/orders/orchestration";
-import type { ProboAddress } from "@/lib/probo/products";
+import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 import type { CartItem } from "@/components/cart/types";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
@@ -39,16 +40,6 @@ const ARTWORK_PREFIX = `${publicEnv.supabaseUrl}/storage/v1/object/public/order-
 function safeFileUrl(url: string | null | undefined): string | null {
   return typeof url === "string" && url.startsWith(ARTWORK_PREFIX) ? url : null;
 }
-
-export interface CheckoutState {
-  status: "idle" | "error" | "quote";
-  /** General banner message. */
-  message?: string;
-  /** Per-field validation errors, keyed by form field name. */
-  fieldErrors?: Record<string, string>;
-}
-
-export const initialCheckoutState: CheckoutState = { status: "idle" };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

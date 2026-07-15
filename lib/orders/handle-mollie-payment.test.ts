@@ -2,25 +2,24 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { randomUUID } from "node:crypto";
 
 /**
- * Integration test for the paid → Probo branch of the Mollie webhook logic
- * ({@link handleMolliePayment}), with the EXTERNAL edges mocked and the REAL
- * repository running against the test DB:
+ * Integratietest voor de betaald-tak van de Mollie-webhook
+ * ({@link handleMolliePayment}), met de EXTERNE rand gemockt en de ECHTE
+ * repository tegen de test-DB:
  *
- *   - `@/lib/mollie/payments`.getPayment → returns `status: "paid"`
- *     (Mollie test payments can't be forced to `paid` via the API, so we mock
- *     the authoritative re-fetch the webhook performs).
- *   - `@/lib/probo/orders`.createProboOrder → returns a fake Probo order id
- *     (so the assertion doesn't depend on a live Probo submission).
+ *   - `@/lib/mollie/payments`.getPayment → geeft `status: "paid"` terug.
+ *     Mollie-testbetalingen zijn via de API niet op `paid` te forceren, dus we
+ *     mocken de gezaghebbende her-ophaal die de webhook doet.
  *   - repository (`insertOrderWithItems`, `getOrderById`, `advanceOrderStatus`,
- *     `recordEventOnce`) is the real thing, hitting the Supabase test DB.
+ *     `recordEventOnce`) is echt en praat met de Supabase-test-DB.
  *
- * Proves: a `paid` webhook moves an `awaiting_payment` order to `sent_to_probo`
- * and stamps the Probo order id. Gated on the service-role key (skips in a
- * hermetic CI with no DB).
+ * Bewijst: een `paid`-webhook zet een `awaiting_payment`-order op `paid`,
+ * stempelt `paid_at` en legt het event vast (idempotentie-grootboek). Daar stopt
+ * het — inkoop bij Probo gaat met de hand vanuit de admin, dus de order blijft
+ * bewust op `paid` staan tot iemand hem daar oppakt. Deze test bewees hiervoor
+ * de automatische doorzet naar Probo; die API-koppeling is weg (2026-07-15).
+ *
+ * Gate op de service-role-key: slaat over in een hermetische CI zonder DB.
  */
-
-// Hoisted so the vi.mock factory below can safely reference it.
-const { FAKE_PROBO_ID } = vi.hoisted(() => ({ FAKE_PROBO_ID: "probo-test-fake-0001" }));
 
 vi.mock("@/lib/mollie/payments", () => ({
   getPayment: vi.fn(async (id: string) => ({
@@ -34,11 +33,6 @@ vi.mock("@/lib/mollie/payments", () => ({
   createPayment: vi.fn(),
 }));
 
-vi.mock("@/lib/probo/orders", () => ({
-  createProboOrder: vi.fn(async () => ({ proboOrderId: FAKE_PROBO_ID, status: "queued", raw: {} })),
-  getProboOrderStatus: vi.fn(),
-}));
-
 import { handleMolliePayment } from "@/lib/orders/orchestration";
 import { insertOrderWithItems } from "@/lib/orders/repository";
 import { getOrderById } from "@/lib/orders/repository";
@@ -47,17 +41,12 @@ import type { Json, OrderRow } from "@/lib/db/types";
 
 const hasDb = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL);
 
-describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → sent_to_probo", () => {
+describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → paid", () => {
   let order: OrderRow;
   const paymentId = `tr_test_${randomUUID().replace(/-/g, "").slice(0, 20)}`;
-  const prevFulfilmentMode = process.env.FULFILMENT_MODE;
 
   beforeAll(async () => {
-    // Deze test bewijst de Probo-tak van de webhook; forceer daarom probo-modus
-    // (de default is inmiddels "manual", waarin er níét naar Probo wordt gestuurd).
-    process.env.FULFILMENT_MODE = "probo";
-    // Seed an order that is already awaiting payment, as it would be right after
-    // placeOrder created the Mollie payment.
+    // Seed een order die al op betaling wacht, zoals vlak na placeOrder.
     order = await insertOrderWithItems(
       {
         market: "nl-NL",
@@ -71,12 +60,12 @@ describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → sent_to_probo", (
       },
       [
         {
-          probo_product_code: "window-decal",
-          product_type: "raamsticker",
-          configuration: { code: "window-decal", options: [] } as unknown as Json,
+          probo_product_code: "flag-ciclo",
+          product_type: "baniervlag",
+          configuration: { code: "flag-ciclo", options: [] } as unknown as Json,
           amount: 1,
-          markup_pct: 50,
-          base_price: 6.67,
+          markup_pct: 0,
+          base_price: 10,
           line_price: 10,
         },
       ],
@@ -84,28 +73,24 @@ describe.skipIf(!hasDb)("handleMolliePayment: paid webhook → sent_to_probo", (
   });
 
   afterAll(async () => {
-    if (prevFulfilmentMode === undefined) {
-      delete process.env.FULFILMENT_MODE;
-    } else {
-      process.env.FULFILMENT_MODE = prevFulfilmentMode;
-    }
     if (order?.id) {
       const supabase = createSupabaseAdminClient();
       await supabase.from("orders").delete().eq("id", order.id);
     }
   });
 
-  it("moves the order to sent_to_probo and stores the Probo order id", async () => {
+  it("zet de order op paid en stempelt paid_at", async () => {
     await handleMolliePayment(paymentId);
 
     const reloaded = await getOrderById(order.id);
     expect(reloaded).not.toBeNull();
-    expect(reloaded!.status).toBe("sent_to_probo");
-    expect(reloaded!.probo_order_id).toBe(FAKE_PROBO_ID);
+    expect(reloaded!.status).toBe("paid");
     expect(reloaded!.paid_at).toBeTruthy();
-    expect(reloaded!.ordered_at).toBeTruthy();
 
-    // The paid payment event should be recorded (idempotency ledger).
+    // Blijft bewust staan: er is geen automatische doorzet naar Probo meer.
+    expect(reloaded!.probo_order_id).toBeNull();
+
+    // Het paid-event hoort vastgelegd te zijn (idempotentie-grootboek).
     const supabase = createSupabaseAdminClient();
     const { data: events } = await supabase
       .from("order_events")

@@ -18,7 +18,8 @@ import {
 import { useCart } from "@/components/cart/CartProvider";
 import { ArtworkProof } from "@/components/cart/ArtworkProof";
 import { localCartLineTotal } from "@/lib/pricing/local-catalog";
-import { checkoutAction, initialCheckoutState } from "./actions";
+import { checkoutAction } from "./actions";
+import { initialCheckoutState } from "./checkout-state";
 
 const COUNTRIES = [
   { code: "NL", label: "Nederland" },

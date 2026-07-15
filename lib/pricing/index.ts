@@ -11,18 +11,6 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-/**
- * Sell price for a line from the Probo purchase price and a markup percentage.
- *
- * @param basePrice  Probo `purchase_price` (ex-VAT).
- * @param markupPct  Markup in percent (caller supplies it; default 50 lives at
- *                   the call site, not here).
- * @returns basePrice increased by `markupPct`, rounded to 2 decimals.
- */
-export function computeLinePrice(basePrice: number, markupPct: number): number {
-  return round2(basePrice * (1 + markupPct / 100));
-}
-
 export interface OrderLine {
   /** Ex-VAT price per unit. */
   unitPrice: number;

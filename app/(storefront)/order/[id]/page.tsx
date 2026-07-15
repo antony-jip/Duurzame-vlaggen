@@ -7,7 +7,7 @@ import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
 import { getOrderById } from "@/lib/orders/repository";
 import type { OrderStatus } from "@/lib/db/types";
 import type { Dictionary } from "@/lib/i18n/types";
-import type { ProboAddress } from "@/lib/probo/products";
+import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 
 export const metadata: Metadata = {
   title: "Bestelbevestiging",
