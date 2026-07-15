@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./afrekenen.module.css";
 import {
@@ -24,6 +24,7 @@ import {
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/pricing/local-catalog";
 import { checkoutAction } from "./actions";
+import { useAdresZoeker, useAdresZoekerBijTypen } from "./useAdresZoeker";
 import { initialCheckoutState } from "./checkout-state";
 
 const COUNTRIES = [
@@ -105,6 +106,64 @@ function AddressFields({
 }) {
   const err = (name: string) => errors?.[`${prefix}${name}`];
   const val = (name: string) => values?.[`${prefix}${name}`];
+
+  const postcodeRef = useRef<HTMLInputElement>(null);
+  const huisnummerRef = useRef<HTMLInputElement>(null);
+  const straatRef = useRef<HTMLInputElement>(null);
+  const plaatsRef = useRef<HTMLInputElement>(null);
+  const [land, setLand] = useState(val("country") ?? "NL");
+
+  // Wat wij zelf hebben ingevuld. Nodig om twee dingen tegelijk waar te maken:
+  // je mag altijd handmatig typen (dan blijven jouw woorden staan), én een
+  // correctie van de postcode moet de straat wél bijwerken. Zonder dit bleef na
+  // "1601MT 115" → De Drie Kronen bij een nieuwe postcode de óude straat staan:
+  // het veld was immers niet meer leeg. Een fout bezorgadres, stilletjes.
+  const ingevuldRef = useRef<{ straat?: string; plaats?: string }>({});
+
+  const { status, zoek } = useAdresZoeker(({ straat, plaats }) => {
+    const magOverschrijven = (
+      el: HTMLInputElement | null,
+      eerder: string | undefined,
+    ) => el && (!el.value || el.value === eerder);
+
+    if (magOverschrijven(straatRef.current, ingevuldRef.current.straat)) {
+      straatRef.current!.value = straat;
+      ingevuldRef.current.straat = straat;
+    }
+    if (magOverschrijven(plaatsRef.current, ingevuldRef.current.plaats)) {
+      plaatsRef.current!.value = plaats;
+      ingevuldRef.current.plaats = plaats;
+    }
+  });
+
+  function probeerZoeken() {
+    void zoek(
+      postcodeRef.current?.value ?? "",
+      huisnummerRef.current?.value ?? "",
+      land,
+    );
+  }
+
+  // Zodra postcode én huisnummer compleet zijn vult het zichzelf; blur blijft
+  // als vangnet voor plakken en autofill.
+  const zoekBijTypen = useAdresZoekerBijTypen(zoek);
+  function opTypen() {
+    zoekBijTypen(
+      postcodeRef.current?.value ?? "",
+      huisnummerRef.current?.value ?? "",
+      land,
+    );
+  }
+
+  const hulp =
+    status === "bezig"
+      ? "Adres opzoeken…"
+      : status === "gevonden"
+        ? "Straat en plaats ingevuld."
+        : status === "niet-gevonden"
+          ? "Niet gevonden — vul straat en plaats zelf in."
+          : undefined;
+
   return (
     <>
       {!zonderNaam && (
@@ -115,45 +174,10 @@ function AddressFields({
           values={values}
         />
       )}
-      <div className={styles.rowThreeOne}>
-        <Field
-          id={`${prefix}street`}
-          name={`${prefix}street`}
-          defaultValue={val("street")}
-          label="Straat"
-          autoComplete="address-line1"
-          required
-          errorText={err("street")}
-        />
-        <Field
-          id={`${prefix}house_number`}
-          name={`${prefix}house_number`}
-          defaultValue={val("house_number")}
-          label="Huisnr."
-          required
-          errorText={err("house_number")}
-        />
-      </div>
-      <div className={styles.row}>
-        <Field
-          id={`${prefix}postal_code`}
-          name={`${prefix}postal_code`}
-          defaultValue={val("postal_code")}
-          label="Postcode"
-          autoComplete="postal-code"
-          required
-          errorText={err("postal_code")}
-        />
-        <Field
-          id={`${prefix}city`}
-          name={`${prefix}city`}
-          defaultValue={val("city")}
-          label="Plaats"
-          autoComplete="address-level2"
-          required
-          errorText={err("city")}
-        />
-      </div>
+      {/* Land eerst: dat bepaalt of we het adres kunnen opzoeken. Daarna
+          postcode + huisnummer, want dáármee vullen straat en plaats zichzelf.
+          De oude volgorde begon met straat — dan zit de klant te typen wat hij
+          twee velden later cadeau krijgt. */}
       <Field
         as="select"
         id={`${prefix}country`}
@@ -162,6 +186,7 @@ function AddressFields({
         defaultValue={val("country") ?? "NL"}
         required
         errorText={err("country")}
+        onChange={(e) => setLand(e.currentTarget.value)}
       >
         {COUNTRIES.map((c) => (
           <option key={c.code} value={c.code}>
@@ -169,6 +194,62 @@ function AddressFields({
           </option>
         ))}
       </Field>
+      <div className={styles.rowAdres}>
+        <Field
+          ref={postcodeRef}
+          id={`${prefix}postal_code`}
+          name={`${prefix}postal_code`}
+          defaultValue={val("postal_code")}
+          label="Postcode"
+          placeholder="1011 AB"
+          autoComplete="postal-code"
+          required
+          errorText={err("postal_code")}
+          onChange={opTypen}
+          onBlur={probeerZoeken}
+        />
+        <Field
+          ref={huisnummerRef}
+          id={`${prefix}house_number`}
+          name={`${prefix}house_number`}
+          defaultValue={val("house_number")}
+          label="Huisnr."
+          required
+          errorText={err("house_number")}
+          onChange={opTypen}
+          onBlur={probeerZoeken}
+        />
+        {/* Toevoeging hoort bij het huisnummer ("115-A"), niet bij de straat. */}
+        <Field
+          id={`${prefix}addition`}
+          name={`${prefix}addition`}
+          defaultValue={val("addition")}
+          label="Toev."
+          placeholder="A"
+          errorText={err("addition")}
+        />
+      </div>
+      {hulp && <p className={styles.adresHulp}>{hulp}</p>}
+      <Field
+        ref={straatRef}
+        id={`${prefix}street`}
+        name={`${prefix}street`}
+        defaultValue={val("street")}
+        label="Straat"
+        autoComplete="address-line1"
+        required
+        errorText={err("street")}
+      />
+      <Field
+        ref={plaatsRef}
+        id={`${prefix}city`}
+        name={`${prefix}city`}
+        defaultValue={val("city")}
+        label="Plaats"
+        autoComplete="address-level2"
+        required
+        errorText={err("city")}
+      />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import type {
   InputHTMLAttributes,
   ReactNode,
+  RefAttributes,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
@@ -18,16 +19,19 @@ type ControlBase = {
 
 type InputField = ControlBase & {
   as?: "input";
-} & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "required">;
+} & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "required"> &
+  RefAttributes<HTMLInputElement>;
 
 type TextareaField = ControlBase & {
   as: "textarea";
-} & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "id" | "required">;
+} & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "id" | "required"> &
+  RefAttributes<HTMLTextAreaElement>;
 
 type SelectField = ControlBase & {
   as: "select";
   children: ReactNode;
-} & Omit<SelectHTMLAttributes<HTMLSelectElement>, "id" | "required">;
+} & Omit<SelectHTMLAttributes<HTMLSelectElement>, "id" | "required"> &
+  RefAttributes<HTMLSelectElement>;
 
 export type FieldProps = InputField | TextareaField | SelectField;
 

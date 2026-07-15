@@ -96,6 +96,28 @@
   gap: var(--space-md);
 }
 
+/* Postcode, huisnummer en toevoeging horen bij elkaar: dit is de rij waarmee
+   het adres zichzelf invult. Toevoeging smal, want het is meestal één teken. */
+.rowAdres {
+  display: grid;
+  grid-template-columns: 2fr 1fr 0.7fr;
+  gap: var(--space-sm);
+}
+
+/* Status van het opzoeken onder de hele rij, niet onder één veld: het geldt
+   voor postcode én huisnummer samen. */
+.adresHulp {
+  margin-top: calc(-1 * var(--space-xs));
+  font-size: 13px;
+  color: var(--color-stone);
+}
+
+@media (max-width: 520px) {
+  .rowAdres {
+    grid-template-columns: 1.6fr 1fr 0.8fr;
+  }
+}
+
 /* Toggle */
 .toggle {
   display: flex;
