@@ -18,7 +18,8 @@ import {
   type CatalogProduct,
 } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
-import { SITE_URL, SITE_NAME, COMPANY_NAME, jsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, jsonLd } from "@/lib/seo";
+import { BEDRIJF } from "@/lib/bedrijf";
 import { ProcesStappen } from "@/components/ui";
 import { ProductConfigurator } from "./ProductConfigurator";
 import { ProductGallery } from "./ProductGallery";
@@ -97,7 +98,7 @@ export default async function ProductPage({
     image: [product.heroImage.src, ...product.gallery.map((g) => g.src)],
     category: product.category === "hardware" ? "Vlaggenmast" : "Vlag",
     brand: { "@type": "Brand", name: SITE_NAME },
-    manufacturer: { "@type": "Organization", name: COMPANY_NAME },
+    manufacturer: { "@type": "Organization", name: BEDRIJF.handelsnaam },
     url: `${SITE_URL}/collectie/${product.slug}`,
     offers: {
       "@type": "AggregateOffer",
@@ -107,7 +108,7 @@ export default async function ProductPage({
       availability: orderable
         ? "https://schema.org/InStock"
         : "https://schema.org/PreOrder",
-      seller: { "@type": "Organization", name: COMPANY_NAME },
+      seller: { "@type": "Organization", name: BEDRIJF.handelsnaam },
     },
   });
 
@@ -145,7 +146,7 @@ export default async function ProductPage({
           <ul className={styles.trustRow}>
             <li>
               <Leaf size={16} aria-hidden="true" />
-              Composteert volledig
+              Breekt volledig af
             </li>
             <li>
               <Recycle size={16} aria-hidden="true" />

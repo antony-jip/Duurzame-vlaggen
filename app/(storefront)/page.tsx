@@ -11,6 +11,10 @@ import {
   Recycle,
   ShieldCheck,
   Truck,
+  Droplet,
+  NoEntry,
+  Check,
+  Close,
   FlagBanier,
   FlagMast,
   FlagBeach,
@@ -34,27 +38,18 @@ export const metadata: Metadata = {
     "Elke gewone vlag wappert uiteen tot microplastic. De onze niet. Biologisch afbreekbare baniervlaggen, mastvlaggen, gevelvlaggen en beachflags. Onderbouwd voor je duurzaamheidsverslag, binnen 5 werkdagen geleverd.",
 };
 
+/* De vier geruststellingen, als strip onder de vlaggen in plaats van als eigen
+   sectie. Ze hadden een eigen kop ("Zichtbaar duurzaam") met een regel die
+   hetzelfde zei als het verhaalblok erboven, en vier alinea's die niemand las.
+   Wat overblijft is waar het om gaat: vier kernwoorden op de plek waar je een
+   vlag kiest. De uitleg staat op /duurzaamheid. */
 const USPS = [
-  {
-    icon: <Leaf size={26} />,
-    title: "100% biologisch afbreekbaar",
-    body: "Geweven van plantaardige, composteerbare vezels. Na gebruik terug de kringloop in. Geen microplastics. Geen restafval.",
-  },
-  {
-    icon: <Recycle size={26} />,
-    title: "Circulair geproduceerd",
-    body: "Waterloos bedrukt met pigmenten op biobasis. Geproduceerd op groene stroom, in ons eigen atelier in Nederland.",
-  },
-  {
-    icon: <ShieldCheck size={26} />,
-    title: "Klaar voor je CSRD-verslag",
-    body: "Bij elke bestelling een CO₂-paspoort en materiaalpaspoort dat naadloos aansluit op je duurzaamheidsverslag.",
-  },
-  {
-    icon: <Truck size={26} />,
-    title: "Binnen 5 werkdagen geleverd",
-    body: "Van ontwerp tot deurmat in 5 werkdagen (buitenland: 1,5 week), inclusief kosteloze digitale drukproef en montageadvies.",
-  },
+  { icon: <Leaf size={20} />, title: "100% biologisch afbreekbaar" },
+  { icon: <Droplet size={20} />, title: "Inkt op waterbasis" },
+  { icon: <NoEntry size={20} />, title: "PVC-vrij" },
+  { icon: <Recycle size={20} />, title: "Recyclebaar" },
+  { icon: <ShieldCheck size={20} />, title: "Klaar voor je CSRD-verslag" },
+  { icon: <Truck size={20} />, title: "Binnen 5 werkdagen geleverd" },
 ];
 
 /* Vlagtype-pictogrammen voor de collectie-tegels — merkeigen, rustiger dan
@@ -67,6 +62,37 @@ const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
   vlaggenmast: FlagPole,
 };
 
+/* De levenscyclus, als beeld in plaats van als uitleg: dezelfde vlag, vier keer.
+   Strak en nieuw, dan rafelig, dan een snipper in het gras, en dan alleen nog
+   gras. Die laatste foto is letterlijk niets — dat ís "0% afval".
+   Ze zweven mee naast het verhaal, in volgorde van verval. */
+const LEVENSCYCLUS = [
+  {
+    src: "/levenscyclus/in-gebruik.webp",
+    alt: "Nieuwe groene vlag met logo, wapperend tegen een blauwe lucht",
+    fase: "In gebruik",
+    tijd: "3-4 maanden",
+  },
+  {
+    src: "/levenscyclus/start-afbraak.webp",
+    alt: "Dezelfde vlag, nu verbleekt en met rafelende randen",
+    fase: "Start afbraak",
+    tijd: "Na afdanking",
+  },
+  {
+    src: "/levenscyclus/afbraak.webp",
+    alt: "Een restje vlagdoek in het gras, het logo nog half leesbaar",
+    fase: "Afbraak",
+    tijd: "1-2 jaar",
+  },
+  {
+    src: "/levenscyclus/verdwenen.webp",
+    alt: "Alleen nog gras en klaver: van de vlag is niets meer terug te vinden",
+    fase: "Verdwenen",
+    tijd: "2-3 jaar",
+  },
+];
+
 const STEPS = [
   {
     title: "Kies je vlag",
@@ -78,7 +104,7 @@ const STEPS = [
   },
   {
     title: "Wij produceren circulair",
-    body: "Wij weven en bedrukken je vlag waterloos op groene stroom in ons Nederlandse atelier.",
+    body: "Wij weven je vlag en bedrukken hem met inkt op waterbasis, op groene stroom, in ons Nederlandse atelier.",
   },
   {
     title: "Ontvang & rapporteer",
@@ -111,7 +137,7 @@ export default async function Home() {
             </h1>
             <p className={styles.heroSub}>
               Elke gewone vlag wappert zichzelf kapot tot duizenden stukjes
-              microplastic. De onze composteert volledig. Gedrukt in Nederland.
+              microplastic. De onze breekt volledig af. Gedrukt in Nederland.
               Binnen 5 werkdagen op je mast.
             </p>
             <div className={styles.heroActions}>
@@ -156,95 +182,12 @@ export default async function Home() {
         </svg>
       </section>
 
-      {/* HET VERHAAL — donker, filmisch blok dat je de pagina in zuigt:
-          de ongemakkelijke waarheid over de vlag die er nu hangt. */}
-      <section className={styles.story} aria-labelledby="story-title">
-        <WindSpecks
-          className={styles.storyParticles}
-          speckClassName={styles.speck}
-        />
-        <Container className={styles.storyInner}>
-          <p className={styles.storyKicker} id="story-title">
-            De vlag die er nu hangt
-          </p>
-          <p className={styles.storyLine}>
-            verliest elke dag microplastics.
-          </p>
-          <p className={styles.storyLine}>
-            Bij wind. Bij regen. Op jouw terrein.
-          </p>
-          <p className={styles.storyLine}>
-            En in je duurzaamheidsverslag? Daar staat er niets over.
-          </p>
-          <p className={`${styles.storyLine} ${styles.storyTurn}`}>
-            Tijd voor een vlag die wél klopt met je verhaal.
-          </p>
-          <p className={styles.storyCounter}>
-            Sinds je deze pagina opende:{" "}
-            <DecayCounter className={styles.storyCounterNum} /> microplastic de
-            natuur in.<span className={styles.storyFootnote}>*</span>
-          </p>
-          <p className={styles.storyFootnoteText}>
-            * Illustratieve schatting voor polyester bedrijfsvlaggen in
-            Nederland samen.
-          </p>
-        </Container>
-        {/* Wapper-golf naar het lichte blok eronder — zachte overgang van de
-            donkere waarheid naar de oplossing, i.p.v. een harde snijlijn. */}
-        <svg
-          className={styles.storyWave}
-          viewBox="0 0 1440 72"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
-            fill="currentColor"
-          />
-        </svg>
-      </section>
-
-      {/* DE NO-BRAINER — gewone vlag vs onze vlag, in de woorden van de klant */}
-      <section className={styles.brainer} aria-labelledby="brainer-title">
-        <Container>
-          <div className={styles.sectionHead}>
-            <Badge variant="primary">De vergelijking</Badge>
-            <h2 id="brainer-title">Waarom heb je deze nog niet?</h2>
-          </div>
-          <div className={styles.brainerGrid}>
-            <div className={`${styles.brainerCard} ${styles.brainerOld}`}>
-              <h3>De gewone vlag</h3>
-              <ul>
-                <li data-mark="✗">Polyester, slijt tot microplastics</li>
-                <li data-mark="✗">Eindigt op de afvalberg</li>
-                <li data-mark="✗">Niets te melden in je CSRD-verslag</li>
-                <li data-mark="—">Scherpe print, weerbestendig</li>
-              </ul>
-            </div>
-            <div className={`${styles.brainerCard} ${styles.brainerNew}`}>
-              <h3>De duurzame vlag</h3>
-              <ul>
-                <li data-mark="✓">Composteert volledig, nul restafval</li>
-                <li data-mark="✓">CO₂-paspoort en materiaalpaspoort bij elke order</li>
-                <li data-mark="✓">Direct een regel vóór je duurzaamheidsverslag</li>
-                <li data-mark="✓">Even scherpe print, even weerbestendig</li>
-              </ul>
-            </div>
-          </div>
-          <div className={styles.brainerPunch}>
-            <p className={styles.brainerPunchline}>
-              Bijna dezelfde prijs. <span>Totaal ander verhaal.</span>
-            </p>
-            <Button as="a" href="/collectie" size="lg" icon={<ArrowRight />}>
-              Bestel de betere vlag
-            </Button>
-          </div>
-        </Container>
-      </section>
-
       {/* Product showcase — meteen de winkel in: fotografie, prijzen, bestellen */}
-      <section className={styles.section} aria-labelledby="types-title">
-        <Container>
+      <section
+        className={`${styles.section} ${styles.shop}`}
+        aria-labelledby="types-title"
+      >
+        <Container className={styles.shopInner}>
           <div className={styles.sectionHead}>
             <Badge variant="success">Bestel direct online</Badge>
             <h2 id="types-title">Kies je vlag.</h2>
@@ -288,39 +231,31 @@ export default async function Home() {
               })}
             </div>
           </div>
-        </Container>
-      </section>
 
-      {/* USPs */}
-      <section className={styles.section} aria-labelledby="usp-title">
-        <Container>
-          <div className={styles.sectionHead}>
-            <Badge variant="primary">Waarom duurzame vlaggen</Badge>
-            <h2 id="usp-title">Zichtbaar duurzaam.</h2>
-            <p className="lead">
-              Polyester vlaggen eindigen op de afvalberg. De onze niet. En dat
-              bewijs je zwart op wit.
-            </p>
-          </div>
-          <div className={styles.uspGrid}>
+          {/* Direct onder de vlaggen: waarom je hier koopt, op het moment dat
+              je kiest. Als eigen sectie stond dit een scroll verderop, los van
+              de beslissing waar het over gaat. */}
+          <ul className={styles.uspStrip}>
             {USPS.map((usp) => (
-              <div key={usp.title} className={styles.usp}>
-                <span className={styles.uspIcon} aria-hidden="true">
+              <li key={usp.title}>
+                <span className={styles.uspStripIcon} aria-hidden="true">
                   {usp.icon}
                 </span>
-                <h3>{usp.title}</h3>
-                <p>{usp.body}</p>
-              </div>
+                {usp.title}
+              </li>
             ))}
-          </div>
+          </ul>
         </Container>
       </section>
 
-      {/* Missie — Dopper-achtig kleurblok: de merkbelofte kolossaal in forest,
-          begrensd door wapper-golven (een vlag ís een golf). */}
-      <section className={styles.mission} aria-labelledby="mission-title">
+      {/* HET VERHAAL — donker, filmisch blok dat je de pagina in zuigt:
+          de ongemakkelijke waarheid over de vlag die er nu hangt. */}
+      <section className={styles.story} aria-labelledby="story-title">
+        {/* Het lichte vlak van de vlaggen erboven golft dit donkere blok in.
+            Nodig sinds de winkel naar voren is gehaald: daarvoor kwam dit blok
+            direct achter de hero en deed de hero-golf dit werk. */}
         <svg
-          className={styles.wave}
+          className={styles.storyWaveTop}
           viewBox="0 0 1440 72"
           preserveAspectRatio="none"
           aria-hidden="true"
@@ -330,106 +265,225 @@ export default async function Home() {
             fill="currentColor"
           />
         </svg>
-        <div className={styles.missionBlock}>
-          <Container className={styles.missionInner}>
-            <span className={styles.missionEyebrow}>Onze missie</span>
-            <h2 id="mission-title" className={styles.missionTitle}>
-              Geen microplastics.
-              <br />
-              Wél <span className={styles.missionAccent}>vlagvertoon</span>.
-            </h2>
-            <p className={styles.missionBody}>
-              Elke polyester vlag eindigt als plastic afval. De onze niet. Het
-              doek composteert na gebruik volledig, en dat bewijzen we bij elke
-              bestelling zwart op wit.
-            </p>
-            <div className={styles.missionStats} aria-label="Kerncijfers">
-              <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>100%</span>
-                <span className={styles.missionStatLabel}>
-                  Composteerbaar doek
-                </span>
-              </div>
-              <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>0</span>
-                <span className={styles.missionStatLabel}>Microplastics</span>
-              </div>
-              <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>5</span>
-                <span className={styles.missionStatLabel}>
-                  Werkdagen levertijd
-                </span>
-              </div>
-            </div>
-          </Container>
-        </div>
-        <svg
-          className={`${styles.wave} ${styles.waveBottom}`}
-          viewBox="0 0 1440 72"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
-            fill="currentColor"
-          />
-        </svg>
+        <WindSpecks
+          className={styles.storyParticles}
+          speckClassName={styles.speck}
+        />
+        <Container className={styles.storyInner}>
+          <p className={styles.storyKicker} id="story-title">
+            De vlag die er nu hangt
+          </p>
+          <p className={styles.storyLine}>
+            verliest elke dag microplastics.
+          </p>
+          {/* Probleem in vier woorden, antwoord in vier woorden, bewijs in vier
+              foto's. Hier stonden nog drie grote regels; die las niemand, en ze
+              duwden de foto's uit beeld. Het beeld overtuigt hier sneller dan
+              de tekst, dus wint het beeld.
+
+              Tussen deze twee koppen staat niets meer: elke regel ertussen
+              breekt de dreun van probleem → antwoord. */}
+          {/* "Verdwijnt" is te vaag: dan weet je nog niet wáár hij blijft.
+              Er moet gewoon staan wat er gebeurt, want het woord "afbreken"
+              stond alleen nog in bijschriften van 11px. */}
+          <p className={`${styles.storyLine} ${styles.storyTurn}`}>
+            De onze breekt gewoon af.
+          </p>
+
+          {/* Het antwoord op de omslagregel, in beeld in plaats van in tekst:
+              dezelfde vlag, vier keer, van nieuw tot niets. Alle vier tegelijk
+              in beeld en op één rij, want de clou is de vólgorde en die moet je
+              in één blik kunnen lezen. Verspreid over de sectie werkt het niet.
+
+              Ze staan bewust ná de omslag: hiervoor gaat het over de vlag die
+              er nu hangt, en dat is deze niet.
+
+              Zonder introregel: de foto's zeggen zelf al dat het dezelfde vlag
+              is, en een bijschrift dat het beeld navertelt is precies de tekst
+              die niemand leest. */}
+          <ol className={styles.cyclus}>
+            {LEVENSCYCLUS.map((fase, i) => (
+              <li key={fase.src} className={styles.cyclusFoto} data-fase={i + 1}>
+                <figure>
+                  {/* De wikkel draagt het verbindingslijntje naar de volgende
+                      foto: zonder die lijn zijn het vier losse plaatjes, met
+                      die lijn is het één proces dat verstrijkt. */}
+                  <span className={styles.cyclusBeeld}>
+                    <Image
+                      src={fase.src}
+                      alt={fase.alt}
+                      width={500}
+                      height={500}
+                      sizes="(max-width: 767px) 40vw, 220px"
+                      /* Niet lazy: deze rij staat direct onder de hero en is
+                         het hele argument van de sectie. Lazy laden betekent
+                         dat een snelle scroller op lege cirkels landt, en dan
+                         mist hij precies de clou. Samen ~143KB. */
+                      loading="eager"
+                    />
+                  </span>
+                  <figcaption>
+                    <span className={styles.cyclusFase}>{fase.fase}</span>
+                    <span className={styles.cyclusTijd}>{fase.tijd}</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ol>
+
+          {/* Onderaan, als onderbouwing bij het beeld. De teller staat bewust
+              níét tussen de twee koppen: daar brak hij de dreun. Hier staat hij
+              naast zijn eigen voetnoot, waar de asterisk ook thuishoort. */}
+          <p className={styles.storyCounter}>
+            Sinds je deze pagina opende:{" "}
+            <DecayCounter className={styles.storyCounterNum} /> microplastic de
+            natuur in.<span className={styles.storyFootnote}>*</span>
+          </p>
+          <p className={styles.storyFootnoteText}>
+            * Illustratieve schatting voor polyester bedrijfsvlaggen in
+            Nederland samen.
+          </p>
+        </Container>
+        {/* Geen golf meer onderaan: hieronder komt geen licht blok maar direct
+            de plaat. De golf die dit blok de plaat in laat lopen zit in de
+            figuur zelf (`doekGolfBoven`), want daar kan hij ÓVER het beeld
+            vallen in plaats van op de pagina-achtergrond. */}
       </section>
 
-      {/* Craft / material story — atmospheric weaving shot */}
-      <section className={styles.craft} aria-labelledby="craft-title">
-        <Container className={styles.craftInner}>
-          <div className={styles.craftMedia}>
-            {/* Scherpe afwerkingsfoto — ambacht in beeld; de wazige
-                weefsel-shot is bewust vervangen. */}
-            <Image
-              src={BRAND_IMAGES.finishing.src}
-              alt={BRAND_IMAGES.finishing.alt}
-              fill
-              sizes="(max-width: 900px) 100vw, 46vw"
-              className={styles.craftPhoto}
+      {/* HET DOEK — het beeld doet het verhaal: links de polyester vlag die
+          uiteenvalt, rechts de onze die de kringloop in gaat.
+
+          Hier stond een foto met een alinea en drie bullets. Twee van die drie
+          bullets waren onwaar ("Composteerbare vezels" en "Waterloos bedrukt"),
+          en de rest vertelde in woorden wat deze plaat in één blik laat zien. */}
+      <section className={styles.doek} aria-labelledby="craft-title">
+        {/* Eerst de klap, dan pas het woord. De plaat loopt van rand tot rand,
+            direct onder het missieblok: geen kop, geen marge, geen kaartje.
+            Daarna landt "Een petfles aan je mast" als onderschrift. */}
+        <figure className={styles.doekBeeld}>
+          <Image
+            src="/vergelijking/polyester-vs-duurzaam.webp"
+            alt="Links een vlag van gerecycled plastic die uiteenvalt in microplastics, die neerslaan in de bodem en het water. Rechts een Duurzame Vlaggen-vlag die overgaat in bladeren en terugkeert in de kringloop."
+            width={2534}
+            height={1075}
+            sizes="100vw"
+            priority
+          />
+
+          {/* Het donkere verhaalblok golft hier de scène in. Deze golf ligt óver
+              het beeld, dus zijn doorzichtige helft toont de foto in plaats van
+              de pagina-achtergrond: geen witte strook. Nam de taak over van de
+              missie-golf toen die sectie eruit ging. */}
+          <svg
+            className={styles.doekGolfBoven}
+            viewBox="0 0 1440 72"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
+              fill="currentColor"
             />
-          </div>
-          <div className={styles.craftBody}>
-            <Badge variant="detail">Het doek</Badge>
-            <h2 id="craft-title">Geweven om te wapperen. Niet om te blijven.</h2>
-            <p>
-              Ons Flag-CiCLO®-doek voelt en print als premium polyester, maar is
-              opgebouwd uit vezels die na hun leven volledig in de natuur
-              afbreken. In jaren, niet in eeuwen. Geen microplastics. Geen
-              afvalberg.
-            </p>
-            <ul className={styles.craftList}>
-              <li>
-                <Leaf size={18} aria-hidden="true" /> Composteerbare vezels,
-                onderbouwd voor je duurzaamheidsverslag
-              </li>
-              <li>
-                <Recycle size={18} aria-hidden="true" /> Waterloos bedrukt op
-                groene stroom
-              </li>
-              <li>
-                <ShieldCheck size={18} aria-hidden="true" /> Kleurvast en
-                weerbestendig in gebruik
-              </li>
-            </ul>
-            <Button
-              as="a"
-              href="/duurzaamheid"
-              variant="secondary"
-              icon={<ArrowRight />}
-            >
-              Zo werkt het
-            </Button>
+          </svg>
+
+          {/* Kruis op de petflesvlag, vink op de onze, midden op de plaat zelf.
+              "Links" en "Rechts" waren woorden, en woorden worden niet gelezen:
+              zo hoef je alleen te kíjken. Dezelfde twee tekens staan hieronder
+              bij de tekst, dus de koppeling is visueel in plaats van talig.
+              Percentages, want de plaat schaalt mee. */}
+          <span className={styles.doekMerk} data-kant="slecht" aria-hidden="true">
+            <Close size={26} />
+          </span>
+          <span className={styles.doekMerk} data-kant="goed" aria-hidden="true">
+            <Check size={26} />
+          </span>
+
+          {/* Dezelfde golf als tussen de andere secties. Bovenaan loopt het
+              missieblok in een golf de scène in; zonder deze golf eindigde de
+              plaat onderaan met een kaarsrechte snijlijn. */}
+          <svg
+            className={styles.doekGolf}
+            viewBox="0 0 1440 72"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </figure>
+
+        <Container>
+          {/* Eén raster van twee kolommen, twee rijen. Links de klap, rechts de
+              weerlegging; daaronder de twee helften van de plaat, elk in de
+              kolom van zijn eigen kant. Als losse rijen bleef de knop alleen
+              linksonder hangen met een leeg vlak ernaast. */}
+          <div className={styles.doekRaster}>
+            <div className={styles.doekKop}>
+              <Badge variant="detail">Het doek</Badge>
+              {/* Benoemt wat je links op de plaat zag. Geen merknaam: het gaat
+                  om het materiaal, niet om één concurrent. */}
+              <h2 id="craft-title">Een petfles aan je mast.</h2>
+            </div>
+            {/* Hier stond nog een inleiding. Die vertelde precies wat het label
+                linksonder ook al zegt, dus hij is weg: de plaat en twee regels
+                doen het werk. */}
+            <div className={styles.doekUitleg}>
+              <Button
+                as="a"
+                href="/duurzaamheid"
+                variant="secondary"
+                icon={<ArrowRight />}
+              >
+                Zo werkt het
+              </Button>
+            </div>
+
+            {/* Hetzelfde kruis en dezelfde vink als op de plaat: dát is de
+                koppeling. "Links"/"Rechts" stond er eerst, maar dat moet je
+                lezen, en dan werkt het dus niet. */}
+            <div className={styles.doekHelft} data-kant="slecht">
+              <span className={styles.doekHelftKop}>
+                <span className={styles.doekTeken} aria-hidden="true">
+                  <Close size={14} />
+                </span>
+                Gerecycled PET
+              </span>
+              <p>Brokkelt af tot microplastic.</p>
+            </div>
+            <div className={styles.doekHelft} data-kant="goed">
+              <span className={styles.doekHelftKop}>
+                <span className={styles.doekTeken} aria-hidden="true">
+                  <Check size={14} />
+                </span>
+                Ons doek
+              </span>
+              <p>Breekt af tot niets.</p>
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* How it works */}
+      {/* HOE WERKT HET — loopt over uit "Het doek": daar zie je waaróm, hier
+          hoe je het koopt. Dit is het slot van de pagina, dus geen harde
+          scheidslijn meer tussen het argument en de handeling. */}
       <section
         className={`${styles.section} ${styles.stepsBand}`}
         aria-labelledby="how-title"
       >
+        {/* Het lichte vlak van "Het doek" golft de stappenband in. */}
+        <svg
+          className={styles.stepsGolf}
+          viewBox="0 0 1440 72"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,0 L0,0 Z"
+            fill="currentColor"
+          />
+        </svg>
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="personal">Hoe werkt het</Badge>
@@ -464,35 +518,10 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* CTA band */}
-      <section className={styles.sectionTight} aria-labelledby="cta-title">
-        <Container>
-          <div className={styles.ctaBand}>
-            <div className={styles.ctaInner}>
-              <h2 id="cta-title" className={styles.ctaTitle}>
-                Klaar om te wapperen?
-              </h2>
-              <p className={styles.ctaSub}>
-                Bestel direct, of vraag eerst een gratis staal van het doek aan.
-              </p>
-              <div className={styles.ctaActions}>
-                <Button
-                  as="a"
-                  href="/collectie"
-                  variant="secondary"
-                  size="lg"
-                  icon={<ArrowRight />}
-                >
-                  Bestel direct
-                </Button>
-                <a href="/contact" className={styles.ctaLink}>
-                  Vraag een gratis staal aan
-                </a>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* Hier stond een CTA-band ("Haal die petfles van je mast" + Stel je vlag
+          samen). Die is eruit: de footer eronder sluit de pagina al af met
+          dezelfde belofte en dezelfde actie, dus stonden er twee afsluiters op
+          elkaar. */}
     </>
   );
 }

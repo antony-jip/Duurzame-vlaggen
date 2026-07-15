@@ -25,12 +25,12 @@ const TRUST = [
   {
     icon: <Leaf size={24} />,
     title: "100% biologisch afbreekbaar",
-    body: "Geweven van composteerbare vezels. Geen microplastics. Geen restafval.",
+    body: "Geweven van biologisch afbreekbare vezels. Geen microplastics. Geen restafval.",
   },
   {
     icon: <Recycle size={24} />,
     title: "Circulair geproduceerd in NL",
-    body: "Waterloos bedrukt op groene stroom in ons eigen atelier.",
+    body: "Bedrukt met inkt op waterbasis, op groene stroom in ons eigen atelier.",
   },
   {
     icon: <Truck size={24} />,

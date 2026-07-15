@@ -1,14 +1,16 @@
 /* ==========================================================================
-   Over ons — Sign Company B.V., ambacht & missie.
-   Doorgetrokken merkstijl van de homepage: forest full-bleed hero, donker
-   filmisch probleem-blok, forest missie-kleurblok tussen wapper-golven,
+   Ons verhaal — verteld vanuit de klant, niet vanuit het bedrijf.
+
+   Arc: waar de branche staat (hero) → de race naar de bodem (donker) → het
+   doek (het hart) → wat jij eraan hebt → bewijs (forest band) → kies je vlag.
+   De pagina eindigt in een keuze, niet in een praatje: de vijf vlagtegels zijn
+   dezelfde als op de homepage.
+
+   Doorgetrokken merkstijl: forest hero, kleurblok tussen wapper-golven,
    gekantelde kleurchips. Styleguide V5.0 "Sora", bold-disruptor.
    ========================================================================== */
 
 /* ---- Section rhythm ---- */
-.section {
-  padding-block: clamp(72px, 8vw, 128px);
-}
 .sectionTight {
   padding-block: clamp(48px, 5vw, 96px);
 }
@@ -106,14 +108,6 @@
     animation: none;
   }
 }
-.heroWave {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: clamp(28px, 4.5vw, 64px);
-  color: var(--color-off-white);
-  margin-top: auto;
-}
 @media (max-width: 900px) {
   .heroInner {
     grid-template-columns: 1fr;
@@ -127,22 +121,52 @@
 }
 
 /* ==========================================================================
-   HET PROBLEEM — donker filmisch blok, confronterend. Regel onthult op scroll.
+   DE RACE NAAR DE BODEM — donker blok, de aanklacht tegen de eigen branche.
+
+   Allebei de golven horen bij DIT blok en steken erbuiten: ze tekenen de
+   donkere kleur, en hun doorzichtige helft laat zien wat erachter ligt (boven
+   de forest-hero, onder de off-white pagina). Zo golft de hero er rechtstreeks
+   in en blijft er nergens een lichte strook staan. Teken je de golven in de
+   achtergrondkleur van de buurman, dan krijg je die strook wél terug.
    ========================================================================== */
-.problem {
+.race {
   position: relative;
-  overflow: hidden;
+  /* Boven de hero, zodat de bovenste golf eroverheen valt. */
+  z-index: 1;
   background: color-mix(in srgb, var(--color-forest) 72%, #0d1f18);
-  padding-block: clamp(80px, 11vw, 168px);
+  padding-block: clamp(72px, 9vw, 132px);
 }
-.problemInner {
+.raceGolfBoven,
+.raceGolfOnder {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: color-mix(in srgb, var(--color-forest) 72%, #0d1f18);
+  pointer-events: none;
+}
+/* Direct bóven het blok: de gevulde onderhelft sluit aan op de sectie, de
+   doorzichtige bovenhelft toont de forest-hero. */
+.raceGolfBoven {
+  bottom: 100%;
+  /* 1px overlap — anders zie je op sommige zooms een haarlijn. */
+  margin-bottom: -1px;
+}
+/* Direct eronder, gespiegeld: gevuld tegen de sectie aan, doorzichtig naar de
+   off-white pagina toe. */
+.raceGolfOnder {
+  top: 100%;
+  margin-top: -1px;
+  transform: scaleY(-1);
+}
+.raceInner {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(20px, 3vw, 40px);
+  gap: clamp(18px, 2.4vw, 32px);
   max-width: 1100px;
 }
-.problemKicker {
+.raceKicker {
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 700;
@@ -150,39 +174,150 @@
   letter-spacing: 0.1em;
   color: rgba(255, 255, 255, 0.55);
 }
-.problemLine {
+.raceLine {
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: clamp(30px, 4.4vw, 62px);
   line-height: 1.06;
   letter-spacing: -0.03em;
   color: rgba(255, 255, 255, 0.92);
-  max-width: 22ch;
+  max-width: 20ch;
   text-wrap: balance;
 }
-.problemAccent {
+.raceAccent {
   color: #eaa886;
 }
-.problemBody {
+.raceBody {
   font-family: var(--font-body);
   font-size: clamp(16px, 1.8vw, 19px);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.72);
   max-width: 56ch;
 }
+/* De conclusie. Staat los en komt later binnen dan de rest: dit is de zin waar
+   de lezer op moet blijven hangen. */
+.racePunch {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #eaa886;
+  max-width: 24ch;
+}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .problemLine {
+    .raceLine {
       animation: fade-in-up linear both;
       animation-timeline: view();
       animation-range: entry 15% entry 55%;
+    }
+    .racePunch {
+      animation: fade-in-up linear both;
+      animation-timeline: view();
+      animation-range: entry 40% entry 85%;
     }
   }
 }
 
 /* ==========================================================================
-   MISSIE — forest kleurblok tussen wapper-golven, statement kolossaal +
-   zwevende glass stat-chips.
+   HET DOEK — het hart van de pagina. Beeld links (het weefgetouw), verhaal
+   rechts. De hero heeft zijn blob rechts; deze staat gespiegeld, zodat de
+   pagina niet twee keer dezelfde compositie laat zien.
+   ========================================================================== */
+.materiaal {
+  padding-block: clamp(72px, 8vw, 128px);
+}
+/* Vaste beeldkolom, geen `auto`: de foto is een `fill`-image en dus absoluut
+   gepositioneerd. Een auto-track heeft daardoor niks om zich naar te meten en
+   klapt naar 0 — de foto verdwijnt dan compleet. Deze breedte hoort gelijk te
+   blijven aan de `sizes` op het <Image>. */
+.materiaalInner {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+}
+/* Bewust klein gehouden: de bron (592-duurzame-vlag-stof) is maar 655×540, en
+   groter uitvergroten wordt op een retina-scherm zichtbaar zacht. Komt er ooit
+   een hogere-resolutie close-up, dan mag dit ruimer. */
+.materiaalBeeld {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border-radius: 56% 44% 58% 42% / 46% 54% 46% 54%;
+  box-shadow: var(--shadow-lg);
+  animation: blob-drift 16s var(--ease-in-out) infinite alternate;
+}
+.materiaalFoto {
+  object-fit: cover;
+}
+@media (prefers-reduced-motion: reduce) {
+  .materiaalBeeld {
+    animation: none;
+  }
+}
+.materiaalCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  /* Regellengte boven alles: dit is de enige plek waar echt gelezen wordt. */
+  max-width: 60ch;
+}
+.materiaalTitel {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 3.8vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.materiaalBody {
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.7;
+  color: var(--color-stone);
+}
+
+/* Subtiele uitstap naar alle vijf de vlaggen. Bewust géén knop: het blok
+   onderaan is de echte afsluiter, dit is alleen een zijdeur voor wie hier al
+   om is. Vandaar tekstlinks op leesformaat in plaats van accentkleur. */
+.doekLinks {
+  margin-top: var(--space-sm);
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--color-stone);
+}
+.doekLinksLabel {
+  margin-right: 8px;
+}
+.doekLinks a {
+  color: var(--color-forest);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-forest) 30%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--duration-base) var(--ease-out);
+}
+.doekLinks a:hover {
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 900px) {
+  .materiaalInner {
+    grid-template-columns: 1fr;
+  }
+  .materiaalBeeld {
+    order: -1;
+    justify-self: center;
+  }
+}
+
+/* ==========================================================================
+   BEWIJS — forest kleurblok tussen wapper-golven, korte kop + zwevende glass
+   stat-chips. Alleen cijfers: het betoog is hierboven al gehouden.
    ========================================================================== */
 .mission {
   margin-block: clamp(24px, 3vw, 48px);
@@ -210,19 +345,6 @@
   gap: var(--space-md);
   padding-block: clamp(56px, 7vw, 104px);
 }
-.missionEyebrow {
-  display: inline-flex;
-  background: var(--color-copper-rust);
-  color: #fff;
-  padding: 10px 24px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-copper);
-  font-family: var(--font-eyebrow);
-  font-optical-sizing: auto;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.03em;
-}
 .missionTitle {
   color: #fff;
   font-family: var(--font-heading);
@@ -234,12 +356,6 @@
 }
 .missionAccent {
   color: #eaa886;
-}
-.missionBody {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.65;
-  max-width: 58ch;
 }
 .missionStats {
   display: flex;
@@ -285,7 +401,7 @@
 }
 
 /* ==========================================================================
-   WAARDEN — drie beloftes met gekantelde kleurchips (USP-taal).
+   WAT JIJ ERAAN HEBT — drie bezwaren weerlegd, met gekantelde kleurchips.
    ========================================================================== */
 .valuesGrid {
   display: grid;
@@ -355,58 +471,191 @@
 }
 
 /* ==========================================================================
-   CTA-BAND — terracotta kleurblok (homepage-echo).
+   KIES JE VLAG — de vijf modellen als volle merkkleur-tegels.
+
+   Bewust 1-op-1 dezelfde tegels als de homepage-showcase: dit is dezelfde
+   keuze, dus hij hoort er hetzelfde uit te zien. Wijk je hier af, dan lijkt het
+   een andere winkel. Loopt de homepage-versie ooit uiteen, trek ze dan weer
+   gelijk in plaats van hier iets eigens te verzinnen.
    ========================================================================== */
-.ctaBand {
-  background: var(--color-terracotta);
-  border-radius: var(--radius-2xl);
-  padding: clamp(48px, 6vw, 96px);
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-md);
 }
-.ctaInner {
+.showcaseCard {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--space-md);
-  max-width: 760px;
-  margin-inline: auto;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  color: var(--color-charcoal);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
-.ctaTitle {
+.showcaseIconWrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
+}
+.showcaseIconWrap svg {
+  stroke-width: 1.4;
+  transform-origin: 30% 85%;
+  transition: transform var(--duration-base) var(--ease-out);
+  /* De vlaggen wapperen zachtjes door — het merk leeft. */
+  animation: flag-sway 5.5s var(--ease-in-out) infinite;
+}
+.showcaseCard:nth-child(2) .showcaseIconWrap svg {
+  animation-delay: -1.1s;
+}
+.showcaseCard:nth-child(3) .showcaseIconWrap svg {
+  animation-delay: -2.2s;
+}
+.showcaseCard:nth-child(4) .showcaseIconWrap svg {
+  animation-delay: -3.3s;
+}
+.showcaseCard:nth-child(5) .showcaseIconWrap svg {
+  animation-delay: -4.4s;
+}
+@keyframes flag-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+@keyframes flag-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-4deg);
+  }
+  65% {
+    transform: rotate(2.5deg);
+  }
+}
+.showcaseCard:hover .showcaseIconWrap svg {
+  animation: flag-wiggle 0.9s var(--ease-in-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcaseIconWrap svg,
+  .showcaseCard:hover .showcaseIconWrap svg {
+    animation: none;
+  }
+}
+
+/* Pictogram in de accentkleur op het witte wapper-vlak. */
+.showcaseCard[data-accent="forest"] .showcaseIconWrap svg {
+  color: var(--color-forest);
+}
+.showcaseCard[data-accent="sage-blue"] .showcaseIconWrap svg {
+  color: var(--color-sage-blue);
+}
+.showcaseCard[data-accent="terracotta"] .showcaseIconWrap svg {
+  color: var(--color-terracotta);
+}
+.showcaseCard[data-accent="sage-purple"] .showcaseIconWrap svg {
+  color: var(--color-sage-purple);
+}
+.showcaseCard[data-accent="copper-rust"] .showcaseIconWrap svg {
+  color: var(--color-copper-rust);
+}
+
+/* Volle merkkleur-vlakken. De accenten zijn middentonen: witte tekst van 14px
+   haalde er 2,9-3,3 contrast op, waar WCAG AA 4,5 vraagt. Daarom een paar
+   procent bijna-zwart erdoor — net genoeg voor de norm, te weinig om te zien.
+   Forest is donker genoeg en blijft onaangeroerd (7,35). Zelfde ingreep en
+   zelfde waarden als op de homepage. */
+.showcaseCard[data-accent="forest"] {
+  background: var(--color-forest);
+}
+.showcaseCard[data-accent="sage-blue"] {
+  background: color-mix(in srgb, var(--color-sage-blue) 88%, #060606);
+}
+.showcaseCard[data-accent="terracotta"] {
+  background: color-mix(in srgb, var(--color-terracotta) 88%, #060606);
+}
+.showcaseCard[data-accent="sage-purple"] {
+  background: color-mix(in srgb, var(--color-sage-purple) 90%, #060606);
+}
+.showcaseCard[data-accent="copper-rust"] {
+  background: color-mix(in srgb, var(--color-copper-rust) 98%, #060606);
+}
+
+.showcaseTag {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  background: rgba(255, 255, 255, 0.92);
+}
+.showcaseBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-md);
+  /* Vult de resterende hoogte, zodat de prijs eronder omlaag geduwd kan worden
+     en alle vijf de prijzen op één lijn staan. */
+  flex: 1;
+}
+.showcaseBody h3 {
+  font-size: 20px;
   color: #fff;
+  font-weight: 800;
+}
+/* Vol wit, geen 78%: de kaartkleuren hierboven zijn precies op vol wit
+   doorgerekend. Met dekking eronder haal je de norm alsnog niet. */
+.showcaseBody p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff;
+}
+.showcasePrice {
+  /* `auto` in plaats van een vaste marge: de taglines lopen van twee tot drie
+     regels, en dan zakt elke prijs op een eigen hoogte. Zo staan ze op één lijn
+     en kun je de vijf prijzen in één blik vergelijken. */
+  margin-top: auto;
+  padding-top: 10px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.showcasePriceValue {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(36px, 4.5vw, 64px);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  text-wrap: balance;
-}
-.ctaSub {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.6;
-}
-.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-md);
-  margin-top: var(--space-sm);
-}
-.ctaLink {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 14px;
+  font-size: 20px;
+  letter-spacing: -0.02em;
   color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
-.ctaLink:hover {
-  color: rgba(255, 255, 255, 0.8);
+/* Speelse kanteling bij hover — elke vlag wappert zijn eigen kant op. */
+.showcaseCard:hover {
+  transform: translateY(-6px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
 }
-@media (max-width: 560px) {
-  .ctaActions {
-    flex-direction: column;
-    width: 100%;
+.showcaseCard:nth-child(even):hover {
+  transform: translateY(-6px) rotate(1deg);
+}
+
+@media (max-width: 1180px) {
+  .showcaseGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .showcaseGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .showcaseGrid {
+    grid-template-columns: 1fr;
   }
 }

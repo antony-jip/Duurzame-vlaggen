@@ -44,7 +44,8 @@ const CONTENT_W = PAGE_W - MARGIN * 2;
 
 /**
  * INDICATIEVE CO2-factor: geschatte kg CO2e per m² geprint Flag-CiCLO®-doek
- * (productie + waterloze print, cradle-to-gate). Bewust conservatief en als
+ * (productie + print met inkt op waterbasis, cradle-to-gate). Bewust
+ * conservatief en als
  * "indicatief" gemarkeerd — geen geverifieerde LCA. Stem exacte factor later af.
  */
 const CO2_PER_M2_KG = 2.4;
@@ -329,9 +330,9 @@ export async function generateMateriaalpaspoort(
   // --- Duurzaamheidskerncijfers -------------------------------------------
   cur.heading("Duurzaamheidskerncijfers");
   cur.bullet("Biologisch afbreekbaar:", "ca. 96% van het doek");
-  cur.bullet("Afbraaktijd:", "2–3 jaar (geen microplastics achtergelaten)");
+  cur.bullet("Afbraaktijd:", "2–3 jaar na afdanking (geen microplastics achtergelaten)");
   cur.bullet("Microplastics:", "0% — breekt af i.p.v. te fragmenteren");
-  cur.bullet("Bedrukking:", "Waterloos geprint");
+  cur.bullet("Bedrukking:", "Geprint met inkt op waterbasis");
   cur.bullet("Productie:", "In Nederland (korte keten)");
 
   // --- CO2-indicatie -------------------------------------------------------
@@ -343,7 +344,7 @@ export async function generateMateriaalpaspoort(
       co2.totalAreaM2 > 0
         ? ` (op basis van ca. ${co2.totalAreaM2.toLocaleString("nl-NL")} m² geprint doek)`
         : ""
-    }. Dit is een INDICATIEVE schatting (cradle-to-gate: productie + waterloze print), geen geverifieerde LCA. Voor mastvlaggen/masten is een forfaitaire aluminiumfactor gebruikt.`,
+    }. Dit is een INDICATIEVE schatting (cradle-to-gate: productie + print met inkt op waterbasis), geen geverifieerde LCA. Voor mastvlaggen/masten is een forfaitaire aluminiumfactor gebruikt.`,
   );
 
   // --- CSRD / ESRS-toelichting --------------------------------------------

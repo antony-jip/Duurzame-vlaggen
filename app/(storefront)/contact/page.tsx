@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
   title: "Contact, offerte en advies",
   description:
-    "Neem contact op met Sign Company B.V. in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",
+    "Neem contact op met Duurzame Vlaggen in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",
 };
 
 // Contact channels — kept as data so the markup stays tidy.
@@ -58,8 +58,8 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             <span className={styles.heroAccent}>wapperen</span>.
           </h1>
           <p className={styles.heroSub}>
-            Vraag een offerte aan, bestel een gratis staal of stel je vraag over
-            CSRD en compliance. We reageren binnen 24 uur. Meestal sneller.
+            Vraag een offerte aan of stel je vraag over CSRD en compliance. We
+            reageren binnen 24 uur. Meestal sneller.
           </p>
         </Container>
         <svg

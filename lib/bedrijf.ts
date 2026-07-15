@@ -9,9 +9,10 @@
  * Sign Company VOF. Op een factuur hoort de rechtspersoon te staan, met de
  * handelsnaam erbij — vandaar beide velden.
  *
- * LET OP: de site noemt op ~20 plekken "Sign Company B.V." (footer, AV,
- * privacyverklaring, over-ons, metadata). Dat is de verkeerde rechtsvorm en
- * moet mee — een VOF is geen B.V.
+ * De site voert het MERK, niet de holding: "Sign Company" staat alleen nog waar
+ * het moet — de algemene voorwaarden en de privacyverklaring (contractpartij en
+ * verwerkingsverantwoordelijke), de factuur, de copyright-regel en de
+ * contactpagina. Overal elders is het Duurzame Vlaggen.
  */
 
 export const BEDRIJF = {

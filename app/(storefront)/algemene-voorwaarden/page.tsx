@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/algemene-voorwaarden" },
   title: "Algemene voorwaarden",
   description:
-    "De algemene voorwaarden van Duurzame Vlaggen (Sign Company B.V.): aanbod, overeenkomst, herroepingsrecht, levering, betaling en klachtenregeling.",
+    "De algemene voorwaarden van Duurzame Vlaggen (Sign Company VOF): aanbod, overeenkomst, herroepingsrecht, levering, betaling en klachtenregeling.",
 };
 
 const WAVE_PATH =
@@ -29,7 +29,7 @@ export default function AlgemeneVoorwaardenPage() {
               Algemene voorwaarden
             </h1>
             <p className={styles.heroSub}>
-              Duurzame Vlaggen is onderdeel van Sign Company B.V. Deze
+              Duurzame Vlaggen is onderdeel van Sign Company VOF Deze
               voorwaarden zijn gebaseerd op de algemene voorwaarden van
               Stichting Webshop Keurmerk, opgesteld in overleg met de
               Consumentenbond.
@@ -54,7 +54,7 @@ export default function AlgemeneVoorwaardenPage() {
             <h2>Artikel 1: Identiteit van de ondernemer</h2>
             <div className={styles.proseCard}>
               <p>
-                <strong>Sign Company B.V.</strong>, handelend onder de naam
+                <strong>Sign Company VOF</strong>, handelend onder de naam
                 Duurzame Vlaggen
                 <br />
                 De Drie Kronen 115, 1601 MT Enkhuizen
@@ -202,7 +202,7 @@ export default function AlgemeneVoorwaardenPage() {
             <h2>Bijlage: Modelformulier voor herroeping</h2>
             <p>
               Wil je de overeenkomst herroepen? Stuur dan onderstaande gegevens
-              aan Sign Company B.V. (Duurzame Vlaggen), De Drie Kronen 115,
+              aan Sign Company VOF (Duurzame Vlaggen), De Drie Kronen 115,
               1601 MT Enkhuizen, of per e-mail aan{" "}
               <a href="mailto:info@duurzame-vlaggen.nl">
                 info@duurzame-vlaggen.nl

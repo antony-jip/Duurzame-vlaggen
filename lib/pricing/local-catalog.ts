@@ -19,6 +19,7 @@
  */
 
 import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
+import { SELLER_COUNTRY, VAT_RATES } from "@/lib/vat/rates";
 
 /** Rond af op 2 decimalen via hele centen (dodge floating-point drift). */
 function round2(n: number): number {
@@ -30,6 +31,30 @@ export function sizeAreaM2(size: Pick<CatalogSize, "widthCm" | "heightCm">): num
   if (size.widthCm == null || size.heightCm == null) return null;
   return (size.widthCm / 100) * (size.heightCm / 100);
 }
+
+/**
+ * Probo-inkoop Flag CiCLO (ex btw) — de basis onder onze marges.
+ *
+ * Staffeltarief per m², bepaald door de TOTALE m² van de order (niet per stuk):
+ *
+ *   0,1 m² → € 8,25/m²      50 m² → € 6,45/m²
+ *    10 m² → € 7,98/m²     100 m² → € 5,90/m²
+ *    25 m² → € 6,70/m²
+ *
+ * Daarbovenop: afwerking ± € 0,17/vlag (tunnel; band+koord is niet gemeten en
+ * ligt hoger) en verpakking € 2,50/order, € 5,00 vanaf ± 40 stuks. Probo
+ * verzendt gratis.
+ *
+ * Getoetst op vier echte portaal-offertes (baniervlag 100×300, tunnel, wit) van
+ * 2026-07-15 — het model voorspelt ze binnen 1-2%:
+ *   1 st → € 25,40 · 10 st → € 202,90 · 25 st → € 487,90 · 40 st → € 714,40
+ *
+ * Probo's eigen verkoopmarge staat op 0% (door Antony bevestigd), dus dit is
+ * echte inkoop. Onze marge zit volledig in RETAIL_PRICES hieronder.
+ *
+ * NB: dit staat hier als documentatie, niet als rekenmodel. De actieve
+ * checkout rekent met RETAIL_PRICES; er is geen live inkoopcalculatie.
+ */
 
 /**
  * ECHTE retailprijzen (ex btw, per stuk) per productslug → maatlabel.
@@ -67,14 +92,22 @@ const RETAIL_PRICES: Record<string, Record<string, number>> = {
     "125 × 400 cm": 76, // TODO: prijs verifiëren (= €76,00 area-scaled)
   },
   mastvlag: {
-    // TODO: prijs verifiëren — enige bekende punt: 225×150 ≈ €44,50 (live site).
-    // Area-scaling geankerd daarop (≈ €13,19/m²), afgerond op €0,50.
+    // Herprijsd op € 15,20/m² (2026-07-15), afgerond op €0,50.
+    //
+    // Stond op ≈ €13,19/m², area-geschaald op het oude live-site-punt
+    // 225×150 = €44,50. Dat was 13% ónder de baniervlag terwijl het hetzelfde
+    // flag-ciclo-doek is en de afwerking (band + koord) duurder is dan een
+    // tunnel — de mastvlag draaide daardoor 31-37% brutomarge waar de
+    // baniervlag 44-50% doet. Zie de Probo-m²-staffel onder RETAIL_PRICES.
+    //
+    // Let op: band+koord is nog niet los ingekocht/gemeten. Zodra dat bekend is
+    // hoort er een opslag bovenop dit tarief, niet erin.
     // Labels zijn breedte × hoogte.
-    "150 × 100 cm": 19.5, // TODO: prijs verifiëren (≈ €19,78 area-scaled)
-    "180 × 120 cm": 28.5, // TODO: prijs verifiëren (≈ €28,49 area-scaled)
-    "225 × 150 cm": 44.5, // ~ECHT (live site, band+koord)
-    "300 × 200 cm": 79, // TODO: prijs verifiëren (≈ €79,14 area-scaled)
-    "350 × 225 cm": 103.5, // TODO: prijs verifiëren (≈ €103,83 area-scaled)
+    "150 × 100 cm": 23, // 1,50 m²
+    "180 × 120 cm": 33, // 2,16 m²
+    "225 × 150 cm": 51.5, // 3,38 m² — was €44,50 op de live site
+    "300 × 200 cm": 91, // 6,00 m²
+    "350 × 225 cm": 119.5, // 7,88 m²
   },
 };
 
@@ -313,7 +346,21 @@ export function localCartLineTotal(unitPriceEx: number, amount: number): number 
 
 /** Eigen verzendregel (ex btw). */
 export const SHIPPING_FLAT = 7.5;
-export const FREE_SHIPPING_THRESHOLD = 150;
+
+/** Gratis verzending vanaf dit bedrag INCLUSIEF btw — zo doen we de belofte. */
+export const FREE_SHIPPING_THRESHOLD_INCL_VAT = 100;
+
+/**
+ * Dezelfde drempel, ex btw — want dit hele bestand rekent ex btw.
+ *
+ * Teruggerekend tegen het NL-standaardtarief (`VAT_RATES.NL`): dat is het
+ * tarief waarin de belofte aan de klant is gedaan. Klanten met verlegde btw of
+ * export krijgen bewust dezelfde ex-btw drempel; voor hen bestaat er geen
+ * incl-bedrag om tegen af te zetten, en een hógere ex-drempel zou hen zonder
+ * reden zwaarder belasten dan een Nederlandse klant.
+ */
+export const FREE_SHIPPING_THRESHOLD =
+  FREE_SHIPPING_THRESHOLD_INCL_VAT / (1 + VAT_RATES[SELLER_COUNTRY] / 100);
 
 /** Verzendkosten ex btw op basis van het subtotaal ex btw. */
 export function localShipping(subtotalExVat: number): number {

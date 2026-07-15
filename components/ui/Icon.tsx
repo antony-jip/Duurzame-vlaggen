@@ -86,6 +86,23 @@ export function Truck({ size = 18, ...props }: IconProps) {
   );
 }
 
+export function Droplet({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M12 2.7c3.5 4 5.5 6.7 5.5 9.6a5.5 5.5 0 0 1-11 0c0-2.9 2-5.6 5.5-9.6Z" />
+    </svg>
+  );
+}
+
+export function NoEntry({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
 export function Menu({ size = 24, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
@@ -115,17 +132,38 @@ export function Bag({ size = 22, ...props }: IconProps) {
   );
 }
 
-/* ---- Vlagtype-pictogrammen — rustige merkeigen producticonen ---- */
+/* ---- Vlagtype-pictogrammen — merkeigen producticonen ----
+ *
+ * Elk vlagtype heeft een eigen SILHOUET, want op 24px is de omtrek het enige
+ * dat leest: banier staand aan een dwarsstok, mastvlag liggend en wapperend,
+ * beachvlag de veervorm, gevelvlag schuin uit de muur, vlaggenmast kaal.
+ * Vijf varianten van hetzelfde vlaggetje zijn hier eerder vijf keer niks.
+ *
+ * Het DOEK is gevuld, de drager blijft lijn. Dat is de taal van het logo zelf:
+ * een massief wit vlagsilhouet op een gekleurd vlak. Een doek is stof, geen
+ * draadframe — en tegen Sora 800 ernaast verliest een haarlijn het.
+ *
+ * `data-cloth` markeert het doek en `data-mast` de drager. Daarmee kan een
+ * consument (de mega-menutegel) alleen het doek animeren; overal elders staan
+ * de iconen stil. Alles blijft op currentColor, zodat ze in elke context werken.
+ */
 
 export function FlagBanier({ size = 18, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      {/* Staande rechthoekige banier langs de mast, met een lichte golf
-         in de onderrand. */}
-      <path d="M6 2v20" />
-      <path d="M6 3h11" />
-      <path d="M17 3v13.4c-3.7 1.3-7.3-1.3-11 0" />
-      <path d="M4 22h4" />
+      {/* Staande banier: het doek zit met een tunnel om de MAST, dus aan de
+         zijkant vast — niet aan een dwarsstok. Vandaar ook de optie
+         "Mastzijde: links/rechts" in de catalogus. Smal en hoog (100×400),
+         alleen de vrije onderrand golft.
+
+         Geen voet: je koopt de vlag, niet de mast. De mast loopt door tot
+         buiten beeld, want hij staat in de grond en niet op een standaard. */}
+      <path data-mast="" d="M6 2v20" />
+      <path
+        data-cloth=""
+        fill="currentColor"
+        d="M6.6 3.4H13v13.2c-2.1 1.5-4.3-1.4-6.4.2Z"
+      />
     </svg>
   );
 }
@@ -133,9 +171,10 @@ export function FlagBanier({ size = 18, ...props }: IconProps) {
 export function FlagMast({ size = 18, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      <path d="M5 2v20" />
-      <path d="M5 4c4-1.6 6 1.6 10 0 1.6-.6 3-.6 4 0v7c-1-.6-2.4-.6-4 0-4 1.6-6-1.6-10 0" />
-      <path d="M3 22h4" />
+      {/* Mastvlag: liggend doek dat in twee bogen van de mast af wappert.
+         Geen voet — de mast is een apart product (zie FlagPole). */}
+      <path data-mast="" d="M5 2v20" />
+      <path data-cloth="" fill="currentColor" d="M5 3.6c3.5-2.2 7 2.2 10.5 0V11c-3.5 2.2-7-2.2-10.5 0Z" />
     </svg>
   );
 }
@@ -143,9 +182,15 @@ export function FlagMast({ size = 18, ...props }: IconProps) {
 export function FlagBeach({ size = 18, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      <path d="M7 22c0-9 .5-16 3-20" />
-      <path d="M10 2c6 1 8 7 7 15-2.5-2-5-2.5-8-2" />
-      <path d="M5 22h5" />
+      {/* Beachvlag: de gebogen veervorm, het enige type met een kromme stok.
+         Geen voet: kruisvoet, grondpen en waterzak zijn accessoires, en je kunt
+         de vlag ook los kopen ("Alleen vlag"). */}
+      <path data-mast="" d="M7 22c0-9 .6-15.6 3.2-20" />
+      <path
+        data-cloth=""
+        fill="currentColor"
+        d="M10.2 2.4c5.4 2.6 6.6 9 4.8 15.3-2.9-1.8-6-2.1-8-1.6.4-6.4 1.3-10.2 3.2-13.7Z"
+      />
     </svg>
   );
 }
@@ -153,10 +198,10 @@ export function FlagBeach({ size = 18, ...props }: IconProps) {
 export function FlagGevel({ size = 18, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      {/* Muur, schuine uithouder, en een banier die eraan hangt. */}
-      <path d="M5 2v20" />
-      <path d="M5 9l11-4" />
-      <path d="M16 5v9.6c-1.5-.9-3-.9-4.4 0V6.6" />
+      {/* Gevelvlag: muur met schuine uithouder, doek hangt er schuin aan. */}
+      <path data-mast="" d="M4 2v20" />
+      <path data-mast="" d="m4 8.4 11.4-4.1" />
+      <path data-cloth="" fill="currentColor" d="m7.3 7.2 7.7-2.8v9.7c-2.6 1.6-5.1-1-7.7.6Z" />
     </svg>
   );
 }
@@ -164,10 +209,17 @@ export function FlagGevel({ size = 18, ...props }: IconProps) {
 export function FlagPole({ size = 18, ...props }: IconProps) {
   return (
     <svg {...base(size, props)}>
-      <path d="M12 22V4" />
-      <circle cx="12" cy="3" r="1" />
-      <path d="M8 22h8" />
-      <path d="M10 19h4" />
+      {/* Vlaggenmast: het product is de mast zelf — knop, voet, en een klein
+         doek aan de val (dat in het menu de mast in hijst). */}
+      <circle data-mast="" cx="12" cy="2.9" r="1.1" />
+      <path data-mast="" d="M12 21V4.4" />
+      <path data-mast="" d="M8 21.5h8" />
+      <path data-mast="" d="m10.2 21.5 1-2.6h1.6l1 2.6" />
+      <path
+        data-cloth=""
+        fill="currentColor"
+        d="M12.6 6.2c1.6-.9 3.2.9 4.8 0v3.6c-1.6.9-3.2-.9-4.8 0Z"
+      />
     </svg>
   );
 }

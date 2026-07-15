@@ -29,7 +29,7 @@
     "hero": {
       "eyebrow": "100% biodégradable",
       "title": "Des drapeaux qui préservent la planète",
-      "lead": "Du drapeau de mât au beach flag : imprimés sur des matériaux recyclés et compostables, produits en Europe à l'énergie verte.",
+      "lead": "Du drapeau de mât au beach flag : imprimés sur des matériaux recyclés et biodégradables, produits en Europe à l'énergie verte.",
       "primaryCta": "Voir la collection",
       "secondaryCta": "Notre démarche durable"
     },
@@ -38,7 +38,7 @@
       "items": {
         "biodegradable": {
           "title": "Biodégradable",
-          "body": "Tissus compostables sans microplastiques."
+          "body": "Tissus biodégradables sans microplastiques."
         },
         "european": {
           "title": "Production européenne",

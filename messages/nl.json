@@ -29,7 +29,7 @@
     "hero": {
       "eyebrow": "100% biologisch afbreekbaar",
       "title": "Vlaggen die de aarde niet belasten",
-      "lead": "Van mastvlag tot beachvlag: gedrukt op gerecyclede en composteerbare materialen, geproduceerd in Europa met groene stroom.",
+      "lead": "Van mastvlag tot beachvlag: gedrukt op gerecyclede en biologisch afbreekbare materialen, geproduceerd in Europa met groene stroom.",
       "primaryCta": "Bekijk de collectie",
       "secondaryCta": "Onze duurzaamheid"
     },
@@ -38,7 +38,7 @@
       "items": {
         "biodegradable": {
           "title": "Biologisch afbreekbaar",
-          "body": "Composteerbare doeken zonder microplastics."
+          "body": "Biologisch afbreekbare doeken zonder microplastics."
         },
         "european": {
           "title": "Europese productie",

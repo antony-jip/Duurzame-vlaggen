@@ -32,7 +32,9 @@ const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
 };
 
 const NAV_LINKS = [
-  { href: "/collectie", label: "Collectie" },
+  // Label is "Vlaggen", niet "Collectie": dat is wat mensen zoeken. De route
+  // blijft /collectie.
+  { href: "/collectie", label: "Vlaggen" },
   { href: "/duurzaamheid", label: "Duurzaamheid" },
   { href: "/over-ons", label: "Over ons" },
   { href: "/contact", label: "Contact" },
@@ -218,10 +220,15 @@ export function Header() {
                     href={`/collectie/${p.slug}`}
                     className={styles.megaCard}
                     data-accent={p.accent}
+                    // Stuurt het doek-gedrag per vlagtype in CSS: de mastvlag
+                    // rimpelt, de vlaggenmast hijst.
+                    data-slug={p.slug}
                     onClick={() => setMega(false)}
                   >
                     <span className={styles.megaTile}>
-                      <FlagIcon size={24} aria-hidden="true" />
+                      {/* 30 op een tegel van 46: het doek moet de tegel vullen,
+                          niet erin zweven. */}
+                      <FlagIcon size={30} aria-hidden="true" />
                     </span>
                     <span className={styles.megaText}>
                       <span className={styles.megaName}>{p.name}</span>
@@ -235,14 +242,14 @@ export function Header() {
                   </Link>
                 );
               })}
-            </div>
-            <div className={styles.megaFoot}>
+              {/* Staat in dezelfde rij als de vijf kaarten, uiterst rechts:
+                  scheelt het paneel een hele regel hoogte. */}
               <Link
                 href="/collectie"
                 className={styles.megaAll}
                 onClick={() => setMega(false)}
               >
-                Bekijk de hele collectie <ArrowRight size={16} />
+                Bekijk alle vlaggen <ArrowRight size={16} />
               </Link>
             </div>
           </Container>

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacyverklaring" },
   title: "Privacyverklaring",
   description:
-    "Hoe Duurzame Vlaggen (Sign Company B.V.) omgaat met jouw persoonsgegevens: wat we verzamelen, waarom, hoe lang we het bewaren en welke rechten je hebt.",
+    "Hoe Duurzame Vlaggen (Sign Company VOF) omgaat met jouw persoonsgegevens: wat we verzamelen, waarom, hoe lang we het bewaren en welke rechten je hebt.",
 };
 
 const WAVE_PATH =
@@ -53,7 +53,7 @@ export default function PrivacyverklaringPage() {
             <h2>Wie is verantwoordelijk?</h2>
             <div className={styles.proseCard}>
               <p>
-                <strong>Sign Company B.V.</strong>, handelend onder de naam
+                <strong>Sign Company VOF</strong>, handelend onder de naam
                 Duurzame Vlaggen
                 <br />
                 De Drie Kronen 115, 1601 MT Enkhuizen

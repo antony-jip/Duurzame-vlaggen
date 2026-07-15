@@ -118,7 +118,7 @@ export const PRODUCTS: CatalogProduct[] = [
     category: "vlag",
     tagline: "Valt op. Valt daarna volledig uiteen. Zonder één stukje plastic.",
     description:
-      "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek dat in 2 tot 3 jaar volledig composteert. Geen microplastics. Geen compromis.",
+      "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek dat na afdanking in 2 tot 3 jaar biologisch afbreekt. Geen microplastics. Geen compromis.",
     // priceFrom = goedkoopste maat uit het lokale retailmodel (100×200), area-
     // geschaald op de anker-maat 100×250 = €38 (≈ €15,20/m²).
     // TODO: prijs verifiëren met Antony (alleen 100×250 is live geverifieerd).
@@ -171,10 +171,9 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "De klassieker aan je mast. Nu zonder plastic nalatenschap.",
     description:
       "Hijs 'm aan je mast, staand of liggend. Gedrukt op biologisch afbreekbaar doek, afgewerkt met een stevige band en koord die jaren meegaan. En als het einde komt, blijft er niets achter. Geen microplastic, geen rommel in de natuur.",
-    // priceFrom = kleinste maat uit het lokale retailmodel (100×150).
-    // TODO: prijs verifiëren — mastvlag-prijzen zijn area-geschaald op het enige
-    // bekende punt 150×225 ≈ €44,50 (live site); zie lib/pricing/local-catalog.
-    priceFrom: 19.5,
+    // priceFrom = kleinste maat uit het lokale retailmodel (150×100).
+    // Herprijsd op € 15,20/m² (2026-07-15); zie lib/pricing/local-catalog.
+    priceFrom: 23,
     sizes: [
       // Mastvlag = hijsvlag (liggend). Labels zijn breedte × hoogte; het
       // mastadvies per maat komt 1-op-1 van de oude site.

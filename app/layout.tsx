@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     "Flag-CiCLO",
   ],
   applicationName: SITE_NAME,
-  authors: [{ name: "Sign Company B.V." }],
+  authors: [{ name: "Duurzame Vlaggen" }],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

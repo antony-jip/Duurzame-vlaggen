@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import styles from "./page.module.css";
-import {
-  Badge,
-  Button,
-  Container,
-  ArrowRight,
-  Check,
-  Leaf,
-  Recycle,
-  ShieldCheck,
-} from "@/components/ui";
+import { Badge, Button, Container, ArrowRight, Recycle } from "@/components/ui";
 import { BRAND_IMAGES } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
@@ -20,23 +11,34 @@ export const metadata: Metadata = {
     "Vlaggen die verdwijnen. Zero plastic. Onze Flag-CiCLO® vlaggen zijn 96% biologisch afbreekbaar in 2 tot 3 jaar, bevatten 0% microplastics en voldoen aan CSRD en ESRS E2-5.",
 };
 
-// The four-phase breakdown of how a Flag-CiCLO® flag returns to nature.
+/* The four-phase breakdown of how a Flag-CiCLO® flag returns to nature.
+   Dezelfde vier foto's als in het verhaalblok op de homepage: één en dezelfde
+   vlag, van strak tot niets. Hier staan ze bij de uitleg, daar bij de klap.
+   Die twee moeten dus dezelfde vlag laten zien, anders klopt het verhaal niet. */
 const PHASES = [
   {
     title: "In gebruik",
     body: "Wappert als elke topvlag. Kleurvast, weerbestendig, tot 2 jaar UV-stabiel. Functionele levensduur 3 tot 4 maanden intensief buiten.",
+    src: "/levenscyclus/in-gebruik.webp",
+    alt: "Nieuwe groene vlag met logo, wapperend tegen een blauwe lucht",
   },
   {
     title: "Start van de afbraak",
     body: "Vlag afgedankt? Nu hechten micro-organismen zich aan de vezels. De CiCLO® technologie opent de kunststofstructuur, zodat de natuur het materiaal herkent als voedsel.",
+    src: "/levenscyclus/start-afbraak.webp",
+    alt: "Dezelfde vlag, nu verbleekt en met rafelende randen",
   },
   {
     title: "Actieve afbraak",
     body: "In de bodem of op de stortplaats breken bacteriën en schimmels de vezels in 1 tot 2 jaar verder af. Zonder één microplastische rest.",
+    src: "/levenscyclus/afbraak.webp",
+    alt: "Een restje vlagdoek in het gras, het logo nog half leesbaar",
   },
   {
     title: "Volledig opgelost",
     body: "96% is verdwenen. Wat rest is CO₂, water en biomassa. Geen microplastics, geen restafval. Totale doorlooptijd: 2 tot 3 jaar.",
+    src: "/levenscyclus/verdwenen.webp",
+    alt: "Alleen nog gras en klaver: van de vlag is niets meer terug te vinden",
   },
 ];
 
@@ -46,45 +48,6 @@ const STATS = [
   { value: "2 tot 3 jaar", label: "Tot volledig opgelost" },
   { value: "0%", label: "Microplastics" },
   { value: "3 tot 4 mnd", label: "Functionele levensduur" },
-];
-
-// Independent certifications backing the claims.
-const CERTS = [
-  {
-    name: "OEKO-TEX ECO PASSPORT",
-    body: "Onafhankelijk bewijs dat elke grondstof en elk chemisch bestanddeel veilig is voor mens en milieu.",
-  },
-  {
-    name: "ASTM D5988",
-    body: "Genormeerde labtest voor biologische afbreekbaarheid in de bodem. De basis onder onze claim van 96%.",
-  },
-  {
-    name: "ASTM D5511",
-    body: "Genormeerde labtest voor afbraak onder anaerobe (stort)omstandigheden.",
-  },
-  {
-    name: "REACH",
-    body: "Voldoet aan de Europese verordening voor veilig gebruik van chemische stoffen.",
-  },
-];
-
-// What CSRD / ESRS E2-5 means concretely for the customer.
-const CSRD_POINTS = [
-  {
-    icon: <ShieldCheck size={26} />,
-    title: "Niets te rapporteren",
-    body: "Onze vlaggen lossen op. 96% verdwijnt volledig, zonder microplastics. Er is dus geen uitstoot om onder ESRS E2-5 te verantwoorden.",
-  },
-  {
-    icon: <Check size={26} />,
-    title: "Documentatie inbegrepen",
-    body: "Bij elke bestelling ontvang je de documentatie voor ESRS E2-5 en de certificaten. Die neem je direct over in je duurzaamheidsverslag.",
-  },
-  {
-    icon: <Leaf size={26} />,
-    title: "Verifieerbaar, geen greenwashing",
-    body: "Alle claims steunen op onafhankelijke ASTM labtests en internationale certificeringen. Controleerbaar door je accountant.",
-  },
 ];
 
 const WAVE_PATH =
@@ -181,8 +144,20 @@ export default function DuurzaamheidPage() {
             <ol className={styles.phases}>
               {PHASES.map((phase, i) => (
                 <li key={phase.title} className={styles.phase}>
-                  <span className={styles.phaseNum} aria-hidden="true">
-                    {i + 1}
+                  {/* De foto draagt de fase, het nummer ligt erop. Vier keer
+                      dezelfde vlag: dat zie je in één blik, en de tekst
+                      eronder vult de details aan. */}
+                  <span className={styles.phaseBeeld}>
+                    <Image
+                      src={phase.src}
+                      alt={phase.alt}
+                      width={500}
+                      height={500}
+                      sizes="(max-width: 1000px) 40vw, 220px"
+                    />
+                    <span className={styles.phaseNum} aria-hidden="true">
+                      {i + 1}
+                    </span>
                   </span>
                   <h3>{phase.title}</h3>
                   <p>{phase.body}</p>
@@ -238,89 +213,46 @@ export default function DuurzaamheidPage() {
         </svg>
       </section>
 
-      {/* CERTIFICERINGEN — clean merk-kaarten met gekantelde kleurchip. */}
-      <section className={styles.section} aria-labelledby="certs-title">
-        <Container>
-          <div className={styles.sectionHead}>
-            <Badge variant="personal">Certificeringen</Badge>
-            <h2 id="certs-title">Onafhankelijk getoetst.</h2>
-            <p className="lead">
-              We laten onze claims controleren door externe instanties. Zo weet
-              je zeker dat &ldquo;duurzaam&rdquo; hier ook echt duurzaam
-              betekent.
-            </p>
-          </div>
-          <div className={styles.certsGrid}>
-            {CERTS.map((cert) => (
-              <div key={cert.name} className={styles.certCard}>
-                <span className={styles.certIcon} aria-hidden="true">
-                  <ShieldCheck size={24} />
-                </span>
-                <h3 className={styles.certName}>{cert.name}</h3>
-                <p>{cert.body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* Hier stonden een Certificeringen-blok ("Onafhankelijk getoetst") en een
+          CSRD-blok ("Wat dit betekent voor je verslag"). Beide zijn eruit; ze
+          hebben allebei hun eigen pagina (/certificeringen en /csrd) die vanuit
+          de footer bereikbaar blijft. */}
 
-      {/* CSRD — forest-3 band met gekantelde kleurchips. */}
-      <section
-        className={`${styles.section} ${styles.csrdBand}`}
-        aria-labelledby="csrd-title"
-      >
-        <Container>
-          <div className={styles.sectionHead}>
-            <Badge variant="primary">CSRD &amp; ESRS E2-5</Badge>
-            <h2 id="csrd-title">Wat dit betekent voor je verslag.</h2>
-            <p className="lead">
-              Onder de CSRD moeten bedrijven hun uitstoot van microplastics
-              rapporteren. Kies je voor onze vlaggen, dan is die uitstoot er
-              simpelweg niet.
-            </p>
-          </div>
-          <div className={styles.csrdGrid}>
-            {CSRD_POINTS.map((point) => (
-              <div key={point.title} className={styles.csrdItem}>
-                <span className={styles.csrdIcon} aria-hidden="true">
-                  {point.icon}
-                </span>
-                <h3>{point.title}</h3>
-                <p>{point.body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA — terracotta kleurblok, tweede merkkleur-moment. */}
-      <section className={styles.sectionTight} aria-labelledby="cta-title">
-        <Container>
-          <div className={styles.ctaBand}>
-            <div className={styles.ctaInner}>
-              <h2 id="cta-title" className={styles.ctaTitle}>
-                Duurzaam wapperen, zwart op wit.
-              </h2>
-              <p className={styles.ctaSub}>
-                Vraag de certificaten en de documentatie voor ESRS E2-5 op. Of
-                bestel direct een gratis staal van ons Flag-CiCLO® doek.
-              </p>
-              <div className={styles.ctaActions}>
-                <Button
-                  as="a"
-                  href="/contact"
-                  variant="secondary"
-                  size="lg"
-                  icon={<ArrowRight />}
-                >
-                  Vraag offerte aan
-                </Button>
-                <a href="/collectie" className={styles.ctaLink}>
-                  Bekijk de collectie
-                </a>
-              </div>
-            </div>
-          </div>
+      {/* SLOT — het weefgetouw waar het doek ontstaat, met de actie erop.
+          Hier stond een terracotta CTA-blok ("Duurzaam wapperen, zwart op wit").
+          Beeld en actie zitten nu in één band: dat scheelt de pagina een heel
+          blok hoogte, en je ziet waar het doek vandaan komt in plaats van het te
+          lezen. */}
+      <section className={styles.weefBand} aria-labelledby="cta-title">
+        <Image
+          src="/vergelijking/doek-weven.webp"
+          alt="Weefgetouw waarop honderden losse Flag-CiCLO-draden tot doek worden geweven"
+          fill
+          sizes="100vw"
+          className={styles.weefFoto}
+        />
+        {/* Geen eigen golven meer. Die tekenden hun doorzichtige helft op de
+            pagina-achtergrond, en die is off-white: precies de witte randen.
+            In plaats daarvan schuift deze band ónder de golf van het datablok
+            erboven en ónder die van de footer eronder door, zodat het forest er
+            in een golf overheen loopt en de sage eronder doorkomt. */}
+        <Container className={styles.weefInner}>
+          <h2 id="cta-title" className={styles.weefTitel}>
+            Uit losse draden. Terug naar niets.
+          </h2>
+          <p className={styles.weefSub}>
+            Zo wordt je vlag geweven: Flag-CiCLO® doek dat presteert als
+            polyester en er na afdanking niet meer is.
+          </p>
+          <Button
+            as="a"
+            href="/collectie"
+            variant="secondary"
+            size="lg"
+            icon={<ArrowRight />}
+          >
+            Stel je vlag samen
+          </Button>
         </Container>
       </section>
     </>

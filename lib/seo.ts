@@ -20,7 +20,15 @@ export const SITE_URL = (
 
 export const SITE_NAME = "Duurzame Vlaggen";
 
-export const COMPANY_NAME = "Sign Company B.V.";
+/**
+ * @deprecated Gebruik `BEDRIJF` uit `lib/bedrijf.ts`.
+ *
+ * Stond hier als "Sign Company B.V." en werd in JSON-LD als `Organization.name`
+ * gebruikt. Twee dingen klopten daar niet: de rechtsvorm (het is een VOF) en de
+ * plek — `name` hoort het merk te zijn waarop gezocht wordt, de rechtspersoon
+ * hoort in `legalName`.
+ */
+export const COMPANY_NAME = "Duurzame Vlaggen";
 
 /** Standaard deelbeeld (OG/Twitter): merkfoto van wapperende vlaggen. */
 export const OG_IMAGE =

@@ -55,14 +55,33 @@ export function Footer() {
       </svg>
       <div className={styles.footer}>
       <Container>
-        {/* Oversized sign-off — the brand thesis as a closing statement. */}
+        {/* Oversized sign-off — the brand thesis as a closing statement.
+            Erachter: een zee vol plastic. Dát is waar "niet de planeet
+            belasten" over gaat, dus staat de belofte er letterlijk in. Het beeld
+            is weggemaskeerd met een gradient en lost op in het forest, zodat het
+            een sfeer is en geen foto in een kader. */}
         <div className={styles.signoff}>
-          <span className={styles.kicker}>Sign Company B.V.</span>
+          {/* Eigen wikkel: dit blok zit in een Container, dus zonder deze
+              full-bleed laag was het beeld nooit breder dan de container en zag
+              je zijn randen als een rechthoek in het vlak liggen. */}
+          <div className={styles.signoffZeeWrap} aria-hidden="true">
+            <Image
+              src="/footer/zee-met-plastic.webp"
+              alt=""
+              fill
+              sizes="100vw"
+              className={styles.signoffZee}
+            />
+          </div>
+          <span className={styles.kicker}>Duurzame Vlaggen</span>
           <p className={styles.statement}>
             Laat je merk <em>wapperen</em>, niet de planeet belasten.
           </p>
-          <Link href="/contact" className={styles.signoffLink}>
-            Vraag een gratis staal aan <ArrowRight size={20} />
+          {/* Was "Vraag een gratis staal aan", en die stalen versturen we niet.
+              Deze link staat op élke pagina, dus die belofte stond overal.
+              Nu stuurt hij naar de configurator, waar de verkoop gebeurt. */}
+          <Link href="/collectie" className={styles.signoffLink}>
+            Stel je vlag samen <ArrowRight size={20} />
           </Link>
         </div>
 
@@ -80,9 +99,7 @@ export function Footer() {
               wapperen zonder de planeet te belasten.
             </p>
             <address className={styles.contact}>
-              <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
-                Sign Company B.V.
-              </a>
+<span>Duurzame Vlaggen</span>
               <span>Enkhuizen, Nederland</span>
               <a href="mailto:info@duurzame-vlaggen.nl">
                 info@duurzame-vlaggen.nl
@@ -147,9 +164,7 @@ export function Footer() {
         <div className={styles.bottom}>
           <span>
             &copy; {year}{" "}
-            <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
-              Sign Company B.V.
-            </a>{" "}
+<span>Sign Company VOF</span>{" "}
             · Alle rechten voorbehouden.
           </span>
           <div className={styles.bottomLinks}>

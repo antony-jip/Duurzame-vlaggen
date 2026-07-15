@@ -176,9 +176,11 @@
   animation: fade-in-up var(--duration-fast) var(--ease-out);
   z-index: var(--z-dropdown);
 }
+/* Vijf producten + de collectie-link uiterst rechts, op één regel. */
 .megaGrid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  align-items: center;
   gap: var(--space-xs);
 }
 /* Verfijnde menukaart: klein kleurchipje + naam + prijs op één regel. */
@@ -195,6 +197,42 @@
   background: var(--forest-3);
   color: var(--color-charcoal);
 }
+/* De vijf kaarten hijsen zich na elkaar binnen, als een rij vlaggen die één
+   voor één omhoog gaat. `backwards` houdt ze onzichtbaar tot hun beurt. */
+@media (prefers-reduced-motion: no-preference) {
+  .megaCard {
+    animation: mega-rise var(--duration-base) var(--ease-out) backwards;
+  }
+  .megaCard:nth-child(1) {
+    animation-delay: 30ms;
+  }
+  .megaCard:nth-child(2) {
+    animation-delay: 75ms;
+  }
+  .megaCard:nth-child(3) {
+    animation-delay: 120ms;
+  }
+  .megaCard:nth-child(4) {
+    animation-delay: 165ms;
+  }
+  .megaCard:nth-child(5) {
+    animation-delay: 210ms;
+  }
+  /* De collectie-link sluit de rij, dus komt hij als laatste binnen. */
+  .megaAll {
+    animation: mega-rise var(--duration-base) var(--ease-out) 255ms backwards;
+  }
+}
+@keyframes mega-rise {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .megaText {
   display: flex;
   flex-direction: column;
@@ -202,24 +240,207 @@
   min-width: 0;
 }
 
-/* Klein merkchipje met wit vlag-pictogram, licht gekanteld. */
+/* Merktegel: schuin, met een vlag die wappert zodra je hem aanwijst.
+
+   De tegel staat scheef en richt zich op bij hover. Het icoon compenseert de
+   skew, zodat de vlag zelf recht blijft staan terwijl de tegel eronder helt.
+
+   De hoeken blijven heel. Een afgesneden hoek las op dit formaat als gedeukt
+   in plaats van als bedoeld, en de disruptor-energie van dit merk zit al in de
+   typografie en de kleur — daar hoeft een tegel van 46px niet overheen. */
 .megaTile {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: var(--radius-md);
   background: var(--color-forest);
   color: #fff;
-  transform: rotate(-3deg);
-  transition: transform var(--duration-fast) var(--ease-out);
+  transform: rotate(-3deg) skewX(-7deg);
+  transition:
+    transform var(--duration-base) var(--ease-elastic),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 .megaCard:hover .megaTile {
-  transform: rotate(0deg);
+  transform: rotate(0deg) skewX(0deg) scale(1.06);
+  box-shadow: var(--shadow-md);
 }
 .megaTile svg {
-  stroke-width: 1.7;
+  /* 2px is de lijndikte van het hele systeem (forms, badges, stat-cards). */
+  stroke-width: 2;
+  overflow: visible;
+  transform: skewX(7deg);
+  transition: transform var(--duration-base) var(--ease-elastic);
+}
+.megaCard:hover .megaTile svg {
+  transform: skewX(0deg);
+}
+
+/* Het doek wappert om zijn eigen hijszijde; de mast blijft staan. */
+.megaTile [data-cloth] {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+
+/* ---- De windvlaag ----
+   Er waait één vlaag door het hele menu: elke vlag begint iets later dan zijn
+   linkerbuurman, dus de golf trekt van links naar rechts over de rij. Het
+   paneel bestaat alleen zolang je het openhoudt, dus dit is een moment, geen
+   permanent bewegend behang.
+
+   Elke vlag heeft zijn eigen rimpel, want elk doek hangt anders: een banier
+   golft aan zijn onderrand, een mastvlag over zijn lengte.
+
+   LET OP: keyframe-namen staan hier expres uitgeschreven en niet in een custom
+   property. CSS Modules hasht `@keyframes gust-mast` naar een unieke naam en
+   herschrijft de verwijzingen mee — maar het kijkt niet ín `var()`-waarden. Een
+   naam via `--gust` blijft dus letterlijk staan, matcht de gehashte keyframe
+   niet, en dan animeert er niets. Zonder foutmelding. */
+.megaCard[data-slug="baniervlag"] {
+  --gust-delay: 0ms;
+}
+.megaCard[data-slug="mastvlag"] {
+  --gust-delay: 130ms;
+}
+.megaCard[data-slug="beachvlag"] {
+  --gust-delay: 260ms;
+}
+.megaCard[data-slug="gevelvlag"] {
+  --gust-delay: 390ms;
+}
+.megaCard[data-slug="vlaggenmast"] {
+  --gust-delay: 520ms;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Basis: een geskewd doek. Werkt overal, ook waar `d` niet animeerbaar is. */
+  .megaTile [data-cloth] {
+    animation: cloth-wave 2.6s var(--ease-in-out) infinite;
+    animation-delay: var(--gust-delay, 0ms);
+  }
+
+  /* Beter: we animeren het PAD zelf, zodat de golf door de stof heen loopt in
+     plaats van dat het hele doek scheeftrekt. Dat is het verschil tussen een
+     wapperende vlag en een kantelend bordje. */
+  @supports (d: path("M0 0")) {
+    .megaCard[data-slug="baniervlag"] .megaTile [data-cloth] {
+      animation-name: gust-banier;
+    }
+    .megaCard[data-slug="mastvlag"] .megaTile [data-cloth] {
+      animation-name: gust-mast;
+    }
+    .megaCard[data-slug="beachvlag"] .megaTile [data-cloth] {
+      animation-name: gust-beach;
+    }
+    .megaCard[data-slug="gevelvlag"] .megaTile [data-cloth] {
+      animation-name: gust-gevel;
+    }
+    .megaCard[data-slug="vlaggenmast"] .megaTile [data-cloth] {
+      animation-name: gust-pole;
+    }
+  }
+
+  /* Aanwijzen = de wind trekt aan: sneller, en meteen, niet pas als de vlaag
+     langskomt. */
+  .megaCard:hover .megaTile [data-cloth] {
+    animation-duration: 1.1s;
+    animation-delay: 0ms;
+  }
+
+  /* De vlaggenmast wordt verkocht als mast, niet als vlag. Wijs hem aan en er
+     gaat er een de mast in — hijsen én wapperen tegelijk (verschillende
+     eigenschappen, dus ze zitten elkaar niet in de weg). */
+  .megaCard[data-slug="vlaggenmast"]:hover .megaTile [data-cloth] {
+    animation:
+      cloth-hoist var(--duration-slow) var(--ease-out) backwards,
+      cloth-wave 1.1s var(--ease-in-out) infinite;
+  }
+  @supports (d: path("M0 0")) {
+    .megaCard[data-slug="vlaggenmast"]:hover .megaTile [data-cloth] {
+      animation:
+        cloth-hoist var(--duration-slow) var(--ease-out) backwards,
+        gust-pole 1.1s var(--ease-in-out) infinite;
+    }
+  }
+}
+
+/* Elke rimpel is hetzelfde pad als in Icon.tsx, met de golf omgeklapt. De
+   browser kan er alleen tussenin animeren als beide varianten exact dezelfde
+   commando's in dezelfde volgorde hebben — vandaar de letterlijke herhaling. */
+@keyframes gust-banier {
+  0%,
+  100% {
+    d: path("M6.6 3.4H13v13.2c-2.1 1.5-4.3-1.4-6.4.2Z");
+  }
+  50% {
+    d: path("M6.6 3.4H13v13.2c-2.1-1.5-4.3 1.4-6.4.2Z");
+  }
+}
+@keyframes gust-mast {
+  0%,
+  100% {
+    d: path("M5 3.6c3.5-2.2 7 2.2 10.5 0V11c-3.5 2.2-7-2.2-10.5 0Z");
+  }
+  50% {
+    d: path("M5 3.6c3.5 2.2 7-2.2 10.5 0V11c-3.5-2.2-7 2.2-10.5 0Z");
+  }
+}
+@keyframes gust-beach {
+  0%,
+  100% {
+    d: path("M10.2 2.4c5.4 2.6 6.6 9 4.8 15.3-2.9-1.8-6-2.1-8-1.6.4-6.4 1.3-10.2 3.2-13.7Z");
+  }
+  50% {
+    d: path("M10.2 2.4c6.3 2.2 7.1 9.4 4.8 15.3-2.9-1.3-6-2.7-8-1.6.4-6.4 1.1-10.5 3.2-13.7Z");
+  }
+}
+@keyframes gust-gevel {
+  0%,
+  100% {
+    d: path("m7.3 7.2 7.7-2.8v9.7c-2.6 1.6-5.1-1-7.7.6Z");
+  }
+  50% {
+    d: path("m7.3 7.2 7.7-2.8v9.7c-2.6-1.6-5.1 1-7.7.6Z");
+  }
+}
+@keyframes gust-pole {
+  0%,
+  100% {
+    d: path("M12.6 6.2c1.6-.9 3.2.9 4.8 0v3.6c-1.6.9-3.2-.9-4.8 0Z");
+  }
+  50% {
+    d: path("M12.6 6.2c1.6.9 3.2-.9 4.8 0v3.6c-1.6-.9-3.2.9-4.8 0Z");
+  }
+}
+
+@keyframes cloth-wave {
+  0%,
+  100% {
+    transform: skewY(0deg) scaleX(1);
+  }
+  25% {
+    transform: skewY(-3deg) scaleX(0.97);
+  }
+  50% {
+    transform: skewY(1deg) scaleX(1);
+  }
+  75% {
+    transform: skewY(3deg) scaleX(0.98);
+  }
+}
+@keyframes cloth-hoist {
+  0% {
+    transform: translateY(11px);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 .megaCard[data-accent="sage-blue"] .megaTile {
   background: var(--color-sage-blue);
@@ -251,15 +472,13 @@
   font-weight: 800;
   color: var(--color-forest);
 }
-.megaFoot {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--space-md);
-}
 .megaAll {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  justify-self: end;
+  white-space: nowrap;
+  padding-inline: var(--space-sm);
   font-family: var(--font-ui);
   font-weight: 700;
   font-size: 14px;
@@ -267,6 +486,19 @@
 }
 .megaAll:hover {
   color: var(--color-terracotta);
+}
+/* De collectie-link kost ~224px uit de rij. Op een breed scherm is dat gratis,
+   maar tussen 1024 en 1200px knijpt hij de vijf kaarten zo ver dicht dat de
+   productnamen buiten hun kaart vallen (`nowrap`). Daar zakt hij terug naar een
+   eigen regel; de rij blijft dan gewoon vijf kolommen. */
+@media (max-width: 1199px) {
+  .megaGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .megaAll {
+    grid-column: 1 / -1;
+    margin-top: var(--space-sm);
+  }
 }
 @media (max-width: 1023px) {
   .megaPanel {
@@ -295,6 +527,9 @@
   font-size: 14px;
   letter-spacing: -0.01em;
   position: relative;
+  /* Op mobiel valt het woord "Winkelmand" weg en blijft alleen het tasje van
+     20px over; zonder deze bodem haalt de knop dan 42px in plaats van 44. */
+  min-height: 44px;
   padding: 11px 20px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -412,14 +647,20 @@
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.7);
 }
+/* 44×44: dit is de sluitknop van het mobiele menu, dus de meest getikte knop
+   van de site. Met alleen 6px om het icoon haalde hij 38px. De negatieve marge
+   houdt hem optisch op dezelfde plek als voorheen. */
 .overlayClose {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   border: none;
   background: transparent;
   color: #fff;
   cursor: pointer;
-  padding: 6px;
-  margin-right: -6px;
+  margin-right: -10px;
 }
 
 .overlayNav {
@@ -503,8 +744,13 @@
   .accountWord {
     display: none;
   }
+  /* Zonder het woord ernaast blijft alleen het 20px-icoon over: vaste 44×44
+     in plaats van 42, zodat hij naast de winkelmand op maat blijft. */
   .account {
-    padding: 10px;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
   }
   .toggle {
     display: inline-flex;

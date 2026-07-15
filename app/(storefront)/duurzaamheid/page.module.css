@@ -141,12 +141,17 @@
 .phasesWrap {
   position: relative;
 }
+/* De lijn liep op de hoogte van de oude nummerchips. Nu dragen foto's de fasen,
+   dus zakt hij naar het hart daarvan: --foto is de diameter, de cirkel is
+   vierkant, dus het midden ligt op de helft. De foto's dekken de lijn af, zodat
+   hij alleen ertussen zichtbaar is. */
 .phasesLine {
+  --foto: clamp(120px, 13vw, 168px);
   position: absolute;
-  top: 0;
-  left: 24px;
-  right: 24px;
-  width: calc(100% - 48px);
+  top: calc(var(--foto) / 2 - 22px);
+  left: calc(var(--foto) / 2);
+  right: calc(var(--foto) / 2);
+  width: calc(100% - var(--foto));
   height: 44px;
   pointer-events: none;
 }
@@ -185,11 +190,31 @@
   gap: var(--space-sm);
 }
 /* Genummerde merkchips — zelfde taal als USP's en stappen op de homepage. */
+/* De foto van de fase: rond, zodat hij dezelfde taal spreekt als het verhaal op
+   de homepage waar precies deze vier beelden staan. */
+.phaseBeeld {
+  position: relative;
+  display: block;
+  width: clamp(120px, 13vw, 168px);
+  margin-bottom: var(--space-xs);
+}
+.phaseBeeld img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  border: 2px solid var(--forest-6);
+}
+/* Het nummer ligt op de foto in plaats van erboven: scheelt een regel hoogte en
+   koppelt het cijfer aan het beeld waar het bij hoort. */
 .phaseNum {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
   display: inline-grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   background: var(--color-forest);
   color: #fff;
@@ -262,8 +287,15 @@
    DATA-BLOK — forest kleurblok tussen wapper-golven, de cijfers kolossaal.
    Merkeigen data-moment; glass stat-chips die zweven (V5.0 float).
    ========================================================================== */
+/* Onderaan geen marge: daar zat 45px vlakke off-white tussen dit blok en de
+   weefband eronder. Bovenaan blijft de lucht wél staan.
+
+   z-index tilt dit blok boven de weefband, zodat zijn golf ÓVER de foto valt in
+   plaats van andersom. Zonder dit dekt de weefband de golf af. */
 .dataBand {
-  margin-block: clamp(24px, 3vw, 48px);
+  position: relative;
+  z-index: 1;
+  margin-block: clamp(24px, 3vw, 48px) 0;
 }
 .wave {
   display: block;
@@ -373,144 +405,6 @@
 }
 
 /* ==========================================================================
-   CERTIFICERINGEN — clean merk-kaarten met gekantelde kleurchip.
-   ========================================================================== */
-.certsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
-}
-.certCard {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding: clamp(24px, 2.4vw, 32px);
-  background: #fff;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xs);
-  transition:
-    transform var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out);
-}
-.certCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-.certIcon {
-  display: inline-grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-lg);
-  background: var(--color-forest);
-  color: #fff;
-  transform: rotate(-3deg);
-  box-shadow: var(--shadow-sm);
-}
-.certCard:nth-child(2) .certIcon {
-  background: var(--color-sage-blue);
-  transform: rotate(2.5deg);
-}
-.certCard:nth-child(3) .certIcon {
-  background: var(--color-terracotta);
-  transform: rotate(-2deg);
-}
-.certCard:nth-child(4) .certIcon {
-  background: var(--color-sage-purple);
-  transform: rotate(3deg);
-}
-.certName {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-.certCard p {
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--color-stone);
-}
-@media (max-width: 900px) {
-  .certsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 520px) {
-  .certsGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ==========================================================================
-   CSRD — forest-3 band met gekantelde kleurchips (USP-taal).
-   ========================================================================== */
-.csrdBand {
-  background: var(--forest-3);
-}
-.csrdGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-xl);
-}
-.csrdItem {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-sm);
-}
-.csrdIcon {
-  display: inline-grid;
-  place-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-lg);
-  background: var(--color-forest);
-  color: #fff;
-  transform: rotate(-3deg);
-  box-shadow: var(--shadow-sm);
-}
-.csrdItem:nth-child(2) .csrdIcon {
-  background: var(--color-sage-blue);
-  transform: rotate(2.5deg);
-}
-.csrdItem:nth-child(3) .csrdIcon {
-  background: var(--color-terracotta);
-  transform: rotate(-2deg);
-}
-.csrdItem h3 {
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-.csrdItem p {
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--color-stone);
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .csrdItem {
-      animation: fade-in-up linear both;
-      animation-timeline: view();
-      animation-range: entry 5% entry 45%;
-    }
-    .csrdItem:nth-child(2) {
-      animation-range: entry 12% entry 55%;
-    }
-    .csrdItem:nth-child(3) {
-      animation-range: entry 19% entry 65%;
-    }
-  }
-}
-@media (max-width: 820px) {
-  .csrdGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-  }
-}
-
-/* ==========================================================================
    CTA-BAND — terracotta kleurblok, tweede merkkleur-moment (homepage-echo).
    ========================================================================== */
 .ctaBand {
@@ -566,3 +460,88 @@
     width: 100%;
   }
 }
+
+/* ==========================================================================
+   SLOT — weefgetouw met de actie erop
+   ========================================================================== */
+/* Beeld en CTA in één band: scheelt de pagina een apart blok. De foto is licht
+   (witte draden), dus de tekst kan er niet zomaar op. Een forest-sluier van
+   links naar rechts geeft de linkerhelft een draagvlak en laat de draden rechts
+   vrij. */
+/* --golf moet gelijk blijven aan die van het datablok en de footergolf: deze
+   band schuift er precies die afstand onderdoor. */
+.weefBand {
+  --golf: clamp(28px, 4.5vw, 64px);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: clamp(360px, 42vw, 520px);
+  /* Onder de golf van het datablok door, en onder die van de footer. Het forest
+     loopt daardoor in een golf de sage in; geen witte strook om te overbruggen. */
+  margin-block: calc(-1 * var(--golf));
+  padding-block: calc(clamp(48px, 6vw, 88px) + var(--golf));
+  overflow: hidden;
+}
+.weefFoto {
+  object-fit: cover;
+  object-position: center 40%;
+  z-index: -2;
+}
+/* Sage blue in plaats van forest: het staat naast de mintgroene machine in de
+   foto, en het datablok erboven is al forest. Twee forest-banden op elkaar is
+   eentonig.
+
+   De kleur is wel een paar procent afgedonkerd. Wit op pure sage-blue haalt
+   3,77 contrast en de ondertitel hieronder is 19px, waar de norm 4,5 is.
+   Zelfde ingreep als op de productkaarten en de footerknop. */
+.weefBand::after {
+  --sage: color-mix(in srgb, var(--color-sage-blue) 88%, #060606);
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--sage) 0%,
+    var(--sage) 34%,
+    color-mix(in srgb, var(--sage) 82%, transparent) 55%,
+    color-mix(in srgb, var(--sage) 30%, transparent) 100%
+  );
+}
+.weefInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  max-width: 1100px;
+}
+.weefTitel {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(30px, 4vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.weefSub {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.7vw, 19px);
+  line-height: 1.6;
+  color: #fff;
+  max-width: 46ch;
+}
+@media (max-width: 760px) {
+  .weefBand::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sage) 88%, transparent) 0%,
+      var(--sage) 60%
+    );
+  }
+}
+

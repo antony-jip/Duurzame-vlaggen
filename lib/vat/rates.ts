@@ -4,7 +4,7 @@ import type { Market } from "@/config/domains";
  * VAT rate configuration — the single source of truth for tariffs used across
  * checkout and order totals.
  *
- * Seller is Sign Company B.V., established in the Netherlands. Under the EU OSS
+ * Seller is Sign Company VOF, established in the Netherlands. Under the EU OSS
  * (One-Stop-Shop) scheme B2C sales are taxed at the CUSTOMER country's standard
  * rate. The rates below are the standard rates per country.
  *
@@ -13,7 +13,7 @@ import type { Market } from "@/config/domains";
  * defaults, not legal advice.
  */
 
-/** Country where the seller (Sign Company B.V.) is established. */
+/** Country where the seller (Sign Company VOF) is established. */
 export const SELLER_COUNTRY = "NL";
 
 /**

@@ -4,7 +4,7 @@ import styles from "./VergelijkVlaggen.module.css";
 /**
  * "Traditioneel vs. Duurzaam" — het kernverhaal in beeld: een polyester vlag die
  * uiteenvalt in microplastics tegenover een Flag-CiCLO®-vlag die volledig
- * composteert. De twee illustraties zijn SVG's uit de merkbibliotheek
+ * biologisch afbreekt. De twee illustraties zijn SVG's uit de merkbibliotheek
  * (public/illustraties). Herbruikbaar op de segment-/infopagina's.
  */
 export function VergelijkVlaggen({
@@ -64,7 +64,7 @@ export function VergelijkVlaggen({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/illustraties/duurzaam-flag-ciclo.svg"
-                alt="Flag-CiCLO-vlag die volledig composteert tot voedingsbodem waar planten uit groeien"
+                alt="Flag-CiCLO-vlag die volledig afbreekt tot voedingsbodem waar planten uit groeien"
                 className={styles.illu}
                 loading="lazy"
               />

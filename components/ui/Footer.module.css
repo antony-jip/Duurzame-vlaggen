@@ -3,11 +3,19 @@
 .footerWrap {
   margin-top: auto;
 }
+/* De golf tekent forest; het doorzichtige deel eromheen toont wat erachter
+   ligt. Géén eigen achtergrond: die zou op elke pagina anders moeten zijn.
+   In plaats daarvan schuift de laatste sectie van een pagina zichzelf hier
+   onderdoor (zie `.stepsBand` op de homepage en `.weefBand` op duurzaamheid),
+   zodat het vlak van díe sectie door de golf heen komt. */
 .topWave {
   display: block;
   width: 100%;
   height: clamp(28px, 4.5vw, 64px);
   color: var(--color-forest);
+  /* Boven de sectie erboven, anders dekt die de golf af. */
+  position: relative;
+  z-index: 1;
 }
 .footer {
   background: var(--color-forest);
@@ -17,8 +25,81 @@
 
 /* ---- Oversized sign-off ---- */
 .signoff {
+  position: relative;
+  /* Eigen stapelcontext: de zee blijft achter de tekst van dit blok en kruipt
+     niet onder de rest van de footer. */
+  isolation: isolate;
   padding-bottom: clamp(48px, 6vw, 80px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* De zee vol plastic achter de merkbelofte. Twee dingen houden hem leesbaar:
+   hij dooft naar rechts en naar onderen weg met een mask, en er ligt een
+   forest-waas overheen (::after). Zo blijft de witte kop overal op contrast,
+   ook waar de zonnestralen in de foto fel zijn. */
+/* Breekt uit de Container naar de volle vensterbreedte: dit vlak hoort van rand
+   tot rand te lopen, anders ligt de zee als een rechthoek in het groen. */
+.signoffZeeWrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+.signoffZee {
+  object-fit: cover;
+  /* Toont de onderste helft van de foto: daar drijft het plastic, en daar
+     zitten de felle zonnestralen NIET. Die zouden de witte kop wegvagen. */
+  object-position: center 72%;
+  opacity: 0.9;
+  /* Alleen de buitenste randen doven weg, zodat het vlak vult maar niet met een
+     harde snijlijn eindigt. */
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 1) 12%,
+    rgba(0, 0, 0, 1) 88%,
+    transparent 100%
+  );
+}
+/* Forest-waas over de volle breedte. Zwaarder aan de linkerkant, want daar
+   staat de kop; rechts, waar niets staat, blijft het plastic goed zichtbaar.
+   Doorgerekend op de felste pixel in de uitsnede: de witte kop is Sora 800
+   (large text, norm 3:1) en blijft daarboven. */
+.signoff::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      100deg,
+      var(--color-forest) 0%,
+      color-mix(in srgb, var(--color-forest) 72%, transparent) 42%,
+      color-mix(in srgb, var(--color-forest) 34%, transparent) 72%,
+      color-mix(in srgb, var(--color-forest) 30%, transparent) 100%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-forest) 0%,
+      transparent 22%,
+      transparent 78%,
+      var(--color-forest) 100%
+    );
 }
 .kicker {
   display: inline-flex;
@@ -52,26 +133,50 @@
   font-style: italic;
   color: #e6a488; /* light terracotta — legible accent on forest */
 }
+/* Een echte knop, geen tekstlinkje. Dit is de enige actie in het slotblok, en
+   als klein kapitaaltje van 13px op een foto verdween hij.
+
+   Terracotta springt eruit tegen het forest en de zee. De kleur is wel een paar
+   procent afgedonkerd: wit op pure terracotta haalt 3,74 contrast en deze tekst
+   is 15px, waar de norm 4,5 is. Zelfde ingreep als op de productkaarten, en met
+   het blote oog niet te zien. */
 .signoffLink {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: var(--space-xl);
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  padding: 18px 34px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-terracotta) 88%, #060606);
   color: #fff;
+  font-family: var(--font-button);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  box-shadow: var(--shadow-lg);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 .signoffLink svg {
   transition: transform var(--duration-base) var(--ease-out);
 }
+/* Hover keert om naar wit: het felste dat je op dit vlak kunt doen. */
 .signoffLink:hover {
-  color: #e6a488;
+  background: #fff;
+  color: var(--color-forest);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl, 0 12px 32px rgba(44, 95, 79, 0.35));
 }
 .signoffLink:hover svg {
   transform: translateX(5px);
+}
+.signoffLink:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 
 /* ---- Columns ---- */
@@ -156,9 +261,12 @@
 .bottom a:hover {
   color: #fff;
 }
+/* Wrapt op smalle schermen: "Privacy · Cookies · Algemene voorwaarden" past
+   naast elkaar niet op een telefoon en liep anders buiten beeld. */
 .bottomLinks {
   display: flex;
-  gap: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
 }
 .bottomLinks a {
   color: rgba(255, 255, 255, 0.7);

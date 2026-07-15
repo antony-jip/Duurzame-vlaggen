@@ -1,13 +1,8 @@
 import { Header, Footer } from "@/components/ui";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { getUiCatalog } from "@/lib/i18n";
-import {
-  SITE_URL,
-  SITE_NAME,
-  COMPANY_NAME,
-  LOGO_URL,
-  jsonLd,
-} from "@/lib/seo";
+import { SITE_URL, SITE_NAME, LOGO_URL, jsonLd } from "@/lib/seo";
+import { BEDRIJF } from "@/lib/bedrijf";
 
 /**
  * Organisatie + website als JSON-LD. Staat in de storefront-shell zodat elke
@@ -17,7 +12,11 @@ import {
 const ORG_JSON_LD = jsonLd({
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: COMPANY_NAME,
+  // `name` is het merk waarop gezocht wordt; de rechtspersoon hoort in
+  // `legalName`. Stond hier eerder omgekeerd (Sign Company als name).
+  name: BEDRIJF.handelsnaam,
+  legalName: BEDRIJF.rechtspersoon,
+  vatID: BEDRIJF.btwNummer,
   alternateName: SITE_NAME,
   url: SITE_URL,
   logo: LOGO_URL,
@@ -37,7 +36,7 @@ const WEBSITE_JSON_LD = jsonLd({
   name: SITE_NAME,
   url: SITE_URL,
   inLanguage: "nl-NL",
-  publisher: { "@type": "Organization", name: COMPANY_NAME },
+  publisher: { "@type": "Organization", name: BEDRIJF.handelsnaam },
 });
 
 /**

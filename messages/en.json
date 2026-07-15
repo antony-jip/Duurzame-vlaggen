@@ -29,7 +29,7 @@
     "hero": {
       "eyebrow": "100% biodegradable",
       "title": "Flags that don't cost the earth",
-      "lead": "From mast flags to beach flags: printed on recycled and compostable materials, produced in Europe with green energy.",
+      "lead": "From mast flags to beach flags: printed on recycled and biodegradable materials, produced in Europe with green energy.",
       "primaryCta": "View the collection",
       "secondaryCta": "Our sustainability"
     },
@@ -38,7 +38,7 @@
       "items": {
         "biodegradable": {
           "title": "Biodegradable",
-          "body": "Compostable fabrics without microplastics."
+          "body": "Biodegradable fabrics without microplastics."
         },
         "european": {
           "title": "European production",

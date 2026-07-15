@@ -182,9 +182,9 @@
   display: block;
   width: 100%;
   height: clamp(28px, 4.5vw, 64px);
-  /* Golft naar de donkere story-sectie eronder — dus dezelfde donkergroene
-     kleur, geen felle off-white band tussen twee donkere vlakken. */
-  color: color-mix(in srgb, var(--color-forest) 52%, #06120c);
+  /* Golft naar de vlaggen eronder. Stond op donkergroen toen het verhaalblok
+     hier nog zat; de winkel staat nu direct achter de hero, dus off-white. */
+  color: var(--color-off-white);
   margin-top: auto;
 }
 .heroPhoto {
@@ -247,23 +247,28 @@
   pointer-events: none;
   opacity: 0.7;
 }
-/* Golf-overgang onderaan de story naar het lichte blok eronder. */
-.storyWave {
+/* Golf-overgang bovenaan: het lichte vlak van de vlaggen loopt hier in. Zelfde
+   svg als de golf onderaan, maar gespiegeld zodat het vult vanaf de bovenrand. */
+.storyWaveTop {
   position: absolute;
   left: 0;
-  bottom: -1px;
+  top: -1px;
   display: block;
   width: 100%;
   height: clamp(28px, 4.5vw, 64px);
   color: var(--color-off-white);
+  transform: scaleY(-1);
   pointer-events: none;
+  z-index: 1;
 }
 .storyInner {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(20px, 3vw, 40px);
+  /* Krap gehouden: kop, omslag én de vier foto's moeten samen in één beeld
+     passen, anders mis je de clou. */
+  gap: clamp(14px, 1.8vw, 26px);
   max-width: 1100px;
 }
 .storyKicker {
@@ -289,11 +294,11 @@
 }
 .storyTurn {
   color: #eaa886;
-  margin-top: clamp(12px, 2vw, 28px);
+  margin-top: clamp(8px, 1.2vw, 18px);
 }
 /* Live afbraak-teller — tikt door terwijl je leest. */
 .storyCounter {
-  margin-top: clamp(20px, 3vw, 36px);
+  margin-top: clamp(8px, 1.2vw, 16px);
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 700;
@@ -335,212 +340,245 @@
   }
 }
 
-/* ==========================================================================
-   DE NO-BRAINER — gewone vlag vs duurzame vlag
-   ========================================================================== */
-.brainer {
-  padding-block: clamp(72px, 8vw, 128px);
-}
-.brainerGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-lg);
-  align-items: stretch;
-}
-.brainerCard {
-  border-radius: var(--radius-2xl);
-  padding: clamp(28px, 3.5vw, 52px);
-}
-.brainerCard h3 {
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-md);
-}
-.brainerCard ul {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.brainerCard li {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.5;
-}
-.brainerCard li::before {
-  content: attr(data-mark);
-  font-family: var(--font-ui);
-  font-weight: 800;
-  flex-shrink: 0;
-}
-/* De oude wereld: vaal, stoffig, licht doorgestreept gevoel. */
-.brainerOld {
-  background: rgba(139, 141, 122, 0.14);
-  color: var(--color-stone);
-}
-.brainerOld h3 {
-  color: var(--color-stone);
-}
-.brainerOld li::before {
-  color: var(--color-stone);
-}
-/* De nieuwe wereld: vol forest, levend. */
-.brainerNew {
-  background: var(--color-forest);
-  color: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--shadow-lg);
-  transform: rotate(0.6deg);
-}
-.brainerNew h3 {
-  color: #fff;
-}
-.brainerNew li::before {
-  color: #eaa886;
-}
-.brainerPunch {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  margin-top: clamp(32px, 4vw, 56px);
-}
-.brainerPunchline {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: clamp(24px, 3vw, 42px);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  color: var(--color-charcoal);
-}
-.brainerPunchline span {
-  color: var(--color-terracotta);
-}
-@media (max-width: 860px) {
-  .brainerGrid {
-    grid-template-columns: 1fr;
-  }
-  .brainerNew {
-    transform: none;
-  }
-}
+/* ---- De levensloop: vier foto's, één blik ----
+   Dezelfde vlag, vier keer: nieuw, rafelig, een snipper in het gras, en dan
+   alleen nog gras. De clou is de VOLGORDE, dus ze staan op één rij en je ziet
+   ze samen. Verspreid over de sectie zie je er één of twee tegelijk en valt
+   het verhaal uit elkaar.
 
-/* ==========================================================================
-   USP's — vier witte kaarten met forest-iconen
-   ========================================================================== */
-.uspGrid {
+   Ze zweven allemaal met dezelfde beweging maar in een eigen fase, zodat het
+   dobbert in plaats van marcheert. */
+.cyclus {
+  --cyclus-gap: clamp(12px, 2.2vw, 32px);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
+  gap: var(--cyclus-gap);
+  width: 100%;
+  /* Het beeld is hier het argument, dus krijgt het de ruimte van de koppen. */
+  max-width: 940px;
+  margin: clamp(12px, 2vw, 24px) 0 0;
+  padding: 0;
+  list-style: none;
 }
-/* Clean: geen kaart-dozen — icoon, kop, tekst op het vlak zelf.
-   Interactie: scroll-reveal per blok + tactiele hover. */
-.usp {
+.cyclusFoto {
+  margin: 0;
+}
+.cyclusFoto figure {
+  margin: 0;
+}
+/* Het lijntje dat de vier foto's tot één tijdlijn maakt. De foto is vierkant en
+   de cirkel raakt precies het midden van de zijkant, dus een lijn vanaf 100%
+   over de breedte van de gap loopt exact van rand tot rand. */
+.cyclusBeeld {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding-top: var(--space-sm);
-  cursor: default;
+  display: block;
 }
-/* Terracotta onderstreep-sweep bij hover. */
-.usp::before {
+.cyclusFoto:not(:last-child) .cyclusBeeld::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 28px;
-  height: 3px;
-  border-radius: 3px;
-  background: var(--forest-8);
-  transition:
-    width var(--duration-base) var(--ease-out),
-    background var(--duration-base) var(--ease-out);
+  top: 50%;
+  left: 100%;
+  width: var(--cyclus-gap);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.22);
 }
-.usp:hover::before {
-  width: 72px;
-  background: var(--color-terracotta);
+.cyclusFoto img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  /* Het doek is het onderwerp, niet de lijst eromheen: een dunne rand houdt de
+     foto los van het bijna-zwarte vlak zonder een medaille te worden. */
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+.cyclusFoto figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 10px;
+  text-align: center;
+}
+.cyclusFase {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+}
+.cyclusTijd {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
 }
 
-/* Staggered scroll-reveal — pure CSS view-timeline (Next 16-era browsers);
-   valt stil terug op gewoon tonen waar niet ondersteund. */
+/* Elke foto dobbert in zijn eigen tempo. Negatieve delays zetten ze meteen
+   midden in hun beweging, zodat ze niet als groep synchroon starten. */
+@media (prefers-reduced-motion: no-preference) {
+  .cyclusFoto figure {
+    animation: cyclus-zweef 9s ease-in-out infinite;
+  }
+  .cyclusFoto[data-fase="2"] figure {
+    animation-delay: -2.2s;
+    animation-duration: 11s;
+  }
+  .cyclusFoto[data-fase="3"] figure {
+    animation-delay: -4.5s;
+    animation-duration: 10s;
+  }
+  .cyclusFoto[data-fase="4"] figure {
+    animation-delay: -6.8s;
+    animation-duration: 12s;
+  }
+}
+@keyframes cyclus-zweef {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translate3d(-6px, -12px, 0) rotate(1.5deg);
+  }
+}
+
+/* Ze komen van links naar rechts binnen terwijl je scrolt: dat is dezelfde
+   richting als het verval, dus de beweging vertelt het verhaal mee. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .usp {
+    .cyclusFoto {
       animation: fade-in-up linear both;
       animation-timeline: view();
-      animation-range: entry 5% entry 45%;
     }
-    .usp:nth-child(2) {
-      animation-range: entry 12% entry 55%;
+    .cyclusFoto[data-fase="1"] {
+      animation-range: entry 12% entry 42%;
     }
-    .usp:nth-child(3) {
-      animation-range: entry 19% entry 65%;
+    .cyclusFoto[data-fase="2"] {
+      animation-range: entry 18% entry 48%;
     }
-    .usp:nth-child(4) {
-      animation-range: entry 26% entry 75%;
+    .cyclusFoto[data-fase="3"] {
+      animation-range: entry 24% entry 54%;
+    }
+    .cyclusFoto[data-fase="4"] {
+      animation-range: entry 30% entry 60%;
     }
   }
 }
-/* Volle merkkleur-blokjes met wit icoon, speels gekanteld — zelfde bold
-   taal als de collectie-tegels. */
-.uspIcon {
-  display: inline-grid;
+
+/* Op mobiel blijft de rij een rij: twee naast twee zou de volgorde breken. */
+@media (max-width: 767px) {
+  .cyclus {
+    gap: 8px;
+  }
+  .cyclusTijd {
+    display: none;
+  }
+}
+/* ==========================================================================
+   COLLECTIE-SHOWCASE — de vlaggen + de geruststelling eronder
+   ========================================================================== */
+/* ---- USP-strip: vier kernwoorden, direct onder de vlaggen ----
+   Stond eerst als eigen sectie met een kop en vier alinea's. Nu staat het waar
+   de beslissing valt: je kiest een vlag, en ziet meteen waarom je hier koopt.
+   Alleen icoon + kernwoord; de uitleg staat op /duurzaamheid. */
+/* Een raster van 3, dus twee nette rijen van drie. Als flexrij passen zes items
+   net niet op één regel en breekt de laatste er in zijn eentje af. */
+.uspStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.6vw, 22px) clamp(16px, 2.5vw, 40px);
+  margin: clamp(32px, 4vw, 56px) 0 0;
+  padding: clamp(20px, 2.5vw, 28px) 0 0;
+  list-style: none;
+  border-top: 2px solid var(--forest-6);
+}
+.uspStrip li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 15px);
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.uspStripIcon {
+  display: grid;
   place-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
   background: var(--color-forest);
   color: #fff;
-  transform: rotate(-3deg);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--duration-base) var(--ease-out);
 }
-.usp:nth-child(2) .uspIcon {
+/* Elk kernwoord zijn eigen accent, in dezelfde volgorde als de vlaggen erboven.
+   Zes items: de vier materiaal-claims voorop, dan CSRD en levertijd. */
+.uspStrip li:nth-child(2) .uspStripIcon {
   background: var(--color-sage-blue);
-  transform: rotate(2.5deg);
 }
-.usp:nth-child(3) .uspIcon {
+.uspStrip li:nth-child(3) .uspStripIcon {
   background: var(--color-terracotta);
-  transform: rotate(-2deg);
 }
-.usp:nth-child(4) .uspIcon {
+.uspStrip li:nth-child(4) .uspStripIcon {
   background: var(--color-sage-purple);
-  transform: rotate(3deg);
 }
-.usp:hover .uspIcon {
-  transform: rotate(0deg) translateY(-4px);
+.uspStrip li:nth-child(5) .uspStripIcon {
+  background: var(--color-copper-rust);
 }
-.usp h3 {
-  font-size: 21px;
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+.uspStrip li:nth-child(6) .uspStripIcon {
+  background: var(--color-forest);
 }
-.usp p {
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--color-stone);
-}
-
-@media (max-width: 1100px) {
-  .uspGrid {
+@media (max-width: 900px) {
+  .uspStrip {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (max-width: 640px) {
-  .uspGrid {
+@media (max-width: 560px) {
+  .uspStrip {
     grid-template-columns: 1fr;
+    gap: var(--space-sm);
   }
 }
 
-/* ==========================================================================
-   COLLECTIE-SHOWCASE — featured groot + grid, echte fotografie
-   ========================================================================== */
+/* ---- Achtergrond: het tech-grid uit de styleguide, langzaam drijvend ----
+   Vijf verzadigde kaarten vragen om een rustige ondergrond, dus geen tweede
+   effect dat om aandacht vecht: alleen het raster van de styleguide (60px,
+   forest op 4%) dat traag wegdrijft. Je merkt het pas als je kijkt.
+
+   De verschuiving is exact één tegel (60px), anders springt de lus zichtbaar
+   terug bij het herstarten. */
+.shop {
+  position: relative;
+  overflow: hidden;
+}
+.shop::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  background:
+    linear-gradient(90deg, var(--forest-3) 1px, transparent 1px),
+    linear-gradient(0deg, var(--forest-3) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shop::before {
+    animation: grid-drift 24s linear infinite;
+  }
+}
+@keyframes grid-drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(60px, 60px);
+  }
+}
+/* Boven het raster. */
+.shopInner {
+  position: relative;
+}
+
 .showcase {
   display: flex;
   flex-direction: column;
@@ -707,21 +745,30 @@
   animation: flag-wiggle 0.9s var(--ease-in-out);
 }
 
-/* Volle merkkleur-vlakken per product — bold disruptor, geen fluistertint. */
+/* Volle merkkleur-vlakken per product — bold disruptor, geen fluistertint.
+ *
+ * De accenten zijn middentonen: witte tekst van 14px haalde er 2,9-3,3 contrast
+ * op, waar WCAG AA 4,5 vraagt. Voller wit lost dat niet op (dan blijf je op
+ * ~3,8), want het ligt aan de kleur zelf. Daarom hier een paar procent
+ * bijna-zwart erdoor: net genoeg om de norm te halen, te weinig om te zien.
+ * Forest is donker genoeg en blijft onaangeroerd (7,35).
+ *
+ * Alleen de KAARTACHTERGROND schuift op. De tokens in de styleguide blijven
+ * wat ze zijn. */
 .showcaseCard[data-accent="forest"] {
   background: var(--color-forest);
 }
 .showcaseCard[data-accent="sage-blue"] {
-  background: var(--color-sage-blue);
+  background: color-mix(in srgb, var(--color-sage-blue) 88%, #060606);
 }
 .showcaseCard[data-accent="terracotta"] {
-  background: var(--color-terracotta);
+  background: color-mix(in srgb, var(--color-terracotta) 88%, #060606);
 }
 .showcaseCard[data-accent="sage-purple"] {
-  background: var(--color-sage-purple);
+  background: color-mix(in srgb, var(--color-sage-purple) 90%, #060606);
 }
 .showcaseCard[data-accent="copper-rust"] {
-  background: var(--color-copper-rust);
+  background: color-mix(in srgb, var(--color-copper-rust) 98%, #060606);
 }
 
 /* Witte typografie op de kleurvlakken. */
@@ -732,8 +779,10 @@
   color: #fff;
   font-weight: 800;
 }
+/* Vol wit, geen 78%: de donkerdere kaarten hierboven zijn precies op vol wit
+   doorgerekend. Met dekking eronder haal je de norm alsnog niet. */
 .showcaseCard[data-accent] .showcaseBody p {
-  color: rgba(255, 255, 255, 0.78);
+  color: #fff;
 }
 .showcaseCard[data-accent] .showcasePrice {
   color: rgba(255, 255, 255, 0.7);
@@ -766,6 +815,9 @@
   align-items: flex-start;
   gap: 6px;
   padding: var(--space-md);
+  /* Vult de resterende hoogte, zodat de prijs eronder omlaag geduwd kan worden
+     en alle vijf de prijzen op één lijn staan. */
+  flex: 1;
 }
 .showcaseBody h3 {
   font-size: 20px;
@@ -776,7 +828,11 @@
   color: var(--color-stone);
 }
 .showcasePrice {
-  margin-top: 6px;
+  /* `auto` in plaats van een vaste marge: de taglines lopen van twee tot drie
+     regels, en dan zakt elke prijs op een eigen hoogte. Zo staan ze op één
+     lijn en kun je de vijf prijzen in één blik vergelijken. */
+  margin-top: auto;
+  padding-top: 10px;
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--color-stone);
@@ -823,174 +879,189 @@
 }
 
 /* ==========================================================================
-   MISSIE — forest kleurblok tussen wapper-golven, merkstatement kolossaal
-   ========================================================================== */
-.mission {
-  margin-block: clamp(24px, 3vw, 48px);
-}
-.wave {
-  display: block;
-  width: 100%;
-  height: clamp(32px, 5vw, 72px);
-  color: var(--color-forest);
-}
-.waveBottom {
-  transform: scaleY(-1);
-}
-.missionBlock {
-  position: relative;
-  background: var(--color-forest);
-  overflow: hidden;
-}
-/* Clean: egaal vlak — geen achtergrond-patroon. */
-.missionInner {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--space-md);
-  padding-block: clamp(56px, 7vw, 104px);
-}
-.missionEyebrow {
-  display: inline-flex;
-  background: var(--color-copper-rust);
-  color: #fff;
-  padding: 10px 24px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-copper);
-  font-family: var(--font-eyebrow);
-  font-optical-sizing: auto;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.03em;
-}
-.missionTitle {
-  color: #fff;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: clamp(40px, 6vw, 84px);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  text-wrap: balance;
-}
-.missionAccent {
-  color: #eaa886;
-}
-.missionBody {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.65;
-  max-width: 52ch;
-}
-.missionStats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-}
-/* Glass stat-chips die zachtjes zweven (V5.0 float). */
-.missionStat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 168px;
-  padding: 18px 26px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: var(--radius-lg);
-  animation: float 5s var(--ease-in-out) infinite;
-}
-.missionStat:nth-child(2) {
-  animation-delay: -1.6s;
-}
-.missionStat:nth-child(3) {
-  animation-delay: -3.2s;
-}
-.missionStatValue {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 30px;
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-.missionStatLabel {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-/* ==========================================================================
-   HET DOEK — craft-band met weefsel-fotografie
+   HET DOEK — één beeld dat het hele verhaal vertelt
    ========================================================================== */
 /* Op het doorlopende off-white vlak — geen witte band-sprong na de golf. */
-.craft {
+/* Sluit direct aan op het verhaalblok erboven. De golf die dat blok de scène in
+   laat lopen zit in de figuur zelf (`doekGolfBoven`), zodat hij óver het beeld
+   valt. Trok zich hiervoor onder de missie-golf door, maar die sectie is weg. */
+.doek {
   background: transparent;
+  padding-block: 0 clamp(72px, 8vw, 128px);
 }
-.craftInner {
+/* Twee kolommen, twee rijen: klap naast weerlegging, en daaronder de twee
+   helften van de plaat. `align-items: end` hangt de rechterkolom aan de
+   onderlijn van de kop, zodat de tekst en de kop op één lijn eindigen in
+   plaats van als twee losse blokken te zweven. */
+.doekRaster {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(32px, 5vw, 96px);
-  align-items: center;
-  padding-block: clamp(64px, 7vw, 112px);
+  grid-template-columns: 1.1fr 1fr;
+  align-items: end;
+  column-gap: clamp(24px, 4vw, 64px);
+  row-gap: clamp(36px, 4.5vw, 64px);
 }
-/* Zelfde organische wapper-vorm als de hero — het terugkerende merkmotief. */
-.craftMedia {
-  position: relative;
-  min-height: clamp(320px, 36vw, 560px);
-  border-radius: 54% 46% 58% 42% / 46% 54% 46% 54%;
-  overflow: hidden;
+.doekKop h2 {
+  margin-top: var(--space-md);
+  text-wrap: balance;
 }
-.craftPhoto {
-  object-fit: cover;
-}
-.craftBody {
+.doekUitleg {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-md);
 }
-.craftBody h2 {
-  max-width: 16ch;
+
+/* Full-bleed: breekt uit de container naar de volle vensterbreedte. Geen
+   afgeronde hoeken en geen schaduw, want dit is geen kaartje maar een scène. */
+.doekBeeld {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-block: 0 clamp(28px, 3.5vw, 48px);
 }
-.craftBody p {
-  color: var(--color-stone);
-  max-width: 48ch;
+.doekBeeld img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
-.craftList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: var(--space-xs) 0 var(--space-sm);
+/* Kruis en vink, midden op de plaat, elk op zijn eigen vlag. Percentages omdat
+   de plaat meeschaalt: de posities zijn afgelezen op de vlaggen zelf. */
+.doekMerk {
+  position: absolute;
+  top: 30%;
+  display: grid;
+  place-items: center;
+  width: clamp(38px, 3.4vw, 52px);
+  height: clamp(38px, 3.4vw, 52px);
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -50%);
 }
-.craftList li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--color-charcoal);
+.doekMerk[data-kant="slecht"] {
+  left: 34%;
+  background: var(--color-terracotta);
 }
-.craftList svg {
-  flex-shrink: 0;
-  color: var(--color-forest);
+.doekMerk[data-kant="goed"] {
+  left: 68%;
+  background: var(--color-forest);
 }
 
-@media (max-width: 900px) {
-  .craftInner {
-    grid-template-columns: 1fr;
+/* Het donkere verhaalblok golft de scène in: zelfde kleur als dat blok, en
+   gespiegeld zodat het vult vanaf de bovenrand. Ligt óver het beeld, dus de
+   doorzichtige helft toont de foto. */
+.doekGolfBoven {
+  position: absolute;
+  left: 0;
+  top: -1px;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: color-mix(in srgb, var(--color-forest) 52%, #06120c);
+  transform: scaleY(-1);
+  pointer-events: none;
+  z-index: 1;
+}
+/* Golft de plaat uit naar het lichte vlak eronder, in dezelfde vorm als de
+   golven tussen de andere secties. */
+.doekGolf {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  pointer-events: none;
+}
+
+/* De twee helften benoemd, elk in de kolom van zijn eigen kant van de plaat.
+   Het streepje is geen border maar een eigen laagje, zodat het zich kan
+   uittrekken zodra je de vergelijking bereikt: links en rechts tegelijk, als
+   twee weegschalen. */
+.doekHelft {
+  position: relative;
+  align-self: start;
+  padding-top: var(--space-sm);
+}
+.doekHelft::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--forest-6);
+  transform-origin: left center;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .doekHelft::before {
+      animation: streep-uit linear both;
+      animation-timeline: view();
+      animation-range: entry 20% entry 60%;
+    }
   }
-  .craftMedia {
-    order: -1;
-    min-height: clamp(260px, 56vw, 440px);
+}
+@keyframes streep-uit {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.doekHelft[data-kant="slecht"]::before {
+  background: color-mix(in srgb, var(--color-terracotta) 45%, transparent);
+}
+.doekHelft[data-kant="goed"]::before {
+  background: var(--color-forest);
+}
+.doekHelftKop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  color: var(--color-stone);
+}
+/* Klein broertje van het merkteken op de plaat: zelfde vorm, zelfde kleur. */
+.doekTeken {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #fff;
+}
+.doekHelft[data-kant="slecht"] .doekTeken {
+  background: var(--color-terracotta);
+}
+.doekHelft[data-kant="goed"] .doekTeken {
+  background: var(--color-forest);
+}
+.doekHelft[data-kant="goed"] .doekHelftKop {
+  color: var(--color-forest);
+}
+.doekHelft p {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  max-width: 30ch;
+}
+@media (max-width: 760px) {
+  .doekRaster {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 }
 
@@ -998,7 +1069,27 @@
    STAPPEN — echte volgorde, uniform forest genummerd
    ========================================================================== */
 .stepsBand {
+  position: relative;
   background: var(--forest-3);
+  /* Ruimte voor de golf die het vlak van "Het doek" hier in laat lopen. */
+  padding-top: clamp(72px, 9vw, 140px);
+  /* Dit is de laatste sectie voor de footer. Hij schuift onder de footergolf
+     door, zodat zijn tint door die golf heen komt in plaats van dat er een
+     kale off-white strook tussen valt. */
+  margin-bottom: calc(-1 * clamp(28px, 4.5vw, 64px));
+  padding-bottom: calc(clamp(72px, 8vw, 128px) + clamp(28px, 4.5vw, 64px));
+}
+/* Het lichte vlak erboven golft naar binnen: hetzelfde motief als tussen de
+   andere secties, zodat het argument en de handeling aan elkaar vastzitten. */
+.stepsGolf {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 4.5vw, 64px);
+  color: var(--color-off-white);
+  pointer-events: none;
 }
 .stepsWrap {
   position: relative;
@@ -1118,62 +1209,5 @@
 @media (max-width: 560px) {
   .steps {
     grid-template-columns: 1fr;
-  }
-}
-
-/* ==========================================================================
-   CTA-BAND — terracotta kleurblok: het tweede merkkleur-moment
-   ========================================================================== */
-.ctaBand {
-  background: var(--color-terracotta);
-  border-radius: var(--radius-2xl);
-  padding: clamp(48px, 6vw, 96px);
-}
-.ctaInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--space-md);
-  max-width: 720px;
-  margin-inline: auto;
-}
-.ctaTitle {
-  color: #fff;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: clamp(36px, 4.5vw, 64px);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-}
-.ctaSub {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.6;
-}
-.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-md);
-  margin-top: var(--space-sm);
-}
-.ctaLink {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 14px;
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.ctaLink:hover {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-@media (max-width: 560px) {
-  .ctaActions {
-    flex-direction: column;
-    width: 100%;
   }
 }

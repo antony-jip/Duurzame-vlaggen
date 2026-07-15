@@ -29,7 +29,7 @@
     "hero": {
       "eyebrow": "100% biologisch abbaubar",
       "title": "Flaggen, die die Erde nicht belasten",
-      "lead": "Von der Mastflagge bis zur Beachflag: gedruckt auf recycelten und kompostierbaren Materialien, produziert in Europa mit Ökostrom.",
+      "lead": "Von der Mastflagge bis zur Beachflag: gedruckt auf recycelten und biologisch abbaubaren Materialien, produziert in Europa mit Ökostrom.",
       "primaryCta": "Kollektion ansehen",
       "secondaryCta": "Unsere Nachhaltigkeit"
     },
@@ -38,7 +38,7 @@
       "items": {
         "biodegradable": {
           "title": "Biologisch abbaubar",
-          "body": "Kompostierbare Stoffe ohne Mikroplastik."
+          "body": "Biologisch abbaubare Stoffe ohne Mikroplastik."
         },
         "european": {
           "title": "Europäische Produktion",
