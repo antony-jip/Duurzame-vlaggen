@@ -132,7 +132,22 @@
       "title": "Thank you for your order",
       "subtitle": "We've received your order and are getting started right away.",
       "orderNumber": "Order number",
-      "emailSent": "A confirmation has been sent to {email}."
+      "emailSent": "A confirmation has been sent to {email}.",
+      "pendingTitle": "Your order is ready to go",
+      "pendingSubtitle": "We have received your order. As soon as your payment comes through, we get started.",
+      "problemTitle": "Your payment did not go through",
+      "problemSubtitle": "No worries, your order is still waiting for you. Try the payment again and we will get started.",
+      "trackPromise": "Once we have processed your order, you will receive a track & trace link by email. It lets you follow your flags right to your door.",
+      "retryCta": "Try payment again"
+    },
+    "steps": {
+      "heading": "What happens next",
+      "paid": "Payment received",
+      "paidBody": "Your order is confirmed and scheduled with us.",
+      "production": "In production",
+      "productionBody": "We print your flags and finish them exactly as you configured them.",
+      "shipped": "On its way to you",
+      "shippedBody": "You will receive your track & trace link by email as soon as the parcel is ready."
     },
     "status": {
       "pending": "Awaiting payment",

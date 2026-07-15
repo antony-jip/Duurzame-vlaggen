@@ -132,7 +132,22 @@
       "title": "Bedankt voor je bestelling",
       "subtitle": "We hebben je bestelling ontvangen en gaan direct aan de slag.",
       "orderNumber": "Bestelnummer",
-      "emailSent": "Een bevestiging is verstuurd naar {email}."
+      "emailSent": "Een bevestiging is verstuurd naar {email}.",
+      "pendingTitle": "Je bestelling staat klaar",
+      "pendingSubtitle": "We hebben je bestelling ontvangen. Zodra je betaling binnen is, gaan we direct aan de slag.",
+      "problemTitle": "De betaling is niet gelukt",
+      "problemSubtitle": "Geen zorgen, je bestelling staat nog voor je klaar. Probeer de betaling opnieuw, dan gaan we alsnog aan de slag.",
+      "trackPromise": "Zodra we je bestelling hebben verwerkt, ontvang je een track & trace-link per e-mail. Daarmee volg je je vlaggen tot aan de deur.",
+      "retryCta": "Betaling opnieuw proberen"
+    },
+    "steps": {
+      "heading": "Wat er nu gebeurt",
+      "paid": "Betaling ontvangen",
+      "paidBody": "Je bestelling is bevestigd en staat bij ons in de planning.",
+      "production": "In productie",
+      "productionBody": "We drukken je vlaggen en werken ze af zoals je ze hebt samengesteld.",
+      "shipped": "Onderweg naar je toe",
+      "shippedBody": "Je ontvangt je track & trace-link per e-mail zodra het pakket klaarstaat."
     },
     "status": {
       "pending": "In afwachting van betaling",

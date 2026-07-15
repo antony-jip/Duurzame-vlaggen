@@ -132,7 +132,22 @@
       "title": "Merci pour votre commande",
       "subtitle": "Nous avons bien reçu votre commande et nous nous y mettons immédiatement.",
       "orderNumber": "Numéro de commande",
-      "emailSent": "Une confirmation a été envoyée à {email}."
+      "emailSent": "Une confirmation a été envoyée à {email}.",
+      "pendingTitle": "Votre commande est prête",
+      "pendingSubtitle": "Nous avons bien reçu votre commande. Dès que votre paiement sera confirmé, nous nous mettons au travail.",
+      "problemTitle": "Le paiement n’a pas abouti",
+      "problemSubtitle": "Pas d’inquiétude, votre commande vous attend toujours. Réessayez le paiement et nous nous mettons au travail.",
+      "trackPromise": "Dès que nous aurons traité votre commande, vous recevrez un lien de suivi par e-mail. Il vous permet de suivre vos drapeaux jusqu’à votre porte.",
+      "retryCta": "Réessayer le paiement"
+    },
+    "steps": {
+      "heading": "Les prochaines étapes",
+      "paid": "Paiement reçu",
+      "paidBody": "Votre commande est confirmée et planifiée chez nous.",
+      "production": "En production",
+      "productionBody": "Nous imprimons vos drapeaux et les finalisons exactement comme vous les avez configurés.",
+      "shipped": "En route vers vous",
+      "shippedBody": "Vous recevrez votre lien de suivi par e-mail dès que le colis sera prêt."
     },
     "status": {
       "pending": "En attente de paiement",

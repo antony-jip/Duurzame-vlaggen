@@ -132,7 +132,22 @@
       "title": "Vielen Dank für Ihre Bestellung",
       "subtitle": "Wir haben Ihre Bestellung erhalten und legen sofort los.",
       "orderNumber": "Bestellnummer",
-      "emailSent": "Eine Bestätigung wurde an {email} gesendet."
+      "emailSent": "Eine Bestätigung wurde an {email} gesendet.",
+      "pendingTitle": "Ihre Bestellung steht bereit",
+      "pendingSubtitle": "Wir haben Ihre Bestellung erhalten. Sobald Ihre Zahlung eingeht, legen wir sofort los.",
+      "problemTitle": "Die Zahlung hat nicht geklappt",
+      "problemSubtitle": "Keine Sorge, Ihre Bestellung wartet weiterhin auf Sie. Versuchen Sie die Zahlung erneut, dann legen wir doch noch los.",
+      "trackPromise": "Sobald wir Ihre Bestellung bearbeitet haben, erhalten Sie einen Track-und-Trace-Link per E-Mail. Damit verfolgen Sie Ihre Fahnen bis vor die Tür.",
+      "retryCta": "Zahlung erneut versuchen"
+    },
+    "steps": {
+      "heading": "Wie es jetzt weitergeht",
+      "paid": "Zahlung erhalten",
+      "paidBody": "Ihre Bestellung ist bestätigt und bei uns eingeplant.",
+      "production": "In Produktion",
+      "productionBody": "Wir drucken Ihre Fahnen und konfektionieren sie genau so, wie Sie sie zusammengestellt haben.",
+      "shipped": "Auf dem Weg zu Ihnen",
+      "shippedBody": "Ihren Track-und-Trace-Link erhalten Sie per E-Mail, sobald das Paket bereitsteht."
     },
     "status": {
       "pending": "Warten auf Zahlung",

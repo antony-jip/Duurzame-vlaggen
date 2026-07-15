@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import styles from "./order.module.css";
+import { Bladeren } from "./Bladeren";
 import { Badge, Button, Card, Container, Check } from "@/components/ui";
 import { getMessages } from "@/lib/i18n";
 import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
@@ -13,6 +14,31 @@ export const metadata: Metadata = {
   title: "Bestelbevestiging",
   robots: { index: false, follow: false },
 };
+
+/**
+ * De toon van de pagina. Losgetrokken van de statusbadge, want die twee liepen
+ * uiteen: de hero riep onvoorwaardelijk "Bedankt voor je bestelling" terwijl de
+ * badge eronder "de betaling is mislukt" meldde. Feest vieren over een mislukte
+ * betaling is niet alleen raar, het verbergt ook dat de klant nog iets moet.
+ */
+type Toon = "feest" | "wachten" | "probleem";
+
+function toonVan(status: OrderStatus): Toon {
+  switch (status) {
+    case "paid":
+    case "sent_to_probo":
+    case "probo_accepted":
+    case "in_production":
+    case "shipped":
+      return "feest";
+    case "payment_failed":
+    case "probo_rejected":
+    case "cancelled":
+      return "probleem";
+    default:
+      return "wachten";
+  }
+}
 
 /** Map an internal order status onto a customer-facing label + badge tone. */
 function statusPresentation(
@@ -39,6 +65,36 @@ function statusPresentation(
       return { label: s.cancelled, variant: "detail" };
     default:
       return { label: s.pending, variant: "outline" };
+  }
+}
+
+/** Kop + onderschrift horen bij de toon, niet bij de losse status. */
+function heroCopy(toon: Toon, dict: Dictionary): { title: string; sub: string } {
+  const c = dict.order.confirmation;
+  if (toon === "probleem") return { title: c.problemTitle, sub: c.problemSubtitle };
+  if (toon === "wachten") return { title: c.pendingTitle, sub: c.pendingSubtitle };
+  return { title: c.title, sub: c.subtitle };
+}
+
+/**
+ * De drie stappen na het afrekenen. `staat` bepaalt of een stap af is, nu loopt
+ * of nog moet komen — zo ziet de klant meteen waar zijn bestelling staat en
+ * wanneer de track & trace-link komt.
+ */
+type StapStaat = "af" | "bezig" | "wacht";
+
+function stappenVoor(status: OrderStatus): StapStaat[] {
+  switch (status) {
+    case "paid":
+    case "sent_to_probo":
+    case "probo_accepted":
+      return ["af", "bezig", "wacht"];
+    case "in_production":
+      return ["af", "bezig", "wacht"];
+    case "shipped":
+      return ["af", "af", "bezig"];
+    default:
+      return ["wacht", "wacht", "wacht"];
   }
 }
 
@@ -71,22 +127,75 @@ export default async function OrderConfirmationPage({
 
   const { catalog, dict } = await getMessages();
   const status = statusPresentation(order.status, dict);
+  const toon = toonVan(order.status);
+  const hero = heroCopy(toon, dict);
   const shipping = (order.shipping_address ?? null) as ProboAddress | null;
+  const stappen = stappenVoor(order.status);
+  const s = dict.order.steps;
+  const stapCopy = [
+    { titel: s.paid, body: s.paidBody },
+    { titel: s.production, body: s.productionBody },
+    { titel: s.shipped, body: s.shippedBody },
+  ];
 
   return (
     <Container as="section" className={styles.page} aria-labelledby="order-title">
-      <div className={styles.hero}>
+      {toon === "feest" && <Bladeren />}
+
+      <div className={`${styles.hero} ${styles[toon]}`}>
         <span className={styles.checkChip} aria-hidden="true">
-          <Check size={32} />
+          {toon === "probleem" ? <span className={styles.bang}>!</span> : <Check size={32} />}
         </span>
         <span className={styles.orderTag}>
           {dict.order.confirmation.orderNumber} {order.order_number}
         </span>
         <h1 id="order-title" className={styles.heroTitle}>
-          {dict.order.confirmation.title}
+          {hero.title}
         </h1>
-        <p className={styles.heroSub}>{dict.order.confirmation.subtitle}</p>
+        <p className={styles.heroSub}>{hero.sub}</p>
+
+        {toon === "probleem" && (
+          <Button as="a" href="/afrekenen" variant="primary" className={styles.heroCta}>
+            {dict.order.confirmation.retryCta}
+          </Button>
+        )}
       </div>
+
+      {toon !== "probleem" && (
+        <Card className={styles.stepsCard} elevation="raised">
+          <h2 className={styles.stepsHeading}>{s.heading}</h2>
+          <ol className={styles.steps}>
+            {stapCopy.map((stap, i) => (
+              <li key={stap.titel} className={`${styles.step} ${styles[stappen[i]]}`}>
+                <span className={styles.stepDot} aria-hidden="true">
+                  {stappen[i] === "af" ? <Check size={14} /> : i + 1}
+                </span>
+                <div className={styles.stepText}>
+                  <span className={styles.stepTitle}>{stap.titel}</span>
+                  <span className={styles.stepBody}>{stap.body}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <p className={styles.trackPromise}>
+            <span className={styles.trackIcon} aria-hidden="true">
+              →
+            </span>
+            {order.tracking_url
+              ? dict.order.tracking
+              : dict.order.confirmation.trackPromise}
+          </p>
+
+          {order.tracking_url && (
+            <div className={styles.actions}>
+              <Button as="a" href={order.tracking_url} variant="primary">
+                {dict.order.tracking}
+              </Button>
+            </div>
+          )}
+        </Card>
+      )}
 
       <Card className={styles.card} elevation="raised">
         <div className={styles.grid}>
