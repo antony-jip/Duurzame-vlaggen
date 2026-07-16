@@ -262,13 +262,25 @@ export function ArtworkUpload({
                 </ul>
               )}
               <span className={styles.doneActions}>
-                <button
-                  type="button"
-                  className={styles.link}
-                  onClick={() => setModalTarget({ mode: "replace", designId: design.id })}
-                >
-                  {design.fileUrl ? "Vervangen" : "Nu uploaden"}
-                </button>
+                {design.fileUrl ? (
+                  <button
+                    type="button"
+                    className={styles.link}
+                    onClick={() => setModalTarget({ mode: "replace", designId: design.id })}
+                  >
+                    Vervangen
+                  </button>
+                ) : (
+                  // Een openstaand slot alsnog vullen is de belangrijkste actie
+                  // in de rij — dat is een echte knop, geen tekstlinkje.
+                  <button
+                    type="button"
+                    className={styles.uploadNow}
+                    onClick={() => setModalTarget({ mode: "replace", designId: design.id })}
+                  >
+                    ⬆ Nu uploaden
+                  </button>
+                )}
                 <button
                   type="button"
                   className={styles.link}

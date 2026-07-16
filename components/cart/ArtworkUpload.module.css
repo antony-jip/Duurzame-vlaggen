@@ -1211,3 +1211,27 @@
     padding-left: 0;
   }
 }
+
+/* Openstaand slot vullen: de hoofdactie van de rij, dus een echte knop. */
+.uploadNow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-md, 10px);
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-button);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--duration-base, 300ms) var(--ease-out, ease);
+}
+
+.uploadNow:hover {
+  background: var(--color-terracotta);
+  color: #fff;
+}

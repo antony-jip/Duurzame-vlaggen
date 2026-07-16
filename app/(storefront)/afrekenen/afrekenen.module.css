@@ -21,7 +21,10 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  /* De zijkolom is óók de bewerkbare winkelmand (regels + ontwerpen), niet
+     alleen een totaaltelling — die verdient ruimte. Op smallere desktops
+     krimpt hij mee tot 400px voordat de layout op één kolom klapt. */
+  grid-template-columns: 1fr minmax(400px, 480px);
   gap: var(--space-xl);
   align-items: start;
 }
