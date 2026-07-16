@@ -1235,3 +1235,20 @@
   background: var(--color-terracotta);
   color: #fff;
 }
+
+/* Batch-upload: voortgang en per-bestand-meldingen. */
+.batchStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-forest);
+}
+
+/* Sleep-doel actief: dezelfde taal als de dropzone in de modal. */
+.uploadDrag {
+  background: color-mix(in srgb, var(--color-forest) 14%, transparent);
+  border-color: var(--color-forest);
+  border-style: solid;
+}

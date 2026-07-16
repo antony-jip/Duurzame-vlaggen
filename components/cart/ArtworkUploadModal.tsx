@@ -196,6 +196,7 @@ export function ArtworkUploadModal({
   onConfirm,
   widthCm,
   heightCm,
+  initialFile,
 }: {
   open: boolean;
   onClose: () => void;
@@ -213,9 +214,18 @@ export function ArtworkUploadModal({
   ) => void;
   widthCm?: number;
   heightCm?: number;
+  /**
+   * Al gekozen bestand (bijv. uit de multi-kiezer van de mandregel): de modal
+   * slaat dan de eigen dropzone over en start meteen met dit bestand, zodat de
+   * drukproef gewoon verschijnt.
+   */
+  initialFile?: File | null;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // handleFile is pas verderop gedefinieerd; de open-effect leest hem via een
+  // ref op run-time, zodat de effect-deps niet op elke render verschuiven.
+  const handleFileRef = useRef<(file: File) => Promise<void>>(null!);
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [dragOver, setDragOver] = useState(false);
@@ -314,10 +324,12 @@ export function ArtworkUploadModal({
     if (open && !dlg.open) {
       resetState();
       dlg.showModal();
+      // Bestand al gekozen vóór het openen → direct de drukproef-flow in.
+      if (initialFile) void handleFileRef.current(initialFile);
     } else if (!open && dlg.open) {
       dlg.close();
     }
-  }, [open, resetState]);
+  }, [open, resetState, initialFile]);
 
   // Revoke de object-URL als het component verdwijnt.
   useEffect(() => revokeObjectUrl, [revokeObjectUrl]);
@@ -575,6 +587,7 @@ export function ArtworkUploadModal({
     },
     [discardPending, analyzeRaster, analyzePdf, rasterizePdf, runUpload],
   );
+  handleFileRef.current = handleFile;
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
