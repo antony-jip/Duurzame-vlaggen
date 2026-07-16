@@ -811,6 +811,55 @@ export function ArtworkUploadModal({
     : 0;
   const beheerMissing = beheer ? Math.max(0, beheer.amount - beheerAssigned) : 0;
 
+  // Toewijzingskaart linksboven op het canvas: voor hoeveel van de vlaggen
+  // geldt dit ontwerp, plus de totaalstand van de regel.
+  const toewijsCard = beheer && beheerActive && (
+    <div className={styles.toewijsCard}>
+      <span className={styles.toewijsLabel}>
+        Dit ontwerp op hoeveel van de {beheer.amount} vlaggen?
+      </span>
+      {beheer.amount > 1 && (
+        <div
+          className={styles.designQty}
+          role="group"
+          aria-label="Aantal vlaggen met dit ontwerp"
+        >
+          <button
+            type="button"
+            className={styles.qtyBtn}
+            onClick={() => beheer.onQuantity(beheerActive.id, beheerActive.quantity - 1)}
+            disabled={beheerActive.quantity <= 1}
+            aria-label="Minder vlaggen met dit ontwerp"
+          >
+            −
+          </button>
+          <span className={styles.qtyValue} aria-live="polite">
+            {beheerActive.quantity} van {beheer.amount}
+          </span>
+          <button
+            type="button"
+            className={styles.qtyBtn}
+            onClick={() => beheer.onQuantity(beheerActive.id, beheerActive.quantity + 1)}
+            disabled={beheerMissing === 0}
+            aria-label="Meer vlaggen met dit ontwerp"
+          >
+            +
+          </button>
+        </div>
+      )}
+      <span
+        className={`${styles.toewijsStatus} ${
+          beheerMissing === 0 ? styles.beheerOk : styles.beheerOpen
+        }`}
+        aria-live="polite"
+      >
+        {beheerMissing === 0 ? "✓ " : ""}
+        {beheerAssigned} van {beheer.amount} toegewezen
+        {beheerMissing > 0 && ` · nog ${beheerMissing} open`}
+      </span>
+    </div>
+  );
+
   // Toon de autoritaire server-waarschuwingen zodra die er zijn, anders de
   // client-side inschatting.
   const shownWarnings =
@@ -940,6 +989,7 @@ export function ArtworkUploadModal({
                 if (!flag) {
                   return (
                     <div className={styles.stage}>
+                      {toewijsCard}
                       {previewIsImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -986,6 +1036,7 @@ export function ArtworkUploadModal({
 
                 return (
                   <div className={styles.stage}>
+                    {toewijsCard}
                     {previewIsImage && (
                       <div
                         className={styles.viewToggle}
@@ -1211,58 +1262,11 @@ export function ArtworkUploadModal({
                 )
               )}
 
-              {/* Toewijzing (beheer-modus): voor hoeveel van de vlaggen geldt
-                  dit ontwerp, plus verwijderen en de rest later aanleveren. */}
+              {/* Beheer-acties: de verdeling zelf zit linksboven op het canvas
+                  (toewijsCard); hier alleen de secundaire acties. */}
               {beheer && beheerActive && (
                 <div className={styles.controls}>
-                  {beheer.amount > 1 && (
-                    <div className={styles.controlRow}>
-                      <span className={styles.controlLabel}>
-                        Voor hoeveel vlaggen?
-                      </span>
-                      <div
-                        className={styles.designQty}
-                        role="group"
-                        aria-label="Aantal vlaggen met dit ontwerp"
-                      >
-                        <button
-                          type="button"
-                          className={styles.qtyBtn}
-                          onClick={() =>
-                            beheer.onQuantity(beheerActive.id, beheerActive.quantity - 1)
-                          }
-                          disabled={beheerActive.quantity <= 1}
-                          aria-label="Minder vlaggen met dit ontwerp"
-                        >
-                          −
-                        </button>
-                        <span className={styles.qtyValue} aria-live="polite">
-                          {beheerActive.quantity} van {beheer.amount}
-                        </span>
-                        <button
-                          type="button"
-                          className={styles.qtyBtn}
-                          onClick={() =>
-                            beheer.onQuantity(beheerActive.id, beheerActive.quantity + 1)
-                          }
-                          disabled={beheerMissing === 0}
-                          aria-label="Meer vlaggen met dit ontwerp"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  )}
                   <div className={styles.controlRow}>
-                    <span
-                      className={
-                        beheerMissing === 0 ? styles.beheerOk : styles.beheerOpen
-                      }
-                      aria-live="polite"
-                    >
-                      {beheerMissing === 0 ? "✓ " : ""}
-                      {beheerAssigned} van {beheer.amount} toegewezen
-                    </span>
                     <span className={styles.beheerActies}>
                       {beheerMissing > 0 && (
                         <button
