@@ -341,11 +341,11 @@ export async function checkoutAction(
                 ? `${err.name}: ${err.message}`
                 : String(err),
           };
-    console.error("[checkout] placeOrder faalde", {
-      market,
-      regels: draftItems.length,
-      ...detail,
-    });
+    // Eén string, geen object: de dev-logwrapper slikt object-argumenten in
+    // ("placeOrder faalde {}"), en dan valt er niets te debuggen.
+    console.error(
+      `[checkout] placeOrder faalde (markt ${market}, ${draftItems.length} regels): ${JSON.stringify(detail)}`,
+    );
     return {
       status: "error",
       message: dict.errors.generic,

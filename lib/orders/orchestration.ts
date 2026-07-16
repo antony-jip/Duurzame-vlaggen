@@ -358,12 +358,17 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     })),
   );
 
+  // Mollie weigert een webhook-URL die het niet kan bereiken (HTTP 422), dus
+  // op localhost maken we de betaling zónder webhook aan. De status wordt dan
+  // handmatig gereconcilieerd ("Ververs betaling" in de admin); in productie
+  // draait de webhook gewoon.
+  const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(appUrl);
   const payment = await createPayment({
     amount: quote.totals.total,
     currency: quote.currency,
     description: `Duurzame-Vlaggen ${order.order_number}`,
     redirectUrl: `${appUrl}/order/${order.id}`,
-    webhookUrl: `${appUrl}/api/webhooks/mollie`,
+    ...(isLocalhost ? {} : { webhookUrl: `${appUrl}/api/webhooks/mollie` }),
     metadata: { orderId: order.id, orderNumber: order.order_number },
   });
 
