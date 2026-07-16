@@ -185,9 +185,13 @@ const MAPPINGS: Record<string, ProductMapping> = {
     mode: "preset-size",
     base: [{ code: "flag-ciclo" }],
     sizePresets: {
-      // Alleen live-geverifieerde Probo-presets. 80×220 en 80×315 (oude-site-maten)
-      // hebben géén preset → quoteOnly in de catalogus, komen hier bewust niet in.
+      // 65×315, 90×430 en de squares zijn live geverifieerd (2026-07-13).
+      // 80×220 en 80×315 volgen hetzelfde naamschema maar zijn NIET tegen de
+      // API geverifieerd — dat kan ook niet meer (API weg) en hoeft niet:
+      // bestellen gaat handmatig, de code is alleen inkoop-informatie.
       "65x315": { code: "65x315cm" },
+      "80x220": { code: "80x220cm" },
+      "80x315": { code: "80x315cm" },
       "90x430": { code: "90x430cm" },
       "75x200": { code: "75x200cm", productCode: "beachflag-square" },
       "75x300": { code: "75x300cm", productCode: "beachflag-square" },

@@ -14,7 +14,7 @@ import {
   rasterizePdfFirstPage,
   rasterizePdfSrc,
 } from "@/lib/artwork/preview";
-import { ArtworkProof, type ProofFinish } from "./ArtworkProof";
+import { ArtworkProof, type ProofFinish, type ProofShape } from "./ArtworkProof";
 import type { CartDesign } from "./types";
 import styles from "./ArtworkUpload.module.css";
 
@@ -249,8 +249,10 @@ export function ArtworkUploadModal({
   heightCm,
   initialFile,
   finish,
+  shape,
   initialRemote,
   beheer,
+  sjabloon,
 }: {
   open: boolean;
   onClose: () => void;
@@ -276,6 +278,8 @@ export function ArtworkUploadModal({
   initialFile?: File | null;
   /** Afwerkingszone (tunnel/band/ringen) voor de drukproef, indicatief. */
   finish?: ProofFinish;
+  /** Doekvorm (straightflag-curve): drukproef en mockup volgen de contour. */
+  shape?: ProofShape;
   /**
    * Al aangeleverd ontwerp om mee te openen: de editor toont dan direct de
    * drukproef van het bestaande bestand (géén nieuwe upload) en "Ander bestand
@@ -306,6 +310,12 @@ export function ArtworkUploadModal({
     onDeliverLater: () => void;
     busyNote?: string | null;
   };
+  /**
+   * URL van het aanleversjabloon (PDF met contour, afloop en afwerkingszone)
+   * voor deze configuratie. Getoond in de dropzone en de zijbalk, zodat de
+   * klant het juiste formaat als onderlegger kan pakken vóór hij uploadt.
+   */
+  sjabloon?: string | null;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -1036,6 +1046,17 @@ export function ArtworkUploadModal({
             </span>
             <span className={styles.dropHint}>PDF, JPG of PNG · max 50 MB</span>
             <span className={styles.dropButton}>Bestand kiezen</span>
+            {sjabloon && (
+              <a
+                className={styles.sjabloonLink}
+                href={sjabloon}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                ⬇ Download eerst het aanleversjabloon (PDF)
+              </a>
+            )}
           </div>
         )}
 
@@ -1187,6 +1208,7 @@ export function ArtworkUploadModal({
                           isImage
                           widthCm={flag.widthCm}
                           heightCm={flag.heightCm}
+                          shape={shape}
                           imgStyle={layerStyle}
                           alt={`Voorbeeld van ${selected.name} als vlag aan de mast`}
                         />
@@ -1208,6 +1230,7 @@ export function ArtworkUploadModal({
                             mode="drukproef"
                             showGuides
                             finish={finish}
+                            shape={shape}
                             src={previewSrc}
                             isImage={previewIsImage}
                             widthCm={flag.widthCm}
@@ -1245,6 +1268,11 @@ export function ArtworkUploadModal({
                                 aria-hidden="true"
                               />
                               {finish.label} (indicatief)
+                            </span>
+                          )}
+                          {shape?.kind === "beachStraight" && (
+                            <span className={styles.legendItem}>
+                              Doekvorm straightflag (contour indicatief)
                             </span>
                           )}
                         </div>
@@ -1291,6 +1319,16 @@ export function ArtworkUploadModal({
                   <p className={styles.fileNote}>
                     Benodigd aanleverformaat = vlagmaat + 1 cm afloop rondom.
                   </p>
+                )}
+                {sjabloon && (
+                  <a
+                    className={styles.sjabloonLink}
+                    href={sjabloon}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    ⬇ Aanleversjabloon voor deze maat (PDF)
+                  </a>
                 )}
               </div>
 

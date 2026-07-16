@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { rasterizePdfSrc } from "@/lib/artwork/preview";
 import styles from "./ArtworkProof.module.css";
@@ -51,6 +51,36 @@ export interface ProofFinish {
   /** Legenda-label, bijv. "Tunnelzoom". */
   label: string;
 }
+
+/**
+ * Doekvorm. Een straightflag-beachvlag is geen rechthoek: de mastzijde loopt
+ * op volle hoogte, de bovenrand buigt in een grote curve naar de vrije zijde.
+ * De contour is indicatief (het exacte snijpatroon zit in het
+ * aanleversjabloon), maar de proef laat zo wél zien wat er buiten het doek
+ * valt.
+ */
+export interface ProofShape {
+  kind: "beachStraight";
+  side: "links" | "rechts";
+}
+
+/**
+ * Genormaliseerd straightflag-pad (0..1 in beide assen), naar de vorm van de
+ * echte vlag: de vrije zijde (links) loopt op volle hoogte, de top piekt rond
+ * een kwart van de breedte en de boog zakt naar de mastzijde (rechts) op ±30%
+ * hoogte. Dit is de canonieke stand voor mastzijde RECHTS; voor mastzijde
+ * links wordt het pad gespiegeld zodat het boogje aan de mastkant zit.
+ */
+const BEACH_STRAIGHT_PATH =
+  "M 0 1 L 0 0.12 C 0 0.03 0.06 0 0.15 0 L 0.24 0 C 0.62 0 1 0.12 1 0.3 L 1 1 Z";
+
+/**
+ * Kromme beachpole (mockup): plant onderaan de mastzijde, loopt langs de
+ * korte zijde omhoog en volgt de boog tot de top van de hoge vrije zijde —
+ * zoals de echte pole die door de tunnel van de korte kant loopt.
+ */
+const BEACH_POLE_PATH =
+  "M 0.975 1 L 0.975 0.3 C 0.975 0.13 0.62 0.02 0.26 0.02 L 0.16 0.02";
 
 /** Neutrale documentglyph voor de fallback-placeholder (geen "PDF"-tekst). */
 function DocGlyph() {
@@ -121,6 +151,7 @@ export function ArtworkProof({
   wave = false,
   showGuides = false,
   finish,
+  shape,
   imgStyle,
   className,
 }: {
@@ -144,6 +175,8 @@ export function ArtworkProof({
   showGuides?: boolean;
   /** Afwerkingszone (tunnel/band/ringen) in de drukproef, indicatief. */
   finish?: ProofFinish;
+  /** Doekvorm (straightflag-curve); rechthoek wanneer weggelaten. */
+  shape?: ProofShape;
   /** Extra stijl voor de beeldlaag (object-fit/rotatie/spiegelen uit de modal). */
   imgStyle?: React.CSSProperties;
   className?: string;
@@ -210,6 +243,32 @@ export function ArtworkProof({
   const cx = (...parts: Array<string | false>) =>
     parts.filter(Boolean).join(" ");
 
+  // Straightflag: clip + contourlijnen via één genormaliseerd pad. Het
+  // canonieke pad heeft de mast rechts (korte zijde + boog rechts, hoge vrije
+  // zijde links); voor mastzijde links spiegelen we in SVG-transformruimte —
+  // dan zit het boogje aan de mastkant, zoals op de echte vlag.
+  const clipId = useId();
+  const beach = shape?.kind === "beachStraight" ? shape : null;
+  const beachMirror = beach?.side === "links" ? "translate(1,0) scale(-1,1)" : undefined;
+  const beachClip = beach ? (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+      <defs>
+        <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+          <path d={BEACH_STRAIGHT_PATH} transform={beachMirror} />
+        </clipPath>
+      </defs>
+    </svg>
+  ) : null;
+  /** Wikkel media in de doekvorm wanneer die geen rechthoek is. */
+  const shaped = (children: React.ReactNode) =>
+    beach ? (
+      <span className={styles.shapeClip} style={{ clipPath: `url(#${clipId})` }}>
+        {children}
+      </span>
+    ) : (
+      children
+    );
+
   const handleImgError = useCallback(() => setImgError(true), []);
 
   /**
@@ -255,15 +314,41 @@ export function ArtworkProof({
         className={cx(styles.frame, small && styles.small, className ?? false)}
         style={{ ...sizeVars, aspectRatio: aspect }}
       >
-        {renderMedia(styles.layer)}
-        {showGuides && (
+        {beachClip}
+        {shaped(renderMedia(styles.layer))}
+        {showGuides && !beach && (
           <>
             <span className={styles.bleedLine} aria-hidden="true" />
             <span className={styles.cutBorder} aria-hidden="true" />
             <span className={styles.safeMargin} aria-hidden="true" />
           </>
         )}
-        {showGuides && finish && (
+        {showGuides && beach && (
+          // Contourlijnen die de doekvorm volgen: afloop iets buiten, snijlijn
+          // op de vorm, veilige marge erbinnen. Non-scaling strokes zodat de
+          // lijndikte niet meeschaalt met de vlagverhouding.
+          <svg
+            className={styles.contour}
+            viewBox="0 0 1 1"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <g transform={beachMirror}>
+              <path
+                d={BEACH_STRAIGHT_PATH}
+                className={styles.contourBleed}
+                transform="translate(0.5,0.5) scale(1.03) translate(-0.5,-0.5)"
+              />
+              <path d={BEACH_STRAIGHT_PATH} className={styles.contourCut} />
+              <path
+                d={BEACH_STRAIGHT_PATH}
+                className={styles.contourSafe}
+                transform="translate(0.5,0.5) scale(0.95) translate(-0.5,-0.5)"
+              />
+            </g>
+          </svg>
+        )}
+        {showGuides && finish && !beach && (
           <span
             className={cx(
               styles.finishZone,
@@ -285,20 +370,49 @@ export function ArtworkProof({
         )}
       </div>
     ) : (
-      // mode === "mockup": vlag aan de mast, mast aan de mastzijde (links).
+      // mode === "mockup": vlag aan de mast. Rechthoekig doek hangt aan een
+      // rechte mast; een straightflag hangt aan een beachpole die met de
+      // topcurve meebuigt.
       <div
         className={cx(styles.scene, small && styles.small, className ?? false)}
         style={sizeVars}
       >
+        {beachClip}
         {wave && <FlagWaveFilter />}
-        <span className={styles.mast} aria-hidden="true">
-          <span className={styles.knob} />
-        </span>
+        {!beach && (
+          <span className={styles.mast} aria-hidden="true">
+            <span className={styles.knob} />
+          </span>
+        )}
         <div
-          className={cx(styles.cloth, wave && styles.wave)}
+          className={cx(
+            styles.cloth,
+            wave && !beach && styles.wave,
+            !!beach && styles.beachCloth,
+          )}
           style={{ aspectRatio: aspect }}
         >
-          {renderMedia(styles.clothImg)}
+          {/* Wave-filter op een buitenlaag, clip op de binnenlaag: zo wappert
+              de doekrand mee terwijl de pole (los ernaast) stil blijft. */}
+          {beach && wave ? (
+            <span className={cx(styles.shapeClip, styles.wave)}>
+              {shaped(renderMedia(styles.clothImg))}
+            </span>
+          ) : (
+            shaped(renderMedia(styles.clothImg))
+          )}
+          {beach && (
+            <svg
+              className={styles.beachPole}
+              viewBox="0 0 1 1"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <g transform={beachMirror}>
+                <path d={BEACH_POLE_PATH} />
+              </g>
+            </svg>
+          )}
         </div>
       </div>
     );

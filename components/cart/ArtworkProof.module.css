@@ -355,3 +355,75 @@
   border: 2.5px solid var(--color-charcoal, #3a3a3a);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
 }
+
+/* ── Straightflag-vorm: clip + contourlijnen + beachpole ─────────────── */
+
+.shapeClip {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.shapeClip > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.contour {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.contour path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.contourCut {
+  stroke: var(--color-charcoal, #3a3a3a);
+  stroke-width: 2px;
+}
+
+.contourBleed {
+  stroke: var(--color-terracotta, #c66b4e);
+  stroke-width: 1.5px;
+}
+
+.contourSafe {
+  stroke: var(--color-sage-blue, #5c8a9d);
+  stroke-width: 1.2px;
+  stroke-dasharray: 5 4;
+}
+
+/* Straightflag-mockup: geen doekrand/schaduwkader, wel ruimte voor de pole. */
+.beachCloth {
+  overflow: visible;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+.beachPole {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.beachPole path {
+  fill: none;
+  stroke: #6d747b;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}

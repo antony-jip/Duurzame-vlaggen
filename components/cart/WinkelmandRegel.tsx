@@ -14,7 +14,8 @@ import {
   volgendeStaffel,
 } from "@/lib/pricing/local-catalog";
 import { normalizeCartItem, primaryDesign, type CartItem } from "./types";
-import type { ProofFinish } from "./ArtworkProof";
+import type { ProofFinish, ProofShape } from "./ArtworkProof";
+import { sjabloonUrl } from "@/lib/catalog/sjablonen";
 
 /**
  * Eén bewerkbare winkelmandregel: het ontwerp op de vlag, de keuzes, het aantal
@@ -66,6 +67,30 @@ function deriveFinish(item: CartItem): ProofFinish | undefined {
   return undefined;
 }
 
+/**
+ * Beachvlag-model uit het maatlabel ("Straight Small — …" / "Square Medium — …").
+ * Het model zit bewust in de maat (elke maat hoort bij één Probo-product).
+ */
+function beachModel(item: CartItem): "straight" | "square" | null {
+  if (item.slug !== "beachvlag") return null;
+  if (/^straight/i.test(item.sizeLabel)) return "straight";
+  if (/^square/i.test(item.sizeLabel)) return "square";
+  return null;
+}
+
+/**
+ * Doekvorm voor de proef: een straightflag is geen rechthoek maar een doek met
+ * een bolle topcurve aan de beachpole. De mastzijde bepaalt de spiegeling.
+ */
+function deriveShape(item: CartItem): ProofShape | undefined {
+  if (beachModel(item) !== "straight") return undefined;
+  const zijde = item.options
+    .find((o) => o.code === "Mastzijde")
+    ?.value?.toString()
+    .toLowerCase();
+  return { kind: "beachStraight", side: zijde === "rechts" ? "rechts" : "links" };
+}
+
 /** Is het ontwerp een rasterafbeelding (i.p.v. PDF)? */
 function isImageArtwork(fileName?: string | null, fileUrl?: string | null): boolean {
   return (
@@ -101,6 +126,16 @@ export function WinkelmandRegel({
   const product = getProduct(item.slug);
   const accent = product?.accent ?? "forest";
   const size = flagSize(item);
+  const shape = deriveShape(item);
+  // De beachvlag heeft één productfoto (straightflag), maar een squareflag in
+  // de mand hoort zijn eigen model te tonen.
+  const thumbImage =
+    beachModel(item) === "square"
+      ? {
+          src: "/beachvlag/squareflag-strand.webp",
+          alt: "Duurzame squareflag beachvlag op het strand",
+        }
+      : product?.heroImage;
   // De mockup kan alleen als we én een bestand én de echte maat hebben.
   const heeftOntwerp = Boolean(hoofdontwerp && size.widthCm && size.heightCm);
   const korting = staffelDiscount(item.amount);
@@ -126,14 +161,15 @@ export function WinkelmandRegel({
           }
           widthCm={size.widthCm!}
           heightCm={size.heightCm!}
+          shape={shape}
           alt={`Je ontwerp op de ${item.name} van ${item.sizeLabel}`}
         />
       ) : (
         <div className={styles.thumb}>
-          {product?.heroImage ? (
+          {thumbImage ? (
             <Image
-              src={product.heroImage.src}
-              alt={product.heroImage.alt}
+              src={thumbImage.src}
+              alt={thumbImage.alt}
               fill
               sizes="(max-width: 480px) 64px, 88px"
               className={styles.thumbPhoto}
@@ -166,6 +202,15 @@ export function WinkelmandRegel({
             amount={item.amount}
             designs={designs}
             finish={deriveFinish(item)}
+            shape={shape}
+            sjabloon={sjabloonUrl({
+              slug: item.slug,
+              widthCm: size.widthCm,
+              heightCm: size.heightCm,
+              selections: Object.fromEntries(
+                item.options.map((o) => [o.code, String(o.value ?? "")]),
+              ),
+            })}
             {...size}
           />
         )}

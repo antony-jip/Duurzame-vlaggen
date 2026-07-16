@@ -1673,3 +1673,23 @@
     width: 100%;
   }
 }
+
+/* ── Aanleversjabloon-download (volgt de gekozen maat en afwerking) ──── */
+
+.sjabloonDl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  width: fit-content;
+}
+
+.sjabloonDl:hover {
+  color: var(--color-terracotta);
+}

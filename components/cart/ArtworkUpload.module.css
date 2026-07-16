@@ -1669,3 +1669,20 @@
   cursor: not-allowed;
   transform: none;
 }
+
+/* Aanleversjabloon-link: opvallend genoeg om vóór de upload te pakken. */
+.sjabloonLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sjabloonLink:hover {
+  color: var(--color-terracotta);
+}

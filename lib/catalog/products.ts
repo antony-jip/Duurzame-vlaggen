@@ -222,12 +222,12 @@ export const PRODUCTS: CatalogProduct[] = [
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
     // Sizes are Probo's own presets for the Flag-CiCLO® material, verified live.
     sizes: [
-      // Straight = de echte oude-site-maten. 65×315 en 90×430 zijn live-geverifieerde
-      // Probo-presets (online bestelbaar); 80×220 en 80×315 bestaan wél maar hebben
-      // geen geverifieerde preset → quoteOnly (op aanvraag) tot Probo bevestigt.
-      { label: "Straight Small — 80 × 220 cm", widthCm: 80, heightCm: 220, quoteOnly: true },
+      // Straight = de echte oude-site-maten. Alle maten zijn online bestelbaar:
+      // bestellen bij Probo gaat toch handmatig, dus een onbevestigde preset is
+      // geen reden meer voor "op aanvraag" (de oude quoteOnly-vlaggen zijn weg).
+      { label: "Straight Small — 80 × 220 cm", widthCm: 80, heightCm: 220 },
       { label: "Straight Medium S — 65 × 315 cm", widthCm: 65, heightCm: 315, popular: true },
-      { label: "Straight Medium L — 80 × 315 cm", widthCm: 80, heightCm: 315, quoteOnly: true },
+      { label: "Straight Medium L — 80 × 315 cm", widthCm: 80, heightCm: 315 },
       { label: "Straight Large — 90 × 430 cm", widthCm: 90, heightCm: 430 },
       // Square = Probo's geverifieerde square-presets (alle online bestelbaar).
       { label: "Square Small — 75 × 200 cm", widthCm: 75, heightCm: 200 },
@@ -236,6 +236,19 @@ export const PRODUCTS: CatalogProduct[] = [
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
+      // Afwerking van de tunnelzoom (oude-site-stap 4): meegeprint doek of een
+      // elastische band in wit/zwart. Geen Probo-optiecode bekend → reist als
+      // "zelf regelen" mee op de orderregel voor de handmatige bestelling.
+      // TODO: prijs verifiëren — oude site noemt de band "voordeliger", maar
+      // zonder bedragen; tot die tijd geen meerprijs.
+      {
+        label: "Gewenste afwerking",
+        choices: [
+          "Gepersonaliseerde tunnel",
+          "Witte elastische band",
+          "Zwarte elastische band",
+        ],
+      },
       // Wat zit erbij: alleen het doek, met stok, of compleet met stok + draagtas.
       // "Vlag + stok + tas" is de geverifieerde standaard-samenstelling (flag-stick-
       // bag-deluxe). Zie probo-mapping voor de open Probo-/prijs-verificatie.

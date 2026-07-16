@@ -6,7 +6,7 @@ import { rasterizePdfSrc } from "@/lib/artwork/preview";
 import { sniffKind } from "@/lib/artwork/sniff";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { ArtworkUploadModal } from "./ArtworkUploadModal";
-import type { ProofFinish } from "./ArtworkProof";
+import type { ProofFinish, ProofShape } from "./ArtworkProof";
 import { clientId, type CartDesign } from "./types";
 import styles from "./ArtworkUpload.module.css";
 
@@ -202,6 +202,8 @@ export function ArtworkUpload({
   widthCm,
   heightCm,
   finish,
+  shape,
+  sjabloon,
 }: {
   itemId: string;
   /** Besteld aantal van de regel — waar de toewijzingen tegen optellen. */
@@ -211,6 +213,10 @@ export function ArtworkUpload({
   heightCm?: number;
   /** Afwerkingszone (tunnel/band/ringen) voor de drukproef, indicatief. */
   finish?: ProofFinish;
+  /** Doekvorm (straightflag-curve) voor drukproef en mockup, indicatief. */
+  shape?: ProofShape;
+  /** URL van het aanleversjabloon (PDF) voor deze configuratie, indien beschikbaar. */
+  sjabloon?: string | null;
 }) {
   const { setItemDesigns } = useCart();
   // Editor open? In beheer-modus (designs aanwezig) wijst activeId het actieve
@@ -483,6 +489,8 @@ export function ArtworkUpload({
       heightCm={heightCm}
       initialFile={pendingFile}
       finish={finish}
+      shape={shape}
+      sjabloon={sjabloon}
       beheer={
         designs.length > 0
           ? {

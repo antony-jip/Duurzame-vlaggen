@@ -34,6 +34,7 @@ import {
   localCustomSizePrice,
 } from "@/lib/pricing/local-catalog";
 import { supportsCustomSize } from "@/lib/catalog/probo-mapping";
+import { sjabloonUrl } from "@/lib/catalog/sjablonen";
 
 /** Redelijke grenzen (cm) voor een eigen maat. */
 const CUSTOM_MIN_CM = 20;
@@ -148,6 +149,13 @@ const PRODUCT_OPTION_IMAGES: Record<
     Mastzijde: {
       Links: "/configurator/beach/mastzijde-links.webp",
       Rechts: "/configurator/beach/mastzijde-rechts.webp",
+    },
+    // Afwerking van de tunnelzoom — close-ups van Antony (2026-07-16):
+    // meegeprinte tunnel in doekkleur vs. witte/zwarte elastische band.
+    "Gewenste afwerking": {
+      "Gepersonaliseerde tunnel": "/configurator/beach/afwerking-gepersonaliseerde-tunnel.webp",
+      "Witte elastische band": "/configurator/beach/afwerking-witte-band.webp",
+      "Zwarte elastische band": "/configurator/beach/afwerking-zwarte-band.webp",
     },
     Accessoires: {
       Grondpen: "/configurator/beach/voet-grondpen.jpg",
@@ -481,6 +489,17 @@ export function ProductConfigurator({
   for (const [label, values] of Object.entries(multiChoices)) {
     if (values.length > 0) mergedSelections[label] = values.join(" · ");
   }
+
+  // Aanleversjabloon voor precies deze configuratie (maat, mastzijde en
+  // afwerking) — volgt live mee met de keuzes. Alleen voor preset-maten.
+  const sjabloon = usingCustom
+    ? null
+    : sjabloonUrl({
+        slug: product.slug,
+        widthCm: size.widthCm,
+        heightCm: size.heightCm,
+        selections: mergedSelections,
+      });
 
   // Instant, netwerk-loze berekening uit het eigen lokale prijsmodel.
   const optionsSurcharge = localOptionsSurcharge(product, mergedSelections);
@@ -1106,6 +1125,18 @@ export function ProductConfigurator({
             <span className={styles.addonKnob} />
           </span>
         </button>
+
+        {/* Zelf opmaken? Het sjabloon hoort bij de gekozen maat + afwerking. */}
+        {sjabloon && (
+          <a
+            className={styles.sjabloonDl}
+            href={sjabloon}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ⬇ Download het aanleversjabloon voor deze maat en afwerking (PDF)
+          </a>
+        )}
       </div>
 
       {/* Geruststelling vlak boven de CTA — de sterkste conversie-drivers. */}
