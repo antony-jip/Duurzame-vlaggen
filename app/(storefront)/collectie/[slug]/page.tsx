@@ -11,7 +11,6 @@ import {
   Price,
 } from "@/components/ui";
 import {
-  BRAND_IMAGES,
   getAllProducts,
   getProduct,
   isOrderable,
@@ -112,13 +111,9 @@ export default async function ProductPage({
     },
   });
 
-  // Vlaggen krijgen het afwerkingsdetail (band + kunststof ringen) als extra
-  // galleriebeeld — een scherpe, tastbare craft-shot i.p.v. het wazige
-  // weefsel-beeld. Hardware toont alleen zijn eigen beelden.
-  const gallery =
-    product.category === "vlag"
-      ? [...product.gallery, BRAND_IMAGES.finishing].slice(0, 3)
-      : product.gallery;
+  // Galerij = de eigen productbeelden. (Het generieke band-en-ringen-detail is
+  // eruit: dat stond op elke vlagpagina en voegde niets toe.)
+  const gallery = product.gallery;
 
   return (
     <>
@@ -215,10 +210,29 @@ export default async function ProductPage({
           )}
         </div>
       </div>
+      {/* Verdieping (werking, materiaal, garantie) — alleen voor producten met
+          details in de catalogus, zoals de Easylift-vlaggenmast. */}
+      {product.details && product.details.length > 0 && (
+        <section className={styles.details} aria-labelledby="details-title">
+          <h2 id="details-title" className={styles.detailsTitle}>
+            Goed om te weten
+          </h2>
+          <dl className={styles.detailsGrid}>
+            {product.details.map((d) => (
+              <div key={d.title} className={styles.detailsItem}>
+                <dt>{d.title}</dt>
+                <dd>{d.body}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
     </Container>
 
-    {/* Vertrouwensblok — zelfde flow op elke productpagina, volle breedte. */}
-    <ProcesStappen />
+    {/* Vertrouwensblok — zelfde flow op elke productpagina, volle breedte.
+        Producten met een maten-overzicht tonen dat als fotoband boven de
+        footer; de rest houdt de waterstrook. */}
+    <ProcesStappen bandImage={product.sizesImage} />
     </>
   );
 }

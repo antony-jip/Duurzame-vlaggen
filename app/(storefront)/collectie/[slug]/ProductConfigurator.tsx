@@ -48,6 +48,82 @@ const CUSTOM_MAX_CM = 600;
  */
 const MULTI_OPTIONS = new Set(["Accessoires"]);
 
+/**
+ * Aantal masten in de "Zet je rij neer"-strook. Twaalf: genoeg om de
+ * −5%- en −10%-mijlpalen ín de rij te laten vallen, en meer voelt als een
+ * hek in plaats van een rij. Grotere aantallen tonen als "+N" naast de rij.
+ */
+const RIJ_MAX = 12;
+
+/**
+ * Korte uitleg per keuzegroep — wat betekent deze keuze voor de klant?
+ * Generiek per optielabel, met product-specifieke overrides waar de optie
+ * iets anders betekent (bv. mastvlag-afwerking = bevestiging).
+ */
+const OPTION_HINTS: Record<string, string> = {
+  Mastzijde:
+    "Aan welke kant van het doek de mast zit. Sta met je rug in de wind: mast links? Kies links.",
+  Afwerking:
+    "Met tunnel schuift het doek als een koker om de mast. Dit is de standaard voor baniermasten.",
+  Bandkleur:
+    "Kleur van de band en het garen, niet van het doek. Kies wat past bij je ontwerp.",
+  Kleur:
+    "Kleur van band, koord en garen, niet van het doek. Kies wat past bij je ontwerp.",
+  "Band- en koordkleur":
+    "Kleur van band, koord en garen, niet van het doek. Kies wat past bij je ontwerp.",
+};
+const PRODUCT_OPTION_HINTS: Record<string, Record<string, string>> = {
+  mastvlag: {
+    Afwerking:
+      "Hoe de vlag aan de mast komt: haken klikken op de mastlijn, koord/lus knoop je vast.",
+  },
+  gevelvlag: {
+    Mastzijde:
+      "Aan welke kant van het doek de gevelstok komt. Kies de kant die past bij de plek aan je gevel.",
+    Afwerking:
+      "Vaste afwerking met band, koord en lus. Daarmee knoop je de vlag stevig aan de gevelstok.",
+    Kleur:
+      "Kleur van band, koord en lus, niet van het doek. Kies wat past bij je ontwerp.",
+  },
+};
+
+/**
+ * Mini-mast voor de rij-strook, in twee vormen: de staande banier (doek met
+ * golvende onderrand langs de mast) en de liggende mastvlag (doek bovenin,
+ * wapperend naar rechts). Geplant = gevuld forest doek; ongeplant =
+ * gestippelde omtrek die wacht op een klik.
+ */
+function MastGlyph({
+  planted,
+  vorm = "banier",
+}: {
+  planted: boolean;
+  vorm?: "banier" | "mastvlag";
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 64"
+      className={styles.rijMastSvg}
+      data-planted={planted || undefined}
+      aria-hidden="true"
+    >
+      {vorm === "mastvlag" ? (
+        <>
+          <line x1="4.5" y1="3" x2="4.5" y2="61" />
+          {/* Liggende rechthoekige vlag (breder dan hoog) met een lichte
+              wapper aan de vrije rand. */}
+          <path d="M6 5 H20.5 C22.6 6.8 22.6 8.5 20.5 10.3 C18.4 12.1 22.6 13.9 20.5 16 H6 Z" />
+        </>
+      ) : (
+        <>
+          <line x1="19.5" y1="3" x2="19.5" y2="61" />
+          <path d="M4 5 H17 V42 C14.8 44.6 12.7 44.6 10.5 42 C8.3 39.4 6.2 39.4 4 42 Z" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 export interface ConfiguratorLabels {
   size: string;
   quantity: string;
@@ -128,6 +204,16 @@ const PRODUCT_OPTION_IMAGES: Record<
     Kleur: {
       Wit: "/configurator/kleur/gevelvlag-wit.png",
       Zwart: "/configurator/kleur/gevelvlag-zwart.png",
+    },
+    Accessoires: {
+      // Gevelstokken en houders (leveranciersbeelden, verkleind naar 800px).
+      // Blauw heeft nog geen beeld → tekstkaart-fallback.
+      "Gevelstok Wit": "/configurator/gevel/gevelstok-wit.jpg",
+      "Gevelstok Oranje": "/configurator/gevel/gevelstok-oranje.jpg",
+      "Gevelstok Zwart": "/configurator/gevel/gevelstok-zwart.jpg",
+      Gevelstokhouder: "/configurator/gevel/gevelstokhouder.jpg",
+      "Gevelstokhouder Zwart": "/configurator/gevel/gevelstokhouder-zwart.jpg",
+      Handystick: "/configurator/gevel/handystick.jpg",
     },
   },
   baniervlag: {
@@ -429,7 +515,6 @@ export function ProductConfigurator({
   const [multiQty, setMultiQty] = useState<Record<string, number>>({});
   const [quantity, setQuantity] = useState(1);
   const [designService, setDesignService] = useState(false);
-  const [showStaffel, setShowStaffel] = useState(false);
   const [added, setAdded] = useState(false);
 
   // Eigen-maat-modus: vrije breedte × hoogte in cm.
@@ -607,6 +692,98 @@ export function ProductConfigurator({
     const picked = isMulti
       ? (multiChoices[opt.label] ?? []).join(" · ")
       : selectedOptions[opt.label];
+
+    // Compacte keuzerij — één regel per eigenschap: mini-voorbeeld van de
+    // gekozen keuze + segmented control. De grote fotokaarten maakten van elke
+    // binaire keuze (Links/Rechts, Tunnel/Geen, Wit/Zwart) een schreeuwend
+    // blok; het voorbeeld wisselt nu gewoon mee met je keuze. De beachvlag
+    // houdt zijn fotokaarten: daar verschilt het beeld écht per samenstelling.
+    const compact =
+      !isMulti && !isBeachMast && product.slug !== "beachvlag" &&
+      opt.choices.length <= 3;
+    if (compact) {
+      const imgFor = (choice: string) =>
+        PRODUCT_OPTION_IMAGES[product.slug]?.[opt.label]?.[choice] ??
+        OPTION_IMAGES[opt.label]?.[choice];
+      const hint =
+        PRODUCT_OPTION_HINTS[product.slug]?.[opt.label] ??
+        OPTION_HINTS[opt.label];
+      return (
+        <div key={opt.label} className={styles.optRij}>
+          {/* Kop (label + uitleg) in een eigen subgrid-rij, zodat de kaarten
+              van alle groepen op dezelfde lijn beginnen, hoeveel regels de
+              uitleg ook telt. */}
+          <span className={styles.optRijKop}>
+            <span className={styles.optRijLabel}>{opt.label}</span>
+            {hint && <span className={styles.optRijHint}>{hint}</span>}
+          </span>
+          <div
+            className={styles.optChips}
+            role="radiogroup"
+            aria-label={opt.label}
+          >
+            {opt.choices.map((choice) => {
+              const selected = selectedOptions[opt.label] === choice;
+              const img = imgFor(choice);
+              const swatch = img ? undefined : COLOR_SWATCHES[choice];
+              const glyph =
+                !img && !swatch
+                  ? optionGlyph(product.slug, opt.label, choice)
+                  : null;
+              const surcharge = localOptionsSurcharge(product, {
+                [opt.label]: choice,
+              });
+              return (
+                <button
+                  key={choice}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  data-on={selected || undefined}
+                  className={styles.optChip}
+                  onClick={() => {
+                    setSelectedOptions((prev) => ({
+                      ...prev,
+                      [opt.label]: choice,
+                    }));
+                    setAdded(false);
+                  }}
+                >
+                  <span className={styles.optChipMedia}>
+                    {img ? (
+                      <Image
+                        src={img}
+                        alt=""
+                        fill
+                        sizes="150px"
+                        className={styles.optionCardImg}
+                      />
+                    ) : swatch ? (
+                      <span
+                        className={styles.optRijSwatch}
+                        style={{ background: swatch }}
+                      />
+                    ) : (
+                      <span className={styles.optRijGlyph}>{glyph}</span>
+                    )}
+                    <span className={styles.optChipCheck} aria-hidden="true">
+                      <Check size={12} />
+                    </span>
+                  </span>
+                  <span className={styles.optChipName}>
+                    {choice}
+                    {surcharge > 0 && (
+                      <span className={styles.segSur}> +{fmt(surcharge)}</span>
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div key={opt.label} className={styles.optionRow}>
         {!hideLabel && (
@@ -832,40 +1009,6 @@ export function ProductConfigurator({
           </span>
           {labels.noticeQuoteOnly}
         </p>
-      )}
-
-      {/* Prijsoverzicht tot 50 stuks — stukprijs per staffel, klik = aantal
-          kiezen. Rekent live mee met maat en uitvoering. */}
-      {orderable && priceReady && !sizeQuoteOnly && (
-        <div
-          className={styles.staffelBar}
-          role="group"
-          aria-label="Stukprijs per aantal, tot 50 stuks"
-        >
-          {STAFFEL_TIERS.map((tier) => {
-            const perStuk = Math.round(unitBasis * (1 - tier.discount) * 100) / 100;
-            return (
-              <button
-                key={tier.qty}
-                type="button"
-                className={styles.staffelCel}
-                data-on={activeTierQty === tier.qty}
-                onClick={() => {
-                  setQuantity(tier.qty);
-                  setAdded(false);
-                }}
-              >
-                <span className={styles.staffelCelQty}>
-                  {tier.qty === 1 ? "1 stuk" : `${tier.qty}+`}
-                </span>
-                <span className={styles.staffelCelPrijs}>{fmt(perStuk)}</span>
-                <span className={styles.staffelCelKorting}>
-                  {tier.discount > 0 ? `−${Math.round(tier.discount * 100)}%` : "per stuk"}
-                </span>
-              </button>
-            );
-          })}
-        </div>
       )}
 
       <div className={styles.steps}>
@@ -1146,113 +1289,153 @@ export function ProductConfigurator({
           </section>
         )}
 
-        {/* Stap 3 — Aantal + bulkkorting */}
+        {/* Stap 3 — Aantal: "Zet je rij neer". Eén baniervlag is zelden het
+            plan; ze staan in rijen bij entrees, op beursterreinen en langs de
+            weg. Het aantal kies je hier letterlijk door masten te planten:
+            elke vlag erbij laat de stukprijs zichtbaar zakken en de mijlpalen
+            onder de grondlijn markeren de staffelkorting. */}
         <section className={styles.step}>
           <header className={styles.stepHead}>
             <span className={styles.stepDot}>{quantityStepNo}</span>
-            <span className={styles.stepTitle}>{labels.quantity}</span>
-            {discount > 0 && (
-              <span className={styles.stepPick}>−{Math.round(discount * 100)}% korting</span>
-            )}
+            <span className={styles.stepTitle}>Zet je rij neer</span>
+            <span className={styles.stepPick}>
+              {quantity} {quantity === 1 ? "vlag" : "vlaggen"}
+              {discount > 0 && ` · −${Math.round(discount * 100)}%`}
+            </span>
           </header>
 
-          <div className={styles.qtyRow}>
-            <div className={styles.quantity}>
-              <button
-                type="button"
-                className={styles.qtyBtn}
-                onClick={() => {
-                  setQuantity((q) => Math.max(1, q - 1));
-                  setAdded(false);
-                }}
-                disabled={quantity <= 1}
-                aria-label="Aantal verlagen"
-              >
-                −
-              </button>
-              <input
-                type="number"
-                className={styles.qtyInput}
-                min={1}
-                value={quantity}
-                aria-label={labels.quantity}
-                onChange={(e) => {
-                  const next = Number(e.target.value);
-                  setQuantity(Number.isFinite(next) && next >= 1 ? Math.floor(next) : 1);
-                  setAdded(false);
-                }}
-              />
-              <button
-                type="button"
-                className={styles.qtyBtn}
-                onClick={() => {
-                  setQuantity((q) => q + 1);
-                  setAdded(false);
-                }}
-                aria-label="Aantal verhogen"
-              >
-                +
-              </button>
-            </div>
-
-            {savings > 0 ? (
-              <span className={styles.savings}>Je bespaart {fmt(savings)}</span>
-            ) : nextTier ? (
-              <button
-                type="button"
-                className={styles.staffelNudge}
-                onClick={() => {
-                  setQuantity(nextTier.qty);
-                  setAdded(false);
-                }}
-              >
-                Neem er {nextTier.qty}, bespaar {Math.round(nextTier.discount * 100)}%
-              </button>
-            ) : null}
-          </div>
-
-          {/* Bulkkorting — subtiele, uitklapbare strip i.p.v. een dominant blok. */}
-          <button
-            type="button"
-            className={styles.staffelToggle}
-            aria-expanded={showStaffel}
-            onClick={() => setShowStaffel((v) => !v)}
-          >
-            <span>Staffelkorting bekijken</span>
-            <span className={styles.staffelToggleIcon} data-on={showStaffel} aria-hidden="true">
-              ⌄
-            </span>
-          </button>
-          {showStaffel && (
-            <div className={styles.staffelStrip}>
-              {STAFFEL_TIERS.map((tier) => {
-                const perUnit = unitBasis * (1 - tier.discount);
-                const active = activeTierQty === tier.qty;
+          <div className={styles.rij}>
+            <div
+              className={styles.rijStrook}
+              role="group"
+              aria-label="Kies het aantal vlaggen door op een mast te klikken"
+            >
+              {Array.from({ length: RIJ_MAX }, (_, i) => {
+                const n = i + 1;
+                const planted = n <= quantity;
+                const milestone = STAFFEL_TIERS.find(
+                  (t) => t.qty === n && t.discount > 0,
+                );
                 return (
-                  <button
-                    key={tier.qty}
-                    type="button"
-                    className={styles.staffelCell}
-                    data-active={active}
-                    aria-pressed={active}
-                    onClick={() => {
-                      setQuantity(tier.qty);
-                      setAdded(false);
-                    }}
-                  >
-                    <span className={styles.staffelCellQty}>
-                      {tier.qty}
-                      {tier.qty >= 50 ? "+" : ""} st
-                    </span>
-                    <span className={styles.staffelCellPer}>{fmt(perUnit)}</span>
-                    <span className={styles.staffelCellDisc}>
-                      {tier.discount > 0 ? `−${Math.round(tier.discount * 100)}%` : "—"}
-                    </span>
-                  </button>
+                  <span key={n} className={styles.rijSlot}>
+                    <button
+                      type="button"
+                      className={styles.rijMast}
+                      aria-label={`${n} ${n === 1 ? "vlag" : "vlaggen"}`}
+                      aria-pressed={quantity === n}
+                      onClick={() => {
+                        setQuantity(n);
+                        setAdded(false);
+                      }}
+                    >
+                      <MastGlyph
+                        planted={planted}
+                        vorm={product.slug === "mastvlag" ? "mastvlag" : "banier"}
+                      />
+                    </button>
+                    {milestone && (
+                      <span
+                        className={styles.rijMijlpaal}
+                        data-on={quantity >= n || undefined}
+                        aria-hidden="true"
+                      >
+                        −{Math.round(milestone.discount * 100)}%
+                      </span>
+                    )}
+                  </span>
                 );
               })}
+              {quantity > RIJ_MAX && (
+                <span className={styles.rijMeer} aria-hidden="true">
+                  +{quantity - RIJ_MAX}
+                </span>
+              )}
             </div>
-          )}
+
+            <div className={styles.rijVoet}>
+              <span className={styles.rijPrijs}>
+                {fmt(Math.round(unitBasis * (1 - discount) * 100) / 100)}
+                <span className={styles.rijPrijsSub}> per vlag</span>
+                {savings > 0 && (
+                  <span className={styles.savings}>Je bespaart {fmt(savings)}</span>
+                )}
+              </span>
+              {nextTier && (
+                <button
+                  type="button"
+                  className={styles.staffelNudge}
+                  onClick={() => {
+                    setQuantity(nextTier.qty);
+                    setAdded(false);
+                  }}
+                >
+                  Nog {nextTier.qty - quantity} erbij voor −
+                  {Math.round(nextTier.discount * 100)}%
+                </button>
+              )}
+            </div>
+
+            <div className={styles.rijKeuzes}>
+              {STAFFEL_TIERS.map((tier) => (
+                <button
+                  key={tier.qty}
+                  type="button"
+                  className={styles.rijChip}
+                  data-on={activeTierQty === tier.qty || undefined}
+                  aria-pressed={activeTierQty === tier.qty}
+                  onClick={() => {
+                    setQuantity(tier.qty);
+                    setAdded(false);
+                  }}
+                >
+                  {tier.qty}
+                  {tier.discount > 0 && (
+                    <span className={styles.rijChipKorting}>
+                      −{Math.round(tier.discount * 100)}%
+                    </span>
+                  )}
+                </button>
+              ))}
+
+              <div className={styles.quantity}>
+                <button
+                  type="button"
+                  className={styles.qtyBtn}
+                  onClick={() => {
+                    setQuantity((q) => Math.max(1, q - 1));
+                    setAdded(false);
+                  }}
+                  disabled={quantity <= 1}
+                  aria-label="Aantal verlagen"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  className={styles.qtyInput}
+                  min={1}
+                  value={quantity}
+                  aria-label={labels.quantity}
+                  onChange={(e) => {
+                    const next = Number(e.target.value);
+                    setQuantity(Number.isFinite(next) && next >= 1 ? Math.floor(next) : 1);
+                    setAdded(false);
+                  }}
+                />
+                <button
+                  type="button"
+                  className={styles.qtyBtn}
+                  onClick={() => {
+                    setQuantity((q) => q + 1);
+                    setAdded(false);
+                  }}
+                  aria-label="Aantal verhogen"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Ontwerpservice — lichte add-on */}
@@ -1547,25 +1730,33 @@ function FlagPreview({
       <div className={styles.banierStage}>
       <div className={styles.banierScene}>
         {vorm === "gevel" ? (
-          /* Gevelvlag: wandje + uithouder-arm, doek hangt eronder. */
+          /* Gevelvlag: wandje + stok die 45 graden omhoog steekt; het doek
+             hangt aan de stok en draait mee, zoals op de productfoto's. De
+             KORTE kant van het doek zit aan de stok, de lange kant hangt af.
+             De stok kantelt om zijn wand-bevestiging, dus het bevestigingspunt
+             ligt precies zo veel lager als de tip stijgt. */
           <span
             className={styles.gevelUnit}
-            style={{ height: `${poleH}px`, width: `${16 + doekW + 8}px` }}
+            style={{
+              height: `${poleH}px`,
+              width: `${Math.round(16 + (doekH + 24 + doekW) * 0.7071) + 8}px`,
+            }}
           >
             <span className={styles.gevelWand} />
-            <span className={styles.gevelArm} style={{ width: `${doekW + 8}px` }} />
             <span
-              className={styles.banierDoek}
-              data-vorm="gevel"
+              className={styles.gevelStok}
               style={{
-                position: "absolute",
-                top: "8px",
-                left: "16px",
-                width: `${doekW}px`,
-                height: `${doekH}px`,
+                top: `${Math.round((doekH + 24) * 0.7071) + 6}px`,
+                width: `${doekH + 24}px`,
               }}
             >
-              <Leaf size={leafSize} />
+              <span
+                className={styles.banierDoek}
+                data-vorm="gevel"
+                style={{ width: `${doekH}px`, height: `${doekW}px` }}
+              >
+                <Leaf size={leafSize} />
+              </span>
             </span>
           </span>
         ) : (

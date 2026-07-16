@@ -183,7 +183,7 @@ describe("buildProboOptions — gevelvlag (preset sizes)", () => {
       widthCm: 100,
       heightCm: 70,
       amount: 3,
-      selections: { Mastzijde: "Links", Uithouder: "Met uithouder" },
+      selections: { Mastzijde: "Links", Accessoires: "Gevelstok Zwart" },
     });
     expect(res).not.toBeNull();
     expect(res!.productCode).toBe("facade-flag");
@@ -194,9 +194,9 @@ describe("buildProboOptions — gevelvlag (preset sizes)", () => {
       { code: "left" },
       { code: "landscape-strap-cord-loop" },
     ]);
-    // The bracket is our own cross-sell → recorded, not sent.
+    // Stokken en houders zijn eigen cross-sell → recorded, not sent.
     expect(res!.unmapped).toEqual([
-      { label: "Uithouder", value: "Met uithouder" },
+      { label: "Accessoires", value: "Gevelstok Zwart" },
     ]);
   });
 
@@ -207,7 +207,7 @@ describe("buildProboOptions — gevelvlag (preset sizes)", () => {
         widthCm: size.widthCm!,
         heightCm: size.heightCm!,
         amount: 1,
-        selections: { Mastzijde: "Rechts", Uithouder: "Zonder" },
+        selections: { Mastzijde: "Rechts" },
       });
       expect(res, `size ${size.label}`).not.toBeNull();
       expect(res!.options).toContainEqual({ code: "right" });

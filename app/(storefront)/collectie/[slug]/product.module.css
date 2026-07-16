@@ -7,6 +7,41 @@
   padding-block: var(--space-2xl) var(--space-4xl);
 }
 
+/* ---- Verdieping: werking, materiaal en garantie onder de configurator ---- */
+.details {
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--forest-6);
+}
+.detailsTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px);
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-lg);
+}
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg) var(--space-xl);
+  margin: 0;
+}
+.detailsItem dt {
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--color-forest);
+  margin-bottom: 6px;
+}
+.detailsItem dd {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--color-stone);
+  max-width: 52ch;
+}
+
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -30,8 +65,10 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(32px, 5vw, 80px);
+  /* Beeld duidelijk smaller dan de info-kolom, met royale lucht ertussen:
+     de galerij is context, de configurator is het werk. */
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: clamp(40px, 7vw, 110px);
   align-items: start;
 }
 
@@ -687,10 +724,27 @@
 }
 
 /* ---- Stap 2: opties als compacte beeldkaarten ---- */
+/* Raster: compacte keuzegroepen (.optRij) staan als gelijke kolommen naast
+   elkaar; hun kop (label + uitleg) en kaarten delen via subgrid dezelfde
+   rijen, zodat de kaarten van alle groepen op één lijn beginnen. Volledige
+   optieblokken (.optionRow, bv. beachvlag-samenstelling) nemen de volle
+   regelbreedte. */
 .optionList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px var(--space-lg);
+  align-items: start;
+}
+.optionList .optionRow {
+  grid-column: 1 / -1;
+}
+/* Smal scherm: kleinere kolom-minima en krappere kolomruimte, zodat de
+   keuzegroepen twee-aan-twee blijven staan in plaats van één brede kolom. */
+@media (max-width: 480px) {
+  .optionList {
+    grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+    gap: 12px var(--space-sm);
+  }
 }
 .optionRow {
   display: flex;
@@ -766,6 +820,325 @@
 }
 .optionCardMedia[data-square="true"] {
   aspect-ratio: 1 / 1;
+}
+
+/* ---- Compacte keuzekaartjes: elke keuze toont zijn eigen foto, beide naast
+   elkaar — het verschil is in één blik te zien, op een fractie van het oude
+   fotokaart-formaat. ---- */
+.optRij {
+  /* Kop en kaarten als gedeelde subgrid-rijen: alle groepen lijnen uit. In
+     browsers zonder subgrid vallen de rijen terug op eigen auto-hoogtes. */
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  min-width: 0;
+}
+.optRijKop {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-self: start;
+}
+/* Korte uitleg onder het groepslabel: wat betekent deze keuze? */
+.optRijHint {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-stone);
+  max-width: 42ch;
+}
+.optRijSwatch {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.optRijGlyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-forest);
+}
+.optRijLabel {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+.optChips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.optChip {
+  appearance: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.optChip:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.optChip:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+.optChip[data-on] {
+  border-color: var(--accent);
+  background: var(--forest-3);
+  box-shadow: var(--shadow-sm);
+}
+.optChipMedia {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--radius-md) - 3px);
+  overflow: hidden;
+  background: var(--forest-3);
+}
+.optChipCheck {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.optChip[data-on] .optChipCheck {
+  opacity: 1;
+  transform: scale(1);
+}
+.optChipName {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  text-align: center;
+  padding-bottom: 2px;
+}
+/* Meerprijs naast een keuzenaam: klein en stil. */
+.segSur {
+  font-size: 11.5px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* ---- Stap Aantal: "Zet je rij neer" — masten planten als aantal-keuze.
+   Geplante vlaggen zijn gevuld, de rest wacht als stippellijn; mijlpalen
+   onder de grondlijn markeren de staffelkorting. ---- */
+.rij {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--forest-3);
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-lg);
+}
+.rijStrook {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  padding-bottom: 22px;
+  border-bottom: 2px solid var(--forest-6);
+  position: relative;
+}
+.rijSlot {
+  position: relative;
+  display: flex;
+}
+.rijMast {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 2px 1px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  display: block;
+}
+.rijMast:focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 2px;
+}
+.rijMastSvg {
+  display: block;
+  width: clamp(18px, 2.6vw, 27px);
+  height: auto;
+}
+.rijMastSvg line {
+  stroke: var(--color-stone);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.45;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.rijMastSvg path {
+  fill: transparent;
+  stroke: var(--color-stone);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.5;
+  transform: translateY(3px);
+  transition:
+    fill var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+.rijMastSvg[data-planted] line {
+  opacity: 1;
+}
+.rijMastSvg[data-planted] path {
+  fill: var(--color-forest);
+  stroke: var(--color-forest);
+  stroke-dasharray: none;
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Hover op een wachtende mast: alvast een beetje kleur — "deze kan erbij". */
+.rijMast:hover .rijMastSvg:not([data-planted]) path {
+  stroke: var(--color-terracotta);
+  opacity: 0.9;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rijMastSvg path {
+    transition: none;
+  }
+}
+/* Kortings-mijlpaal onder de grondlijn, gecentreerd onder zijn mast. */
+.rijMijlpaal {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--color-stone);
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.rijMijlpaal::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 5px;
+  background: currentColor;
+  opacity: 0.6;
+}
+.rijMijlpaal[data-on] {
+  color: var(--color-forest);
+}
+/* "+N" voor aantallen boven de zichtbare rij. */
+.rijMeer {
+  align-self: center;
+  margin-left: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 800;
+}
+.rijVoet {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.rijPrijs {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+.rijPrijsSub {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-stone);
+}
+.rijKeuzes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rijKeuzes .quantity {
+  margin-left: auto;
+}
+.rijChip {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--forest-6);
+  background: var(--color-white);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.rijChip:hover {
+  border-color: var(--color-forest);
+}
+.rijChip:focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 2px;
+}
+.rijChip[data-on] {
+  background: var(--color-forest);
+  border-color: var(--color-forest);
+  color: #fff;
+}
+.rijChipKorting {
+  font-size: 10.5px;
+  font-weight: 800;
+  opacity: 0.75;
+}
+@media (max-width: 460px) {
+  .rijStrook {
+    gap: 0;
+  }
+  .rijKeuzes .quantity {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 /* Mastzijde-toggle (beachvlag): productfoto + Links⇄Rechts schakelaar */
@@ -1322,14 +1695,25 @@
   border: 1px solid rgba(58, 58, 58, 0.1);
   box-shadow: 2px 0 6px rgba(28, 40, 36, 0.08);
 }
-.gevelArm {
+/* Stok onder 45 graden omhoog; het doek hangt eraan en draait mee. */
+.gevelStok {
   position: absolute;
-  top: 3px;
-  left: 13px;
-  height: 4px;
-  border-radius: 2px;
+  left: 12px;
+  height: 5px;
+  border-radius: 3px;
   background: linear-gradient(90deg, #b9bec1, #979da0);
   box-shadow: 0 2px 5px rgba(28, 40, 36, 0.25);
+  transform: rotate(-45deg);
+  transform-origin: left center;
+}
+.gevelStok .banierDoek {
+  position: absolute;
+  top: 5px;
+  left: 12px;
+}
+/* Het blaadje draait terug, zodat het rechtop in het schuine doek staat. */
+.gevelStok .banierDoek svg {
+  transform: rotate(45deg);
 }
 /* … plus een lichtgolf die als rimpeling over de stof loopt. */
 .banierDoek::after {

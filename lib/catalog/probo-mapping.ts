@@ -229,9 +229,10 @@ const MAPPINGS: Record<string, ProductMapping> = {
       // → reist als `unmapped` mee op de orderregel (nooit gokken richting Probo).
       // TODO: met Antony/Probo verifiëren of landscape-strap-cord-loop een kleur kent.
       Kleur: null,
-      // The wall bracket is cross-sell hardware (facade-pole-* accessories at
-      // Probo, separate codes) → not sent, recorded on the order line.
-      Uithouder: null,
+      // Gevelstokken en houders zijn cross-sell hardware (facade-pole-*
+      // accessories at Probo, separate codes) → not sent, recorded on the
+      // order line.
+      Accessoires: null,
     },
     // "Met band, koord en lus" — the only finishing facade-flag offers.
     tail: [{ code: "landscape-strap-cord-loop" }],

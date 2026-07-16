@@ -73,9 +73,10 @@ export const BRAND_IMAGES = {
     "761-duurzame-vlaggen-verzenden.webp",
     "Duurzame vlaggen worden ingepakt voor verzending",
   ),
-  finishing: img(
-    "931-band-en-kunststof-ringen.webp",
-    "Afwerking met band en kunststof ringen",
+  // Klantcase in het echt — ook de fotoband boven de footer (ProcesStappen).
+  banieren: img(
+    "baniervlaggen-westcord-hotels.webp",
+    "Baniervlaggen van WestCord Hotels en ss Rotterdam tegen een blauwe lucht",
   ),
 } as const;
 
@@ -97,6 +98,16 @@ export interface CatalogProduct {
   heroImage: ProductImage;
   /** Extra photos for the product-page gallery (sfeer, maten, details). */
   gallery: ProductImage[];
+  /**
+   * Breed maten-overzicht (render met alle formaten naast elkaar) — getoond
+   * als fotoband boven de footer op de eigen productpagina.
+   */
+  sizesImage?: ProductImage;
+  /**
+   * Verdiepende productinformatie (werking, materiaal, garantie) — getoond
+   * als eigen sectie onder de configurator op de productpagina.
+   */
+  details?: Array<{ title: string; body: string }>;
   /** Visual accent — fallback gradient behind/instead of the photo. */
   accent: "forest" | "terracotta" | "sage-blue" | "sage-purple" | "copper-rust";
   /**
@@ -119,22 +130,25 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Valt op. Valt daarna volledig uiteen. Zonder één stukje plastic.",
     description:
       "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek dat na afdanking in 2 tot 3 jaar biologisch afbreekt. Geen microplastics. Geen compromis.",
-    // priceFrom = goedkoopste maat uit het lokale retailmodel (100×200), area-
-    // geschaald op de anker-maat 100×250 = €38 (≈ €15,20/m²).
-    // TODO: prijs verifiëren met Antony (alleen 100×250 is live geverifieerd).
-    priceFrom: 30.5,
+    // priceFrom = goedkoopste maat (100×250 = €32,50) uit de configurator.
+    priceFrom: 32.5,
     badge: "Populair",
     sizes: [
-      // Baniervlag = verticale banier (staand): label breedte × hoogte.
-      { label: "100 × 200 cm", widthCm: 100, heightCm: 200 },
-      { label: "100 × 250 cm", widthCm: 100, heightCm: 250 },
-      { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true },
-      { label: "100 × 350 cm", widthCm: 100, heightCm: 350 },
-      { label: "100 × 400 cm", widthCm: 100, heightCm: 400 },
-      // Brede banieren (125 cm) voor de grotere masten.
-      { label: "125 × 300 cm", widthCm: 125, heightCm: 300 },
-      { label: "125 × 350 cm", widthCm: 125, heightCm: 350 },
-      { label: "125 × 400 cm", widthCm: 125, heightCm: 400 },
+      // Baniervlag = verticale banier (label breedte × hoogte). Custom-size, dus
+      // elke maat kan. Prijzen: 100/120-breed uit de configurator; de grote maten
+      // (120×400, 150×450, 150×500) door Antony bevestigd; 150×550/600 area-
+      // geschaald op €13/m². Mastadvies in de comment.
+      { label: "100 × 250 cm", widthCm: 100, heightCm: 250 }, // 5 m mast
+      { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true }, // 6 m mast
+      { label: "100 × 350 cm", widthCm: 100, heightCm: 350 }, // 7 m mast
+      { label: "100 × 400 cm", widthCm: 100, heightCm: 400 }, // 8 m mast
+      { label: "120 × 300 cm", widthCm: 120, heightCm: 300 }, // 6 m mast
+      { label: "120 × 350 cm", widthCm: 120, heightCm: 350 }, // 7 m mast
+      { label: "120 × 400 cm", widthCm: 120, heightCm: 400 }, // 8 m mast
+      { label: "150 × 450 cm", widthCm: 150, heightCm: 450 }, // 8-9 m mast
+      { label: "150 × 500 cm", widthCm: 150, heightCm: 500 }, // 9 m mast
+      { label: "150 × 550 cm", widthCm: 150, heightCm: 550 }, // 10 m mast
+      { label: "150 × 600 cm", widthCm: 150, heightCm: 600 }, // 11 m mast
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
@@ -147,15 +161,18 @@ export const PRODUCTS: CatalogProduct[] = [
       "Duurzame baniervlag aan een baniermast",
     ),
     gallery: [
-      img(
-        "772-baniervlaggen-duurzame-vlaggen.webp",
-        "Meerdere duurzame baniervlaggen naast elkaar",
-      ),
+      // 772-baniervlaggen is dezelfde opname als de hero (762) — eruit gehaald
+      // zodat de galerij geen dubbele foto toont.
+      BRAND_IMAGES.banieren,
       img(
         "1018-baniervlaggen-maten-overzichten.webp",
         "Overzicht van beschikbare baniervlag-maten",
       ),
     ],
+    sizesImage: img(
+      "baniervlaggen-maten-masthoogtes-hd.jpg",
+      "Alle baniervlag-maten naast elkaar, van 100 × 300 cm (masthoogte 6 m) tot 150 × 500 cm (masthoogte 9 m)",
+    ),
     accent: "forest",
     // ORDERABLE (2026-07-13). Probo code `flag-ciclo`; option tree verified live.
     // The base below (finishing-all-sides) is always sent; the size + finishing
@@ -201,6 +218,10 @@ export const PRODUCTS: CatalogProduct[] = [
       ),
       img("1027-mastvlaggen-maten.webp", "Overzicht van mastvlag-maten"),
     ],
+    sizesImage: img(
+      "mastvlaggen-maten-masthoogtes-hd.jpg",
+      "Alle mastvlag-maten naast elkaar, van 100 × 150 cm (mast 2/3 m) tot 225 × 350 cm (mast 10 m)",
+    ),
     accent: "sage-blue",
     // ORDERABLE (2026-07-13). Same Flag-CiCLO® fabric as the baniervlag. Mast flags
     // finish with band-and-cord (colour + 200 cm cord), built per-selection in
@@ -215,8 +236,8 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Overal opgezet. Nergens plastic achtergelaten.",
     description:
       "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. De doekprint breekt netjes af in plaats van als microplastic in de natuur te belanden.",
-    // priceFrom = goedkoopste maat uit het lokale retailmodel (Straight S = €35;
-    // dichtstbijzijnde ref-maat 80×220). Zie lib/pricing/local-catalog.
+    // priceFrom = goedkoopste maat (Straight S, 80×220 = €35) met de standaard-
+    // samenstelling "Alleen vlag" (€0) — de openingsprijs van de configurator.
     priceFrom: 35,
     // The model (Straight/Square) is encoded in the size: each size belongs to
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
@@ -252,9 +273,11 @@ export const PRODUCTS: CatalogProduct[] = [
       // Wat zit erbij: alleen het doek, met stok, of compleet met stok + draagtas.
       // "Vlag + stok + tas" is de geverifieerde standaard-samenstelling (flag-stick-
       // bag-deluxe). Zie probo-mapping voor de open Probo-/prijs-verificatie.
+      // Standaard "Alleen vlag" (kale doek, €0); stok +€15, stok + tas +€22,50
+      // (zie OPTION_SURCHARGES). De eerste keuze is de default in de configurator.
       {
         label: "Samenstelling",
-        choices: ["Vlag + stok + tas", "Vlag + stok", "Alleen vlag"],
+        choices: ["Alleen vlag", "Vlag + stok", "Vlag + stok + tas"],
       },
       // Volledige accessoire-assortiment van de oude site (namen + prijzen ECHT).
       // Optionele keuze: in de configurator kun je hem ook weer uitzetten.
@@ -318,13 +341,25 @@ export const PRODUCTS: CatalogProduct[] = [
     options: [
       // Probo's only facade-flag finishing is "band, koord en lus" (fixed in the
       // mapping); de klant kiest de mastzijde, ziet de vaste afwerking + de
-      // band-/koordkleur, en kan optioneel onze uithouder als cross-sell bijkopen.
+      // band-/koordkleur, en koopt gevelstokken en houders als accessoire bij.
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
       // Vaste afwerking (band, koord en lus) — één keuze, puur ter illustratie.
       { label: "Afwerking", choices: ["Koord/Lus"] },
       // Kleur van band, koord en lus (zie render-beelden), niet van het doek.
       { label: "Kleur", choices: ["Wit", "Zwart"] },
-      { label: "Uithouder", choices: ["Zonder", "Met uithouder"] },
+      // Losse artikelen met eigen aantal (zie OPTION_SURCHARGES voor prijzen).
+      {
+        label: "Accessoires",
+        choices: [
+          "Gevelstok Wit",
+          "Gevelstok Blauw",
+          "Gevelstok Oranje",
+          "Gevelstok Zwart",
+          "Gevelstokhouder",
+          "Gevelstokhouder Zwart",
+          "Handystick",
+        ],
+      },
     ],
     heroImage: img(
       "763-duurzame-gevelvlag.webp",
@@ -375,6 +410,34 @@ export const PRODUCTS: CatalogProduct[] = [
       {
         src: "/vlaggenmast/grondplaat-montage.jpg",
         alt: "Montage van de grondplaat van een vlaggenmast",
+      },
+    ],
+    // Verdieping over het Easylift-systeem, onder eigen noemer geschreven
+    // (leverancier blijft ongenoemd op de site).
+    details: [
+      {
+        title: "Banier wisselen zonder kantelen",
+        body: "De banierhouder beweegt omhoog en omlaag met een lier met slinger. Je wisselt een banier veilig op werkhoogte, zonder de mast te kantelen en zonder speciale vaardigheden. Simpel, snel en veilig.",
+      },
+      {
+        title: "Degelijk gebouwd",
+        body: "Dikwandige cilindervormige mast van hoogwaardig aluminium, met slijtvaste geleidingsringen van POM-kunststof, een hijslijn met stalen kern en een soepel lopende bandlier met zwengel. De afwerking is extra dik gepoedercoat of geanodiseerd, in vier kleuren.",
+      },
+      {
+        title: "Compleet geleverd",
+        body: "Inclusief thermisch verzinkt kantelanker, contragewicht met rubberring, aluminium uithouder, flexibele banierringen en een mastknop naar keuze.",
+      },
+      {
+        title: "Eenvoudig te plaatsen",
+        body: "Dankzij het kantelanker plaats je de mast eenvoudig zelf. Het grondanker is nastelbaar, zodat de mast altijd strak in het lood staat.",
+      },
+      {
+        title: "Garantie waar je op kunt bouwen",
+        body: "Drie jaar garantie op alle bewegende delen en tien jaar op het mastprofiel.",
+      },
+      {
+        title: "Kies de juiste hoogte",
+        body: "Vuistregel: kies de mast minstens één meter hoger dan je gebouw. Zo vangt de vlag vrije wind en komt hij het beste tot zijn recht.",
       },
     ],
     accent: "copper-rust",

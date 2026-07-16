@@ -77,23 +77,28 @@ const RETAIL_PRICES: Record<string, Record<string, number>> = {
   beachvlag: {
     "Straight Small — 80 × 220 cm": 35, // ECHT (ref 80×220)
     "Straight Medium S — 65 × 315 cm": 45, // ECHT (ref 65×315)
-    "Straight Medium L — 80 × 315 cm": 55, // TODO: prijs verifiëren (tussen 65×315=€45 en 90×430=€65)
+    "Straight Medium L — 80 × 315 cm": 49, // ECHT (configurator 80×315)
     "Straight Large — 90 × 430 cm": 65, // ECHT (ref 90×430)
     "Square Small — 75 × 200 cm": 45, // ECHT (ref 75×200)
     "Square Medium — 75 × 300 cm": 55, // ECHT (ref 75×300)
     "Square Large — 75 × 400 cm": 65, // ECHT (ref 75×400)
   },
   baniervlag: {
-    // TODO: prijs verifiëren — geen exacte ref-prijzen bekend. Area-scaling
-    // geankerd op 100×250 = €38 (≈ €15,20/m²), afgerond op €0,50.
-    "100 × 200 cm": 30.5, // TODO: prijs verifiëren (≈ €30,40 area-scaled) = priceFrom
-    "100 × 250 cm": 38, // anker
-    "100 × 300 cm": 45.5, // TODO: prijs verifiëren (≈ €45,60 area-scaled)
-    "100 × 350 cm": 53.5, // TODO: prijs verifiëren (≈ €53,20 area-scaled)
-    "100 × 400 cm": 60.5, // TODO: prijs verifiëren (≈ €60,80 area-scaled)
-    "125 × 300 cm": 57, // TODO: prijs verifiëren (= €57,00 area-scaled)
-    "125 × 350 cm": 66.5, // TODO: prijs verifiëren (≈ €66,50 area-scaled)
-    "125 × 400 cm": 76, // TODO: prijs verifiëren (= €76,00 area-scaled)
+    // ECHT — 100/120-brede maten uit de configurator, grote maten door Antony
+    // bevestigd (2026-07-16).
+    "100 × 250 cm": 32.5,
+    "100 × 300 cm": 38,
+    "100 × 350 cm": 45,
+    "100 × 400 cm": 52,
+    "120 × 300 cm": 42,
+    "120 × 350 cm": 49,
+    "120 × 400 cm": 56,
+    "150 × 450 cm": 88,
+    "150 × 500 cm": 97.5,
+    // Extra grote maten, area-geschaald op €13/m² (150×550 = 8,25 m²,
+    // 150×600 = 9,00 m²). // TODO: prijs verifiëren met Antony.
+    "150 × 550 cm": 107.5,
+    "150 × 600 cm": 117,
   },
   mastvlag: {
     // Herprijsd op € 15,20/m² (2026-07-15), afgerond op €0,50.
@@ -143,6 +148,13 @@ const OPTION_SURCHARGES: Record<
     Kleur: { Wit: 0, Aluminium: 0, Zwart: 71.5, Antraciet: 71.5 },
   },
   beachvlag: {
+    // Samenstelling-toeslag t.o.v. het kale doek (configurator-prijzen):
+    // stok +€15, stok + draagtas +€22,50.
+    Samenstelling: {
+      "Alleen vlag": 0,
+      "Vlag + stok": 15,
+      "Vlag + stok + tas": 22.5,
+    },
     // Accessoire als cross-sell per vlag — prijzen ECHT (oude site, stap 7).
     Accessoires: {
       Grondpen: 11,
@@ -159,8 +171,20 @@ const OPTION_SURCHARGES: Record<
       "Rotator Voetplaat": 8,
     },
   },
-  // TODO: prijs verifiëren — gevelvlag "Met uithouder" heeft nog geen bekende
-  // meerprijs; nu €0 tot Antony de uithouder-prijs bevestigt.
+  gevelvlag: {
+    // Losse artikelen per stuk — inkoop + 65% marge, afgerond op €0,50 naar
+    // boven (inkoop: stok wit/blauw/oranje €12,69, zwart €17,50, houder €5,50,
+    // houder zwart €10,75, handystick €29,50).
+    Accessoires: {
+      "Gevelstok Wit": 21,
+      "Gevelstok Blauw": 21,
+      "Gevelstok Oranje": 21,
+      "Gevelstok Zwart": 29,
+      Gevelstokhouder: 9.5,
+      "Gevelstokhouder Zwart": 18,
+      Handystick: 49,
+    },
+  },
 };
 
 /**
@@ -289,6 +313,15 @@ export function localUnitPrice(product: CatalogProduct, size?: CatalogSize): num
 export const CUSTOM_SIZE_FLOOR = 20;
 
 /**
+ * Vaste eigen-maat-tarieven per product waar de configurator een expliciet
+ * m²-tarief + ondergrens hanteert (i.p.v. het afgeleide tarief). Baniervlag:
+ * € 14/m², minimaal € 25 — 1-op-1 uit de configurator.
+ */
+const CUSTOM_SIZE_RATES: Record<string, { perM2: number; floor: number }> = {
+  baniervlag: { perM2: 14, floor: 25 },
+};
+
+/**
  * €/m²-tarief voor een eigen maat, per product afgeleid uit de bekende
  * retailprijzen: de goedkoopste maat gedeeld door zijn oppervlak. Zo sluit een
  * eigen maat aan op de echte prijsstelling van dat product.
@@ -316,10 +349,12 @@ export function localCustomSizePrice(
   widthCm: number,
   heightCm: number,
 ): number {
+  const override = CUSTOM_SIZE_RATES[product.slug];
+  const floor = override?.floor ?? CUSTOM_SIZE_FLOOR;
   const area = (widthCm / 100) * (heightCm / 100);
-  if (!Number.isFinite(area) || area <= 0) return round2(CUSTOM_SIZE_FLOOR);
-  const rate = customRatePerM2(product);
-  return round2(Math.max(area * rate, CUSTOM_SIZE_FLOOR));
+  if (!Number.isFinite(area) || area <= 0) return round2(floor);
+  const rate = override?.perM2 ?? customRatePerM2(product);
+  return round2(Math.max(area * rate, floor));
 }
 
 /**
