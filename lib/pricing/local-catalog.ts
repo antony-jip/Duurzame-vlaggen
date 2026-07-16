@@ -18,7 +18,7 @@
  * Alle bedragen zijn EX btw en op 2 decimalen (via hele centen).
  */
 
-import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
+import { getProduct, type CatalogProduct, type CatalogSize } from "@/lib/catalog/products";
 // `supportsCustomSize` woont bij de mapping omdat dáár vastligt welke producten
 // een vrije maat aankunnen (custom-size vs preset-size). Geen cyclus: dat is een
 // plat data-module zonder imports.
@@ -323,11 +323,29 @@ export function localCustomSizePrice(
 }
 
 /**
+ * Optielabels die losse artikelen zijn (eigen aantal, los van het
+ * vlaggenaantal) in plaats van een eigenschap van de vlag. Ze tellen NIET mee
+ * in de stukprijs/staffel maar als vast bedrag op de regel — 2 vlaggen met
+ * 1 kruisvoet = 1 kruisvoet, niet 2.
+ */
+const LOSSE_ARTIKEL_OPTIES = new Set(["Accessoires"]);
+
+/**
+ * Eén deelkeuze van een losse-artikelen-optie: optioneel aantal-prefix
+ * ("2× Kruisvoet"), zonder prefix telt hij één keer.
+ */
+function parseArtikelDeel(part: string): { qty: number; name: string } {
+  const m = /^(\d+)× (.+)$/.exec(part);
+  return m ? { qty: Number(m[1]), name: m[2] } : { qty: 1, name: part };
+}
+
+/**
  * Toeslag (ex btw, per stuk) voor de gekozen opties.
  *
- * Multi-keuzes (bv. meerdere beachvlag-accessoires) reizen als ÉÉN waarde met
- * " · " als scheider ("Grondpen · Waterzak Grijs") — dezelfde string staat ook
- * op de orderregel. Elke deelkeuze telt hier los mee in de toeslag.
+ * Multi-keuzes reizen als ÉÉN waarde met " · " als scheider — dezelfde string
+ * staat ook op de orderregel. Losse artikelen (accessoires) tellen hier NIET
+ * mee: die zijn geen stukprijs-eigenschap maar een vast regelbedrag, zie
+ * `localAccessoiresTotal`.
  */
 export function localOptionsSurcharge(
   product: CatalogProduct,
@@ -337,11 +355,37 @@ export function localOptionsSurcharge(
   if (!table) return 0;
   let total = 0;
   for (const [label, value] of Object.entries(selections)) {
+    if (LOSSE_ARTIKEL_OPTIES.has(label)) continue;
     const choices = table[label];
     if (!choices) continue;
     for (const part of String(value).split(" · ")) {
       const add = choices[part];
       if (add) total += add;
+    }
+  }
+  return round2(total);
+}
+
+/**
+ * Vast regelbedrag (ex btw) voor losse artikelen (accessoires): elke deelkeuze
+ * × zijn eigen aantal ("2× Kruisvoet · Waterzak Zwart" = 2×27 + 1×8). Staat
+ * bewust buiten stukprijs en staffelkorting.
+ */
+export function localAccessoiresTotal(
+  product: CatalogProduct,
+  selections: Record<string, string> = {},
+): number {
+  const table = OPTION_SURCHARGES[product.slug];
+  if (!table) return 0;
+  let total = 0;
+  for (const [label, value] of Object.entries(selections)) {
+    if (!LOSSE_ARTIKEL_OPTIES.has(label)) continue;
+    const choices = table[label];
+    if (!choices) continue;
+    for (const part of String(value).split(" · ")) {
+      const { qty, name } = parseArtikelDeel(part);
+      const add = choices[name];
+      if (add) total += qty * add;
     }
   }
   return round2(total);
@@ -406,7 +450,10 @@ export function localLinePrice(input: {
   const { product, size, widthCm, heightCm, amount, selections } = input;
   const qty = Math.max(1, amount);
   const unit = localUnitPriceForLine({ product, size, widthCm, heightCm, selections });
-  return round2(unit * qty * (1 - staffelDiscount(qty)));
+  // Losse artikelen (accessoires × eigen aantal) als vast bedrag erbovenop —
+  // buiten aantal en staffel.
+  const artikelen = localAccessoiresTotal(product, selections);
+  return round2(unit * qty * (1 - staffelDiscount(qty)) + artikelen);
 }
 
 /**
@@ -417,6 +464,27 @@ export function localLinePrice(input: {
 export function localCartLineTotal(unitPriceEx: number, amount: number): number {
   const qty = Math.max(1, amount);
   return round2(unitPriceEx * qty * (1 - staffelDiscount(qty)));
+}
+
+/**
+ * Ex-btw regeltotaal voor een winkelmandregel INCLUSIEF losse accessoires.
+ * Zelfde optelling als `localLinePrice`: (stukprijs × aantal × staffel) +
+ * accessoires × eigen aantal. Mand en checkout-weergave gebruiken déze, zodat
+ * ze niets anders tonen dan `buildLocalQuote` afrekent.
+ */
+export function cartRegelTotaal(item: {
+  slug: string;
+  unitPriceEstimate: number;
+  amount: number;
+  options: Array<{ code: string; value?: string | number | null }>;
+}): number {
+  const basis = localCartLineTotal(item.unitPriceEstimate, item.amount);
+  const product = getProduct(item.slug);
+  if (!product) return basis;
+  const selections = Object.fromEntries(
+    item.options.map((o) => [o.code, String(o.value ?? "")]),
+  );
+  return round2(basis + localAccessoiresTotal(product, selections));
 }
 
 /** Eigen verzendregel (ex btw). */

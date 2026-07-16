@@ -20,7 +20,7 @@ import {
 } from "react";
 import type { UiCatalog } from "@/config/domains";
 import { normalizeCartItem, type CartDesign, type CartItem } from "./types";
-import { localCartLineTotal } from "@/lib/pricing/local-catalog";
+import { cartRegelTotaal } from "@/lib/pricing/local-catalog";
 
 const STORAGE_KEY = "dv-cart-v1";
 const VAT_STORAGE_KEY = "dv-vat-incl-v1";
@@ -187,9 +187,11 @@ export function CartProvider({
 
   const value = useMemo<CartContextValue>(() => {
     // Subtotaal met staffelkorting per regel — zo klopt de mand met de
-    // definitieve prijs die buildLocalQuote (checkout) berekent.
+    // definitieve prijs die buildLocalQuote (checkout) berekent. Accessoires
+    // (losse artikelen met eigen aantal) tellen als vast bedrag per regel mee,
+    // buiten de staffel — zelfde regel als localLinePrice.
     const subtotal = items.reduce(
-      (sum, it) => sum + localCartLineTotal(it.unitPriceEstimate, it.amount),
+      (sum, it) => sum + cartRegelTotaal(it),
       0,
     );
     const count = items.reduce((sum, it) => sum + it.amount, 0);

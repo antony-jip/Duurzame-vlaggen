@@ -1715,3 +1715,139 @@
 .sjabloonDl:hover {
   color: var(--color-terracotta);
 }
+
+/* ── Prijsstaffel-overzicht bovenaan de configurator ─────────────────── */
+
+.staffelBar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: var(--space-md);
+}
+
+.staffelCel {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding: 10px 6px;
+  border: 1.5px solid color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+  border-radius: var(--radius-md);
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out);
+}
+
+.staffelCel:hover {
+  border-color: var(--color-terracotta);
+}
+
+.staffelCel[data-on="true"] {
+  border-color: var(--color-forest);
+  background: color-mix(in srgb, var(--color-forest) 7%, #fff);
+}
+
+.staffelCelQty {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+.staffelCelPrijs {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-forest);
+  font-variant-numeric: tabular-nums;
+}
+
+.staffelCelKorting {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-terracotta);
+}
+
+.staffelCel[data-on="true"] .staffelCelQty {
+  color: var(--color-forest);
+}
+
+@media (max-width: 480px) {
+  .staffelBar {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .staffelCel {
+    padding: 8px 2px;
+  }
+}
+
+/* ── Aantal-stepper in de koopbalk ───────────────────────────────────── */
+
+.buyQty {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid color-mix(in srgb, var(--color-charcoal) 14%, transparent);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.buyQty .qtyBtn {
+  width: 40px;
+  min-height: 40px;
+  font-size: 20px;
+  border: none;
+}
+
+.buyQtyValue {
+  min-width: 40px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Eigen aantal per accessoire op de aangevinkte kaart ─────────────── */
+
+.accQty {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  margin: 0 8px 8px;
+  border: 1.5px solid color-mix(in srgb, var(--color-charcoal) 14%, transparent);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  overflow: hidden;
+}
+
+.accQtyBtn {
+  width: 30px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-forest);
+  cursor: pointer;
+}
+
+.accQtyBtn:disabled {
+  color: color-mix(in srgb, var(--color-charcoal) 25%, transparent);
+  cursor: default;
+}
+
+.accQtyBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-terracotta) 12%, #fff);
+}
+
+.accQtyValue {
+  min-width: 26px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}

@@ -86,3 +86,43 @@ describe("ontwerpservice", () => {
     expect(ontwerpserviceVoorOrder(drieRegels)).toBe(DESIGN_SERVICE_PRICE);
   });
 });
+
+describe("accessoires als losse artikelen (eigen aantal, buiten de staffel)", () => {
+  const beachvlag = getProduct("beachvlag")!;
+  const maat = getSize(beachvlag, "Straight Medium S — 65 × 315 cm");
+
+  it("telt accessoires niet mee in de stukprijs", () => {
+    const zonder = localUnitPriceForLine({ product: beachvlag, size: maat });
+    const met = localUnitPriceForLine({
+      product: beachvlag,
+      size: maat,
+      selections: { Accessoires: "Kruisvoet" },
+    });
+    expect(met).toBe(zonder);
+  });
+
+  it("rekent accessoires één keer per regel, niet × het vlaggenaantal", () => {
+    // 2 vlaggen + 1 kruisvoet (€27): voorheen 2×27 in de regel, nu 1×27.
+    const kaal = localLinePrice({ product: beachvlag, size: maat, amount: 2 });
+    const met = localLinePrice({
+      product: beachvlag,
+      size: maat,
+      amount: 2,
+      selections: { Accessoires: "Kruisvoet" },
+    });
+    expect(met - kaal).toBeCloseTo(27, 2);
+  });
+
+  it("respecteert het eigen aantal per accessoire (N×-prefix), buiten de staffel", () => {
+    // 10 vlaggen (10% staffel) + 3 kruisvoeten + 1 waterzak zwart:
+    // accessoires = 3×27 + 8 = 89, zónder korting.
+    const kaal = localLinePrice({ product: beachvlag, size: maat, amount: 10 });
+    const met = localLinePrice({
+      product: beachvlag,
+      size: maat,
+      amount: 10,
+      selections: { Accessoires: "3× Kruisvoet · Waterzak Zwart" },
+    });
+    expect(met - kaal).toBeCloseTo(89, 2);
+  });
+});

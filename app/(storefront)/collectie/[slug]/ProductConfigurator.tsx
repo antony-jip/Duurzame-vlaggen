@@ -29,6 +29,7 @@ import {
   designServiceCost,
   DESIGN_SERVICE_PRICE,
   localOptionsSurcharge,
+  localAccessoiresTotal,
   localUnitPriceWithOptions,
   localCartLineTotal,
   localCustomSizePrice,
@@ -424,6 +425,8 @@ export function ProductConfigurator({
   );
   // Multi-opties (accessoires): 0, 1 of meer keuzes per label.
   const [multiChoices, setMultiChoices] = useState<Record<string, string[]>>({});
+  // Eigen aantal per aangevinkt accessoire, sleutel "label:keuze" (default 1).
+  const [multiQty, setMultiQty] = useState<Record<string, number>>({});
   const [quantity, setQuantity] = useState(1);
   const [designService, setDesignService] = useState(false);
   const [showStaffel, setShowStaffel] = useState(false);
@@ -485,9 +488,19 @@ export function ProductConfigurator({
       : undefined;
 
   // Alle keuzes samengevoegd: multi-opties als " · "-lijst (prijs-/orderconventie).
+  // Accessoires met een eigen aantal > 1 krijgen een "N× "-prefix in de waarde
+  // ("2× Kruisvoet · Waterzak Zwart") — leesbaar op de orderregel én parseerbaar
+  // door het prijsmodel (localAccessoiresTotal).
   const mergedSelections: Record<string, string> = { ...selectedOptions };
   for (const [label, values] of Object.entries(multiChoices)) {
-    if (values.length > 0) mergedSelections[label] = values.join(" · ");
+    if (values.length > 0) {
+      mergedSelections[label] = values
+        .map((v) => {
+          const n = multiQty[`${label}:${v}`] ?? 1;
+          return n > 1 ? `${n}× ${v}` : v;
+        })
+        .join(" · ");
+    }
   }
 
   // Aanleversjabloon voor precies deze configuratie (maat, mastzijde en
@@ -502,14 +515,18 @@ export function ProductConfigurator({
       });
 
   // Instant, netwerk-loze berekening uit het eigen lokale prijsmodel.
+  // Accessoires zitten NIET in de stukprijs: het zijn losse artikelen met een
+  // eigen aantal, dus een vast bedrag op de regel buiten aantal en staffel.
   const optionsSurcharge = localOptionsSurcharge(product, mergedSelections);
   const unitBasis = usingCustom
     ? Math.round((localCustomSizePrice(product, wNum, hNum) + optionsSurcharge) * 100) / 100
     : localUnitPriceWithOptions(product, presetSize, mergedSelections);
+  const accessoiresExVat = localAccessoiresTotal(product, mergedSelections);
   const discount = staffelDiscount(quantity);
   const lineExVat = localCartLineTotal(unitBasis, quantity);
   const designExVat = designServiceCost(designService);
-  const totalExVat = Math.round((lineExVat + designExVat) * 100) / 100;
+  const totalExVat =
+    Math.round((lineExVat + accessoiresExVat + designExVat) * 100) / 100;
   const savings = Math.round((unitBasis * quantity - lineExVat) * 100) / 100;
 
   /** Toon een ex-btw bedrag volgens de globale btw-voorkeur. */
@@ -559,11 +576,252 @@ export function ProductConfigurator({
     setAdded(false);
   }
 
-  // Stapnummering schuift op wanneer er een Soort-stap vóór het formaat staat.
-  const sizeStepNo = hasSoort ? 2 : 1;
+  // "Gewenste afwerking" (beachvlag) is belangrijk genoeg voor een eigen stap
+  // direct na de soort; de overige opties blijven samen in "Uitvoering".
+  const afwerkingOpt = product.options.find(
+    (o) => o.label === "Gewenste afwerking",
+  );
+  const uitvoeringOpts = product.options.filter((o) => o !== afwerkingOpt);
+
+  // Stapnummering schuift op wanneer er een Soort- en/of afwerking-stap vóór
+  // het formaat staat.
+  const afwerkingStepNo = (hasSoort ? 1 : 0) + 1;
+  const sizeStepNo = (hasSoort ? 1 : 0) + (afwerkingOpt ? 1 : 0) + 1;
   const optionsStepNo = sizeStepNo + 1;
-  const quantityStepNo =
-    sizeStepNo + (product.options.length > 0 ? 1 : 0) + 1;
+  const quantityStepNo = sizeStepNo + (uitvoeringOpts.length > 0 ? 1 : 0) + 1;
+
+  /**
+   * Eén optieblok (rijlabel + kaarten of mastzijde-toggle). Gedeeld door de
+   * verzamelstap Uitvoering en de losse Gewenste afwerking-stap (hideLabel:
+   * daar staat de naam al in de stapkop).
+   */
+  function renderOption(
+    opt: CatalogProduct["options"][number],
+    hideLabel = false,
+  ) {
+    const isMulti = MULTI_OPTIONS.has(opt.label);
+    // Beachvlag-mastzijde = productfoto + Links⇄Rechts toggle-slider
+    // (functioneel: stuurt de live preview), i.p.v. twee losse kaarten.
+    const isBeachMast =
+      product.slug === "beachvlag" && opt.label === "Mastzijde";
+    const picked = isMulti
+      ? (multiChoices[opt.label] ?? []).join(" · ")
+      : selectedOptions[opt.label];
+    return (
+      <div key={opt.label} className={styles.optionRow}>
+        {!hideLabel && (
+          <span className={styles.optionRowLabel}>
+            {opt.label}
+            <span className={styles.optionRowPick}>{picked || "Geen"}</span>
+          </span>
+        )}
+                  {isBeachMast ? (
+                    <div className={styles.mastToggle}>
+                      <span className={styles.mastToggleMedia}>
+                        <Image
+                          src={
+                            BEACH_MASTZIJDE[selectedModel ?? "Straight"]?.[
+                              selectedOptions[opt.label] ?? "Links"
+                            ] ||
+                            (selectedModel && soortMeta?.[selectedModel]?.img) ||
+                            product.heroImage.src
+                          }
+                          alt={`Beachvlag ${selectedModel ?? ""} — mast ${selectedOptions[opt.label]?.toLowerCase() ?? "links"}`}
+                          fill
+                          sizes="(max-width: 860px) 60vw, 240px"
+                          className={styles.optionCardImg}
+                        />
+                      </span>
+                      <div
+                        className={styles.segControl}
+                        role="radiogroup"
+                        aria-label={opt.label}
+                      >
+                        {opt.choices.map((choice) => (
+                          <button
+                            key={choice}
+                            type="button"
+                            role="radio"
+                            aria-checked={selectedOptions[opt.label] === choice}
+                            className={styles.segOption}
+                            data-on={selectedOptions[opt.label] === choice}
+                            onClick={() => {
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [opt.label]: choice,
+                              }));
+                              setAdded(false);
+                            }}
+                          >
+                            {choice}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                  <div
+                    className={styles.optionGrid}
+                    data-dense={opt.choices.length > 4}
+                    data-cols={
+                      opt.label === "Samenstelling" ||
+                      opt.label === "Gewenste afwerking"
+                        ? "3"
+                        : undefined
+                    }
+                    role={isMulti ? "group" : "radiogroup"}
+                    aria-label={opt.label}
+                  >
+                    {opt.choices.map((choice) => {
+                      const selected = isMulti
+                        ? (multiChoices[opt.label] ?? []).includes(choice)
+                        : selectedOptions[opt.label] === choice;
+                      // Beeld-volgorde: model-specifieke beach-samenstelling →
+                      // productfoto → huisstijl-glyph → generiek beeld.
+                      const productImg =
+                        (product.slug === "beachvlag" &&
+                        opt.label === "Samenstelling" &&
+                        selectedModel
+                          ? BEACH_SAMENSTELLING[selectedModel]?.[choice]
+                          : undefined) ??
+                        PRODUCT_OPTION_IMAGES[product.slug]?.[opt.label]?.[choice];
+                      const glyph = productImg
+                        ? null
+                        : optionGlyph(product.slug, opt.label, choice);
+                      const imgSrc =
+                        productImg ??
+                        (glyph ? undefined : OPTION_IMAGES[opt.label]?.[choice]);
+                      const swatch = COLOR_SWATCHES[choice];
+                      // Meerprijs van deze ene keuze: als stukprijs-toeslag óf
+                      // als los artikel (accessoire) — één van beide is > 0.
+                      const surcharge =
+                        localOptionsSurcharge(product, { [opt.label]: choice }) +
+                        localAccessoiresTotal(product, { [opt.label]: choice });
+                      const qtyKey = `${opt.label}:${choice}`;
+                      return (
+                        <label key={choice} className={styles.optionCard} data-selected={selected}>
+                          <input
+                            type={isMulti ? "checkbox" : "radio"}
+                            name={opt.label}
+                            checked={selected}
+                            onChange={() => {
+                              if (isMulti) {
+                                // Aanvinken/uitvinken; meerdere tegelijk mag.
+                                setMultiChoices((prev) => {
+                                  const current = prev[opt.label] ?? [];
+                                  const next = selected
+                                    ? current.filter((c) => c !== choice)
+                                    : [...current, choice];
+                                  return { ...prev, [opt.label]: next };
+                                });
+                                // Uitvinken = aantal terug naar af.
+                                if (selected) {
+                                  setMultiQty((prev) => {
+                                    const next = { ...prev };
+                                    delete next[qtyKey];
+                                    return next;
+                                  });
+                                }
+                              } else {
+                                setSelectedOptions((prev) => ({
+                                  ...prev,
+                                  [opt.label]: choice,
+                                }));
+                              }
+                              setAdded(false);
+                            }}
+                          />
+                          <span
+                            className={styles.optionCardMedia}
+                            data-square={product.slug === "beachvlag" ? "true" : undefined}
+                          >
+                            {imgSrc ? (
+                              <Image
+                                src={imgSrc}
+                                alt={`${opt.label}: ${choice}`}
+                                fill
+                                sizes="(max-width: 860px) 45vw, 180px"
+                                className={styles.optionCardImg}
+                              />
+                            ) : glyph ? (
+                              <span className={styles.optionCardGlyph}>{glyph}</span>
+                            ) : swatch ? (
+                              <span
+                                className={styles.optionCardSwatch}
+                                style={{ background: swatch }}
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <span className={styles.optionCardFallback} aria-hidden="true">
+                                {choice}
+                              </span>
+                            )}
+                            <span className={styles.optionCardCheck} aria-hidden="true">
+                              <Check size={14} />
+                            </span>
+                          </span>
+                          <span className={styles.optionCardFoot}>
+                            <span className={styles.optionCardName}>{choice}</span>
+                            {surcharge > 0 && (
+                              <span className={styles.optionCardSurcharge}>+{fmt(surcharge)}</span>
+                            )}
+                          </span>
+                          {/* Eigen aantal per aangevinkt accessoire: losse
+                              artikelen, dus niet gekoppeld aan het
+                              vlaggenaantal. preventDefault houdt de kaart
+                              aangevinkt terwijl je klikt. */}
+                          {isMulti && selected && (
+                            <span
+                              className={styles.accQty}
+                              role="group"
+                              aria-label={`Aantal ${choice}`}
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <button
+                                type="button"
+                                className={styles.accQtyBtn}
+                                disabled={(multiQty[qtyKey] ?? 1) <= 1}
+                                aria-label={`Minder ${choice}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setMultiQty((prev) => ({
+                                    ...prev,
+                                    [qtyKey]: Math.max(1, (prev[qtyKey] ?? 1) - 1),
+                                  }));
+                                  setAdded(false);
+                                }}
+                              >
+                                −
+                              </button>
+                              <span className={styles.accQtyValue}>
+                                {multiQty[qtyKey] ?? 1}
+                              </span>
+                              <button
+                                type="button"
+                                className={styles.accQtyBtn}
+                                aria-label={`Meer ${choice}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setMultiQty((prev) => ({
+                                    ...prev,
+                                    [qtyKey]: (prev[qtyKey] ?? 1) + 1,
+                                  }));
+                                  setAdded(false);
+                                }}
+                              >
+                                +
+                              </button>
+                            </span>
+                          )}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  )}
+                </div>
+                );
+  }
 
   return (
     <div className={styles.configurator} data-accent={product.accent}>
@@ -574,6 +832,40 @@ export function ProductConfigurator({
           </span>
           {labels.noticeQuoteOnly}
         </p>
+      )}
+
+      {/* Prijsoverzicht tot 50 stuks — stukprijs per staffel, klik = aantal
+          kiezen. Rekent live mee met maat en uitvoering. */}
+      {orderable && priceReady && !sizeQuoteOnly && (
+        <div
+          className={styles.staffelBar}
+          role="group"
+          aria-label="Stukprijs per aantal, tot 50 stuks"
+        >
+          {STAFFEL_TIERS.map((tier) => {
+            const perStuk = Math.round(unitBasis * (1 - tier.discount) * 100) / 100;
+            return (
+              <button
+                key={tier.qty}
+                type="button"
+                className={styles.staffelCel}
+                data-on={activeTierQty === tier.qty}
+                onClick={() => {
+                  setQuantity(tier.qty);
+                  setAdded(false);
+                }}
+              >
+                <span className={styles.staffelCelQty}>
+                  {tier.qty === 1 ? "1 stuk" : `${tier.qty}+`}
+                </span>
+                <span className={styles.staffelCelPrijs}>{fmt(perStuk)}</span>
+                <span className={styles.staffelCelKorting}>
+                  {tier.discount > 0 ? `−${Math.round(tier.discount * 100)}%` : "per stuk"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       )}
 
       <div className={styles.steps}>
@@ -636,6 +928,22 @@ export function ProductConfigurator({
                   </label>
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {/* Gewenste afwerking — eigen stap direct na de soort. */}
+        {afwerkingOpt && (
+          <section className={styles.step}>
+            <header className={styles.stepHead}>
+              <span className={styles.stepDot}>{afwerkingStepNo}</span>
+              <span className={styles.stepTitle}>Gewenste afwerking</span>
+              <span className={styles.stepPick}>
+                {selectedOptions[afwerkingOpt.label]}
+              </span>
+            </header>
+            <div className={styles.optionList}>
+              {renderOption(afwerkingOpt, true)}
             </div>
           </section>
         )}
@@ -825,7 +1133,7 @@ export function ProductConfigurator({
         </div>
 
         {/* Stap 2 — Uitvoering (mastzijde, afwerking, kleur, voet, …) */}
-        {product.options.length > 0 && (
+        {uitvoeringOpts.length > 0 && (
           <section className={styles.step}>
             <header className={styles.stepHead}>
               <span className={styles.stepDot}>{optionsStepNo}</span>
@@ -833,168 +1141,7 @@ export function ProductConfigurator({
             </header>
 
             <div className={styles.optionList}>
-              {product.options.map((opt) => {
-                const isMulti = MULTI_OPTIONS.has(opt.label);
-                // Beachvlag-mastzijde = productfoto + Links⇄Rechts toggle-slider
-                // (functioneel: stuurt de live preview), i.p.v. twee losse kaarten.
-                const isBeachMast =
-                  product.slug === "beachvlag" && opt.label === "Mastzijde";
-                const picked = isMulti
-                  ? (multiChoices[opt.label] ?? []).join(" · ")
-                  : selectedOptions[opt.label];
-                return (
-                <div key={opt.label} className={styles.optionRow}>
-                  <span className={styles.optionRowLabel}>
-                    {opt.label}
-                    <span className={styles.optionRowPick}>{picked || "Geen"}</span>
-                  </span>
-                  {isBeachMast ? (
-                    <div className={styles.mastToggle}>
-                      <span className={styles.mastToggleMedia}>
-                        <Image
-                          src={
-                            BEACH_MASTZIJDE[selectedModel ?? "Straight"]?.[
-                              selectedOptions[opt.label] ?? "Links"
-                            ] ||
-                            (selectedModel && soortMeta?.[selectedModel]?.img) ||
-                            product.heroImage.src
-                          }
-                          alt={`Beachvlag ${selectedModel ?? ""} — mast ${selectedOptions[opt.label]?.toLowerCase() ?? "links"}`}
-                          fill
-                          sizes="(max-width: 860px) 60vw, 240px"
-                          className={styles.optionCardImg}
-                        />
-                      </span>
-                      <div
-                        className={styles.segControl}
-                        role="radiogroup"
-                        aria-label={opt.label}
-                      >
-                        {opt.choices.map((choice) => (
-                          <button
-                            key={choice}
-                            type="button"
-                            role="radio"
-                            aria-checked={selectedOptions[opt.label] === choice}
-                            className={styles.segOption}
-                            data-on={selectedOptions[opt.label] === choice}
-                            onClick={() => {
-                              setSelectedOptions((prev) => ({
-                                ...prev,
-                                [opt.label]: choice,
-                              }));
-                              setAdded(false);
-                            }}
-                          >
-                            {choice}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                  <div
-                    className={styles.optionGrid}
-                    data-dense={opt.choices.length > 4}
-                    data-cols={
-                      opt.label === "Samenstelling" ||
-                      opt.label === "Gewenste afwerking"
-                        ? "3"
-                        : undefined
-                    }
-                    role={isMulti ? "group" : "radiogroup"}
-                    aria-label={opt.label}
-                  >
-                    {opt.choices.map((choice) => {
-                      const selected = isMulti
-                        ? (multiChoices[opt.label] ?? []).includes(choice)
-                        : selectedOptions[opt.label] === choice;
-                      // Beeld-volgorde: model-specifieke beach-samenstelling →
-                      // productfoto → huisstijl-glyph → generiek beeld.
-                      const productImg =
-                        (product.slug === "beachvlag" &&
-                        opt.label === "Samenstelling" &&
-                        selectedModel
-                          ? BEACH_SAMENSTELLING[selectedModel]?.[choice]
-                          : undefined) ??
-                        PRODUCT_OPTION_IMAGES[product.slug]?.[opt.label]?.[choice];
-                      const glyph = productImg
-                        ? null
-                        : optionGlyph(product.slug, opt.label, choice);
-                      const imgSrc =
-                        productImg ??
-                        (glyph ? undefined : OPTION_IMAGES[opt.label]?.[choice]);
-                      const swatch = COLOR_SWATCHES[choice];
-                      const surcharge = localOptionsSurcharge(product, {
-                        [opt.label]: choice,
-                      });
-                      return (
-                        <label key={choice} className={styles.optionCard} data-selected={selected}>
-                          <input
-                            type={isMulti ? "checkbox" : "radio"}
-                            name={opt.label}
-                            checked={selected}
-                            onChange={() => {
-                              if (isMulti) {
-                                // Aanvinken/uitvinken; meerdere tegelijk mag.
-                                setMultiChoices((prev) => {
-                                  const current = prev[opt.label] ?? [];
-                                  const next = selected
-                                    ? current.filter((c) => c !== choice)
-                                    : [...current, choice];
-                                  return { ...prev, [opt.label]: next };
-                                });
-                              } else {
-                                setSelectedOptions((prev) => ({
-                                  ...prev,
-                                  [opt.label]: choice,
-                                }));
-                              }
-                              setAdded(false);
-                            }}
-                          />
-                          <span
-                            className={styles.optionCardMedia}
-                            data-square={product.slug === "beachvlag" ? "true" : undefined}
-                          >
-                            {imgSrc ? (
-                              <Image
-                                src={imgSrc}
-                                alt={`${opt.label}: ${choice}`}
-                                fill
-                                sizes="(max-width: 860px) 45vw, 180px"
-                                className={styles.optionCardImg}
-                              />
-                            ) : glyph ? (
-                              <span className={styles.optionCardGlyph}>{glyph}</span>
-                            ) : swatch ? (
-                              <span
-                                className={styles.optionCardSwatch}
-                                style={{ background: swatch }}
-                                aria-hidden="true"
-                              />
-                            ) : (
-                              <span className={styles.optionCardFallback} aria-hidden="true">
-                                {choice}
-                              </span>
-                            )}
-                            <span className={styles.optionCardCheck} aria-hidden="true">
-                              <Check size={14} />
-                            </span>
-                          </span>
-                          <span className={styles.optionCardFoot}>
-                            <span className={styles.optionCardName}>{choice}</span>
-                            {surcharge > 0 && (
-                              <span className={styles.optionCardSurcharge}>+{fmt(surcharge)}</span>
-                            )}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                  )}
-                </div>
-                );
-              })}
+              {uitvoeringOpts.map((opt) => renderOption(opt))}
             </div>
           </section>
         )}
@@ -1168,12 +1315,51 @@ export function ProductConfigurator({
             {sizeQuoteOnly
               ? "Deze maat bestel je op aanvraag (niet online)"
               : priceReady
-                ? `${inclVat ? "incl. btw" : "excl. btw"}${
-                    designService ? " · incl. ontwerpservice" : ""
-                  }${usingCustom ? " · eigen maat" : ""}`
+                ? `${quantity} ${quantity === 1 ? "stuk" : "stuks"} · ${
+                    inclVat ? "incl. btw" : "excl. btw"
+                  }${designService ? " · incl. ontwerpservice" : ""}${
+                    usingCustom ? " · eigen maat" : ""
+                  }`
                 : "Vul eerst een geldige eigen afmeting in"}
           </span>
         </div>
+
+        {/* Aantal direct in de koopbalk aanpasbaar — je hoeft niet terug naar
+            de aantal-stap om te zien of te sturen wat je afrekent. */}
+        {!sizeQuoteOnly && (
+          <div
+            className={styles.buyQty}
+            role="group"
+            aria-label="Aantal aanpassen"
+          >
+            <button
+              type="button"
+              className={styles.qtyBtn}
+              onClick={() => {
+                setQuantity((q) => Math.max(1, q - 1));
+                setAdded(false);
+              }}
+              disabled={quantity <= 1}
+              aria-label="Aantal verlagen"
+            >
+              −
+            </button>
+            <span className={styles.buyQtyValue} aria-live="polite">
+              {quantity}
+            </span>
+            <button
+              type="button"
+              className={styles.qtyBtn}
+              onClick={() => {
+                setQuantity((q) => q + 1);
+                setAdded(false);
+              }}
+              aria-label="Aantal verhogen"
+            >
+              +
+            </button>
+          </div>
+        )}
 
         <div className={styles.actions}>
           {sizeQuoteOnly ? (

@@ -9,7 +9,7 @@ import { ArtworkUpload } from "./ArtworkUpload";
 import { ArtworkProof } from "./ArtworkProof";
 import { getProduct, type CatalogProduct } from "@/lib/catalog/products";
 import {
-  localCartLineTotal,
+  cartRegelTotaal,
   staffelDiscount,
   volgendeStaffel,
 } from "@/lib/pricing/local-catalog";
@@ -218,7 +218,7 @@ export function WinkelmandRegel({
 
       <div className={styles.controls}>
         <span className={styles.prijs}>
-          <Price amount={localCartLineTotal(item.unitPriceEstimate, item.amount)} />
+          <Price amount={cartRegelTotaal(item)} />
         </span>
         <div className={styles.quantity} role="group" aria-label={`Aantal ${item.name}`}>
           <button
