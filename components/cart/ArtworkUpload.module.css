@@ -1634,8 +1634,8 @@
   margin-right: 6px;
 }
 
-/* Opslaan: dé actie van de editor — volle CTA volgens de styleguide
-   (forest, Sora 800, hover terracotta met lift). */
+/* Opslaan: dé actie van de editor — terracotta (energie/conversie in de
+   styleguide), Sora 800, hover forest met lift. Tekst altijd wit. */
 .saveBtn {
   display: inline-flex;
   align-items: center;
@@ -1644,24 +1644,24 @@
   padding: 14px 30px;
   border: none;
   border-radius: var(--radius-lg, 14px);
-  background: var(--color-forest);
+  background: var(--color-terracotta);
   color: #fff;
   font-family: var(--font-button);
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.01em;
   cursor: pointer;
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(44, 95, 79, 0.25));
+  box-shadow: var(--shadow-terracotta-md, 0 8px 24px rgba(198, 107, 78, 0.25));
   transition: background var(--duration-base, 300ms) var(--ease-out, ease),
     transform var(--duration-base, 300ms) var(--ease-out, ease),
     box-shadow var(--duration-base, 300ms) var(--ease-out, ease);
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: var(--color-terracotta);
+  background: var(--color-forest);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-terracotta-md, 0 8px 24px rgba(198, 107, 78, 0.25));
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(44, 95, 79, 0.25));
 }
 
 .saveBtn:disabled {
