@@ -12,6 +12,7 @@ import {
 import {
   rasterizeImageElement,
   rasterizePdfFirstPage,
+  rasterizePdfSrc,
 } from "@/lib/artwork/preview";
 import { ArtworkProof, type ProofFinish } from "./ArtworkProof";
 import type { CartDesign } from "./types";
@@ -189,6 +190,55 @@ function withTimeout<T>(p: Promise<T>, ms: number, onTimeout: () => T): Promise<
       },
     );
   });
+}
+
+/**
+ * Tegel-preview in de ontwerpen-strip: de voorbereide preview, anders de
+ * afbeelding zelf, anders client-side de eerste PDF-pagina rasteren (gecachet
+ * per src in rasterizePdfSrc) — zelfde route als de mini's op de mandregel.
+ */
+function RailThumb({ design }: { design: CartDesign }) {
+  const isImage =
+    /\.(jpe?g|png)$/i.test(design.fileName ?? "") ||
+    /\.(jpe?g|png)$/i.test(design.fileUrl ?? "");
+  const needsRaster = !design.previewUrl && !isImage && !!design.fileUrl;
+  const [pdfThumb, setPdfThumb] = useState<string | null>(null);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!needsRaster || !design.fileUrl) {
+      setPdfThumb(null);
+      return;
+    }
+    let cancelled = false;
+    setPdfThumb(null);
+    void rasterizePdfSrc(design.fileUrl).then((dataUrl) => {
+      if (!cancelled && dataUrl) setPdfThumb(dataUrl);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [needsRaster, design.fileUrl]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const src = design.previewUrl ?? (isImage ? design.fileUrl : pdfThumb);
+
+  if (!design.fileUrl) {
+    return (
+      <span className={styles.railLater} aria-hidden="true">
+        ⏱
+      </span>
+    );
+  }
+  if (src) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt="" />;
+  }
+  return (
+    <span className={styles.railDoc} aria-hidden="true">
+      PDF
+    </span>
+  );
 }
 
 export function ArtworkUploadModal({
@@ -1009,13 +1059,32 @@ export function ArtworkUploadModal({
                 // vlagverhouding rekenen we dat om zodat het gedraaide vak het
                 // kader exact blijft vullen.
                 const quarter = rotation === 90 || rotation === 270;
+
+                // Bestand op AANLEVERFORMAAT (vlagmaat + 1 cm afloop rondom)?
+                // Teken het dan dóór tot de afloop-lijn in plaats van passend
+                // bínnen het eindformaat — anders toont de proef valse
+                // witranden bij een correct aangeleverd bestand. Alleen bij
+                // "Passend" en zonder kwartslag.
+                const bleedW = flag.widthCm + 2;
+                const bleedH = flag.heightCm + 2;
+                const bleedRatio = bleedW / bleedH;
+                const flagRatio = flag.widthCm / flag.heightCm;
+                const designRatio = selected.ratio;
+                const bleedSized =
+                  designRatio !== null &&
+                  fit === "contain" &&
+                  !quarter &&
+                  Math.abs(designRatio - bleedRatio) <=
+                    Math.abs(designRatio - flagRatio) &&
+                  Math.abs(designRatio - bleedRatio) / bleedRatio < 0.05;
+
                 const transformParts = [
-                  quarter ? "translate(-50%, -50%)" : null,
+                  quarter || bleedSized ? "translate(-50%, -50%)" : null,
                   rotation !== 0 ? `rotate(${rotation}deg)` : null,
                   mirrored ? "scaleX(-1)" : null,
                 ].filter((p): p is string => p !== null);
                 const layerStyle: React.CSSProperties = {
-                  objectFit: fit,
+                  objectFit: bleedSized ? "fill" : fit,
                   transform: transformParts.length
                     ? transformParts.join(" ")
                     : undefined,
@@ -1026,7 +1095,18 @@ export function ArtworkUploadModal({
                         width: `calc(100% * ${flag.heightCm} / ${flag.widthCm})`,
                         height: `calc(100% * ${flag.widthCm} / ${flag.heightCm})`,
                       }
-                    : null),
+                    : bleedSized
+                      ? {
+                          top: "50%",
+                          left: "50%",
+                          right: "auto",
+                          bottom: "auto",
+                          width: `calc(100% * ${bleedW} / ${flag.widthCm})`,
+                          height: `calc(100% * ${bleedH} / ${flag.heightCm})`,
+                          maxWidth: "none",
+                          maxHeight: "none",
+                        }
+                      : null),
                 };
 
                 // Mockup zodra we een échte afbeelding hebben — voor PDF dus
@@ -1081,7 +1161,7 @@ export function ArtworkUploadModal({
                           isImage
                           widthCm={flag.widthCm}
                           heightCm={flag.heightCm}
-                          imgStyle={selected.isImage ? layerStyle : undefined}
+                          imgStyle={layerStyle}
                           alt={`Voorbeeld van ${selected.name} als vlag aan de mast`}
                         />
                         <p className={styles.stageHint}>
@@ -1106,7 +1186,7 @@ export function ArtworkUploadModal({
                             isImage={previewIsImage}
                             widthCm={flag.widthCm}
                             heightCm={flag.heightCm}
-                            imgStyle={selected.isImage ? layerStyle : undefined}
+                            imgStyle={layerStyle}
                             alt={`Voorbeeld van ${selected.name} in het vlagkader`}
                           />
 
@@ -1497,11 +1577,6 @@ export function ArtworkUploadModal({
             </button>
             <div className={styles.railTiles}>
               {beheer.designs.map((d) => {
-                const railImg =
-                  d.previewUrl ??
-                  (/\.(jpe?g|png)$/i.test(d.fileName ?? d.fileUrl ?? "")
-                    ? d.fileUrl
-                    : null);
                 return (
                   <span key={d.id} className={styles.railWrap}>
                     <button
@@ -1519,18 +1594,7 @@ export function ArtworkUploadModal({
                       }
                       aria-pressed={d.id === beheer.activeId}
                     >
-                      {railImg ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={railImg} alt="" />
-                      ) : d.fileUrl ? (
-                        <span className={styles.railDoc} aria-hidden="true">
-                          PDF
-                        </span>
-                      ) : (
-                        <span className={styles.railLater} aria-hidden="true">
-                          ⏱
-                        </span>
-                      )}
+                      <RailThumb design={d} />
                       <span className={styles.railQty}>{d.quantity}×</span>
                     </button>
                     <button

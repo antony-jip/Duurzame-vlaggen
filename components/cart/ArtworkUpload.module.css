@@ -415,20 +415,21 @@
 /* Weergave-toggle: technische drukproef of realistische vlag-mockup. */
 .viewToggle {
   display: inline-flex;
-  gap: 2px;
-  padding: 3px;
+  gap: 3px;
+  padding: 4px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-charcoal) 7%, #fff);
+  background: color-mix(in srgb, var(--color-charcoal) 8%, #fff);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .viewOption {
   border: none;
   background: transparent;
-  font-family: var(--font-ui);
-  font-size: 12.5px;
-  font-weight: 600;
+  font-family: var(--font-button);
+  font-size: 15px;
+  font-weight: 700;
   color: var(--color-stone, #8b8d7a);
-  padding: 6px 14px;
+  padding: 10px 24px;
   border-radius: 999px;
   cursor: pointer;
   transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
@@ -440,9 +441,9 @@
 }
 
 .viewOptionActive {
-  background: var(--color-white, #fff);
-  color: var(--color-forest);
-  box-shadow: 0 1px 4px rgba(44, 95, 79, 0.18);
+  background: var(--color-forest);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(44, 95, 79, 0.3);
 }
 
 /* Grid: hoogte-maat links, kader midden, breedte-maat eronder. */
