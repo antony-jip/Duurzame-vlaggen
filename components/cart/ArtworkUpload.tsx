@@ -279,7 +279,10 @@ export function ArtworkUpload({
               </span>
             </div>
 
-            {amount > 1 && (
+            {/* De verdeel-stepper is alleen zinvol bij een échte splitsing:
+                één ontwerp dat de hele regel dekt volgt het regelaantal
+                vanzelf, en een tweede stepper ernaast verwart alleen maar. */}
+            {amount > 1 && (designs.length > 1 || design.quantity !== amount) && (
               <div
                 className={styles.designQty}
                 role="group"
