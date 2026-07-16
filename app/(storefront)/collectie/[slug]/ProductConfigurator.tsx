@@ -895,7 +895,12 @@ export function ProductConfigurator({
                   <div
                     className={styles.optionGrid}
                     data-dense={opt.choices.length > 4}
-                    data-cols={opt.label === "Samenstelling" ? "3" : undefined}
+                    data-cols={
+                      opt.label === "Samenstelling" ||
+                      opt.label === "Gewenste afwerking"
+                        ? "3"
+                        : undefined
+                    }
                     role={isMulti ? "group" : "radiogroup"}
                     aria-label={opt.label}
                   >
