@@ -849,11 +849,6 @@ export function ArtworkUploadModal({
   const beheerIndex = beheer
     ? beheer.designs.findIndex((d) => d.id === beheer.activeId)
     : -1;
-  const stapBeheer = (richting: -1 | 1) => {
-    if (!beheer || beheerIndex < 0) return;
-    const next = beheer.designs[beheerIndex + richting];
-    if (next) beheer.onSelect(next.id);
-  };
   const beheerActive =
     beheer && beheerIndex >= 0 ? beheer.designs[beheerIndex] : null;
   const beheerAssigned = beheer
@@ -964,6 +959,36 @@ export function ArtworkUploadModal({
             </h2>
             {sizeContext && <p className={styles.modalContext}>{sizeContext}</p>}
           </div>
+          {/* Acties rechtsboven: altijd zichtbaar en nooit afgedekt door de
+              ontwerpen-strip of de schermrand. */}
+          {phase === "preview" && selected && (
+            <div className={styles.headActions}>
+              <button
+                type="button"
+                className={styles.secondary}
+                onClick={requestClose}
+              >
+                Sluiten
+              </button>
+              <button
+                type="button"
+                className={styles.primary}
+                onClick={() => void confirmSelectedFile()}
+                disabled={!canConfirm}
+                title={
+                  canConfirm
+                    ? undefined
+                    : "Wacht tot de upload klaar is om dit bestand te gebruiken"
+                }
+              >
+                {upload?.status === "uploading"
+                  ? "Uploaden…"
+                  : upload?.status === "failed"
+                    ? "Toch gebruiken (preview)"
+                    : "Opslaan"}
+              </button>
+            </div>
+          )}
           <button
             type="button"
             className={styles.close}
@@ -1494,32 +1519,6 @@ export function ArtworkUploadModal({
                 Ander bestand kiezen
               </button>
 
-              <div className={styles.sidebarActions}>
-                <button
-                  type="button"
-                  className={styles.secondary}
-                  onClick={requestClose}
-                >
-                  Sluiten
-                </button>
-                <button
-                  type="button"
-                  className={styles.primary}
-                  onClick={() => void confirmSelectedFile()}
-                  disabled={!canConfirm}
-                  title={
-                    canConfirm
-                      ? undefined
-                      : "Wacht tot de upload klaar is om dit bestand te gebruiken"
-                  }
-                >
-                  {upload?.status === "uploading"
-                    ? "Uploaden…"
-                    : upload?.status === "failed"
-                      ? "Toch gebruiken (preview)"
-                      : "Opslaan"}
-                </button>
-              </div>
             </aside>
           </div>
         )}
@@ -1566,17 +1565,17 @@ export function ArtworkUploadModal({
               }}
               aria-label="Ontwerpbestanden toevoegen"
             />
-            <button
-              type="button"
-              className={styles.railArrow}
-              onClick={() => stapBeheer(-1)}
-              disabled={beheerIndex <= 0}
-              aria-label="Vorige ontwerp"
-            >
-              ‹
-            </button>
+            <span className={styles.railLabel}>
+              Ontwerpen op deze regel ({beheer.designs.length})
+              {beheer.busyNote && (
+                <span className={styles.railNote} role="status">
+                  {" "}
+                  · {beheer.busyNote}
+                </span>
+              )}
+            </span>
             <div className={styles.railTiles}>
-              {beheer.designs.map((d) => {
+              {beheer.designs.map((d, i) => {
                 return (
                   <span key={d.id} className={styles.railWrap}>
                     <button
@@ -1605,32 +1604,24 @@ export function ArtworkUploadModal({
                     >
                       ✕
                     </button>
+                    <span className={styles.railName}>
+                      {d.fileUrl ? (d.fileName ?? `Ontwerp ${i + 1}`) : "Later aanleveren"}
+                    </span>
                   </span>
                 );
               })}
-              <button
-                type="button"
-                className={styles.railAdd}
-                onClick={() => railInputRef.current?.click()}
-                aria-label="Ontwerpen toevoegen"
-              >
-                ＋
-              </button>
-            </div>
-            <button
-              type="button"
-              className={styles.railArrow}
-              onClick={() => stapBeheer(1)}
-              disabled={beheerIndex < 0 || beheerIndex >= beheer.designs.length - 1}
-              aria-label="Volgende ontwerp"
-            >
-              ›
-            </button>
-            {beheer.busyNote && (
-              <span className={styles.railNote} role="status">
-                {beheer.busyNote}
+              <span className={styles.railWrap}>
+                <button
+                  type="button"
+                  className={styles.railAdd}
+                  onClick={() => railInputRef.current?.click()}
+                  aria-label="Ontwerpen toevoegen"
+                >
+                  ＋
+                </button>
+                <span className={styles.railName}>Toevoegen</span>
               </span>
-            )}
+            </div>
           </div>
         )}
       </div>
