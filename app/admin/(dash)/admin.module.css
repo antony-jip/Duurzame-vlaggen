@@ -671,11 +671,32 @@
 
 .stappen li {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 10px 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(58, 58, 58, 0.06);
+}
+
+.stapKop {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.stapTijd {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--color-stone);
+  white-space: nowrap;
+}
+
+.stapNoot {
+  margin: 0 0 0 19px; /* inspringen tot voorbij de stip */
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-stone);
 }
 
 .stappen li:last-child {
@@ -712,10 +733,14 @@
 
 .stapForm {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
-  flex: 1;
-  min-width: 260px;
+  margin-left: 19px; /* inspringen tot voorbij de stip */
+}
+
+.stapForm .trackInput {
+  width: 100%;
 }
 
 .trackInput {
@@ -1271,4 +1296,135 @@
   .dashZij .actionRow button {
     width: auto;
   }
+}
+
+/* --- Documenten: nette twee-koloms grid, ZIP prominent bovenaan --- */
+
+.docGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.docGrid > * {
+  min-width: 0;
+}
+
+.docPrimair {
+  grid-column: 1 / -1;
+}
+
+/* --- Fulfilment: links (track & trace, portaal) als nette definitierijen --- */
+
+.fulfilLinks {
+  margin: 0 0 var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fulfilLink dt {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-stone);
+  margin-bottom: 2px;
+}
+
+.fulfilLink dd {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fulfilLink a {
+  color: var(--color-forest);
+  font-weight: 600;
+}
+
+.fulfilLinkNoot {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--color-stone);
+}
+
+/* --- Handmatige status-uitweg: stil, onderaan --- */
+
+.handmatigRij {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(58, 58, 58, 0.08);
+}
+
+.handmatigLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-stone);
+}
+
+.handmatigKnop {
+  border: none;
+  background: none;
+  padding: 2px 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-stone);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.handmatigKnop:hover {
+  color: var(--color-terracotta);
+}
+
+/* --- Order verwijderen: twee-staps-knop in de lijst --- */
+
+.verwijderKnop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(58, 58, 58, 0.12);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-stone);
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.verwijderKnop:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.verwijderBevestig {
+  display: inline-flex;
+}
+
+.verwijderZeker {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  background: #ef4444;
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
 }

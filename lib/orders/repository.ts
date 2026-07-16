@@ -291,6 +291,17 @@ export async function suppressEmail(email: string, reason: string): Promise<void
   if (error) throw new Error(`suppressEmail failed: ${error.message}`);
 }
 
+/**
+ * Verwijder een order definitief. De foreign keys ruimen regels, designs en
+ * events mee op (on delete cascade); artwork-objecten in Storage worden
+ * wezen en later geveegd door scripts/cleanup-artwork.ts.
+ */
+export async function deleteOrder(id: string): Promise<void> {
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase.from("orders").delete().eq("id", id);
+  if (error) throw new Error(`deleteOrder failed: ${error.message}`);
+}
+
 export type OrderPatch = Partial<Omit<OrderInsert, "order_number">>;
 
 export async function updateOrder(id: string, patch: OrderPatch): Promise<OrderRow> {

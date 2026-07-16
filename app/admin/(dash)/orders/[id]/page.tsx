@@ -334,15 +334,17 @@ export default async function AdminOrderDetailPage({
           handmatig (FULFILMENT_MODE "manual"). Zie het Fulfilment-blok hieronder. */}
       <Card className={styles.actions}>
         <h2 className={styles.sectionTitle}>Documenten</h2>
-        <div className={styles.actionRow}>
-          {order.mollie_payment_id && (
-            <form action={refreshPaymentAction}>
-              <input type="hidden" name="orderId" value={order.id} />
-              <Button type="submit" size="sm" variant="secondary">
-                Ververs betaling
-              </Button>
-            </form>
-          )}
+        <div className={styles.docGrid}>
+          {/* Same-origin ZIP: één klik, alle aangeleverde ontwerpen als échte
+              download (de losse Storage-links openen slechts een tabblad). */}
+          <Button
+            as="a"
+            href={`/api/admin/ontwerpen/${order.id}`}
+            size="sm"
+            className={styles.docPrimair}
+          >
+            ⬇ Alle ontwerpen (ZIP)
+          </Button>
           <Button
             as="a"
             href={`/api/admin/pakbon/${order.id}`}
@@ -394,26 +396,42 @@ export default async function AdminOrderDetailPage({
 
         <ol className={styles.stappen}>
           <li className={betaald ? styles.stapAf : styles.stapOpen}>
-            <span className={styles.stapDot} aria-hidden="true" />
-            <span className={styles.stapLabel}>Betaald</span>
-            {order.paid_at && (
-              <span className={styles.muted}>{formatDateTime(order.paid_at)}</span>
+            <div className={styles.stapKop}>
+              <span className={styles.stapDot} aria-hidden="true" />
+              <span className={styles.stapLabel}>Betaald</span>
+              {order.paid_at && (
+                <span className={styles.stapTijd}>{formatDateTime(order.paid_at)}</span>
+              )}
+            </div>
+            {/* Reconciliatie hoort bij deze stap: haal de actuele Mollie-status
+                op (nodig op localhost, waar de webhook ons niet kan bereiken). */}
+            {order.mollie_payment_id && !betaald && (
+              <form action={refreshPaymentAction} className={styles.stapForm}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <Button type="submit" size="sm">
+                  Ververs betaling
+                </Button>
+              </form>
             )}
           </li>
 
           <li className={besteld ? styles.stapAf : styles.stapOpen}>
-            <span className={styles.stapDot} aria-hidden="true" />
-            <span className={styles.stapLabel}>Besteld bij Probo</span>
-            {order.ordered_at && (
-              <span className={styles.muted}>{formatDateTime(order.ordered_at)}</span>
-            )}
+            <div className={styles.stapKop}>
+              <span className={styles.stapDot} aria-hidden="true" />
+              <span className={styles.stapLabel}>Besteld bij Probo</span>
+              {order.ordered_at && (
+                <span className={styles.stapTijd}>
+                  {formatDateTime(order.ordered_at)}
+                </span>
+              )}
+            </div>
             {betaald && !verzonden && !besteld && pendingDesigns > 0 ? (
               // Zonder drukbestanden valt er niets te bestellen; de server
               // action weigert dit óók (dubbel slot).
-              <span className={styles.muted}>
+              <p className={styles.stapNoot}>
                 Wacht op {pendingDesigns} ontwerp{pendingDesigns === 1 ? "" : "en"} van
                 de klant — bestellen kan zodra alles binnen is.
-              </span>
+              </p>
             ) : (
               betaald &&
               !verzonden && (
@@ -426,8 +444,8 @@ export default async function AdminOrderDetailPage({
                     placeholder="Plak de Probo track & trace-link…"
                     defaultValue={order.tracking_url ?? ""}
                   />
-                  <Button type="submit" size="sm" variant="secondary">
-                    {besteld ? "Link bijwerken" : "Markeer besteld"}
+                  <Button type="submit" size="sm">
+                    {besteld ? "Track & trace bijwerken" : "Markeer besteld"}
                   </Button>
                 </form>
               )
@@ -435,15 +453,19 @@ export default async function AdminOrderDetailPage({
           </li>
 
           <li className={verzonden ? styles.stapAf : styles.stapOpen}>
-            <span className={styles.stapDot} aria-hidden="true" />
-            <span className={styles.stapLabel}>Verzonden</span>
-            {order.shipped_at && (
-              <span className={styles.muted}>{formatDateTime(order.shipped_at)}</span>
-            )}
+            <div className={styles.stapKop}>
+              <span className={styles.stapDot} aria-hidden="true" />
+              <span className={styles.stapLabel}>Verzonden</span>
+              {order.shipped_at && (
+                <span className={styles.stapTijd}>
+                  {formatDateTime(order.shipped_at)}
+                </span>
+              )}
+            </div>
             {besteld && !verzonden && (
               <form action={markeerVerzondenAction} className={styles.stapForm}>
                 <input type="hidden" name="orderId" value={order.id} />
-                <Button type="submit" size="sm" variant="secondary">
+                <Button type="submit" size="sm">
                   Markeer verzonden
                 </Button>
               </form>
@@ -451,43 +473,57 @@ export default async function AdminOrderDetailPage({
           </li>
         </ol>
 
-        {order.tracking_url && (
-          <p className={styles.trackRegel}>
-            Track &amp; trace:{" "}
-            <a href={order.tracking_url} target="_blank" rel="noopener noreferrer">
-              {order.tracking_url}
-            </a>
-          </p>
+        {(order.tracking_url || order.portal_token) && (
+          <dl className={styles.fulfilLinks}>
+            {order.tracking_url && (
+              <div className={styles.fulfilLink}>
+                <dt>Track &amp; trace</dt>
+                <dd>
+                  <a
+                    href={order.tracking_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {order.tracking_url}
+                  </a>
+                </dd>
+              </div>
+            )}
+            {order.portal_token && (
+              <div className={styles.fulfilLink}>
+                <dt>Aanleverportaal klant</dt>
+                <dd>
+                  <a
+                    href={`/aanleveren/${order.portal_token}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open het portaal →
+                  </a>
+                  {order.portal_expires_at && (
+                    <span className={styles.fulfilLinkNoot}>
+                      geldig t/m {formatDateTime(order.portal_expires_at)}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
         )}
 
-        {order.portal_token && (
-          <p className={styles.muted}>
-            Aanleverportaal klant:{" "}
-            <a
-              href={`/aanleveren/${order.portal_token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              /aanleveren/{order.portal_token.slice(0, 8)}…
-            </a>
-            {order.portal_expires_at
-              ? ` (geldig t/m ${formatDateTime(order.portal_expires_at)})`
-              : ""}
-          </p>
-        )}
-
-        {/* De statusmachine blijft leidend; deze knoppen zijn de uitweg voor de
-            randgevallen (annuleren, betaling mislukt) die de drie stappen niet
-            dekken. */}
+        {/* De statusmachine blijft leidend; dit is de stille uitweg voor
+            randgevallen (annuleren, terug naar wacht-op-bestand) die de drie
+            stappen niet dekken. */}
         {overigeStatussen.length > 0 && (
-          <div className={styles.actionRow}>
+          <div className={styles.handmatigRij}>
+            <span className={styles.handmatigLabel}>Handmatig:</span>
             {overigeStatussen.map((to) => (
               <form action={advanceStatusAction} key={to}>
                 <input type="hidden" name="orderId" value={order.id} />
                 <input type="hidden" name="to" value={to} />
-                <Button type="submit" size="sm" variant="tertiary">
+                <button type="submit" className={styles.handmatigKnop}>
                   → {STATUS_LABELS[to]}
-                </Button>
+                </button>
               </form>
             ))}
           </div>

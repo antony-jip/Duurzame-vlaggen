@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listOrders } from "@/lib/orders/repository";
+import { verwijderOrderAction } from "./actions";
+import { VerwijderOrder } from "./VerwijderOrder";
 import type { OrderStatus } from "@/lib/db/types";
 import { STATUS_LABELS, formatMoney, formatDateTime } from "../format";
 import { requireAdminPage } from "../auth";
@@ -141,6 +143,7 @@ export default async function AdminOrdersPage({
                 <th className={styles.right}>Totaal</th>
                 <th>Mollie</th>
                 <th>Probo</th>
+                <th aria-label="Acties" />
               </tr>
             </thead>
             <tbody>
@@ -160,6 +163,13 @@ export default async function AdminOrdersPage({
                   <td className={styles.right}>{formatMoney(o.total, o.currency)}</td>
                   <td className={styles.muted}>{o.mollie_status ?? "—"}</td>
                   <td className={styles.muted}>{o.probo_status ?? "—"}</td>
+                  <td className={styles.right}>
+                    <VerwijderOrder
+                      orderId={o.id}
+                      orderNumber={o.order_number}
+                      action={verwijderOrderAction}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
