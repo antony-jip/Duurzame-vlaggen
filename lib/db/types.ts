@@ -24,6 +24,7 @@ export type OrderStatus =
   | "cart"
   | "awaiting_payment"
   | "paid"
+  | "awaiting_files"
   | "sent_to_probo"
   | "probo_accepted"
   | "in_production"
@@ -105,6 +106,9 @@ export type Database = {
           probo_status: string | null;
           carrier: string | null;
           tracking_url: string | null;
+          portal_token: string | null;
+          portal_expires_at: string | null;
+          reorder_token: string | null;
           created_at: string;
           paid_at: string | null;
           ordered_at: string | null;
@@ -138,6 +142,9 @@ export type Database = {
           probo_status?: string | null;
           carrier?: string | null;
           tracking_url?: string | null;
+          portal_token?: string | null;
+          portal_expires_at?: string | null;
+          reorder_token?: string | null;
           created_at?: string;
           paid_at?: string | null;
           ordered_at?: string | null;
@@ -227,6 +234,55 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      order_item_designs: {
+        Row: {
+          id: string;
+          order_item_id: string;
+          quantity: number;
+          file_url: string | null;
+          file_path: string | null;
+          file_name: string | null;
+          file_warnings: Json;
+          uploaded_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_item_id: string;
+          quantity: number;
+          file_url?: string | null;
+          file_path?: string | null;
+          file_name?: string | null;
+          file_warnings?: Json;
+          uploaded_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["order_item_designs"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "order_item_designs_order_item_id_fkey";
+            columns: ["order_item_id"];
+            referencedRelation: "order_items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      marketing_suppressions: {
+        Row: {
+          email: string;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          email: string;
+          reason?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["marketing_suppressions"]["Insert"]>;
+        Relationships: [];
       };
       media_assets: {
         Row: {
@@ -328,3 +384,7 @@ export type SeoKansActieRow = Database["public"]["Tables"]["seo_kans_acties"]["R
 export type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
 export type OrderItemInsert = Database["public"]["Tables"]["order_items"]["Insert"];
 export type OrderEventInsert = Database["public"]["Tables"]["order_events"]["Insert"];
+
+export type OrderItemDesignRow = Database["public"]["Tables"]["order_item_designs"]["Row"];
+export type OrderItemDesignInsert =
+  Database["public"]["Tables"]["order_item_designs"]["Insert"];

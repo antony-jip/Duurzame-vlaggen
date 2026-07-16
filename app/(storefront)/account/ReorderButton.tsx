@@ -37,14 +37,15 @@ export function ReorderButton({
     for (const line of lines) {
       if (stripDesign) {
         // Laat ontwerp-velden weg → klant uploadt een nieuw ontwerp in de mand.
-        const { fileUrl, fileName, filePath, fileWarnings, previewUrl, ...rest } =
+        const { designs, fileUrl, fileName, filePath, fileWarnings, previewUrl, ...rest } =
           line;
+        void designs;
         void fileUrl;
         void fileName;
         void filePath;
         void fileWarnings;
         void previewUrl;
-        addItem(rest);
+        addItem({ ...rest, designs: [] });
       } else {
         addItem(line);
       }

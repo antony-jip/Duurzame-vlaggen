@@ -6,6 +6,7 @@ export const CUSTOMER_STATUS_LABELS: Record<OrderStatus, string> = {
   cart: "Winkelmand",
   awaiting_payment: "Wacht op betaling",
   paid: "Betaald",
+  awaiting_files: "Wacht op je ontwerp",
   sent_to_probo: "In behandeling",
   probo_accepted: "In behandeling",
   in_production: "In productie",

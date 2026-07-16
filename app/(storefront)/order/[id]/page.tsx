@@ -5,7 +5,7 @@ import { Bladeren } from "./Bladeren";
 import { Badge, Button, Card, Container, Check } from "@/components/ui";
 import { getMessages } from "@/lib/i18n";
 import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
-import { getOrderById } from "@/lib/orders/repository";
+import { countPendingDesigns, getOrderById } from "@/lib/orders/repository";
 import type { OrderStatus } from "@/lib/db/types";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
@@ -26,6 +26,7 @@ type Toon = "feest" | "wachten" | "probleem";
 function toonVan(status: OrderStatus): Toon {
   switch (status) {
     case "paid":
+    case "awaiting_files":
     case "sent_to_probo":
     case "probo_accepted":
     case "in_production":
@@ -54,6 +55,8 @@ function statusPresentation(
     case "sent_to_probo":
     case "probo_accepted":
       return { label: s.paid, variant: "success" };
+    case "awaiting_files":
+      return { label: s.awaitingFiles, variant: "detail" };
     case "in_production":
       return { label: s.inProduction, variant: "primary" };
     case "shipped":
@@ -85,6 +88,10 @@ type StapStaat = "af" | "bezig" | "wacht";
 
 function stappenVoor(status: OrderStatus): StapStaat[] {
   switch (status) {
+    // Betaald, maar de productie kan pas starten als alle ontwerpen binnen
+    // zijn — stap 2 staat dus nog op "wacht".
+    case "awaiting_files":
+      return ["af", "wacht", "wacht"];
     case "paid":
     case "sent_to_probo":
     case "probo_accepted":
@@ -128,6 +135,12 @@ export default async function OrderConfirmationPage({
   const { catalog, dict } = await getMessages();
   const status = statusPresentation(order.status, dict);
   const toon = toonVan(order.status);
+  // Klanten landen hier na de Mollie-redirect; missen er nog ontwerpen, dan is
+  // dit hét moment om ze het aanleverportaal in handen te geven.
+  const pendingDesigns =
+    order.status === "awaiting_files" && order.portal_token
+      ? await countPendingDesigns(order.id)
+      : 0;
   const hero = heroCopy(toon, dict);
   const shipping = (order.shipping_address ?? null) as ProboAddress | null;
   const stappen = stappenVoor(order.status);
@@ -160,6 +173,22 @@ export default async function OrderConfirmationPage({
           </Button>
         )}
       </div>
+
+      {pendingDesigns > 0 && order.portal_token && (
+        <Card className={styles.stepsCard} elevation="raised">
+          <p className={styles.trackPromise} role="status">
+            <span className={styles.trackIcon} aria-hidden="true">
+              →
+            </span>
+            {dict.order.portal.pending.replace("{count}", String(pendingDesigns))}
+          </p>
+          <div className={styles.actions}>
+            <Button as="a" href={`/aanleveren/${order.portal_token}`} variant="primary">
+              {dict.order.portal.cta}
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {toon !== "probleem" && (
         <Card className={styles.stepsCard} elevation="raised">

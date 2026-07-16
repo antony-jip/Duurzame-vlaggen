@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Badge, Container } from "@/components/ui";
 import { requireCustomer } from "../../auth";
 import { getCustomerOrder } from "@/lib/orders/customer";
-import { getOrderItems } from "@/lib/orders/repository";
+import { getOrderDesigns, getOrderItems } from "@/lib/orders/repository";
 import { getProduct } from "@/lib/catalog/products";
 import { orderItemToCartLine, orderItemsToCartLines } from "@/lib/orders/reorder";
 import type { OrderItemRow } from "@/lib/db/types";
@@ -88,7 +88,10 @@ export default async function AccountOrderDetailPage({
   if (!order) notFound();
 
   const items = await getOrderItems(order.id);
-  const reorderLines = orderItemsToCartLines(items, true);
+  // Design-toewijzingen mee: herbestellen krijgt dan exact dezelfde verdeling
+  // ("2× ontwerp A, 3× ontwerp B") met dezelfde bestanden.
+  const designs = await getOrderDesigns(order.id);
+  const reorderLines = orderItemsToCartLines(items, true, designs);
   const shipping = (order.shipping_address ?? null) as ProboAddress | null;
 
   return (
@@ -127,7 +130,7 @@ export default async function AccountOrderDetailPage({
       <div className={`${styles.card} ${styles.lineList}`} style={{ marginBottom: "var(--space-lg)" }}>
         {items.map((it) => {
           const product = getProduct(it.product_type);
-          const line = orderItemToCartLine(it, true);
+          const line = orderItemToCartLine(it, true, designs.get(it.id));
           const size = sizeText(it);
           const sel = selectionsText(it);
           const thumbSrc = isImageUrl(it.file_url)

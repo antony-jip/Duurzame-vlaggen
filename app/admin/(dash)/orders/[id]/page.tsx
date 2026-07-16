@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge, Button, Card } from "@/components/ui";
-import { getOrderById, getOrderItems } from "@/lib/orders/repository";
+import { getOrderById, getOrderDesigns, getOrderItems } from "@/lib/orders/repository";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { ALLOWED_TRANSITIONS } from "@/lib/orders/state-machine";
 import type { OrderEventRow, OrderStatus } from "@/lib/db/types";
@@ -47,6 +47,7 @@ const STATUS_TONE: Record<OrderStatus, string> = {
   cart: styles.pillNeutral,
   awaiting_payment: styles.pillWait,
   paid: styles.pillProgress,
+  awaiting_files: styles.pillWait,
   sent_to_probo: styles.pillProgress,
   probo_accepted: styles.pillProgress,
   in_production: styles.pillProgress,
@@ -147,17 +148,34 @@ export default async function AdminOrderDetailPage({
   const order = await getOrderById(id);
   if (!order) notFound();
 
-  const [items, events] = await Promise.all([getOrderItems(order.id), getOrderEvents(order.id)]);
+  const [items, events, designs] = await Promise.all([
+    getOrderItems(order.id),
+    getOrderEvents(order.id),
+    getOrderDesigns(order.id),
+  ]);
   const nextStatuses = ALLOWED_TRANSITIONS[order.status];
   const overigeStatussen = nextStatuses.filter((s) => !STAP_STATUSSEN.has(s));
+
+  // Nog niet aangeleverde design-toewijzingen blokkeren "Markeer besteld":
+  // zonder drukbestanden valt er bij Probo niets te bestellen.
+  const pendingDesigns = Array.from(designs.values())
+    .flat()
+    .filter((d) => d.file_url === null).length;
 
   // De drie stappen leiden we af uit de status, niet uit losse vlaggen: de
   // statusmachine is de bron van waarheid.
   const betaald =
     Boolean(order.paid_at) ||
-    (["paid", "sent_to_probo", "probo_accepted", "in_production", "shipped"] as OrderStatus[]).includes(
-      order.status,
-    );
+    (
+      [
+        "paid",
+        "awaiting_files",
+        "sent_to_probo",
+        "probo_accepted",
+        "in_production",
+        "shipped",
+      ] as OrderStatus[]
+    ).includes(order.status);
   const besteld = (
     ["sent_to_probo", "probo_accepted", "in_production", "shipped"] as OrderStatus[]
   ).includes(order.status);
@@ -204,13 +222,46 @@ export default async function AdminOrderDetailPage({
 
                 <div className={styles.regelBody}>
                   <div className={styles.regelZij}>
-                    <span className={styles.proboLabel}>Ontwerp</span>
-                    {it.file_url ? (
+                    <span className={styles.proboLabel}>
+                      Ontwerp{(designs.get(it.id)?.length ?? 0) > 1 ? "en" : ""}
+                    </span>
+                    {(designs.get(it.id)?.length ?? 0) > 0 ? (
+                      // Welk bestand hoort bij hoeveel vlaggen — de kern van de
+                      // handmatige Probo-aanlevering bij meerdere ontwerpen.
+                      designs.get(it.id)!.map((d) => (
+                        <div key={d.id} className={styles.artworkBlok}>
+                          {d.file_url ? (
+                            <>
+                              <OntwerpPreview fileUrl={d.file_url} />
+                              <div>
+                                {/* `download` forceert opslaan i.p.v. openen: dit
+                                    bestand moet naar de studio, niet naar een tab. */}
+                                <a
+                                  href={d.file_url}
+                                  download
+                                  className={styles.artworkLink}
+                                  title="Aangeleverd ontwerp downloaden"
+                                >
+                                  Ontwerp downloaden
+                                </a>
+                                <span className={styles.artworkNaam}>
+                                  {d.file_name ??
+                                    decodeURIComponent(d.file_url.split("/").pop() ?? "")}{" "}
+                                  · voor {d.quantity} van {it.amount}
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <span className={styles.muted}>
+                              Wacht op klant · {d.quantity} van {it.amount} vlaggen
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    ) : it.file_url ? (
                       <div className={styles.artworkBlok}>
                         <OntwerpPreview fileUrl={it.file_url} />
                         <div>
-                          {/* `download` forceert opslaan i.p.v. openen: dit
-                              bestand moet naar de studio, niet naar een tab. */}
                           <a
                             href={it.file_url}
                             download
@@ -356,20 +407,30 @@ export default async function AdminOrderDetailPage({
             {order.ordered_at && (
               <span className={styles.muted}>{formatDateTime(order.ordered_at)}</span>
             )}
-            {betaald && !verzonden && (
-              <form action={markeerBesteldAction} className={styles.stapForm}>
-                <input type="hidden" name="orderId" value={order.id} />
-                <input
-                  type="url"
-                  name="trackingUrl"
-                  className={styles.trackInput}
-                  placeholder="Plak de Probo track & trace-link…"
-                  defaultValue={order.tracking_url ?? ""}
-                />
-                <Button type="submit" size="sm" variant="secondary">
-                  {besteld ? "Link bijwerken" : "Markeer besteld"}
-                </Button>
-              </form>
+            {betaald && !verzonden && !besteld && pendingDesigns > 0 ? (
+              // Zonder drukbestanden valt er niets te bestellen; de server
+              // action weigert dit óók (dubbel slot).
+              <span className={styles.muted}>
+                Wacht op {pendingDesigns} ontwerp{pendingDesigns === 1 ? "" : "en"} van
+                de klant — bestellen kan zodra alles binnen is.
+              </span>
+            ) : (
+              betaald &&
+              !verzonden && (
+                <form action={markeerBesteldAction} className={styles.stapForm}>
+                  <input type="hidden" name="orderId" value={order.id} />
+                  <input
+                    type="url"
+                    name="trackingUrl"
+                    className={styles.trackInput}
+                    placeholder="Plak de Probo track & trace-link…"
+                    defaultValue={order.tracking_url ?? ""}
+                  />
+                  <Button type="submit" size="sm" variant="secondary">
+                    {besteld ? "Link bijwerken" : "Markeer besteld"}
+                  </Button>
+                </form>
+              )
             )}
           </li>
 
@@ -396,6 +457,22 @@ export default async function AdminOrderDetailPage({
             <a href={order.tracking_url} target="_blank" rel="noopener noreferrer">
               {order.tracking_url}
             </a>
+          </p>
+        )}
+
+        {order.portal_token && (
+          <p className={styles.muted}>
+            Aanleverportaal klant:{" "}
+            <a
+              href={`/aanleveren/${order.portal_token}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              /aanleveren/{order.portal_token.slice(0, 8)}…
+            </a>
+            {order.portal_expires_at
+              ? ` (geldig t/m ${formatDateTime(order.portal_expires_at)})`
+              : ""}
           </p>
         )}
 

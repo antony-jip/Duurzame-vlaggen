@@ -22,8 +22,10 @@ import { getMessages } from "@/lib/i18n";
 import {
   placeOrder,
   type CheckoutInput,
+  type DesignDraft,
   type OrderItemDraft,
 } from "@/lib/orders/orchestration";
+import { suppressEmail } from "@/lib/orders/repository";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 import type { CheckoutLine } from "@/components/cart/types";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
@@ -124,6 +126,34 @@ function parseItems(raw: string): CheckoutLine[] {
   }
 }
 
+/**
+ * Valideer de design-toewijzingen van een regel en maak er drafts van. De
+ * payload komt uit de client, dus alles wordt hier opnieuw gecheckt: gehele
+ * aantallen van minstens 1, de som EXACT gelijk aan het bestelde aantal, en
+ * bestands-URL's beperkt tot onze eigen artwork-bucket. Een design zonder
+ * (geldige) URL is een openstaande "later aanleveren"-toewijzing.
+ *
+ * Terugval voor oude tabbladen: een payload zonder `designs` maar mét het oude
+ * losse `fileUrl`-veld wordt behandeld als één toewijzing over de hele regel.
+ */
+function buildDesignDrafts(item: CheckoutLine): DesignDraft[] | null {
+  const legacy = (item as { fileUrl?: string | null }).fileUrl;
+  const designs =
+    Array.isArray(item.designs) && item.designs.length > 0
+      ? item.designs
+      : [{ quantity: item.amount, fileUrl: legacy ?? null }];
+
+  let sum = 0;
+  const drafts: DesignDraft[] = [];
+  for (const d of designs) {
+    if (!Number.isInteger(d.quantity) || d.quantity < 1) return null;
+    sum += d.quantity;
+    drafts.push({ quantity: d.quantity, fileUrl: safeFileUrl(d.fileUrl) });
+  }
+  if (sum !== item.amount) return null;
+  return drafts;
+}
+
 export async function checkoutAction(
   _prev: CheckoutState,
   formData: FormData,
@@ -219,6 +249,16 @@ export async function checkoutAction(
         values: echoValues(formData),
       };
     }
+    // Afrekenen kan pas als de toewijzingen van elke regel exact optellen tot
+    // het aantal (uploads of "later aanleveren").
+    const designs = buildDesignDrafts(it);
+    if (!designs) {
+      return {
+        status: "error",
+        message: dict.errors.designsIncomplete,
+        values: echoValues(formData),
+      };
+    }
     draftItems.push({
       // The mapping decides the effective code (a Squareflag size routes to
       // `beachflag-square` while the cart carries the catalogue default).
@@ -235,7 +275,7 @@ export async function checkoutAction(
       options: mapped.options,
       selections,
       unmapped: mapped.unmapped,
-      fileUrl: safeFileUrl(it.fileUrl),
+      designs,
     });
   }
 
@@ -273,6 +313,13 @@ export async function checkoutAction(
   try {
     const result = await placeOrder(input);
     checkoutUrl = result.checkoutUrl;
+
+    // AVG: de klant maakte bij het afrekenen bezwaar tegen de
+    // vervangingsherinneringen (soft opt-in vereist die keuze op het moment dat
+    // we het adres verzamelen). Best-effort; blokkeert de betaling nooit.
+    if (formData.get("noMarketing") != null) {
+      await suppressEmail(email, "checkout_opt_out").catch(() => {});
+    }
   } catch (err) {
     // Log de échte oorzaak, altijd. Dit stond hier als kale `catch {}`, en dan
     // ziet een mislukte betaling er in de logs uit alsof er niets gebeurde —

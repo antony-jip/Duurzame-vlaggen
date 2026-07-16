@@ -19,7 +19,7 @@ import {
   type ReactNode,
 } from "react";
 import type { UiCatalog } from "@/config/domains";
-import type { CartItem } from "./types";
+import { normalizeCartItem, type CartDesign, type CartItem } from "./types";
 import { localCartLineTotal } from "@/lib/pricing/local-catalog";
 
 const STORAGE_KEY = "dv-cart-v1";
@@ -53,15 +53,8 @@ export interface CartContextValue {
   removeItem: (id: string) => void;
   /** Set a line's quantity (clamped to at least 1). */
   updateAmount: (id: string, amount: number) => void;
-  /** Attach (or clear, with nulls) the uploaded artwork for a line. */
-  setItemFile: (
-    id: string,
-    fileUrl: string | null,
-    fileName: string | null,
-    filePath: string | null,
-    fileWarnings: string[],
-    previewUrl?: string | null,
-  ) => void;
+  /** Vervang de design-toewijzingen van een regel in één keer. */
+  setItemDesigns: (id: string, designs: CartDesign[]) => void;
   /** Empty the cart. */
   clear: () => void;
 }
@@ -100,7 +93,11 @@ export function CartProvider({
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as unknown;
-        if (Array.isArray(parsed)) setItems(parsed as CartItem[]);
+        if (Array.isArray(parsed)) {
+          // Migreer manden van vóór de design-toewijzingen (één fileUrl per
+          // regel) bij het lezen.
+          setItems((parsed as CartItem[]).map(normalizeCartItem));
+        }
       }
       if (window.localStorage.getItem(VAT_STORAGE_KEY) === "1") {
         setInclVat(true);
@@ -164,31 +161,27 @@ export function CartProvider({
 
   const updateAmount = useCallback((id: string, amount: number) => {
     setItems((prev) =>
-      prev.map((it) =>
-        it.id === id ? { ...it, amount: Math.max(1, Math.round(amount)) } : it,
-      ),
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const next = Math.max(1, Math.round(amount));
+        // De snelle route blijft synchroon: één design dat de hele regel dekte
+        // blijft de hele regel dekken als het aantal wijzigt. Verdeelde
+        // toewijzingen blijven staan; de regel toont zelf zijn tekort/teveel.
+        const designs = it.designs ?? [];
+        const syncedDesigns =
+          designs.length === 1 && designs[0].quantity === it.amount
+            ? [{ ...designs[0], quantity: next }]
+            : designs;
+        return { ...it, amount: next, designs: syncedDesigns };
+      }),
     );
   }, []);
 
-  const setItemFile = useCallback(
-    (
-      id: string,
-      fileUrl: string | null,
-      fileName: string | null,
-      filePath: string | null,
-      fileWarnings: string[],
-      previewUrl: string | null = null,
-    ) => {
-      setItems((prev) =>
-        prev.map((it) =>
-          it.id === id
-            ? { ...it, fileUrl, fileName, filePath, fileWarnings, previewUrl }
-            : it,
-        ),
-      );
-    },
-    [],
-  );
+  const setItemDesigns = useCallback((id: string, designs: CartDesign[]) => {
+    setItems((prev) =>
+      prev.map((it) => (it.id === id ? { ...it, designs } : it)),
+    );
+  }, []);
 
   const clear = useCallback(() => setItems([]), []);
 
@@ -211,12 +204,12 @@ export function CartProvider({
       addItem,
       removeItem,
       updateAmount,
-      setItemFile,
+      setItemDesigns,
       clear,
       paneelOpen,
       setPaneelOpen,
     };
-  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemFile, clear, paneelOpen]);
+  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemDesigns, clear, paneelOpen]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

@@ -152,6 +152,7 @@
     "status": {
       "pending": "Awaiting payment",
       "paid": "Paid",
+      "awaitingFiles": "Waiting for your design",
       "inProduction": "In production",
       "shipped": "Shipped",
       "delivered": "Delivered",
@@ -159,7 +160,11 @@
     },
     "tracking": "Track your shipment",
     "trackingNumber": "Tracking number",
-    "estimatedDelivery": "Estimated delivery"
+    "estimatedDelivery": "Estimated delivery",
+    "portal": {
+      "pending": "We are still missing {count} design(s) for your order. Deliver them whenever suits you.",
+      "cta": "Deliver designs"
+    }
   },
   "footer": {
     "company": {
@@ -188,6 +193,7 @@
     "notFoundBody": "The page you're looking for doesn't exist or has been moved.",
     "backHome": "Back to home",
     "paymentFailed": "The payment failed. Please try again.",
-    "cartEmpty": "Your cart is empty."
+    "cartEmpty": "Your cart is empty.",
+    "designsIncomplete": "Not every flag has a design yet. Assign all designs first or choose “deliver later”."
   }
 }

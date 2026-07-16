@@ -1,0 +1,13 @@
+.page {
+  padding-block: var(--space-2xl, 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm, 16px);
+  max-width: 560px;
+}
+
+.page h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+}

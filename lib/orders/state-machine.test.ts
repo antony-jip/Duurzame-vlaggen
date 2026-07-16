@@ -49,6 +49,17 @@ describe("order state machine", () => {
     expect(canTransition("payment_failed", "awaiting_payment")).toBe(true);
   });
 
+  it("parks a paid order with pending designs in awaiting_files", () => {
+    expect(canTransition("paid", "awaiting_files")).toBe(true);
+    // Handmatig "Markeer besteld" zodra alle bestanden binnen zijn.
+    expect(canTransition("awaiting_files", "sent_to_probo")).toBe(true);
+    expect(canTransition("awaiting_files", "cancelled")).toBe(true);
+    // Forward-only: nooit terug naar paid, nooit vooruit springen.
+    expect(canTransition("awaiting_files", "paid")).toBe(false);
+    expect(canTransition("awaiting_files", "shipped")).toBe(false);
+    expect(canTransition("sent_to_probo", "awaiting_files")).toBe(false);
+  });
+
   it("marks shipped and cancelled terminal", () => {
     expect(isTerminal("shipped")).toBe(true);
     expect(isTerminal("cancelled")).toBe(true);
@@ -73,7 +84,7 @@ describe("order state machine", () => {
 
   it("every status has an entry in the matrix", () => {
     const statuses = Object.keys(ALLOWED_TRANSITIONS);
-    expect(statuses).toHaveLength(10);
+    expect(statuses).toHaveLength(11);
     for (const targets of Object.values(ALLOWED_TRANSITIONS)) {
       expect(Array.isArray(targets)).toBe(true);
     }

@@ -72,6 +72,16 @@ export const serverEnv = {
       "Duurzame Vlaggen <hello@duurzame-vlaggen.nl>"
     );
   },
+  // Interne inbox voor portaal-notificaties ("klant leverde een ontwerp aan").
+  // Valt terug op het eerste admin-adres zodat het zonder extra config werkt.
+  get orderNotifyEmail(): string | null {
+    return process.env.ORDER_NOTIFY_EMAIL?.trim() || this.adminEmails[0] || null;
+  },
+  // HMAC-secret voor ondertekende e-maillinks (uitschrijven). Een eigen secret
+  // zodat roteren alleen e-maillinks ongeldig maakt, niets anders.
+  get emailLinkSecret() {
+    return required("EMAIL_LINK_SECRET");
+  },
 
   // ── Google Search Console (admin-analytics) ────────────────────────────────
   // Alle drie OPTIONEEL: niet gezet ⇒ de analytics-pagina toont een

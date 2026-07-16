@@ -62,3 +62,19 @@ verifiëren zodra de eerste echte order is verzonden (nu tolerant geparsed).
 ### 12. Contactformulier-backend
 Het contactformulier heeft nu een placeholder-submit → koppelen aan e-mail (bijv. Resend) of een
 inbox.
+
+### 13. Multi-design uploader, aanleverportaal & lifecycle-mails (2026-07-16)
+Nieuw gebouwd (branch claude/multi-design-portal-v2); vóór livegang nodig:
+- **Migratie draaien**: `supabase/migrations/20260716100000_designs_portal_lifecycle.sql`
+  via de Supabase SQL-editor (tabel `order_item_designs`, portal/reorder-tokens op
+  `orders`, `marketing_suppressions`, enum-waarde `awaiting_files`).
+- **Env**: `CRON_SECRET` (beveiligt beide crons; Vercel stuurt hem automatisch mee),
+  `EMAIL_LINK_SECRET` (HMAC voor uitschrijflinks), optioneel `ORDER_NOTIFY_EMAIL`
+  (portaal-notificaties; default: eerste ADMIN_EMAILS). Resend/MAIL_FROM bestonden al.
+- **Vercel Cron** `/api/cron/lifecycle` staat in `vercel.json` (dagelijks 08:00 UTC,
+  naast de gsc-snapshot) — actief bij de volgende deploy.
+- Gedrag: order met "later aanleveren" parkeert na betaling op **wacht op bestand**;
+  klant levert via `/aanleveren/[token]` (90 dagen geldig); jij krijgt mail per
+  aanlevering en bij "alles binnen"; **Markeer besteld is geblokkeerd zolang er
+  ontwerpen missen**. Lifecycle-mails op 4/8 maanden na verzending met one-click
+  herbestellen (`/opnieuw/[token]`) en uitschrijven (`/uitschrijven/[token]`).

@@ -148,3 +148,192 @@ export const MAIL_LABELS: Record<MailSoort, string> = {
   verzonden: "Verzonden",
   vraag: "Vraag",
 };
+
+// ---------------------------------------------------------------------------
+// Aanleverportaal ("later aanleveren")
+// ---------------------------------------------------------------------------
+
+function escapeHtmlText(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+/**
+ * "Lever je ontwerpen aan" — automatisch verstuurd zodra een betaalde order
+ * design-toewijzingen zonder bestand heeft. De portaallink is een bearer-token:
+ * wie de link heeft kan aanleveren, dus de mail benoemt de geldigheidsduur.
+ */
+export function ontwerpenAanleveren(
+  order: OrderRow,
+  pending: number,
+  portalUrl: string,
+  portalDays: number,
+): MailInhoud {
+  const wat =
+    pending === 1 ? "1 ontwerp" : `${pending} ontwerpen`;
+  return {
+    onderwerp: `Nog ${wat} aan te leveren · ${order.order_number}`,
+    html: mailLayout({
+      titel: "Lever je ontwerpen aan",
+      ondertitel: order.order_number,
+      inhoud:
+        alinea(aanhef(order)) +
+        alinea(
+          `Je betaling is binnen. Voor ${wat} van je bestelling hebben we nog geen bestand.`,
+        ) +
+        alinea(
+          "Upload ze wanneer het jou uitkomt via jouw persoonlijke uploadpagina. Daar kun je ook een al aangeleverd ontwerp vervangen, tot we je bestelling in productie nemen.",
+        ) +
+        blok(
+          `<strong>Ordernummer</strong><br/>${order.order_number}<br/><br/>` +
+            `<strong>Uploadlink</strong><br/>De link hieronder is ${portalDays} dagen geldig en werkt zonder inloggen. Deel hem niet.`,
+        ) +
+        fijn("We starten de productie zodra alles binnen is."),
+      knop: { label: "Ontwerpen aanleveren", url: portalUrl },
+    }),
+    tekst: platteTekst([
+      aanhef(order),
+      "",
+      `Je betaling is binnen. Voor ${wat} van je bestelling hebben we nog geen bestand.`,
+      `Lever aan via jouw persoonlijke uploadpagina (${portalDays} dagen geldig, zonder inloggen):`,
+      portalUrl,
+      "",
+      "We starten de productie zodra alles binnen is.",
+    ]),
+  };
+}
+
+/**
+ * Interne notificatie: een klant leverde of verving een ontwerp via het
+ * portaal. Bij `remainingPending === 0` is dit het sein dat de order compleet
+ * is en handmatig bij Probo besteld kan worden.
+ */
+export function portaalNotificatie(input: {
+  order: OrderRow;
+  kind: "delivered" | "replaced";
+  fileName: string;
+  itemLabel: string;
+  remainingPending: number;
+  adminUrl: string;
+}): MailInhoud {
+  const actie = input.kind === "delivered" ? "aangeleverd" : "vervangen";
+  const compleet = input.remainingPending === 0;
+  const status = compleet
+    ? "Alle ontwerpen zijn nu binnen. De order kan bij Probo besteld worden (Markeer besteld in de admin)."
+    : input.remainingPending === 1
+      ? "Er wacht nog 1 ontwerp op aanlevering."
+      : `Er wachten nog ${input.remainingPending} ontwerpen op aanlevering.`;
+
+  return {
+    onderwerp: compleet
+      ? `Alle ontwerpen binnen · ${input.order.order_number}`
+      : `Ontwerp ${actie} · ${input.order.order_number}`,
+    html: mailLayout({
+      titel: compleet ? "Alle ontwerpen binnen" : `Ontwerp ${actie}`,
+      ondertitel: input.order.order_number,
+      inhoud:
+        alinea(
+          `Klant <strong>${escapeHtmlText(input.order.email)}</strong> heeft via het aanleverportaal een ontwerp ${actie} voor <strong>${escapeHtmlText(input.itemLabel)}</strong>.`,
+        ) +
+        blok(
+          `<strong>Bestand</strong><br/>${escapeHtmlText(input.fileName)}<br/><br/>` +
+            `<strong>Status</strong><br/>${status}`,
+        ),
+      knop: { label: "Bekijk de order in de admin", url: input.adminUrl },
+    }),
+    tekst: platteTekst([
+      `Klant ${input.order.email} heeft een ontwerp ${actie} voor ${input.itemLabel} (order ${input.order.order_number}).`,
+      `Bestand: ${input.fileName}`,
+      status,
+      input.adminUrl,
+    ]),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Lifecycle: vervangingsherinneringen (4 en 8 maanden na verzending)
+// ---------------------------------------------------------------------------
+
+/**
+ * Copy-regels (factsheet, docs/CONTENT-MAP.md): functionele levensduur 3 tot 4
+ * maanden, tot 2 jaar UV-kleurvast, 96% biologisch afbreekbaar in 2 tot 3 jaar,
+ * geen microplastics. NOOIT "100%", geen deeltjes-aantallen. Dit is
+ * marketingmail, dus verplicht een uitschrijflink in de voet.
+ */
+export type LifecycleStageKey = "4m" | "8m";
+
+export function lifecycleMail(input: {
+  order: OrderRow;
+  stage: LifecycleStageKey;
+  flagNames: string[];
+  reorderUrl: string;
+  unsubscribeUrl: string;
+}): MailInhoud {
+  const vlaggen =
+    input.flagNames.length > 0 ? input.flagNames.join(" · ") : "je vlaggen";
+
+  const inhoud4m =
+    alinea(aanhef(input.order)) +
+    alinea(
+      `Je vlaggen van bestelling ${input.order.order_number} wapperen nu zo'n vier maanden. Precies de functionele levensduur van Flag-CiCLO® doek: 3 tot 4 maanden intensief buiten.`,
+    ) +
+    alinea(
+      "Daarna wordt het doek moe. Kleuren vervagen, randen rafelen. En een vermoeide vlag hangt precies op de plek waar jij zichtbaar wilt zijn.",
+    ) +
+    alinea(
+      "Vervangen doe je hier met een gerust hart: je oude vlag breekt voor 96% biologisch af in 2 tot 3 jaar. Geen microplastics, geen restafval.",
+    );
+
+  const inhoud8m =
+    alinea(aanhef(input.order)) +
+    alinea(
+      `Je vlaggen van bestelling ${input.order.order_number} zijn nu acht maanden oud. Dat is ruim voorbij de functionele levensduur van 3 tot 4 maanden.`,
+    ) +
+    alinea(
+      "Het doek is tot 2 jaar UV-kleurvast, maar na acht maanden buiten vertelt je vlag een ander verhaal dan je merk.",
+    ) +
+    alinea(
+      "Een frisse vlag, zonder spijt: het oude doek breekt voor 96% biologisch af. Geen microplastics om je druk over te maken.",
+    );
+
+  const onderwerp =
+    input.stage === "4m"
+      ? "Je vlag heeft vier maanden gewapperd."
+      : "Hangt hij er nog?";
+
+  return {
+    onderwerp,
+    html: mailLayout({
+      titel:
+        input.stage === "4m"
+          ? "Vier maanden wind, zon en regen."
+          : "Acht maanden. Tijd voor een eerlijke blik.",
+      ondertitel: escapeHtmlText(vlaggen),
+      inhoud:
+        (input.stage === "4m" ? inhoud4m : inhoud8m) +
+        fijn(
+          "Zelfde maat, zelfde ontwerp, twee klikken. Liever een nieuw ontwerp? Dat vervang je zo in de winkelmand.",
+        ) +
+        fijn(
+          `Geen herinneringen meer ontvangen? <a href="${input.unsubscribeUrl}" style="color:#8B8D7A;">Schrijf je uit</a> met één klik.`,
+        ),
+      knop: { label: "Bestel dezelfde vlag opnieuw", url: input.reorderUrl },
+    }),
+    tekst: platteTekst([
+      aanhef(input.order),
+      "",
+      input.stage === "4m"
+        ? `Je vlaggen van bestelling ${input.order.order_number} wapperen nu zo'n vier maanden. Dat is de functionele levensduur van Flag-CiCLO® doek: 3 tot 4 maanden intensief buiten.`
+        : `Je vlaggen van bestelling ${input.order.order_number} zijn nu acht maanden oud. Dat is ruim voorbij de functionele levensduur van 3 tot 4 maanden.`,
+      "Vervangen doe je met een gerust hart: het oude doek breekt voor 96% biologisch af in 2 tot 3 jaar. Geen microplastics.",
+      "",
+      `Bestel dezelfde vlag opnieuw: ${input.reorderUrl}`,
+      "Zelfde maat, zelfde ontwerp, twee klikken. Een nieuw ontwerp uploaden kan ook, gewoon in de winkelmand.",
+      "",
+      `Geen herinneringen meer? Schrijf je uit: ${input.unsubscribeUrl}`,
+    ]),
+  };
+}

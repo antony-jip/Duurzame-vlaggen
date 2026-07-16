@@ -152,6 +152,7 @@
     "status": {
       "pending": "Warten auf Zahlung",
       "paid": "Bezahlt",
+      "awaitingFiles": "Wartet auf dein Design",
       "inProduction": "In Produktion",
       "shipped": "Versandt",
       "delivered": "Geliefert",
@@ -159,7 +160,11 @@
     },
     "tracking": "Sendung verfolgen",
     "trackingNumber": "Sendungsnummer",
-    "estimatedDelivery": "Voraussichtliche Lieferung"
+    "estimatedDelivery": "Voraussichtliche Lieferung",
+    "portal": {
+      "pending": "Für deine Bestellung fehlen noch {count} Design(s). Reiche sie ein, wann es dir passt.",
+      "cta": "Designs hochladen"
+    }
   },
   "footer": {
     "company": {
@@ -188,6 +193,7 @@
     "notFoundBody": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
     "backHome": "Zurück zur Startseite",
     "paymentFailed": "Die Zahlung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "cartEmpty": "Ihr Warenkorb ist leer."
+    "cartEmpty": "Ihr Warenkorb ist leer.",
+    "designsIncomplete": "Noch nicht jede Flagge hat ein Design. Weise zuerst alle Designs zu oder wähle „später einreichen“."
   }
 }

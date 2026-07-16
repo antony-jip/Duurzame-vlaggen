@@ -9,6 +9,7 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  countPendingDesigns,
   getOrderById,
   updateOrder,
   advanceOrderStatus,
@@ -73,7 +74,15 @@ export async function markeerBesteldAction(formData: FormData): Promise<void> {
   }
 
   // Idempotent: al besteld ⇒ alleen de link bijwerken, geen tweede overgang.
-  if (order.status === "paid") {
+  if (order.status === "paid" || order.status === "awaiting_files") {
+    // Nooit bij Probo bestellen zonder drukbestanden: zolang er
+    // design-toewijzingen zonder bestand zijn, blijft deze actie dicht.
+    const pending = await countPendingDesigns(order.id);
+    if (pending > 0) {
+      throw new Error(
+        `Er ${pending === 1 ? "ontbreekt nog 1 ontwerp" : `ontbreken nog ${pending} ontwerpen`} — bestellen kan zodra de klant alles heeft aangeleverd.`,
+      );
+    }
     await advanceOrderStatus(order.id, "sent_to_probo");
   }
 

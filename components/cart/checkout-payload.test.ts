@@ -35,11 +35,26 @@ function regelMet(previewBytes: number): CartItem {
     sizeLabel: "100 × 300 cm",
     widthCm: 100,
     heightCm: 300,
-    fileUrl: "https://voorbeeld.supabase.co/storage/v1/object/public/order-artwork/a.pdf",
-    fileName: "ontwerp.pdf",
-    filePath: "a.pdf",
-    fileWarnings: ["Lage resolutie"],
-    previewUrl: `data:image/png;base64,${"A".repeat(previewBytes)}`,
+    designs: [
+      {
+        id: "d1",
+        quantity: 1,
+        fileUrl:
+          "https://voorbeeld.supabase.co/storage/v1/object/public/order-artwork/a.pdf",
+        fileName: "ontwerp.pdf",
+        filePath: "a.pdf",
+        fileWarnings: ["Lage resolutie"],
+        previewUrl: `data:image/png;base64,${"A".repeat(previewBytes)}`,
+      },
+      {
+        id: "d2",
+        quantity: 1,
+        fileUrl: null,
+        fileName: null,
+        filePath: null,
+        fileWarnings: [],
+      },
+    ],
   };
 }
 
@@ -55,15 +70,28 @@ describe("toCheckoutLines", () => {
       sizeLabel: "100 × 300 cm",
       widthCm: 100,
       heightCm: 300,
-      fileUrl:
-        "https://voorbeeld.supabase.co/storage/v1/object/public/order-artwork/a.pdf",
+      designs: [
+        {
+          quantity: 1,
+          fileUrl:
+            "https://voorbeeld.supabase.co/storage/v1/object/public/order-artwork/a.pdf",
+        },
+        { quantity: 1, fileUrl: null },
+      ],
     });
+  });
+
+  it("migreert een legacy regel (los fileUrl) naar één design-toewijzing", () => {
+    const legacy = { ...regelMet(10), designs: undefined, fileUrl: "https://x/y.png" };
+    const [regel] = toCheckoutLines([legacy]);
+    expect(regel.designs).toEqual([{ quantity: 2, fileUrl: "https://x/y.png" }]);
   });
 
   it("stuurt geen weergave-velden mee", () => {
     const [regel] = toCheckoutLines([regelMet(10)]) as unknown as Record<string, unknown>[];
     for (const veld of [
       "previewUrl",
+      "fileUrl",
       "fileName",
       "filePath",
       "fileWarnings",
@@ -73,6 +101,10 @@ describe("toCheckoutLines", () => {
       "unitPriceEstimate",
     ]) {
       expect(regel).not.toHaveProperty(veld);
+    }
+    const [eersteDesign] = (regel as { designs: Record<string, unknown>[] }).designs;
+    for (const veld of ["previewUrl", "fileName", "filePath", "fileWarnings", "id"]) {
+      expect(eersteDesign).not.toHaveProperty(veld);
     }
   });
 

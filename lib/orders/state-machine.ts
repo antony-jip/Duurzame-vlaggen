@@ -16,7 +16,13 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = 
   awaiting_payment: ["paid", "payment_failed", "cancelled"],
   // Retry: a failed payment may be re-attempted.
   payment_failed: ["awaiting_payment", "cancelled"],
-  paid: ["sent_to_probo", "cancelled"],
+  // Een betaalde order met ontbrekende ontwerpen ("later aanleveren") parkeert
+  // op awaiting_files tot de klant alles via het portaal heeft aangeleverd.
+  // Er is GEEN automatische vervolgstap: bestellen bij Probo gaat met de hand,
+  // dus "Markeer besteld" (admin) doet awaiting_files → sent_to_probo en is
+  // geblokkeerd zolang er ontwerpen missen.
+  paid: ["sent_to_probo", "awaiting_files", "cancelled"],
+  awaiting_files: ["sent_to_probo", "cancelled"],
   // `shipped` hoort hier vanwege de HANDMATIGE afhandeling (FULFILMENT_MODE
   // "manual", de standaard): we bestellen zelf in het Probo-portaal, dus er komt
   // geen callback die de order via probo_accepted/in_production verder duwt.

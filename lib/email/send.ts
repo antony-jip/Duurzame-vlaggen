@@ -137,3 +137,38 @@ export async function sendKlantMail(
     return { sent: false, reason: err instanceof Error ? err.message : "exception" };
   }
 }
+
+/**
+ * Generieke best-effort verzending voor de automatische mails (portaal,
+ * lifecycle). Faalt stil met log; de aanroepende flow mag er nooit op breken.
+ */
+export async function sendMailInhoud(
+  to: string,
+  mail: { onderwerp: string; html: string; tekst: string },
+  headers?: Record<string, string>,
+): Promise<SendResult> {
+  const resend = getResendClient();
+  if (!resend) {
+    console.info(`[email] "${mail.onderwerp}" naar ${to} overgeslagen: RESEND_API_KEY ontbreekt.`);
+    return { sent: false, reason: "not_configured" };
+  }
+  try {
+    const { error } = await resend.emails.send({
+      from: serverEnv.mailFrom,
+      to,
+      subject: mail.onderwerp,
+      html: mail.html,
+      text: mail.tekst,
+      ...(headers ? { headers } : {}),
+    });
+    if (error) {
+      console.error(`[email] Resend-fout bij "${mail.onderwerp}" naar ${to}:`, error);
+      return { sent: false, reason: error.message ?? "provider_error" };
+    }
+    console.info(`[email] "${mail.onderwerp}" verstuurd naar ${to}.`);
+    return { sent: true };
+  } catch (err) {
+    console.error(`[email] Onverwachte fout bij "${mail.onderwerp}" naar ${to}:`, err);
+    return { sent: false, reason: err instanceof Error ? err.message : "exception" };
+  }
+}

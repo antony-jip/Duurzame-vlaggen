@@ -88,11 +88,16 @@ function createSupabase(): Supabase {
   });
 }
 
-/** All storage paths currently referenced by an order item. */
+/**
+ * All storage paths currently referenced by an order: legacy single-file
+ * references (order_items.file_url) plus design assignments
+ * (order_item_designs.file_path).
+ */
 async function fetchReferencedPaths(supabase: Supabase): Promise<Set<string>> {
   const marker = "/order-artwork/";
   const referenced = new Set<string>();
   const pageSize = 1000;
+
   let from = 0;
   for (;;) {
     const { data, error } = await supabase
@@ -111,6 +116,23 @@ async function fetchReferencedPaths(supabase: Supabase): Promise<Set<string>> {
     if (data.length < pageSize) break;
     from += pageSize;
   }
+
+  from = 0;
+  for (;;) {
+    const { data, error } = await supabase
+      .from("order_item_designs")
+      .select("file_path")
+      .not("file_path", "is", null)
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(`Failed to read order_item_designs: ${error.message}`);
+    if (!data || data.length === 0) break;
+    for (const row of data) {
+      if (row.file_path) referenced.add(row.file_path);
+    }
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+
   return referenced;
 }
 

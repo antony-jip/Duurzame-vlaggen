@@ -1,0 +1,131 @@
+.page {
+  padding-block: var(--space-2xl, 64px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 32px);
+  max-width: 760px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm, 16px);
+}
+
+.head h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 48px);
+}
+
+.intro {
+  margin: 0;
+  max-width: 56ch;
+}
+
+.deadEnd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm, 16px);
+  padding-block: var(--space-2xl, 64px);
+}
+
+.deadEnd h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm, 16px);
+}
+
+.line {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lineHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm, 16px);
+  flex-wrap: wrap;
+}
+
+.lineName {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-charcoal, #3a3a3a);
+}
+
+.lineMeta {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-stone, #8b8d7a);
+}
+
+.designs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.design {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 6px;
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--color-forest) 4%, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-forest) 12%, transparent);
+}
+
+.designThumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-sm, 6px);
+  display: block;
+}
+
+.designChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm, 6px);
+  background: color-mix(in srgb, var(--color-terracotta) 10%, #fff);
+  color: var(--color-terracotta);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.designLabel {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-charcoal, #3a3a3a);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skippedNote {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-stone, #8b8d7a);
+}

@@ -152,6 +152,7 @@
     "status": {
       "pending": "En attente de paiement",
       "paid": "Payée",
+      "awaitingFiles": "En attente de ton design",
       "inProduction": "En production",
       "shipped": "Expédiée",
       "delivered": "Livrée",
@@ -159,7 +160,11 @@
     },
     "tracking": "Suivre votre colis",
     "trackingNumber": "Numéro de suivi",
-    "estimatedDelivery": "Livraison prévue"
+    "estimatedDelivery": "Livraison prévue",
+    "portal": {
+      "pending": "Il manque encore {count} design(s) pour ta commande. Envoie-les quand cela t'arrange.",
+      "cta": "Fournir mes designs"
+    }
   },
   "footer": {
     "company": {
@@ -188,6 +193,7 @@
     "notFoundBody": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "backHome": "Retour à l'accueil",
     "paymentFailed": "Le paiement a échoué. Veuillez réessayer.",
-    "cartEmpty": "Votre panier est vide."
+    "cartEmpty": "Votre panier est vide.",
+    "designsIncomplete": "Chaque drapeau n'a pas encore de design. Attribue d'abord tous les designs ou choisis « fournir plus tard »."
   }
 }

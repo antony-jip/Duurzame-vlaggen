@@ -268,7 +268,11 @@ export async function DELETE(request: Request): Promise<NextResponse> {
 
   const supabase = createSupabaseAdminClient();
 
-  // Never delete a file already attached to an order.
+  // Never delete a file already attached to an order: zowel de legacy
+  // enkelbestand-referentie (order_items.file_url) als design-toewijzingen
+  // tellen. Een herbestelling deelt zijn storage-object met de oorspronkelijke
+  // order, dus deze check voorkomt dat "verwijderen uit de mand" het artwork
+  // van een oude order sloopt.
   const { data: refs, error: refErr } = await supabase
     .from("order_items")
     .select("id")
@@ -278,7 +282,16 @@ export async function DELETE(request: Request): Promise<NextResponse> {
     console.error("[artwork] delete ref-check failed:", refErr.message);
     return NextResponse.json({ error: "Verwijderen mislukt." }, { status: 500 });
   }
-  if (refs && refs.length > 0) {
+  const { data: designRefs, error: designErr } = await supabase
+    .from("order_item_designs")
+    .select("id")
+    .eq("file_path", path)
+    .limit(1);
+  if (designErr) {
+    console.error("[artwork] delete design ref-check failed:", designErr.message);
+    return NextResponse.json({ error: "Verwijderen mislukt." }, { status: 500 });
+  }
+  if ((refs && refs.length > 0) || (designRefs && designRefs.length > 0)) {
     return NextResponse.json(
       { error: "Dit bestand hoort bij een bestelling en kan niet worden verwijderd." },
       { status: 409 },

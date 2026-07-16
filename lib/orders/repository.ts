@@ -1,10 +1,13 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type {
   OrderRow,
   OrderItemRow,
+  OrderItemDesignRow,
   OrderInsert,
   OrderItemInsert,
+  OrderItemDesignInsert,
   OrderStatus,
   Json,
 } from "@/lib/db/types";
@@ -24,14 +27,22 @@ import { generateOrderNumber } from "@/lib/orders/numbers";
 const UNIQUE_VIOLATION = "23505";
 
 type OrderItemInsertNoOrderId = Omit<OrderItemInsert, "order_id">;
+type DesignInsertNoItemId = Omit<OrderItemDesignInsert, "order_item_id">;
+
+/** Een orderregel om in te voegen, mét zijn design-toewijzingen (mag leeg). */
+export type OrderItemWithDesigns = OrderItemInsertNoOrderId & {
+  designs?: DesignInsertNoItemId[];
+};
 
 /**
- * Insert an order together with its line items. Retries once on an
- * order_number collision by regenerating the number.
+ * Insert an order together with its line items and their design assignments.
+ * Retries once on an order_number collision by regenerating the number.
+ * Item-ids worden app-side gegenereerd zodat de designrijen ernaar kunnen
+ * verwijzen zonder read-back.
  */
 export async function insertOrderWithItems(
   order: Omit<OrderInsert, "order_number"> & { order_number?: string },
-  items: OrderItemInsertNoOrderId[],
+  items: OrderItemWithDesigns[],
 ): Promise<OrderRow> {
   const supabase = createSupabaseAdminClient();
 
@@ -47,11 +58,30 @@ export async function insertOrderWithItems(
     if (!error && data) {
       const orderRow = data as OrderRow;
       if (items.length > 0) {
-        const { error: itemsError } = await supabase
-          .from("order_items")
-          .insert(items.map((it) => ({ ...it, order_id: orderRow.id })));
+        const withIds = items.map((it) => ({ ...it, id: it.id ?? randomUUID() }));
+        const { error: itemsError } = await supabase.from("order_items").insert(
+          withIds.map((it) => {
+            const { designs, ...row } = it;
+            void designs; // designrijen gaan hieronder naar hun eigen tabel
+            return { ...row, order_id: orderRow.id };
+          }),
+        );
         if (itemsError) {
           throw new Error(`Failed to insert order_items: ${itemsError.message}`);
+        }
+
+        const designRows = withIds.flatMap((it) =>
+          (it.designs ?? []).map((d) => ({ ...d, order_item_id: it.id })),
+        );
+        if (designRows.length > 0) {
+          const { error: designsError } = await supabase
+            .from("order_item_designs")
+            .insert(designRows);
+          if (designsError) {
+            throw new Error(
+              `Failed to insert order_item_designs: ${designsError.message}`,
+            );
+          }
         }
       }
       return orderRow;
@@ -119,6 +149,148 @@ export async function getOrderItems(orderId: string): Promise<OrderItemRow[]> {
   return (data ?? []) as OrderItemRow[];
 }
 
+// --- Design-toewijzingen --------------------------------------------------------
+
+/** Alle design-toewijzingen van een order, gegroepeerd op order_item_id. */
+export async function getOrderDesigns(
+  orderId: string,
+): Promise<Map<string, OrderItemDesignRow[]>> {
+  const supabase = createSupabaseAdminClient();
+  const items = await getOrderItems(orderId);
+  const map = new Map<string, OrderItemDesignRow[]>();
+  if (items.length === 0) return map;
+
+  const { data, error } = await supabase
+    .from("order_item_designs")
+    .select()
+    .in(
+      "order_item_id",
+      items.map((it) => it.id),
+    )
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(`getOrderDesigns failed: ${error.message}`);
+
+  for (const row of (data ?? []) as OrderItemDesignRow[]) {
+    const list = map.get(row.order_item_id) ?? [];
+    list.push(row);
+    map.set(row.order_item_id, list);
+  }
+  return map;
+}
+
+export async function getDesignById(id: string): Promise<OrderItemDesignRow | null> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("order_item_designs")
+    .select()
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(`getDesignById failed: ${error.message}`);
+  return data as OrderItemDesignRow | null;
+}
+
+/** Koppel (of vervang) het bestand van een design-toewijzing. */
+export async function updateDesignFile(
+  id: string,
+  file: { file_url: string; file_path: string; file_name: string; file_warnings: Json },
+): Promise<OrderItemDesignRow> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("order_item_designs")
+    .update({ ...file, uploaded_at: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw new Error(`updateDesignFile failed: ${error.message}`);
+  return data as OrderItemDesignRow;
+}
+
+/** Aantal design-toewijzingen op de order dat nog geen bestand heeft. */
+export async function countPendingDesigns(orderId: string): Promise<number> {
+  const designs = await getOrderDesigns(orderId);
+  let pending = 0;
+  for (const list of designs.values()) {
+    pending += list.filter((d) => d.file_url === null).length;
+  }
+  return pending;
+}
+
+// --- Token-lookups ---------------------------------------------------------------
+
+/** Is de portaallink van deze order verlopen? */
+export function isPortalExpired(order: Pick<OrderRow, "portal_expires_at">): boolean {
+  return (
+    order.portal_expires_at !== null && Date.parse(order.portal_expires_at) < Date.now()
+  );
+}
+
+/** Zoek een order op portaal-token. Verval checkt de aanroeper (isPortalExpired). */
+export async function getOrderByPortalToken(token: string): Promise<OrderRow | null> {
+  if (!token) return null;
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("portal_token", token)
+    .maybeSingle();
+  if (error) throw new Error(`getOrderByPortalToken failed: ${error.message}`);
+  return data as OrderRow | null;
+}
+
+export async function getOrderByReorderToken(token: string): Promise<OrderRow | null> {
+  if (!token) return null;
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("reorder_token", token)
+    .maybeSingle();
+  if (error) throw new Error(`getOrderByReorderToken failed: ${error.message}`);
+  return data as OrderRow | null;
+}
+
+/**
+ * Verzonden orders waarvan shipped_at in [from, to) valt. Gebruikt door de
+ * lifecycle-cron om de 4/8-maanden-cohorten te vinden.
+ */
+export async function listShippedOrdersBetween(
+  fromIso: string,
+  toIso: string,
+): Promise<OrderRow[]> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("status", "shipped")
+    .gte("shipped_at", fromIso)
+    .lt("shipped_at", toIso)
+    .order("shipped_at", { ascending: true });
+  if (error) throw new Error(`listShippedOrdersBetween failed: ${error.message}`);
+  return (data ?? []) as OrderRow[];
+}
+
+// --- Marketing-suppressies (AVG opt-out) ------------------------------------------
+
+export async function isEmailSuppressed(email: string): Promise<boolean> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("marketing_suppressions")
+    .select("email")
+    .eq("email", email.trim().toLowerCase())
+    .maybeSingle();
+  if (error) throw new Error(`isEmailSuppressed failed: ${error.message}`);
+  return data !== null;
+}
+
+/** Zet een e-mailadres op de opt-out-lijst voor lifecycle-mail (idempotent). */
+export async function suppressEmail(email: string, reason: string): Promise<void> {
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from("marketing_suppressions")
+    .upsert({ email: email.trim().toLowerCase(), reason }, { onConflict: "email" });
+  if (error) throw new Error(`suppressEmail failed: ${error.message}`);
+}
+
 export type OrderPatch = Partial<Omit<OrderInsert, "order_number">>;
 
 export async function updateOrder(id: string, patch: OrderPatch): Promise<OrderRow> {
@@ -165,35 +337,71 @@ export async function advanceOrderStatus(
  */
 export async function recordEventOnce(input: {
   orderId: string;
-  source: "mollie" | "probo" | "system";
+  source: EventSource;
   eventType: string;
   externalId?: string | null;
   data?: Record<string, unknown>;
 }): Promise<{ inserted: boolean }> {
+  const externalId = input.externalId ?? null;
+
+  const exists = await hasEvent({
+    orderId: input.orderId,
+    source: input.source,
+    eventType: input.eventType,
+    externalId,
+  });
+  if (exists) return { inserted: false };
+
+  await recordEvent(input);
+  return { inserted: true };
+}
+
+export type EventSource = "mollie" | "probo" | "system" | "portal";
+
+/** Bestaat er al een event met exact deze dedupe-sleutel? */
+export async function hasEvent(input: {
+  orderId: string;
+  source: EventSource;
+  eventType: string;
+  externalId?: string | null;
+}): Promise<boolean> {
   const supabase = createSupabaseAdminClient();
   const externalId = input.externalId ?? null;
 
-  let existing = supabase
+  let query = supabase
     .from("order_events")
     .select("id")
     .eq("order_id", input.orderId)
     .eq("source", input.source)
     .eq("event_type", input.eventType);
-  existing = externalId
-    ? existing.eq("payload->>external_id", externalId)
-    : existing.is("payload->>external_id", null);
+  query = externalId
+    ? query.eq("payload->>external_id", externalId)
+    : query.is("payload->>external_id", null);
 
-  const { data: found, error: selectError } = await existing.maybeSingle();
-  if (selectError) throw new Error(`recordEventOnce select failed: ${selectError.message}`);
-  if (found) return { inserted: false };
+  const { data, error } = await query.maybeSingle();
+  if (error) throw new Error(`hasEvent select failed: ${error.message}`);
+  return data !== null;
+}
 
-  const payload = { external_id: externalId, ...(input.data ?? {}) } as Json;
-  const { error: insertError } = await supabase.from("order_events").insert({
+/**
+ * Schrijf een order_event ONVOORWAARDELIJK (geen dedupe). Voor gebeurtenissen
+ * die legitiem mogen herhalen, zoals een klant die via het portaal twee keer
+ * hetzelfde ontwerp vervangt.
+ */
+export async function recordEvent(input: {
+  orderId: string;
+  source: EventSource;
+  eventType: string;
+  externalId?: string | null;
+  data?: Record<string, unknown>;
+}): Promise<void> {
+  const supabase = createSupabaseAdminClient();
+  const payload = { external_id: input.externalId ?? null, ...(input.data ?? {}) } as Json;
+  const { error } = await supabase.from("order_events").insert({
     order_id: input.orderId,
     source: input.source,
     event_type: input.eventType,
     payload,
   });
-  if (insertError) throw new Error(`recordEventOnce insert failed: ${insertError.message}`);
-  return { inserted: true };
+  if (error) throw new Error(`recordEvent insert failed: ${error.message}`);
 }

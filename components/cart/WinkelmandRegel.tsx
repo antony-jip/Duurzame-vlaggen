@@ -13,7 +13,7 @@ import {
   staffelDiscount,
   volgendeStaffel,
 } from "@/lib/pricing/local-catalog";
-import type { CartItem } from "./types";
+import { normalizeCartItem, primaryDesign, type CartItem } from "./types";
 
 /**
  * Eén bewerkbare winkelmandregel: het ontwerp op de vlag, de keuzes, het aantal
@@ -56,7 +56,7 @@ const accentClass: Record<CatalogProduct["accent"], string> = {
 };
 
 export function WinkelmandRegel({
-  item,
+  item: rawItem,
   compact = false,
 }: {
   item: CartItem;
@@ -65,11 +65,16 @@ export function WinkelmandRegel({
 }) {
   const { updateAmount, removeItem } = useCart();
 
+  // Oude manden (één fileUrl per regel) on-the-fly naar design-toewijzingen.
+  const item = normalizeCartItem(rawItem);
+  const designs = item.designs ?? [];
+  const hoofdontwerp = primaryDesign(item);
+
   const product = getProduct(item.slug);
   const accent = product?.accent ?? "forest";
   const size = flagSize(item);
   // De mockup kan alleen als we én een bestand én de echte maat hebben.
-  const heeftOntwerp = Boolean(item.fileUrl && size.widthCm && size.heightCm);
+  const heeftOntwerp = Boolean(hoofdontwerp && size.widthCm && size.heightCm);
   const korting = staffelDiscount(item.amount);
   const volgende = volgendeStaffel(item.amount);
   const details = item.options
@@ -86,8 +91,11 @@ export function WinkelmandRegel({
           mode="mockup"
           small
           className={styles.mockup}
-          src={item.previewUrl ?? item.fileUrl!}
-          isImage={!!item.previewUrl || isImageArtwork(item.fileName, item.fileUrl)}
+          src={hoofdontwerp!.previewUrl ?? hoofdontwerp!.fileUrl!}
+          isImage={
+            !!hoofdontwerp!.previewUrl ||
+            isImageArtwork(hoofdontwerp!.fileName, hoofdontwerp!.fileUrl)
+          }
           widthCm={size.widthCm!}
           heightCm={size.heightCm!}
           alt={`Je ontwerp op de ${item.name} van ${item.sizeLabel}`}
@@ -122,15 +130,10 @@ export function WinkelmandRegel({
             <Badge variant="detail">Offerte-aanvraag</Badge>
           </span>
         )}
-        {/* Geen eigen thumbnail: het ontwerp staat hiernaast al op de vlag. */}
         <ArtworkUpload
           itemId={item.id}
-          fileUrl={item.fileUrl}
-          fileName={item.fileName}
-          filePath={item.filePath}
-          fileWarnings={item.fileWarnings}
-          previewUrl={item.previewUrl}
-          toonPreview={!heeftOntwerp}
+          amount={item.amount}
+          designs={designs}
           {...size}
         />
       </div>

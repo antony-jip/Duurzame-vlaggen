@@ -17,7 +17,7 @@ import {
 } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
 import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
-import { toCheckoutLines } from "@/components/cart/types";
+import { cartDesignsComplete, toCheckoutLines } from "@/components/cart/types";
 import {
   localShipping,
   ontwerpserviceVoorOrder,
@@ -345,6 +345,10 @@ export default function AfrekenenPage() {
   const quoteOnlyNames = Array.from(
     new Set(quoteOnlyItems.map((it) => it.name)),
   ).join(", ");
+  // Elke bestelbare regel moet zijn volledige aantal gedekt hebben met
+  // ontwerpen (uploads of "later aanleveren") vóór er betaald kan worden. De
+  // server-action valideert dit opnieuw; dit stuurt alleen de UI.
+  const designsComplete = cartDesignsComplete(items);
 
   return (
     <Container
@@ -437,6 +441,21 @@ export default function AfrekenenPage() {
                 errorText={state.fieldErrors?.vatNumber}
               />
             )}
+            <label className={styles.toggle}>
+              <input
+                type="checkbox"
+                name="noMarketing"
+                defaultChecked={state.values?.noMarketing != null}
+              />
+              <span className={styles.toggleLabel}>
+                Ik wil geen vervangingsherinnering per e-mail ontvangen
+              </span>
+            </label>
+            <p className={styles.adresHulp}>
+              Zonder vinkje sturen we je na 4 en 8 maanden een herinnering om je
+              vlag duurzaam te vervangen. Uitschrijven kan in elke mail met één
+              klik.
+            </p>
           </fieldset>
 
           {/* Shipping address */}
@@ -561,11 +580,19 @@ export default function AfrekenenPage() {
             </p>
           )}
 
+          {!hasQuoteOnly && !designsComplete && (
+            <p className={`${styles.banner} ${styles.bannerQuote}`} role="status">
+              Nog niet elke vlag heeft een ontwerp. Wijs bij elke regel je
+              ontwerpen toe, of kies &ldquo;later aanleveren&rdquo;.
+            </p>
+          )}
+
           <Button
             type="submit"
             form="checkout-form"
             size="lg"
             fullWidth
+            disabled={!hasQuoteOnly && !designsComplete}
             loading={isPending}
             icon={<ArrowRight />}
             className={styles.submit}

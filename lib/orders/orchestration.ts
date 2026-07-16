@@ -16,15 +16,19 @@ import {
   ontwerpserviceVoorOrder,
 } from "@/lib/pricing/local-catalog";
 
+import { randomBytes } from "node:crypto";
+
 import {
   advanceOrderStatus,
+  countPendingDesigns,
   getOrderById,
   getOrderByMolliePaymentId,
   getOrderItems,
   insertOrderWithItems,
   recordEventOnce,
 } from "@/lib/orders/repository";
-import { sendMateriaalpaspoortEmail } from "@/lib/email/send";
+import { sendMateriaalpaspoortEmail, sendMailInhoud } from "@/lib/email/send";
+import { ontwerpenAanleveren } from "@/lib/email/templates";
 
 /**
  * Order orchestration — de ruggengraat die Mollie, btw en prijzen aan het
@@ -43,9 +47,23 @@ import { sendMateriaalpaspoortEmail } from "@/lib/email/send";
  * Bedragen zijn ex btw, `numeric(12,2)`.
  */
 
+/** Geldigheid van de aanleverportaal-link (bearer-token op de order). */
+export const PORTAL_TTL_DAYS = 90;
+
 // ---------------------------------------------------------------------------
 // Inputs
 // ---------------------------------------------------------------------------
+
+/**
+ * Eén design-toewijzing op een orderregel: een bestand (of een openstaand
+ * "later aanleveren"-slot wanneer `fileUrl` null is) dat `quantity` vlaggen
+ * van de regel dekt. De aantallen van een regel tellen exact op tot `amount`;
+ * de checkout-action valideert dat vóór placeOrder.
+ */
+export interface DesignDraft {
+  quantity: number;
+  fileUrl: string | null;
+}
 
 export interface OrderItemDraft {
   /** Probo-productcode (bijv. "flag-ciclo") — voor de inkoop met de hand. */
@@ -84,8 +102,12 @@ export interface OrderItemDraft {
   /**
    * Publieke URL van het aangeleverde ontwerp (order-artwork bucket).
    * Null/undefined voor offerte-only regels.
+   * @deprecated Nieuwe aanroepers geven `designs` mee; dit veld blijft werken
+   * als één toewijzing die de hele regel dekt.
    */
   fileUrl?: string | null;
+  /** Design-toewijzingen voor deze regel (zie {@link DesignDraft}). */
+  designs?: DesignDraft[];
   /** Opslag %; in de handmatige flow altijd 0 (basePrice == linePrice). */
   markupPct?: number;
 }
@@ -216,6 +238,37 @@ export async function buildLocalQuote(input: CheckoutInput): Promise<Quote> {
   };
 }
 
+/**
+ * De design-toewijzingen van een regel, met legacy-terugval: aanroepers zonder
+ * `designs` krijgen één toewijzing die de volledige quantity dekt (openstaand
+ * wanneer er ook geen `fileUrl` is).
+ */
+function designDraftsFor(draft: OrderItemDraft): DesignDraft[] {
+  if (draft.designs && draft.designs.length > 0) return draft.designs;
+  return [{ quantity: draft.amount, fileUrl: draft.fileUrl ?? null }];
+}
+
+/** Eerste ontwerp mét bestand — wat order_items.file_url blijft dragen. */
+function primaryFileUrl(draft: OrderItemDraft): string | null {
+  return designDraftsFor(draft).find((d) => d.fileUrl)?.fileUrl ?? null;
+}
+
+/** Storage-key uit een publieke order-artwork-URL (`${uuid}-${naam}`). */
+function artworkPathFromUrl(url: string): string | null {
+  const marker = "/order-artwork/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  const path = decodeURIComponent(url.slice(idx + marker.length));
+  return path || null;
+}
+
+/** Weergavenaam: de storage-key zonder het 36-tekens-UUID-voorvoegsel. */
+function artworkNameFromUrl(url: string): string | null {
+  const path = artworkPathFromUrl(url);
+  if (!path) return null;
+  return path.slice(37) || path;
+}
+
 // ---------------------------------------------------------------------------
 // Place order + create payment
 // ---------------------------------------------------------------------------
@@ -262,6 +315,13 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       shipping_cost: quote.totals.shippingCost,
       vat_amount: quote.totals.vatAmount,
       total: quote.totals.total,
+      // Bearer-credentials: het no-login aanleverportaal (verloopt) en de
+      // herbestel-link in de lifecycle-mails (langlopend).
+      portal_token: randomBytes(32).toString("base64url"),
+      portal_expires_at: new Date(
+        Date.now() + PORTAL_TTL_DAYS * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+      reorder_token: randomBytes(32).toString("base64url"),
     },
     quote.lines.map((l) => ({
       probo_product_code: l.draft.proboProductCode,
@@ -282,10 +342,19 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       amount: l.draft.amount,
       // Manual-modus heeft geen Probo-calculatie → leeg wordt null.
       calculation_id: l.calculationId || null,
-      file_url: l.draft.fileUrl ?? null,
+      // Compat: account/herbestellen/admin tonen het (eerste) ontwerp via deze
+      // kolom; de designtabel is de volledige bron (welk bestand × hoeveel).
+      file_url: primaryFileUrl(l.draft),
       base_price: l.basePrice,
       markup_pct: l.markupPct,
       line_price: l.linePrice,
+      designs: designDraftsFor(l.draft).map((d) => ({
+        quantity: d.quantity,
+        file_url: d.fileUrl,
+        file_path: d.fileUrl ? artworkPathFromUrl(d.fileUrl) : null,
+        file_name: d.fileUrl ? artworkNameFromUrl(d.fileUrl) : null,
+        uploaded_at: d.fileUrl ? new Date().toISOString() : null,
+      })),
     })),
   );
 
@@ -347,12 +416,26 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     if (order.status === "awaiting_payment") {
       await advanceOrderStatus(order.id, "paid", { mollie_status: payment.status });
     }
+
+    // "Later aanleveren": mist er nog een ontwerp, dan parkeert de order op
+    // awaiting_files en krijgt de klant zijn portaallink per mail. Er is geen
+    // automatische vervolgstap — bestellen bij Probo gaat met de hand zodra
+    // alles binnen is (Markeer besteld, geblokkeerd zolang er iets mist).
+    const pending = await countPendingDesigns(order.id);
+    if (pending > 0) {
+      const current = await getOrderById(order.id);
+      if (current?.status === "paid") {
+        await advanceOrderStatus(order.id, "awaiting_files");
+      }
+      await sendOntwerpenAanleverenOnce(order.id, pending);
+    }
+
     // Kernbelofte: elke betaalde bestelling krijgt een materiaalpaspoort per
     // aparte e-mail. Best-effort en idempotent — faalt stil met log, en mag de
     // betaalflow nooit blokkeren.
     await sendMateriaalpaspoortOnce(order.id);
-    // De order blijft op `paid` staan: inkoop en verzending gaan met de hand,
-    // vanuit de admin.
+    // Verder blijft de order staan (paid of awaiting_files): inkoop en
+    // verzending gaan met de hand, vanuit de admin.
     return;
   }
 
@@ -392,6 +475,41 @@ export async function sendMateriaalpaspoortOnce(orderId: string): Promise<void> 
       `[materiaalpaspoort] Verzenden mislukt voor order ${orderId}:`,
       err,
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Aanleverportaal-mail (best-effort, idempotent)
+// ---------------------------------------------------------------------------
+
+/**
+ * Mail de klant zijn persoonlijke uploadlink, exact één keer per order.
+ * Idempotent via `recordEventOnce`; best-effort zoals de paspoort-mail.
+ */
+export async function sendOntwerpenAanleverenOnce(
+  orderId: string,
+  pending: number,
+): Promise<void> {
+  try {
+    const event = await recordEventOnce({
+      orderId,
+      source: "system",
+      eventType: "portal.link_sent",
+    });
+    if (!event.inserted) return;
+
+    const order = await getOrderById(orderId);
+    if (!order?.portal_token) return;
+
+    const mail = ontwerpenAanleveren(
+      order,
+      pending,
+      `${publicEnv.appUrl}/aanleveren/${order.portal_token}`,
+      PORTAL_TTL_DAYS,
+    );
+    await sendMailInhoud(order.email, mail);
+  } catch (err) {
+    console.error(`[portal] aanlevermail mislukt voor order ${orderId}:`, err);
   }
 }
 

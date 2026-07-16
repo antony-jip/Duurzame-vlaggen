@@ -152,6 +152,7 @@
     "status": {
       "pending": "In afwachting van betaling",
       "paid": "Betaald",
+      "awaitingFiles": "Wacht op je ontwerp",
       "inProduction": "In productie",
       "shipped": "Verzonden",
       "delivered": "Geleverd",
@@ -159,7 +160,11 @@
     },
     "tracking": "Volg je zending",
     "trackingNumber": "Trackingnummer",
-    "estimatedDelivery": "Verwachte levering"
+    "estimatedDelivery": "Verwachte levering",
+    "portal": {
+      "pending": "We missen nog {count} ontwerp(en) voor je bestelling. Lever ze aan wanneer het jou uitkomt.",
+      "cta": "Ontwerpen aanleveren"
+    }
   },
   "footer": {
     "company": {
@@ -188,6 +193,7 @@
     "notFoundBody": "De pagina die je zoekt bestaat niet of is verplaatst.",
     "backHome": "Terug naar de startpagina",
     "paymentFailed": "De betaling is mislukt. Probeer het opnieuw.",
-    "cartEmpty": "Je winkelmand is leeg."
+    "cartEmpty": "Je winkelmand is leeg.",
+    "designsIncomplete": "Nog niet elke vlag heeft een ontwerp. Wijs eerst alle ontwerpen toe of kies “later aanleveren”."
   }
 }
