@@ -14,6 +14,7 @@ import {
   rasterizePdfFirstPage,
 } from "@/lib/artwork/preview";
 import { ArtworkProof, type ProofFinish } from "./ArtworkProof";
+import type { CartDesign } from "./types";
 import styles from "./ArtworkUpload.module.css";
 
 /**
@@ -198,6 +199,8 @@ export function ArtworkUploadModal({
   heightCm,
   initialFile,
   finish,
+  initialRemote,
+  beheer,
 }: {
   open: boolean;
   onClose: () => void;
@@ -223,12 +226,49 @@ export function ArtworkUploadModal({
   initialFile?: File | null;
   /** Afwerkingszone (tunnel/band/ringen) voor de drukproef, indicatief. */
   finish?: ProofFinish;
+  /**
+   * Al aangeleverd ontwerp om mee te openen: de editor toont dan direct de
+   * drukproef van het bestaande bestand (géén nieuwe upload) en "Ander bestand
+   * kiezen" wordt de vervang-route. Zo is de miniatuur op de mandregel één
+   * klik verwijderd van de volledige editor.
+   */
+  initialRemote?: {
+    url: string;
+    path: string;
+    name: string;
+    warnings: string[];
+  } | null;
+  /**
+   * Beheer-modus: de editor beheert ALLE ontwerpen van de mandregel — een
+   * ontwerpen-strip onderin (klik = wisselen, ＋ = bestanden toevoegen), de
+   * aantal-verdeling en verwijderen in de zijbalk. Zo gebeurt alles in de
+   * uploader, ook bij één ontwerp op drie dezelfde vlaggen. De parent blijft
+   * eigenaar van de designs (live gecommit in de cart).
+   */
+  beheer?: {
+    designs: CartDesign[];
+    amount: number;
+    activeId: string | null;
+    onSelect: (id: string) => void;
+    onQuantity: (id: string, quantity: number) => void;
+    onRemove: (id: string) => void;
+    onAddFiles: (files: FileList | File[]) => void;
+    onDeliverLater: () => void;
+    busyNote?: string | null;
+  };
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Aparte kiezer voor de ＋-tegel in de ontwerpen-strip (beheer-modus).
+  const railInputRef = useRef<HTMLInputElement>(null);
   // handleFile is pas verderop gedefinieerd; de open-effect leest hem via een
   // ref op run-time, zodat de effect-deps niet op elke render verschuiven.
-  const handleFileRef = useRef<(file: File) => Promise<void>>(null!);
+  const handleFileRef = useRef<
+    (
+      file: File,
+      existing?: { url: string; path: string; warnings: string[] },
+    ) => Promise<void>
+  >(null!);
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [dragOver, setDragOver] = useState(false);
@@ -327,15 +367,71 @@ export function ArtworkUploadModal({
     if (open && !dlg.open) {
       resetState();
       dlg.showModal();
-      // Bestand al gekozen vóór het openen → direct de drukproef-flow in.
-      if (initialFile) void handleFileRef.current(initialFile);
+      if (initialFile) {
+        // Bestand al gekozen vóór het openen → direct de drukproef-flow in.
+        void handleFileRef.current(initialFile);
+      } else if (initialRemote) {
+        // Bestaand ontwerp bekijken/vervangen: haal het bestand op en toon de
+        // drukproef zonder her-upload. Mislukt de fetch, dan blijft gewoon de
+        // dropzone staan.
+        const remote = initialRemote;
+        void fetch(remote.url)
+          .then((res) => (res.ok ? res.blob() : null))
+          .then((blob) => {
+            if (!blob || !dlg.open) return;
+            const file = new File([blob], remote.name, {
+              type: blob.type || "application/octet-stream",
+            });
+            void handleFileRef.current(file, {
+              url: remote.url,
+              path: remote.path,
+              warnings: remote.warnings,
+            });
+          })
+          .catch(() => {});
+      }
     } else if (!open && dlg.open) {
       dlg.close();
     }
-  }, [open, resetState, initialFile]);
+  }, [open, resetState, initialFile, initialRemote]);
 
   // Revoke de object-URL als het component verdwijnt.
   useEffect(() => revokeObjectUrl, [revokeObjectUrl]);
+
+  // Beheer-modus: laad het actieve ontwerp in de drukproef zodra de selectie
+  // wisselt. Een bestaand bestand wordt opgehaald en zonder her-upload getoond
+  // (status direct "done"); een "later aanleveren"-slot toont de dropzone.
+  // Bewust alleen afhankelijk van open + activeId: aantal-wijzigingen mogen de
+  // proef niet herladen. De rest komt uit refs.
+  const beheerRef = useRef(beheer);
+  beheerRef.current = beheer;
+  const activeBeheerId = beheer?.activeId ?? null;
+  useEffect(() => {
+    if (!open || !beheerRef.current || !activeBeheerId) return;
+    const active = beheerRef.current.designs.find((d) => d.id === activeBeheerId);
+    if (!active) return;
+    resetState();
+    if (!active.fileUrl) return; // later-slot → dropzone
+    let cancelled = false;
+    const { fileUrl, filePath, fileName, fileWarnings } = active;
+    void fetch(fileUrl)
+      .then((res) => (res.ok ? res.blob() : null))
+      .then((blob) => {
+        if (cancelled || !blob) return;
+        const file = new File([blob], fileName ?? "ontwerp", {
+          type: blob.type || "application/octet-stream",
+        });
+        void handleFileRef.current(file, {
+          url: fileUrl,
+          path: filePath ?? "",
+          warnings: fileWarnings,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [open, activeBeheerId, resetState]);
 
   const requestClose = useCallback(() => {
     // Eerst sluiten voor een snappy gevoel; opruimen op de achtergrond.
@@ -526,9 +622,17 @@ export function ArtworkUploadModal({
     [deleteOrphan, widthCm, heightCm],
   );
 
-  /** Nieuw bestand gekozen: valideer, toon direct de preview, upload erachteraan. */
+  /**
+   * Nieuw bestand gekozen: valideer, toon direct de preview, upload erachteraan.
+   * Met `existing` (al aangeleverd bestand, geopend vanaf de mandregel) wordt
+   * de upload overgeslagen: het staat al in Storage, dus de status springt
+   * direct op "done" met de bestaande URL.
+   */
   const handleFile = useCallback(
-    async (file: File) => {
+    async (
+      file: File,
+      existing?: { url: string; path: string; warnings: string[] },
+    ) => {
       // Vorige selectie/upload ongeldig maken.
       pickTokenRef.current++;
       const token = pickTokenRef.current;
@@ -585,8 +689,12 @@ export function ArtworkUploadModal({
         void rasterizePdf(file, objectUrl, token);
       }
 
-      // Echte upload op de achtergrond.
-      void runUpload(file, token);
+      // Echte upload op de achtergrond — tenzij het bestand al bij ons staat.
+      if (existing) {
+        setUpload({ status: "done", ...existing });
+      } else {
+        void runUpload(file, token);
+      }
     },
     [discardPending, analyzeRaster, analyzePdf, rasterizePdf, runUpload],
   );
@@ -685,6 +793,23 @@ export function ArtworkUploadModal({
 
   const sizeContext =
     widthCm && heightCm ? `Voor je vlag van ${widthCm} × ${heightCm} cm` : null;
+
+  // Beheer-modus: positie van het actieve ontwerp in de strip + ‹ ›-navigatie
+  // en de toewijzingsstand (som van de aantallen tegen het regelaantal).
+  const beheerIndex = beheer
+    ? beheer.designs.findIndex((d) => d.id === beheer.activeId)
+    : -1;
+  const stapBeheer = (richting: -1 | 1) => {
+    if (!beheer || beheerIndex < 0) return;
+    const next = beheer.designs[beheerIndex + richting];
+    if (next) beheer.onSelect(next.id);
+  };
+  const beheerActive =
+    beheer && beheerIndex >= 0 ? beheer.designs[beheerIndex] : null;
+  const beheerAssigned = beheer
+    ? beheer.designs.reduce((sum, d) => sum + d.quantity, 0)
+    : 0;
+  const beheerMissing = beheer ? Math.max(0, beheer.amount - beheerAssigned) : 0;
 
   // Toon de autoritaire server-waarschuwingen zodra die er zijn, anders de
   // client-side inschatting.
@@ -1086,6 +1211,80 @@ export function ArtworkUploadModal({
                 )
               )}
 
+              {/* Toewijzing (beheer-modus): voor hoeveel van de vlaggen geldt
+                  dit ontwerp, plus verwijderen en de rest later aanleveren. */}
+              {beheer && beheerActive && (
+                <div className={styles.controls}>
+                  {beheer.amount > 1 && (
+                    <div className={styles.controlRow}>
+                      <span className={styles.controlLabel}>
+                        Voor hoeveel vlaggen?
+                      </span>
+                      <div
+                        className={styles.designQty}
+                        role="group"
+                        aria-label="Aantal vlaggen met dit ontwerp"
+                      >
+                        <button
+                          type="button"
+                          className={styles.qtyBtn}
+                          onClick={() =>
+                            beheer.onQuantity(beheerActive.id, beheerActive.quantity - 1)
+                          }
+                          disabled={beheerActive.quantity <= 1}
+                          aria-label="Minder vlaggen met dit ontwerp"
+                        >
+                          −
+                        </button>
+                        <span className={styles.qtyValue} aria-live="polite">
+                          {beheerActive.quantity} van {beheer.amount}
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.qtyBtn}
+                          onClick={() =>
+                            beheer.onQuantity(beheerActive.id, beheerActive.quantity + 1)
+                          }
+                          disabled={beheerMissing === 0}
+                          aria-label="Meer vlaggen met dit ontwerp"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  <div className={styles.controlRow}>
+                    <span
+                      className={
+                        beheerMissing === 0 ? styles.beheerOk : styles.beheerOpen
+                      }
+                      aria-live="polite"
+                    >
+                      {beheerMissing === 0 ? "✓ " : ""}
+                      {beheerAssigned} van {beheer.amount} toegewezen
+                    </span>
+                    <span className={styles.beheerActies}>
+                      {beheerMissing > 0 && (
+                        <button
+                          type="button"
+                          className={styles.linkButton}
+                          onClick={beheer.onDeliverLater}
+                        >
+                          Rest later aanleveren
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className={styles.linkButton}
+                        onClick={() => beheer.onRemove(beheerActive.id)}
+                      >
+                        Ontwerp verwijderen
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Kwaliteitskaart — altijd niet-blokkerend. */}
               {shownWarnings.length > 0 ? (
                 <div className={`${styles.qualityBox} ${styles.qualityWarn}`}>
@@ -1248,6 +1447,97 @@ export function ArtworkUploadModal({
                 Opnieuw proberen
               </button>
             </div>
+          </div>
+        )}
+
+        {/* ── Ontwerpen-strip (beheer-modus): alle ontwerpen van de regel,
+            wisselen met een klik of met ‹ ›, bestanden toevoegen met ＋. ── */}
+        {beheer && (
+          <div className={styles.designRail} aria-label="Ontwerpen van deze regel">
+            <input
+              ref={railInputRef}
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,application/pdf"
+              className={styles.input}
+              onChange={(e) => {
+                if (e.target.files?.length) beheer.onAddFiles(e.target.files);
+                e.target.value = "";
+              }}
+              aria-label="Ontwerpbestanden toevoegen"
+            />
+            <button
+              type="button"
+              className={styles.railArrow}
+              onClick={() => stapBeheer(-1)}
+              disabled={beheerIndex <= 0}
+              aria-label="Vorige ontwerp"
+            >
+              ‹
+            </button>
+            <div className={styles.railTiles}>
+              {beheer.designs.map((d) => {
+                const railImg =
+                  d.previewUrl ??
+                  (/\.(jpe?g|png)$/i.test(d.fileName ?? d.fileUrl ?? "")
+                    ? d.fileUrl
+                    : null);
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    className={
+                      d.id === beheer.activeId
+                        ? `${styles.railTile} ${styles.railTileActive}`
+                        : styles.railTile
+                    }
+                    onClick={() => beheer.onSelect(d.id)}
+                    aria-label={
+                      d.fileUrl
+                        ? `Ontwerp ${d.fileName ?? ""} (${d.quantity} van ${beheer.amount})`
+                        : `Later aanleveren (${d.quantity} van ${beheer.amount})`
+                    }
+                    aria-pressed={d.id === beheer.activeId}
+                  >
+                    {railImg ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={railImg} alt="" />
+                    ) : d.fileUrl ? (
+                      <span className={styles.railDoc} aria-hidden="true">
+                        PDF
+                      </span>
+                    ) : (
+                      <span className={styles.railLater} aria-hidden="true">
+                        ⏱
+                      </span>
+                    )}
+                    <span className={styles.railQty}>{d.quantity}×</span>
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                className={styles.railAdd}
+                onClick={() => railInputRef.current?.click()}
+                aria-label="Ontwerpen toevoegen"
+              >
+                ＋
+              </button>
+            </div>
+            <button
+              type="button"
+              className={styles.railArrow}
+              onClick={() => stapBeheer(1)}
+              disabled={beheerIndex < 0 || beheerIndex >= beheer.designs.length - 1}
+              aria-label="Volgende ontwerp"
+            >
+              ›
+            </button>
+            {beheer.busyNote && (
+              <span className={styles.railNote} role="status">
+                {beheer.busyNote}
+              </span>
+            )}
           </div>
         )}
       </div>

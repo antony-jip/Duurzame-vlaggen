@@ -486,7 +486,7 @@
    "zwarte strook" bij letterbox-randen. Extra selector-diepte zodat deze
    sizing wint van de `width: 100%`-default in ArtworkProof.module.css. */
 .proofGrid .proofFrame {
-  --maxh: min(76vh, 1200px);
+  --maxh: min(66vh, 1100px);
   grid-column: 2;
   grid-row: 1;
   /* Vult de breedte, maar begrensd door maximale hoogte × verhouding,
@@ -544,7 +544,7 @@
 
 /* Alleen maat-vars; mast, doek en wapper-effect komen uit ArtworkProof. */
 .mockupSize {
-  --maxh: min(72vh, 1100px);
+  --maxh: min(62vh, 1000px);
   --cloth-w: calc(var(--maxh) * var(--fw) / var(--fh));
 }
 
@@ -1279,4 +1279,213 @@
   border-radius: 50%;
   background: #fff;
   border: 2px solid var(--color-charcoal, #3a3a3a);
+}
+
+/* ── Ontwerpen-strip onderin de editor (beheer-modus) ──────────────────── */
+
+.designRail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 8%, transparent);
+  /* Altijd in beeld, ook als de proef de modal laat scrollen. */
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  background: var(--color-white, #fff);
+  padding-bottom: 6px;
+  z-index: 2;
+}
+
+.railTiles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px;
+}
+
+.railTile {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border-radius: var(--radius-md, 10px);
+  border: 2px solid color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+    transform var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.railTile:hover {
+  border-color: var(--color-forest);
+  transform: translateY(-1px);
+}
+
+.railTileActive {
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-forest) 18%, transparent);
+}
+
+.railTile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.railDoc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--color-terracotta);
+  background: color-mix(in srgb, var(--color-terracotta) 8%, #fff);
+}
+
+.railLater {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+  color: var(--color-sage-purple, #8b7ba8);
+  background: color-mix(in srgb, var(--color-sage-purple) 10%, #fff);
+}
+
+.railQty {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--color-forest);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.railAdd {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md, 10px);
+  border: 1.5px dashed color-mix(in srgb, var(--color-forest) 45%, transparent);
+  background: color-mix(in srgb, var(--color-forest) 6%, transparent);
+  color: var(--color-forest);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.railAdd:hover {
+  background: color-mix(in srgb, var(--color-forest) 12%, transparent);
+  border-color: var(--color-forest);
+}
+
+.railArrow {
+  flex-shrink: 0;
+  width: 34px;
+  height: 64px;
+  border: none;
+  border-radius: var(--radius-md, 10px);
+  background: transparent;
+  color: var(--color-charcoal, #3a3a3a);
+  font-size: 22px;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.railArrow:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-charcoal) 7%, transparent);
+}
+
+.railArrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.railNote {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-forest);
+  white-space: nowrap;
+}
+
+/* Toewijzingsstatus in de zijbalk (beheer-modus). */
+.beheerOk,
+.beheerOpen {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.beheerOk {
+  color: var(--color-sage-blue, #5c8a9d);
+}
+
+.beheerOpen {
+  color: var(--color-forest);
+}
+
+.beheerActies {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Compacte samenvatting op de mandregel: mini's + één knop ──────────── */
+
+.miniStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.miniTile {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: var(--radius-md, 10px);
+  border: 1.5px solid color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+    transform var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.miniTile:hover {
+  border-color: var(--color-forest);
+  transform: translateY(-1px);
+}
+
+.miniTile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.miniWarn {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 11px;
+  color: #9a6a00;
+  text-shadow: 0 0 3px #fff;
 }

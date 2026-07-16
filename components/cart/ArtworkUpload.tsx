@@ -11,26 +11,21 @@ import { clientId, type CartDesign } from "./types";
 import styles from "./ArtworkUpload.module.css";
 
 /**
- * Design-toewijzingen van één winkelmandregel.
+ * Ontwerpen van één winkelmandregel — naar het model van een echte
+ * bestel-uploader: de regel toont alleen een compacte samenvatting (mini's +
+ * "x van y toegewezen") met één knop ("Start met uploaden" / "Ontwerpen
+ * bekijken"); ALLES verder gebeurt in de schermvullende editor. Daar wissel je
+ * tussen ontwerpen (strip onderin, ‹ ›), voeg je bestanden toe (＋, meerdere
+ * tegelijk), verdeel je de aantallen en vervang of verwijder je een ontwerp.
  *
- * Een regel draagt N designs; elk dekt een `quantity` van de regel ("2 van de
- * 6 met ontwerp A"). Kiezen kan in bulk: de bestandskiezer accepteert meerdere
- * bestanden tegelijk (of een sleep met meerdere), elk bestand wordt een eigen
- * ontwerp en de aantallen worden automatisch verdeeld. Eén bestand loopt door
- * de drukproef-modal (kwaliteitscheck + snijlijnen); een batch gaat direct
- * door dezelfde sign → upload → finalize-API, met de kwaliteitswaarschuwingen
- * per ontwerp in de rij.
- *
- * Ook ná volledige dekking blijft splitsen mogelijk: een extra ontwerp pakt
- * 1 vlag af van het grootste bestaande ontwerp, waarna de steppers de
- * verdeling bijstellen. Vervangen/verwijderde bestanden worden best-effort
- * opgeruimd via DELETE /api/artwork.
+ * Eén bestand = hetzelfde ontwerp op alle vlaggen van de regel (de normale
+ * route); meerdere bestanden worden automatisch over de vlaggen verdeeld.
+ * "Later aanleveren" kan per (deel)ontwerp; die klant krijgt na het afrekenen
+ * een uploadlink per e-mail.
  */
 
 const MAX_BYTES = 50 * 1024 * 1024; // 50 MB, spiegelt server + bucket
 const BUCKET = "order-artwork";
-
-type ModalTarget = { mode: "add" } | { mode: "replace"; designId: string };
 
 interface BatchProgress {
   done: number;
@@ -129,11 +124,19 @@ function isImageDesign(design: CartDesign): boolean {
 }
 
 /**
- * Thumbnail van één design: de voorbereide preview, anders de afbeelding
- * zelf, anders client-side de eerste PDF-pagina rasteren (gecachet per src in
- * rasterizePdfSrc).
+ * Mini van één design op de mandregel: de voorbereide preview, anders de
+ * afbeelding zelf, anders client-side de eerste PDF-pagina rasteren (gecachet
+ * in rasterizePdfSrc). Klik = editor openen op dit ontwerp.
  */
-function DesignThumb({ design }: { design: CartDesign }) {
+function DesignMini({
+  design,
+  amount,
+  onOpen,
+}: {
+  design: CartDesign;
+  amount: number;
+  onOpen: () => void;
+}) {
   const isImage = isImageDesign(design);
   const needsRaster = !design.previewUrl && !isImage && !!design.fileUrl;
   const [pdfThumb, setPdfThumb] = useState<string | null>(null);
@@ -158,20 +161,37 @@ function DesignThumb({ design }: { design: CartDesign }) {
   const src = design.previewUrl ?? (isImage ? design.fileUrl : pdfThumb);
 
   return (
-    <a
-      href={design.fileUrl!}
-      target="_blank"
-      rel="noreferrer"
-      className={styles.preview}
-      aria-label={`Ontwerp openen: ${design.fileName ?? "bestand"}`}
+    <button
+      type="button"
+      className={styles.miniTile}
+      onClick={onOpen}
+      aria-label={
+        design.fileUrl
+          ? `Ontwerp ${design.fileName ?? ""} bekijken (${design.quantity} van ${amount})`
+          : `Later aanleveren (${design.quantity} van ${amount})`
+      }
     >
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={`Voorbeeld van ${design.fileName ?? "je ontwerp"}`} />
+      {design.fileUrl ? (
+        src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={src} alt="" />
+        ) : (
+          <span className={styles.railDoc} aria-hidden="true">
+            PDF
+          </span>
+        )
       ) : (
-        <span className={styles.pdfBadge}>PDF</span>
+        <span className={styles.railLater} aria-hidden="true">
+          ⏱
+        </span>
       )}
-    </a>
+      {amount > 1 && <span className={styles.railQty}>{design.quantity}×</span>}
+      {design.fileWarnings.length > 0 && (
+        <span className={styles.miniWarn} aria-hidden="true">
+          ⚠︎
+        </span>
+      )}
+    </button>
   );
 }
 
@@ -193,9 +213,10 @@ export function ArtworkUpload({
   finish?: ProofFinish;
 }) {
   const { setItemDesigns } = useCart();
-  const [modalTarget, setModalTarget] = useState<ModalTarget | null>(null);
-  // Bestand dat al gekozen is vóór de modal opent (enkel bestand uit de
-  // multi-kiezer): de modal start er direct mee.
+  // Editor open? In beheer-modus (designs aanwezig) wijst activeId het actieve
+  // ontwerp in de strip aan; pendingFile stuurt de eerste upload de drukproef in.
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [batch, setBatch] = useState<BatchProgress | null>(null);
   const [batchNotes, setBatchNotes] = useState<string[]>([]);
@@ -206,12 +227,19 @@ export function ArtworkUpload({
   const missing = Math.max(0, amount - assigned);
   const over = Math.max(0, assigned - amount);
   const complete = assigned === amount;
-  // Hoeveel extra ontwerpen deze regel nog kwijt kan: de open vlaggen, of —
-  // als alles gedekt is — de vlaggen die nog geen eigen ontwerp hebben.
-  const capacity = missing > 0 ? missing : amount - designs.length;
 
   function commit(next: CartDesign[]) {
     setItemDesigns(itemId, next);
+  }
+
+  function openEditorAt(id: string | null) {
+    setActiveId(id ?? designs[0]?.id ?? null);
+    setEditorOpen(true);
+  }
+
+  function closeEditor() {
+    setEditorOpen(false);
+    setPendingFile(null);
   }
 
   /** Voeg een geüpload bestand toe als design; bij volle dekking doneert het
@@ -246,6 +274,11 @@ export function ArtworkUpload({
     ];
   }
 
+  /**
+   * "Opslaan" in de editor: het bevestigde bestand hoort bij het actieve
+   * ontwerp (vervangen of een later-slot vullen). Zonder actief ontwerp (eerste
+   * upload op een lege regel) wordt het een nieuw design over de hele regel.
+   */
   function onModalConfirm(
     url: string,
     name: string,
@@ -253,16 +286,17 @@ export function ArtworkUpload({
     warnings: string[],
     preview: string | null,
   ) {
-    if (!modalTarget) return;
-    if (modalTarget.mode === "add") {
+    const target = activeId ? designs.find((d) => d.id === activeId) : undefined;
+    if (!target) {
       const next = designsWithUpload(designs, { url, name, path, warnings }, preview);
       if (next) commit(next);
       return;
     }
-    const target = designs.find((d) => d.id === modalTarget.designId);
+    // Ongewijzigd opgeslagen (zelfde bestand): niets te doen.
+    if (target.filePath === path && target.fileUrl === url) return;
     commit(
       designs.map((d) =>
-        d.id === modalTarget.designId
+        d.id === target.id
           ? {
               ...d,
               fileUrl: url,
@@ -275,7 +309,7 @@ export function ArtworkUpload({
       ),
     );
     // Vervangen gelukt → ruim het zojuist vervangen bestand op.
-    if (target?.filePath && target.filePath !== path) void deleteOrphan(target.filePath);
+    if (target.filePath && target.filePath !== path) void deleteOrphan(target.filePath);
   }
 
   /**
@@ -285,6 +319,7 @@ export function ArtworkUpload({
    * overgeslagen met een melding, de rest gaat gewoon door.
    */
   async function uploadBatch(files: File[]) {
+    const capacity = missing > 0 ? missing : amount - designs.length;
     const usable = files.slice(0, Math.max(0, capacity));
     const notes: string[] = [];
     if (usable.length < files.length) {
@@ -314,46 +349,50 @@ export function ArtworkUpload({
 
     if (results.length > 0) {
       let next: CartDesign[] = designs;
+      let firstNewId: string | null = null;
       if (missing > 0) {
         // Verdeel de open vlaggen gelijkmatig; de eerste ontwerpen vangen de rest.
         const base = Math.floor(missing / results.length);
         const rest = missing % results.length;
-        next = [
-          ...next,
-          ...results.map((file, i) => ({
-            id: clientId(),
-            quantity: base + (i < rest ? 1 : 0),
-            fileUrl: file.url,
-            fileName: file.name,
-            filePath: file.path,
-            fileWarnings: file.warnings,
-            previewUrl: null,
-          })),
-        ];
+        const nieuwe = results.map((file, i) => ({
+          id: clientId(),
+          quantity: base + (i < rest ? 1 : 0),
+          fileUrl: file.url,
+          fileName: file.name,
+          filePath: file.path,
+          fileWarnings: file.warnings,
+          previewUrl: null,
+        }));
+        firstNewId = nieuwe[0]?.id ?? null;
+        next = [...next, ...nieuwe];
       } else {
         for (const file of results) {
           const grown = designsWithUpload(next, file, null);
           if (!grown) break;
           next = grown;
+          firstNewId ??= grown[grown.length - 1].id;
         }
       }
       commit(next);
+      if (firstNewId) setActiveId(firstNewId);
     }
 
     setBatch(null);
     setBatchNotes(notes);
   }
 
-  /** Route gekozen bestanden: één → drukproef-modal, meerdere → batch. */
+  /** Route gekozen bestanden: één → drukproef in de editor, meerdere → batch. */
   function routeFiles(list: FileList | File[]) {
     const files = Array.from(list);
     if (files.length === 0) return;
-    if (files.length === 1) {
+    if (files.length === 1 && designs.length === 0) {
+      // Eerste bestand op een lege regel: meteen de drukproef in.
       setPendingFile(files[0]);
-      setModalTarget({ mode: "add" });
+      setActiveId(null);
+      setEditorOpen(true);
       return;
     }
-    void uploadBatch(files);
+    void uploadBatch(files).then(() => setEditorOpen(true));
   }
 
   function onMultiPick(e: React.ChangeEvent<HTMLInputElement>) {
@@ -375,37 +414,38 @@ export function ArtworkUpload({
     },
   };
 
-  function closeModal() {
-    setModalTarget(null);
-    setPendingFile(null);
-  }
-
   function addDeliverLater() {
-    commit([
-      ...designs,
-      {
-        id: clientId(),
-        quantity: Math.max(1, amount - assigned),
-        fileUrl: null,
-        fileName: null,
-        filePath: null,
-        fileWarnings: [],
-        previewUrl: null,
-      },
-    ]);
+    const nieuw: CartDesign = {
+      id: clientId(),
+      quantity: Math.max(1, amount - assigned),
+      fileUrl: null,
+      fileName: null,
+      filePath: null,
+      fileWarnings: [],
+      previewUrl: null,
+    };
+    commit([...designs, nieuw]);
+    return nieuw.id;
   }
 
-  function removeDesign(design: CartDesign) {
-    commit(designs.filter((d) => d.id !== design.id));
-    if (design.filePath) void deleteOrphan(design.filePath);
+  function removeDesign(id: string) {
+    const design = designs.find((d) => d.id === id);
+    const rest = designs.filter((d) => d.id !== id);
+    commit(rest);
+    if (design?.filePath) void deleteOrphan(design.filePath);
+    if (rest.length === 0) {
+      closeEditor();
+    } else if (activeId === id) {
+      setActiveId(rest[0].id);
+    }
   }
 
-  function setQuantity(design: CartDesign, quantity: number) {
+  function setQuantity(id: string, quantity: number) {
     const next = Math.max(1, Math.round(quantity));
-    commit(designs.map((d) => (d.id === design.id ? { ...d, quantity: next } : d)));
+    commit(designs.map((d) => (d.id === id ? { ...d, quantity: next } : d)));
   }
 
-  const uploadBtnClass = `${styles.upload} ${dragOver ? styles.uploadDrag : ""}`;
+  const uploadBtnClass = `${styles.uploadNow} ${dragOver ? styles.uploadDrag : ""}`;
 
   const picker = (
     <input
@@ -436,17 +476,34 @@ export function ArtworkUpload({
 
   const modal = (
     <ArtworkUploadModal
-      open={modalTarget !== null}
-      onClose={closeModal}
+      open={editorOpen}
+      onClose={closeEditor}
       onConfirm={onModalConfirm}
       widthCm={widthCm}
       heightCm={heightCm}
       initialFile={pendingFile}
       finish={finish}
+      beheer={
+        designs.length > 0
+          ? {
+              designs,
+              amount,
+              activeId,
+              onSelect: setActiveId,
+              onQuantity: setQuantity,
+              onRemove: removeDesign,
+              onAddFiles: (files) => void uploadBatch(Array.from(files)),
+              onDeliverLater: () => setActiveId(addDeliverLater()),
+              busyNote: batch
+                ? `Bezig met uploaden (${batch.done} van ${batch.total})…`
+                : null,
+            }
+          : undefined
+      }
     />
   );
 
-  // --- Lege staat: de snelle route -------------------------------------------
+  // --- Lege regel: één duidelijke startknop (alles verder in de editor) ------
 
   if (designs.length === 0) {
     return (
@@ -458,13 +515,17 @@ export function ArtworkUpload({
           onClick={() => multiInputRef.current?.click()}
           {...dropProps}
         >
-          ＋ Ontwerp{amount > 1 ? "en" : ""} uploaden (PDF/JPG/PNG)
+          ⬆ Start met uploaden
         </button>
         <span className={styles.assignHint}>
           {amount > 1
-            ? `Kies of sleep gerust meerdere bestanden tegelijk; wij verdelen ze over je ${amount} vlaggen.`
-            : null}
-          <button type="button" className={styles.link} onClick={addDeliverLater}>
+            ? `Eén bestand? Dan komt hetzelfde ontwerp op alle ${amount} vlaggen. Meerdere bestanden verdelen we automatisch.`
+            : "PDF, JPG of PNG · max 50 MB."}
+          <button
+            type="button"
+            className={styles.link}
+            onClick={() => void addDeliverLater()}
+          >
             Ontwerp later aanleveren
           </button>
         </span>
@@ -474,168 +535,47 @@ export function ArtworkUpload({
     );
   }
 
-  // --- Designlijst -------------------------------------------------------------
+  // --- Regel met ontwerpen: compacte samenvatting + één knop ------------------
 
   return (
     <div className={styles.wrap}>
       {picker}
-      <ul className={styles.designList}>
+      <div className={styles.miniStrip}>
         {designs.map((design) => (
-          <li key={design.id} className={styles.designRow}>
-            {design.fileUrl ? (
-              <DesignThumb design={design} />
-            ) : (
-              <span className={`${styles.preview} ${styles.previewLater}`} aria-hidden="true">
-                ⏱
-              </span>
-            )}
-
-            <div className={styles.designMeta}>
-              <span className={styles.doneLabel}>
-                {design.fileUrl ? (
-                  design.fileWarnings.length > 0 ? (
-                    <span className={styles.warnBadge} aria-hidden="true">
-                      ⚠︎
-                    </span>
-                  ) : (
-                    <span className={styles.check} aria-hidden="true">
-                      ✓
-                    </span>
-                  )
-                ) : null}
-                <span className={styles.fileName}>
-                  {design.fileUrl ? (design.fileName ?? "Ontwerp") : "Later aanleveren"}
-                </span>
-              </span>
-              {!design.fileUrl && (
-                <span className={styles.laterNote}>
-                  Je ontvangt na het afrekenen een uploadlink per e-mail.
-                </span>
-              )}
-              {design.fileWarnings.length > 0 && (
-                <ul className={styles.warnings}>
-                  {design.fileWarnings.map((w) => (
-                    <li key={w} className={styles.warning}>
-                      <span aria-hidden="true">⚠︎</span> {w}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <span className={styles.doneActions}>
-                {design.fileUrl ? (
-                  <button
-                    type="button"
-                    className={styles.link}
-                    onClick={() => setModalTarget({ mode: "replace", designId: design.id })}
-                  >
-                    Vervangen
-                  </button>
-                ) : (
-                  // Een openstaand slot alsnog vullen is de belangrijkste actie
-                  // in de rij — dat is een echte knop, geen tekstlinkje.
-                  <button
-                    type="button"
-                    className={styles.uploadNow}
-                    onClick={() => setModalTarget({ mode: "replace", designId: design.id })}
-                  >
-                    ⬆ Nu uploaden
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className={styles.link}
-                  onClick={() => removeDesign(design)}
-                >
-                  Verwijderen
-                </button>
-              </span>
-            </div>
-
-            {/* De verdeel-stepper is alleen zinvol bij een échte splitsing:
-                één ontwerp dat de hele regel dekt volgt het regelaantal
-                vanzelf, en een tweede stepper ernaast verwart alleen maar. */}
-            {amount > 1 && (designs.length > 1 || design.quantity !== amount) && (
-              <div
-                className={styles.designQty}
-                role="group"
-                aria-label="Aantal vlaggen met dit ontwerp"
-              >
-                <button
-                  type="button"
-                  className={styles.qtyBtn}
-                  onClick={() => setQuantity(design, design.quantity - 1)}
-                  disabled={design.quantity <= 1}
-                  aria-label="Minder vlaggen met dit ontwerp"
-                >
-                  −
-                </button>
-                <span className={styles.qtyValue} aria-live="polite">
-                  {design.quantity}×
-                </span>
-                <button
-                  type="button"
-                  className={styles.qtyBtn}
-                  onClick={() => setQuantity(design, design.quantity + 1)}
-                  disabled={missing === 0}
-                  aria-label="Meer vlaggen met dit ontwerp"
-                >
-                  +
-                </button>
-              </div>
-            )}
-          </li>
+          <DesignMini
+            key={design.id}
+            design={design}
+            amount={amount}
+            onOpen={() => openEditorAt(design.id)}
+          />
         ))}
-      </ul>
+      </div>
 
-      {amount > 1 && (
-        <div
-          className={`${styles.assignStatus} ${
-            complete
-              ? styles.assignComplete
-              : over > 0
-                ? styles.assignError
-                : styles.assignOpen
-          }`}
-          aria-live="polite"
+      <span className={styles.assignActions}>
+        <button
+          type="button"
+          className={styles.uploadNow}
+          onClick={() => openEditorAt(designs[0]?.id ?? null)}
         >
-          {complete && <span aria-hidden="true">✓ </span>}
-          {assigned} van {amount} toegewezen
-          {over > 0 && ` · ${over} te veel: verlaag een aantal of verwijder een ontwerp`}
-        </div>
-      )}
-
-      {missing > 0 ? (
-        <span className={styles.assignActions}>
-          <button
-            type="button"
-            className={uploadBtnClass}
-            onClick={() => multiInputRef.current?.click()}
-            {...dropProps}
+          Ontwerpen bekijken{missing > 0 ? " en aanvullen" : ""}
+        </button>
+        {amount > 1 && (
+          <span
+            className={`${styles.assignStatus} ${
+              complete
+                ? styles.assignComplete
+                : over > 0
+                  ? styles.assignError
+                  : styles.assignOpen
+            }`}
+            aria-live="polite"
           >
-            ＋ Nog een ontwerp ({missing} vlag{missing === 1 ? "" : "gen"} open)
-          </button>
-          <button type="button" className={styles.link} onClick={addDeliverLater}>
-            Rest later aanleveren
-          </button>
-        </span>
-      ) : (
-        // Alles gedekt, maar splitsen moet mogelijk blijven: extra ontwerpen
-        // pakken elk 1 vlag af van het grootste ontwerp. Zodra elke vlag zijn
-        // eigen ontwerp heeft, valt er niets meer te verdelen.
-        amount > 1 &&
-        capacity > 0 && (
-          <span className={styles.assignActions}>
-            <button
-              type="button"
-              className={uploadBtnClass}
-              onClick={() => multiInputRef.current?.click()}
-              {...dropProps}
-            >
-              ＋ Ander ontwerp voor een deel van de vlaggen
-            </button>
+            {complete && <span aria-hidden="true">✓ </span>}
+            {assigned} van {amount} toegewezen
+            {over > 0 && ` · ${over} te veel`}
           </span>
-        )
-      )}
+        )}
+      </span>
 
       {batchStatus}
       {modal}
