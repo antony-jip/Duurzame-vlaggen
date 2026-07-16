@@ -1279,9 +1279,25 @@ export function ArtworkUploadModal({
                       )}
                       <button
                         type="button"
-                        className={styles.linkButton}
+                        className={styles.removeBtn}
                         onClick={() => beheer.onRemove(beheerActive.id)}
                       >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="15"
+                          height="15"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                          <path d="M10 11v6M14 11v6" />
+                        </svg>
                         Ontwerp verwijderen
                       </button>
                     </span>
@@ -1487,36 +1503,45 @@ export function ArtworkUploadModal({
                     ? d.fileUrl
                     : null);
                 return (
-                  <button
-                    key={d.id}
-                    type="button"
-                    className={
-                      d.id === beheer.activeId
-                        ? `${styles.railTile} ${styles.railTileActive}`
-                        : styles.railTile
-                    }
-                    onClick={() => beheer.onSelect(d.id)}
-                    aria-label={
-                      d.fileUrl
-                        ? `Ontwerp ${d.fileName ?? ""} (${d.quantity} van ${beheer.amount})`
-                        : `Later aanleveren (${d.quantity} van ${beheer.amount})`
-                    }
-                    aria-pressed={d.id === beheer.activeId}
-                  >
-                    {railImg ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={railImg} alt="" />
-                    ) : d.fileUrl ? (
-                      <span className={styles.railDoc} aria-hidden="true">
-                        PDF
-                      </span>
-                    ) : (
-                      <span className={styles.railLater} aria-hidden="true">
-                        ⏱
-                      </span>
-                    )}
-                    <span className={styles.railQty}>{d.quantity}×</span>
-                  </button>
+                  <span key={d.id} className={styles.railWrap}>
+                    <button
+                      type="button"
+                      className={
+                        d.id === beheer.activeId
+                          ? `${styles.railTile} ${styles.railTileActive}`
+                          : styles.railTile
+                      }
+                      onClick={() => beheer.onSelect(d.id)}
+                      aria-label={
+                        d.fileUrl
+                          ? `Ontwerp ${d.fileName ?? ""} (${d.quantity} van ${beheer.amount})`
+                          : `Later aanleveren (${d.quantity} van ${beheer.amount})`
+                      }
+                      aria-pressed={d.id === beheer.activeId}
+                    >
+                      {railImg ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={railImg} alt="" />
+                      ) : d.fileUrl ? (
+                        <span className={styles.railDoc} aria-hidden="true">
+                          PDF
+                        </span>
+                      ) : (
+                        <span className={styles.railLater} aria-hidden="true">
+                          ⏱
+                        </span>
+                      )}
+                      <span className={styles.railQty}>{d.quantity}×</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.railRemove}
+                      onClick={() => beheer.onRemove(d.id)}
+                      aria-label={`Ontwerp ${d.fileName ?? ""} verwijderen`}
+                    >
+                      ✕
+                    </button>
+                  </span>
                 );
               })}
               <button

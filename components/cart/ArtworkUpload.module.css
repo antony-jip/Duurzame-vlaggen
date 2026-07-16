@@ -1535,3 +1535,68 @@
   font-size: 13.5px;
   font-weight: 700;
 }
+
+/* Ontwerp verwijderen: duidelijke destructieve knop, geen tekstlinkje. */
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 16px;
+  border-radius: var(--radius-md, 10px);
+  border: 2px solid color-mix(in srgb, var(--color-error, #ef4444) 45%, transparent);
+  background: #fff;
+  color: var(--color-error, #ef4444);
+  font-family: var(--font-button);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+    color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.removeBtn:hover {
+  background: var(--color-error, #ef4444);
+  border-color: var(--color-error, #ef4444);
+  color: #fff;
+}
+
+/* Tegel + verwijder-kruisje in de ontwerpen-strip. */
+.railWrap {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  /* Ruimte voor het kruisje dat buiten de tegel uitsteekt. */
+  padding: 8px 8px 0 0;
+}
+
+.railRemove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--color-error, #ef4444) 45%, transparent);
+  background: #fff;
+  color: var(--color-error, #ef4444);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: background var(--duration-fast, 150ms) var(--ease-out, ease),
+    color var(--duration-fast, 150ms) var(--ease-out, ease);
+}
+
+.railRemove:hover {
+  background: var(--color-error, #ef4444);
+  border-color: var(--color-error, #ef4444);
+  color: #fff;
+}
