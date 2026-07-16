@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * Productgalerij met lightbox.
+ * Productgalerij: vierkant hoofdbeeld als slider + thumbnailrij + lightbox.
  *
- * Toont het hero-beeld (in de organische wapper-vorm) plus de thumbnailrij.
- * Elk beeld is klikbaar en opent een schermvullende lightbox waarin je met
- * pijltjes/klik door alle beelden bladert. Puur weergave — geen bestellogica.
+ * Het hoofdbeeld bladert met pijlen door alle beelden; de thumbnails springen
+ * direct naar een beeld en tonen welke actief is. Klik op het hoofdbeeld opent
+ * de schermvullende lightbox op datzelfde beeld. Puur weergave — geen
+ * bestellogica.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -48,8 +49,16 @@ export function ProductGallery({
   const images = [heroImage, ...thumbs];
   const FlagIcon = FLAG_ICONS[slug] ?? FlagMast;
 
+  // Actief beeld in de slider; de lightbox opent op ditzelfde beeld.
+  const [index, setIndex] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const isOpen = openIndex !== null;
+
+  const slide = useCallback(
+    (delta: number) =>
+      setIndex((i) => (i + delta + images.length) % images.length),
+    [images.length],
+  );
 
   const close = useCallback(() => setOpenIndex(null), []);
   const go = useCallback(
@@ -80,38 +89,66 @@ export function ProductGallery({
 
   return (
     <>
-      {/* Hero-beeld in de wapper-vorm — klikbaar naar de lightbox. */}
-      <button
-        type="button"
-        className={`${styles.visual} ${accentClass}`}
-        onClick={() => setOpenIndex(0)}
-        aria-label={`Vergroot: ${heroImage.alt}`}
-      >
-        <span className={styles.accentChip} data-accent={accent} aria-hidden="true">
-          <FlagIcon size={30} />
-        </span>
-        <span className={styles.visualZoom} aria-hidden="true">⤢</span>
-        <Image
-          src={heroImage.src}
-          alt={heroImage.alt}
-          fill
-          priority
-          sizes="(max-width: 860px) 100vw, 50vw"
-          className={styles.photo}
-        />
-      </button>
+      {/* Vierkant hoofdbeeld met slider-pijlen; klik = lightbox. De pijlen
+          staan náást de beeld-knop (geen knop-in-knop). */}
+      <div className={styles.visualWrap}>
+        <button
+          type="button"
+          className={`${styles.visual} ${accentClass}`}
+          onClick={() => setOpenIndex(index)}
+          aria-label={`Vergroot: ${images[index].alt}`}
+        >
+          <span className={styles.accentChip} data-accent={accent} aria-hidden="true">
+            <FlagIcon size={30} />
+          </span>
+          <span className={styles.visualZoom} aria-hidden="true">⤢</span>
+          <Image
+            key={images[index].src}
+            src={images[index].src}
+            alt={images[index].alt}
+            fill
+            priority
+            sizes="(max-width: 860px) 100vw, 50vw"
+            className={styles.photo}
+          />
+        </button>
 
-      {thumbs.length > 0 && (
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              className={`${styles.galleryNav} ${styles.galleryPrev}`}
+              onClick={() => slide(-1)}
+              aria-label="Vorig beeld"
+            >
+              <ArrowRight size={20} />
+            </button>
+            <button
+              type="button"
+              className={`${styles.galleryNav} ${styles.galleryNext}`}
+              onClick={() => slide(1)}
+              aria-label="Volgend beeld"
+            >
+              <ArrowRight size={20} />
+            </button>
+            <span className={styles.galleryCounter} aria-hidden="true">
+              {index + 1} / {images.length}
+            </span>
+          </>
+        )}
+      </div>
+
+      {images.length > 1 && (
         <div className={styles.thumbs}>
-          {thumbs.map((image, i) => (
+          {images.map((image, i) => (
             <button
               key={image.src}
               type="button"
-              className={styles.thumb}
-              onClick={() => setOpenIndex(i + 1)}
-              aria-label={`Vergroot: ${image.alt}`}
+              className={`${styles.thumb} ${i === index ? styles.thumbActive : ""}`}
+              onClick={() => setIndex(i)}
+              aria-label={`Toon: ${image.alt}`}
+              aria-current={i === index}
             >
-              <span className={styles.thumbZoom} aria-hidden="true">⤢</span>
               <Image
                 src={image.src}
                 alt={image.alt}
