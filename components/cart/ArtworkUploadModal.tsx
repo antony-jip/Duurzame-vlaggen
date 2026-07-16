@@ -972,7 +972,7 @@ export function ArtworkUploadModal({
               </button>
               <button
                 type="button"
-                className={styles.primary}
+                className={styles.saveBtn}
                 onClick={() => void confirmSelectedFile()}
                 disabled={!canConfirm}
                 title={
@@ -986,6 +986,7 @@ export function ArtworkUploadModal({
                   : upload?.status === "failed"
                     ? "Toch gebruiken (preview)"
                     : "Opslaan"}
+                <span aria-hidden="true">→</span>
               </button>
             </div>
           )}
