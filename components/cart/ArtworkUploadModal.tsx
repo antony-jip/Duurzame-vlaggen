@@ -13,7 +13,7 @@ import {
   rasterizeImageElement,
   rasterizePdfFirstPage,
 } from "@/lib/artwork/preview";
-import { ArtworkProof } from "./ArtworkProof";
+import { ArtworkProof, type ProofFinish } from "./ArtworkProof";
 import styles from "./ArtworkUpload.module.css";
 
 /**
@@ -197,6 +197,7 @@ export function ArtworkUploadModal({
   widthCm,
   heightCm,
   initialFile,
+  finish,
 }: {
   open: boolean;
   onClose: () => void;
@@ -220,6 +221,8 @@ export function ArtworkUploadModal({
    * drukproef gewoon verschijnt.
    */
   initialFile?: File | null;
+  /** Afwerkingszone (tunnel/band/ringen) voor de drukproef, indicatief. */
+  finish?: ProofFinish;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -922,6 +925,7 @@ export function ArtworkUploadModal({
                             className={styles.proofFrame}
                             mode="drukproef"
                             showGuides
+                            finish={finish}
                             src={previewSrc}
                             isImage={previewIsImage}
                             widthCm={flag.widthCm}
@@ -948,6 +952,19 @@ export function ArtworkUploadModal({
                             <span className={styles.swatchSafe} aria-hidden="true" />
                             Veilige marge (1 cm)
                           </span>
+                          {finish && (
+                            <span className={styles.legendItem}>
+                              <span
+                                className={
+                                  finish.kind === "ringen"
+                                    ? styles.swatchRing
+                                    : styles.swatchFinish
+                                }
+                                aria-hidden="true"
+                              />
+                              {finish.label} (indicatief)
+                            </span>
+                          )}
                         </div>
 
                         <p className={styles.stageHint}>
@@ -1201,7 +1218,7 @@ export function ArtworkUploadModal({
                     ? "Uploaden…"
                     : upload?.status === "failed"
                       ? "Toch gebruiken (preview)"
-                      : "Dit bestand gebruiken"}
+                      : "Opslaan"}
                 </button>
               </div>
             </aside>

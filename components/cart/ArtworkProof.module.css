@@ -285,3 +285,73 @@
     animation: none;
   }
 }
+
+/* ── Afwerkingszone: tunnel/band/ringen (indicatief) ──────────────────── */
+
+.finishZone {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-sage-blue, #5c8a9d) 22%, transparent);
+}
+
+/* Verticale zone aan de mastzijde (tunnel: ~7% van de doekbreedte). */
+.finishLinks {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: max(7%, 14px);
+  border-right: 2px solid var(--color-sage-blue, #5c8a9d);
+}
+
+.finishRechts {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: max(7%, 14px);
+  border-left: 2px solid var(--color-sage-blue, #5c8a9d);
+}
+
+/* Horizontale zone bovenlangs (gevelvlag aan de uithouder). */
+.finishBoven {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: max(7%, 14px);
+  border-bottom: 2px solid var(--color-sage-blue, #5c8a9d);
+}
+
+/* Band en koord: smaller dan een tunnel. */
+.finishBand.finishLinks,
+.finishBand.finishRechts {
+  width: max(4%, 10px);
+}
+
+.finishBand.finishBoven {
+  height: max(4%, 10px);
+}
+
+/* Ringen/oogjes verdeeld over de bevestigingszijde. */
+.rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6% 0;
+}
+
+.finishBoven .rings {
+  flex-direction: row;
+  padding: 0 6%;
+}
+
+.ring {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--color-charcoal, #3a3a3a);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+}

@@ -14,6 +14,7 @@ import {
   volgendeStaffel,
 } from "@/lib/pricing/local-catalog";
 import { normalizeCartItem, primaryDesign, type CartItem } from "./types";
+import type { ProofFinish } from "./ArtworkProof";
 
 /**
  * Eén bewerkbare winkelmandregel: het ontwerp op de vlag, de keuzes, het aantal
@@ -36,6 +37,33 @@ function flagSize(item: CartItem): { widthCm?: number; heightCm?: number } {
   const m = /(\d+)\s*[×x]\s*(\d+)\s*cm/i.exec(item.sizeLabel);
   if (m) return { widthCm: Number(m[1]), heightCm: Number(m[2]) };
   return {};
+}
+
+/**
+ * Afwerkingszone voor de drukproef, afgeleid van de gekozen opties: tunnel of
+ * ringen aan de mastzijde (baniervlag), band en koord aan de hijszijde
+ * (mastvlag) of bovenlangs (gevelvlag). Beachvlag slaan we over: dat doek is
+ * niet rechthoekig, dus een rechte zone zou meer misleiden dan helpen.
+ */
+function deriveFinish(item: CartItem): ProofFinish | undefined {
+  if (item.slug === "beachvlag") return undefined;
+  const optie = (code: string) =>
+    item.options.find((o) => o.code === code)?.value?.toString() ?? "";
+  const afwerking = optie("Afwerking");
+  const lower = afwerking.toLowerCase();
+  const side: ProofFinish["side"] =
+    item.slug === "gevelvlag"
+      ? "boven"
+      : optie("Mastzijde").toLowerCase() === "rechts"
+        ? "rechts"
+        : "links";
+  if (lower.includes("tunnel")) return { kind: "tunnel", side, label: afwerking };
+  if (lower.includes("ring")) return { kind: "ringen", side, label: afwerking };
+  if (lower.includes("band")) return { kind: "band", side, label: afwerking };
+  if (item.slug === "mastvlag" || item.slug === "gevelvlag") {
+    return { kind: "band", side, label: "Band en koord" };
+  }
+  return undefined;
 }
 
 /** Is het ontwerp een rasterafbeelding (i.p.v. PDF)? */
@@ -137,6 +165,7 @@ export function WinkelmandRegel({
             itemId={item.id}
             amount={item.amount}
             designs={designs}
+            finish={deriveFinish(item)}
             {...size}
           />
         )}

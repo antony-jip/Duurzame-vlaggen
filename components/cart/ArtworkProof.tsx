@@ -38,6 +38,20 @@ import styles from "./ArtworkProof.module.css";
 
 export type ArtworkProofMode = "drukproef" | "mockup";
 
+/**
+ * Afwerkingszone in de drukproef: waar tunnel, band of ringen op het doek
+ * komen (indicatief), afgeleid van de gekozen afwerking op de mandregel. Zo
+ * ziet de klant dat zijn logo niet ín de tunnelzoom moet staan — zonder dat we
+ * exacte confectiematen beloven.
+ */
+export interface ProofFinish {
+  kind: "tunnel" | "band" | "ringen";
+  /** Bevestigingszijde van het doek. */
+  side: "links" | "rechts" | "boven";
+  /** Legenda-label, bijv. "Tunnelzoom". */
+  label: string;
+}
+
 /** Neutrale documentglyph voor de fallback-placeholder (geen "PDF"-tekst). */
 function DocGlyph() {
   return (
@@ -106,6 +120,7 @@ export function ArtworkProof({
   small = false,
   wave = false,
   showGuides = false,
+  finish,
   imgStyle,
   className,
 }: {
@@ -127,6 +142,8 @@ export function ArtworkProof({
   wave?: boolean;
   /** Hulplijnen eindformaat/afloop/veilige marge (alleen drukproef). */
   showGuides?: boolean;
+  /** Afwerkingszone (tunnel/band/ringen) in de drukproef, indicatief. */
+  finish?: ProofFinish;
   /** Extra stijl voor de beeldlaag (object-fit/rotatie/spiegelen uit de modal). */
   imgStyle?: React.CSSProperties;
   className?: string;
@@ -245,6 +262,26 @@ export function ArtworkProof({
             <span className={styles.cutBorder} aria-hidden="true" />
             <span className={styles.safeMargin} aria-hidden="true" />
           </>
+        )}
+        {showGuides && finish && (
+          <span
+            className={cx(
+              styles.finishZone,
+              finish.side === "links" && styles.finishLinks,
+              finish.side === "rechts" && styles.finishRechts,
+              finish.side === "boven" && styles.finishBoven,
+              finish.kind === "band" && styles.finishBand,
+            )}
+            aria-hidden="true"
+          >
+            {finish.kind === "ringen" && (
+              <span className={styles.rings}>
+                {[0, 1, 2, 3].map((i) => (
+                  <span key={i} className={styles.ring} />
+                ))}
+              </span>
+            )}
+          </span>
         )}
       </div>
     ) : (

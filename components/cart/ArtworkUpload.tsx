@@ -6,6 +6,7 @@ import { rasterizePdfSrc } from "@/lib/artwork/preview";
 import { sniffKind } from "@/lib/artwork/sniff";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { ArtworkUploadModal } from "./ArtworkUploadModal";
+import type { ProofFinish } from "./ArtworkProof";
 import { clientId, type CartDesign } from "./types";
 import styles from "./ArtworkUpload.module.css";
 
@@ -180,6 +181,7 @@ export function ArtworkUpload({
   designs,
   widthCm,
   heightCm,
+  finish,
 }: {
   itemId: string;
   /** Besteld aantal van de regel — waar de toewijzingen tegen optellen. */
@@ -187,6 +189,8 @@ export function ArtworkUpload({
   designs: CartDesign[];
   widthCm?: number;
   heightCm?: number;
+  /** Afwerkingszone (tunnel/band/ringen) voor de drukproef, indicatief. */
+  finish?: ProofFinish;
 }) {
   const { setItemDesigns } = useCart();
   const [modalTarget, setModalTarget] = useState<ModalTarget | null>(null);
@@ -438,6 +442,7 @@ export function ArtworkUpload({
       widthCm={widthCm}
       heightCm={heightCm}
       initialFile={pendingFile}
+      finish={finish}
     />
   );
 
