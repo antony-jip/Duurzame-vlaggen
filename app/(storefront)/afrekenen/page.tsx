@@ -361,8 +361,17 @@ export default function AfrekenenPage() {
       aria-labelledby="checkout-title"
     >
       <div className={styles.head}>
-        <Badge variant="success">Afrekenen</Badge>
         <h1 id="checkout-title">Afrekenen</h1>
+        {/* Stappenpad: waar je bent en dat betalen de laatste stap is. */}
+        <ol className={styles.stappenPad} aria-label="Bestelstappen">
+          <li data-done="true">Samenstellen</li>
+          <li data-actief="true">Gegevens en ontwerp</li>
+          <li>Betalen</li>
+        </ol>
+        <p className={styles.headSub}>
+          <ShieldCheck size={15} aria-hidden="true" />
+          Veilig betalen via iDEAL. Binnen 5 werkdagen geleverd.
+        </p>
       </div>
 
       <div className={styles.layout}>
@@ -403,6 +412,7 @@ export default function AfrekenenPage() {
               label="E-mailadres"
               autoComplete="email"
               placeholder="naam@bedrijf.nl"
+              helperText="Hierop ontvang je je orderbevestiging en drukproef."
               required
               errorText={state.fieldErrors?.email}
             />
@@ -500,22 +510,19 @@ export default function AfrekenenPage() {
         </form>
         </div>
 
-        {/* Overzicht: alleen geld en betalen. De regels staan hierboven,
-            bewerkbaar. */}
+        {/* Zijkolom: eerst het geld en de betaalknop (de beslissing), daarna
+            de bewerkbare regels. Met meerdere regels stond de knop onder een
+            lange scroll; de belangrijkste actie hoort bovenaan. */}
         <Card as="aside" className={styles.summary} elevation="raised">
-          {/* Je bestelling hoort bij het geld, niet bij het formulier: rechts
-              zie je wat je koopt en wat het kost, links vul je in. Zo is de
-              hoofdkolom één ononderbroken taak. */}
-          <h2 className={styles.zijKop}>Je bestelling</h2>
-          <div className={styles.zijRegels}>
-            {items.map((item) => (
-              <WinkelmandRegel key={item.id} item={item} compact />
-            ))}
-          </div>
-
           <h2 className={styles.zijKop}>Overzicht</h2>
           <div className={styles.summaryRow}>
-            <span>Subtotaal</span>
+            <span>
+              Subtotaal ({items.reduce((n, it) => n + it.amount, 0)}{" "}
+              {items.reduce((n, it) => n + it.amount, 0) === 1
+                ? "artikel"
+                : "artikelen"}
+              )
+            </span>
             <span>
               <Price amount={subtotal} />
             </span>
@@ -586,8 +593,8 @@ export default function AfrekenenPage() {
 
           {!hasQuoteOnly && !designsComplete && (
             <p className={`${styles.banner} ${styles.bannerQuote}`} role="status">
-              Nog niet elke vlag heeft een ontwerp. Wijs bij elke regel je
-              ontwerpen toe, of kies &ldquo;later aanleveren&rdquo;.
+              Nog niet elke vlag heeft een ontwerp. Wijs hieronder bij elke
+              regel je ontwerpen toe, of kies &ldquo;later aanleveren&rdquo;.
             </p>
           )}
 
@@ -616,10 +623,37 @@ export default function AfrekenenPage() {
               <Truck size={16} aria-hidden="true" /> Binnen 5 werkdagen geleverd
             </li>
           </ul>
+
+          <h2 className={`${styles.zijKop} ${styles.zijKopRegels}`}>
+            Je bestelling
+          </h2>
+          <div className={styles.zijRegels}>
+            {items.map((item) => (
+              <WinkelmandRegel key={item.id} item={item} compact />
+            ))}
+          </div>
           <Link href="/collectie" className="text-sm">
             Verder winkelen
           </Link>
         </Card>
+      </div>
+
+      {/* Vaste betaalbalk op smalle schermen: totaal en betalen altijd binnen
+          handbereik, hoe lang het formulier ook is. */}
+      <div className={styles.mobielBalk}>
+        <span className={styles.mobielBalkPrijs}>
+          <span className={styles.mobielBalkLabel}>Totaal</span>
+          <Price amount={teBetalen} />
+        </span>
+        <Button
+          type="submit"
+          form="checkout-form"
+          disabled={!hasQuoteOnly && !designsComplete}
+          loading={isPending}
+          icon={<ArrowRight />}
+        >
+          {hasQuoteOnly ? "Offerte aanvragen" : "Nu betalen"}
+        </Button>
       </div>
     </Container>
   );

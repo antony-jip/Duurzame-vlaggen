@@ -19,6 +19,79 @@
   letter-spacing: -0.03em;
 }
 
+/* Stappenpad: samenstellen is klaar, hier vul je in, dan betalen. */
+.stappenPad {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+.stappenPad li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-stone);
+}
+.stappenPad li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--forest-15);
+}
+.stappenPad li[data-done="true"] {
+  color: var(--color-forest);
+}
+.stappenPad li[data-done="true"]::before {
+  content: "✓";
+  width: auto;
+  height: auto;
+  background: none;
+  font-size: 12px;
+  color: var(--color-forest);
+}
+.stappenPad li[data-actief="true"] {
+  color: var(--color-charcoal);
+}
+.stappenPad li[data-actief="true"]::before {
+  background: var(--color-terracotta);
+}
+/* Pijltje tussen de stappen. */
+.stappenPad li + li {
+  position: relative;
+  margin-left: var(--space-md);
+}
+.stappenPad li + li::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-md) + 4px);
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--forest-15);
+  border-right: 2px solid var(--forest-15);
+  transform: translateY(-50%) translateX(-4px) rotate(45deg);
+}
+
+/* Vertrouwensregel direct onder de kop. */
+.headSub {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-stone);
+}
+.headSub svg {
+  color: var(--color-forest);
+  flex-shrink: 0;
+}
+
 .layout {
   display: grid;
   /* De zijkolom is óók de bewerkbare winkelmand (regels + ontwerpen), niet
@@ -352,4 +425,56 @@
   display: flex;
   flex-direction: column;
   margin-top: var(--space-xs);
+}
+
+/* "Je bestelling" volgt op het geld-blok: lucht en een lijn ertussen. */
+.zijKopRegels {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--forest-6);
+}
+
+/* ── Vaste betaalbalk op smalle schermen ─────────────────────────────────── */
+.mobielBalk {
+  display: none;
+}
+@media (max-width: 860px) {
+  .mobielBalk {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+    background: var(--color-white);
+    border-top: 1px solid var(--forest-6);
+    box-shadow: 0 -8px 24px rgba(44, 95, 79, 0.12);
+  }
+  /* Ruimte zodat de vaste balk het einde van het formulier niet afdekt. */
+  .page {
+    padding-bottom: calc(var(--space-4xl) + 76px);
+  }
+}
+.mobielBalkPrijs {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-forest);
+  font-variant-numeric: tabular-nums;
+}
+.mobielBalkLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-stone);
 }
