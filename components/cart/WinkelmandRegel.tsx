@@ -130,12 +130,16 @@ export function WinkelmandRegel({
             <Badge variant="detail">Offerte-aanvraag</Badge>
           </span>
         )}
-        <ArtworkUpload
-          itemId={item.id}
-          amount={item.amount}
-          designs={designs}
-          {...size}
-        />
+        {/* Hardware (vlaggenmast) heeft geen drukbestand; alleen drukwerk
+            krijgt de ontwerp-toewijzingen. */}
+        {product?.category !== "hardware" && (
+          <ArtworkUpload
+            itemId={item.id}
+            amount={item.amount}
+            designs={designs}
+            {...size}
+          />
+        )}
       </div>
 
       <div className={styles.controls}>

@@ -153,10 +153,17 @@ export function primaryDesign(item: CartItem): CartDesign | undefined {
   return (item.designs ?? []).find((d) => d.fileUrl !== null);
 }
 
-/** True wanneer elke bestelbare regel complete toewijzingen heeft. */
-export function cartDesignsComplete(items: CartItem[]): boolean {
+/**
+ * True wanneer elke bestelbare drukwerk-regel complete toewijzingen heeft.
+ * Offerte-only regels en hardware (vlaggenmast, geen drukbestand) tellen niet
+ * mee; de server-action hanteert dezelfde uitzonderingen.
+ */
+export function cartDesignsComplete(
+  items: CartItem[],
+  isHardware: (slug: string) => boolean = () => false,
+): boolean {
   return items
-    .filter((it) => it.proboProductCode !== null)
+    .filter((it) => it.proboProductCode !== null && !isHardware(it.slug))
     .every((it) => designStatus(normalizeCartItem(it)).complete);
 }
 

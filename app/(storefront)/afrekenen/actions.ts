@@ -28,6 +28,7 @@ import {
 import { suppressEmail } from "@/lib/orders/repository";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 import type { CheckoutLine } from "@/components/cart/types";
+import { getProduct } from "@/lib/catalog/products";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -137,6 +138,9 @@ function parseItems(raw: string): CheckoutLine[] {
  * losse `fileUrl`-veld wordt behandeld als één toewijzing over de hele regel.
  */
 function buildDesignDrafts(item: CheckoutLine): DesignDraft[] | null {
+  // Hardware (vlaggenmast) heeft geen drukbestand: geen toewijzingen vereist.
+  if (getProduct(item.slug)?.category === "hardware") return [];
+
   const legacy = (item as { fileUrl?: string | null }).fileUrl;
   const designs =
     Array.isArray(item.designs) && item.designs.length > 0

@@ -18,6 +18,7 @@ import {
 import { useCart } from "@/components/cart/CartProvider";
 import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
 import { cartDesignsComplete, toCheckoutLines } from "@/components/cart/types";
+import { getProduct } from "@/lib/catalog/products";
 import {
   localShipping,
   ontwerpserviceVoorOrder,
@@ -348,7 +349,10 @@ export default function AfrekenenPage() {
   // Elke bestelbare regel moet zijn volledige aantal gedekt hebben met
   // ontwerpen (uploads of "later aanleveren") vóór er betaald kan worden. De
   // server-action valideert dit opnieuw; dit stuurt alleen de UI.
-  const designsComplete = cartDesignsComplete(items);
+  const designsComplete = cartDesignsComplete(
+    items,
+    (slug) => getProduct(slug)?.category === "hardware",
+  );
 
   return (
     <Container
