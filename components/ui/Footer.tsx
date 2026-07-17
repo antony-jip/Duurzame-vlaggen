@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "./Footer.module.css";
 import { Container } from "./Container";
 import { ArrowRight } from "./Icon";
+import { BEDRIJF, bedrijfsAdresRegels } from "@/lib/bedrijf";
 import { getAllProducts } from "@/lib/catalog/products";
 
 // Derive from the catalogue so slugs never drift from the real product pages.
@@ -101,10 +102,12 @@ export function Footer() {
             {/* Geen mailadres: alles loopt via /contact, zodat aanvragen
                 gestructureerd binnenkomen in plaats van als losse mail. */}
             <address className={styles.contact}>
-              <span>Duurzame Vlaggen</span>
-              <span>Enkhuizen, Nederland</span>
+              <span>{BEDRIJF.handelsnaam}</span>
+              {bedrijfsAdresRegels().map((regel) => (
+                <span key={regel}>{regel}</span>
+              ))}
               <Link href="/contact">Stel je vraag</Link>
-              <a href="tel:+31850608963">085 060 8963</a>
+              <a href="tel:+31850608963">{BEDRIJF.telefoon}</a>
             </address>
           </div>
 

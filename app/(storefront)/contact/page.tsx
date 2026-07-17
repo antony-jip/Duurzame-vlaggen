@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Badge, Container } from "@/components/ui";
+import { BEDRIJF } from "@/lib/bedrijf";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -18,12 +19,14 @@ export const metadata: Metadata = {
 const CHANNELS = [
   {
     label: "Telefoon",
-    value: "085 060 8963",
+    value: BEDRIJF.telefoon,
     href: "tel:+31850608963",
   },
   {
     label: "Vestiging",
-    value: "Enkhuizen, Nederland",
+    // Uit BEDRIJF, niet overgetikt: het adres staat al in de algemene
+    // voorwaarden en op de factuur, en die drie mogen nooit uiteenlopen.
+    value: `${BEDRIJF.adres.straat}, ${BEDRIJF.adres.postcode} ${BEDRIJF.adres.plaats}`,
     href: undefined,
   },
 ];
