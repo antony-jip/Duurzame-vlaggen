@@ -30,9 +30,10 @@ import type { ProboAddress } from "@/lib/catalog/probo-mapping";
 import type { CheckoutLine } from "@/components/cart/types";
 import { getProduct } from "@/lib/catalog/products";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
-import { publicEnv } from "@/lib/env";
+import { publicEnv, serverEnv } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getOrCreateCustomerId } from "@/lib/orders/customer";
+import { sendMailInhoud } from "@/lib/email/send";
 
 /**
  * The `items` payload is client-supplied (localStorage → hidden field), so a
@@ -222,6 +223,48 @@ export async function checkoutAction(
   // Quote-only guard: any line without a Probo code cannot be ordered online.
   const quoteOnly = items.some((it) => it.proboProductCode === null);
   if (quoteOnly) {
+    // Leg de aanvraag vast: mail de interne inbox zodat de lead niet verdwijnt.
+    // Best-effort — faalt de mail (of ontbreekt de config), dan krijgt de klant
+    // nog steeds de bevestiging; we mogen de checkout hier nooit op laten breken.
+    const notify = serverEnv.orderNotifyEmail;
+    if (notify) {
+      const a = shippingAddress as unknown as Record<string, string>;
+      const naam = `${a.first_name ?? ""} ${a.last_name ?? ""}`.trim();
+      const regels = items
+        .map(
+          (it) =>
+            `• ${it.slug} × ${it.amount}${it.proboProductCode === null ? " (offerte)" : ""}`,
+        )
+        .join("\n");
+      const tekst = [
+        "Nieuwe offerte-aanvraag via de webshop.",
+        "",
+        `Naam: ${naam}`,
+        `E-mail: ${email}`,
+        phone ? `Telefoon: ${phone}` : "",
+        isBusiness ? `Bedrijf: ${a.company_name ?? ""}` : "",
+        isBusiness && vatNumber ? `Btw-nummer: ${vatNumber}` : "",
+        `Adres: ${a.street ?? ""} ${a.house_number ?? ""}, ${a.postal_code ?? ""} ${a.city ?? ""} (${a.country ?? ""})`,
+        "",
+        "Producten:",
+        regels,
+      ]
+        .filter((r) => r !== "")
+        .join("\n");
+      const html = `<div style="font-family:Arial,Helvetica,sans-serif;color:#212421;line-height:1.55;">
+        <h1 style="color:#2c5f4f;font-size:18px;margin:0 0 12px;">Nieuwe offerte-aanvraag</h1>
+        <pre style="white-space:pre-wrap;font-family:inherit;margin:0;">${tekst.replace(/</g, "&lt;")}</pre>
+      </div>`;
+      await sendMailInhoud(notify, {
+        onderwerp: `Offerte-aanvraag webshop${naam ? ` — ${naam}` : ""}`,
+        html,
+        tekst,
+      });
+    } else {
+      console.error(
+        "[checkout] Offerte-aanvraag niet vastgelegd: geen ORDER_NOTIFY_EMAIL/ADMIN_EMAILS geconfigureerd.",
+      );
+    }
     return {
       status: "quote",
       message:

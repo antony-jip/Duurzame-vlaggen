@@ -192,3 +192,27 @@
   font-size: 13px;
   color: var(--color-stone);
 }
+.formError {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+  color: #b4231f;
+  margin: 0;
+}
+.formSuccess {
+  border: 1px solid var(--color-moss, #2c5f4f);
+  border-radius: var(--radius-lg, 14px);
+  padding: var(--space-lg, 24px);
+  background: var(--color-mist, #f3f5f2);
+}
+.formSuccess h3 {
+  font-family: var(--font-heading, var(--font-ui));
+  font-size: 20px;
+  margin: 0 0 8px;
+  color: var(--color-moss, #2c5f4f);
+}
+.formSuccess p {
+  font-family: var(--font-body, var(--font-ui));
+  margin: 0;
+  color: var(--color-ink, #212421);
+}

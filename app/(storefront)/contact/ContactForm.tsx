@@ -9,9 +9,9 @@ export interface ContactFormProps {
   defaultProduct?: string;
 }
 
-// Recipient for the placeholder mailto: submit. A real POST handler with
-// server-side validation / spam protection lands in Fase 4.
-const CONTACT_EMAIL = "info@duurzame-vlaggen.nl";
+// Support-adres, alleen nog als fallback in de foutmelding. De verzending loopt
+// nu server-side via /api/contact (Resend), niet meer via een mailto:.
+const CONTACT_EMAIL = "hello@duurzame-vlaggen.nl";
 
 const SUBJECTS = [
   { value: "offerte", label: "Offerte aanvragen" },
@@ -20,6 +20,8 @@ const SUBJECTS = [
   { value: "ontwerp", label: "Eigen ontwerp" },
   { value: "overig", label: "Overig" },
 ] as const;
+
+type Status = "idle" | "sending" | "sent" | "error";
 
 export function ContactForm({ defaultProduct }: ContactFormProps) {
   // Prefix each field id so multiple forms on a page stay unique/accessible.
@@ -34,32 +36,68 @@ export function ContactForm({ defaultProduct }: ContactFormProps) {
       ? `Ik ontvang graag meer informatie over: ${defaultProduct}.\n\n`
       : "",
   );
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  // Placeholder submit — opens the visitor's mail client with a pre-filled
-  // message. No backend is wired up yet (Fase 4). We keep the native form
-  // semantics so required-field validation still runs before we build the URL.
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    if (status === "sending") return;
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
     const subjectLabel =
       SUBJECTS.find((s) => s.value === data.get("subject"))?.label ??
       "Contactaanvraag";
     const productSuffix = defaultProduct ? `: ${defaultProduct}` : "";
-    const body = [
-      `Naam: ${data.get("name") ?? ""}`,
-      `E-mail: ${data.get("email") ?? ""}`,
-      `Telefoon: ${data.get("phone") ?? ""}`,
-      `Bedrijf: ${data.get("company") ?? ""}`,
-      "",
-      String(data.get("message") ?? ""),
-    ].join("\n");
 
-    const mailto =
-      `mailto:${CONTACT_EMAIL}` +
-      `?subject=${encodeURIComponent(subjectLabel + productSuffix)}` +
-      `&body=${encodeURIComponent(body)}`;
+    const payload = {
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      phone: String(data.get("phone") ?? ""),
+      company: String(data.get("company") ?? ""),
+      subject: subjectLabel + productSuffix,
+      message: String(data.get("message") ?? ""),
+      website: String(data.get("website") ?? ""), // honeypot
+    };
 
-    window.location.href = mailto;
+    setStatus("sending");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setErrorMsg(
+          data?.error ??
+            `Versturen mislukt. Mail ons gerust direct op ${CONTACT_EMAIL}.`,
+        );
+        setStatus("error");
+        return;
+      }
+      form.reset();
+      setStatus("sent");
+    } catch {
+      setErrorMsg(
+        `Versturen mislukt. Controleer je verbinding of mail ons op ${CONTACT_EMAIL}.`,
+      );
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div className={styles.formSuccess} role="status">
+        <h3>Bericht verstuurd</h3>
+        <p>
+          Bedankt voor je bericht. We reageren binnen 24 uur, meestal sneller.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -134,9 +172,41 @@ export function ContactForm({ defaultProduct }: ContactFormProps) {
         placeholder="Waar kunnen we je mee helpen?"
       />
 
+      {/* Honeypot — verborgen voor mensen, ingevuld door bots. Niet-tabbaar. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          width: 1,
+          height: 1,
+          overflow: "hidden",
+        }}
+      >
+        <label htmlFor={fid("website")}>Laat dit veld leeg</label>
+        <input
+          id={fid("website")}
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
+      {status === "error" && (
+        <p className={styles.formError} role="alert">
+          {errorMsg}
+        </p>
+      )}
+
       <div className={styles.formActions}>
-        <Button type="submit" size="lg" icon={<ArrowRight />}>
-          Verstuur bericht
+        <Button
+          type="submit"
+          size="lg"
+          icon={<ArrowRight />}
+          disabled={status === "sending"}
+        >
+          {status === "sending" ? "Versturen…" : "Verstuur bericht"}
         </Button>
         <p className={styles.formNote}>
           We reageren binnen 24 uur, meestal sneller.
