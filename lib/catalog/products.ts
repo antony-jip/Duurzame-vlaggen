@@ -305,6 +305,13 @@ export const PRODUCTS: CatalogProduct[] = [
       alt: "Duurzame straightflag beachvlag op het strand",
     },
     gallery: [
+      // Vier straightflags naast elkaar: laat in één beeld zien wat de maten in
+      // het echt schelen. Staat vooraan in de galerij, want "hoe groot is dat
+      // dan?" is de eerste vraag bij een preset-maat.
+      {
+        src: "/beachvlag/straightflag-maten.webp",
+        alt: "De vier straightflag-maten naast elkaar op het strand, van Small tot Large",
+      },
       {
         src: "/beachvlag/squareflag-strand.webp",
         alt: "Duurzame squareflag beachvlag op het strand",

@@ -292,6 +292,22 @@ function sizeModel(size: CatalogSize): string | null {
 }
 
 /**
+ * Geldt een optie voor dit model?
+ *
+ * De squareflag wordt altijd in zijn geheel meegeprint: daar bestaat geen keuze
+ * tussen tunnel en elastische band. Die opties staan in de catalogus op het
+ * product (beachvlag) en niet per maat, dus de uitzondering hoort hier.
+ *
+ * Gebruikt door ZOWEL de stappen als de orderregel. Alleen de stap verbergen zou
+ * de keuze uit de state stilletjes op de regel laten meeliften — en dan bestelt
+ * Antony een afwerking die voor dit model niet bestaat.
+ */
+function optieGeldtVoorModel(label: string, model: string | null): boolean {
+  if (label === "Gewenste afwerking") return model !== "Square";
+  return true;
+}
+
+/**
  * Silhouet-beelden per maat (persoon van 1,80 m naast de vlag), getoond op de
  * formaat-kaart. Sleutel = productslug → exact maatlabel. Bestanden in
  * `public/configurator/beach/formaat/`.
@@ -501,6 +517,12 @@ export function ProductConfigurator({
     () => sizeModel(product.sizes[defaultSizeIndex]) ?? soortModels[0] ?? null,
   );
 
+  // De opties die voor het gekozen model gelden. Eén bron voor de stappen én
+  // voor wat er op de orderregel belandt.
+  const actieveOpties = product.options.filter((o) =>
+    optieGeldtVoorModel(o.label, selectedModel),
+  );
+
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
     () =>
       Object.fromEntries(
@@ -622,8 +644,9 @@ export function ProductConfigurator({
     if (!priceReady || sizeQuoteOnly) return;
     const baseOptions = [
       { code: "Formaat", value: size.label },
-      // Niet-gekozen optionele opties (accessoires) blijven van de regel af.
-      ...product.options.flatMap((opt) => {
+      // Niet-gekozen optionele opties (accessoires) blijven van de regel af, en
+      // opties die niet voor dit model gelden (square + afwerking) ook niet.
+      ...actieveOpties.flatMap((opt) => {
         const value = mergedSelections[opt.label];
         return value ? [{ code: opt.label, value }] : [];
       }),
@@ -662,11 +685,13 @@ export function ProductConfigurator({
   }
 
   // "Gewenste afwerking" (beachvlag) is belangrijk genoeg voor een eigen stap
-  // direct na de soort; de overige opties blijven samen in "Uitvoering".
-  const afwerkingOpt = product.options.find(
+  // direct na de soort; de overige opties blijven samen in "Uitvoering". Bij de
+  // squareflag valt de stap helemaal weg — die wordt altijd in zijn geheel
+  // meegeprint.
+  const afwerkingOpt = actieveOpties.find(
     (o) => o.label === "Gewenste afwerking",
   );
-  const uitvoeringOpts = product.options.filter((o) => o !== afwerkingOpt);
+  const uitvoeringOpts = actieveOpties.filter((o) => o !== afwerkingOpt);
 
   // Stapnummering schuift op wanneer er een Soort- en/of afwerking-stap vóór
   // het formaat staat.
