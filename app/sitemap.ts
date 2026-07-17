@@ -14,18 +14,16 @@ import { STATIC_ROUTES, KENNISBANK_SLUGS } from "@/lib/routes";
  */
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
+  // Bewust géén lastModified: "altijd nu" (elke build een nieuwe datum) is
+  // ruis voor crawlers; liever geen datum dan een verzonnen datum.
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
     url: `${SITE_URL}${r.path}`,
-    lastModified: now,
     changeFrequency: "monthly",
     priority: r.priority,
   }));
 
   const productEntries: MetadataRoute.Sitemap = getAllProducts().map((p) => ({
     url: `${SITE_URL}/collectie/${p.slug}`,
-    lastModified: now,
     changeFrequency: "monthly",
     priority: 0.8,
   }));
@@ -33,7 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const kennisbankEntries: MetadataRoute.Sitemap = KENNISBANK_SLUGS.map(
     (slug) => ({
       url: `${SITE_URL}/kennisbank/${slug}`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }),

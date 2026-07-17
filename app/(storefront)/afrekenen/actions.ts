@@ -27,7 +27,10 @@ import {
 } from "@/lib/orders/orchestration";
 import { suppressEmail } from "@/lib/orders/repository";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
-import type { CheckoutLine } from "@/components/cart/types";
+import {
+  heeftOntwerpserviceOptie,
+  type CheckoutLine,
+} from "@/components/cart/types";
 import { getProduct } from "@/lib/catalog/products";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
@@ -140,12 +143,18 @@ function parseItems(raw: string): CheckoutLine[] {
 function buildDesignDrafts(item: CheckoutLine): DesignDraft[] | null {
   // Hardware (vlaggenmast) heeft geen drukbestand: geen toewijzingen vereist.
   if (getProduct(item.slug)?.category === "hardware") return [];
+  // Ontwerpservice: wij maken het ontwerp, dus de klant hoeft niets toe te
+  // wijzen. Wat hij wél aanlevert (bv. logomateriaal) reist gewoon mee, zonder
+  // de eis dat de aantallen optellen tot het bestelde aantal.
+  const ontwerpservice = heeftOntwerpserviceOptie(item.options);
 
   const legacy = (item as { fileUrl?: string | null }).fileUrl;
   const designs =
     Array.isArray(item.designs) && item.designs.length > 0
       ? item.designs
-      : [{ quantity: item.amount, fileUrl: legacy ?? null }];
+      : ontwerpservice
+        ? []
+        : [{ quantity: item.amount, fileUrl: legacy ?? null }];
 
   let sum = 0;
   const drafts: DesignDraft[] = [];
@@ -154,7 +163,7 @@ function buildDesignDrafts(item: CheckoutLine): DesignDraft[] | null {
     sum += d.quantity;
     drafts.push({ quantity: d.quantity, fileUrl: safeFileUrl(d.fileUrl) });
   }
-  if (sum !== item.amount) return null;
+  if (!ontwerpservice && sum !== item.amount) return null;
   return drafts;
 }
 

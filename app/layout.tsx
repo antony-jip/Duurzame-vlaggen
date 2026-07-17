@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   // Title template lives here only, so per-page titles read "<Page> | Duurzame
   // Vlaggen". The homepage sets an absolute title to avoid a doubled suffix.
   title: {
-    default: "Duurzame Vlaggen — biologisch afbreekbaar",
+    default: "Duurzame Vlaggen. Biologisch afbreekbaar.",
     template: "%s | Duurzame Vlaggen",
   },
   description:

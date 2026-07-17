@@ -10,7 +10,17 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/api", "/afrekenen", "/winkelwagen", "/order"],
+      disallow: [
+        "/admin",
+        "/api",
+        "/afrekenen",
+        "/winkelwagen",
+        "/order",
+        "/account",
+        "/aanleveren",
+        "/opnieuw",
+        "/uitschrijven",
+      ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

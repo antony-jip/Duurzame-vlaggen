@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import styles from "./afrekenen.module.css";
 import {
@@ -34,6 +40,30 @@ const COUNTRIES = [
   { code: "DE", label: "Duitsland" },
   { code: "FR", label: "Frankrijk" },
 ];
+
+/**
+ * Ingevulde velden overleven een navigatie ("Verder winkelen" staat naast dit
+ * formulier): elke wijziging bewaart de tekstvelden in sessionStorage, en bij
+ * terugkomst vullen ze de defaults weer. Sessie-gebonden, dus een gesloten tab
+ * vergeet alles vanzelf.
+ */
+const FORM_STORAGE_KEY = "dv-checkout-form-v1";
+/** Checkboxen expliciet meeschrijven: afwezig in FormData = uitgevinkt. */
+const FORM_CHECKBOXES = ["isBusiness", "noMarketing", "sameAsBilling"] as const;
+
+function leesBewaardFormulier(): Record<string, string> | undefined {
+  try {
+    const raw = sessionStorage.getItem(FORM_STORAGE_KEY);
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as Record<string, string>;
+    }
+  } catch {
+    // Storage geblokkeerd of corrupt: dan gewoon een leeg formulier.
+  }
+  return undefined;
+}
 
 /** A reusable Probo-shape address block. */
 /**
@@ -261,8 +291,40 @@ export default function AfrekenenPage() {
     checkoutAction,
     initialCheckoutState,
   );
-  const [isBusiness, setIsBusiness] = useState(false);
-  const [sameAsBilling, setSameAsBilling] = useState(true);
+  // Bewaarde formulierwaarden lazy inlezen: de velden zijn uncontrolled, dus
+  // de defaults moeten er bij de eerste form-render al staan. Op de server is
+  // er geen storage; het formulier rendert pas ná de hydratie-gate, dus dit
+  // verschil geeft geen hydration-mismatch.
+  const [savedValues] = useState<Record<string, string> | undefined>(() =>
+    typeof window === "undefined" ? undefined : leesBewaardFormulier(),
+  );
+  const [isBusiness, setIsBusiness] = useState(
+    () => savedValues?.isBusiness === "on",
+  );
+  const [sameAsBilling, setSameAsBilling] = useState(() =>
+    savedValues ? savedValues.sameAsBilling !== "" : true,
+  );
+
+  // Elke wijziging bewaren. `items` is een verborgen serialisatie van de mand
+  // en hoort niet in de opslag.
+  const persistForm = (e: FormEvent<HTMLFormElement>) => {
+    try {
+      const fd = new FormData(e.currentTarget);
+      const entries: Record<string, string> = {};
+      for (const [k, v] of fd.entries()) {
+        if (typeof v === "string" && k !== "items") entries[k] = v;
+      }
+      for (const k of FORM_CHECKBOXES) {
+        entries[k] = fd.has(k) ? "on" : "";
+      }
+      sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(entries));
+    } catch {
+      // Storage vol of geblokkeerd: het formulier werkt gewoon door.
+    }
+  };
+
+  // Server-echo (na een validatiefout) wint van de opgeslagen kopie.
+  const formValues = state.values ?? savedValues;
 
   // A submitted quote request has been received server-side — empty the cart so
   // the customer does not resubmit the same lines.
@@ -381,6 +443,7 @@ export default function AfrekenenPage() {
           action={formAction}
           className={styles.form}
           noValidate
+          onChange={persistForm}
         >
           {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
               inclusief previewUrl: een base64-PNG tot 3MB die de server nooit
@@ -407,7 +470,7 @@ export default function AfrekenenPage() {
             <Field
               id="email"
               name="email"
-              defaultValue={state.values?.email}
+              defaultValue={formValues?.email}
               type="email"
               label="E-mailadres"
               autoComplete="email"
@@ -419,7 +482,7 @@ export default function AfrekenenPage() {
             <Field
               id="phone"
               name="phone"
-              defaultValue={state.values?.phone}
+              defaultValue={formValues?.phone}
               type="tel"
               label="Telefoonnummer"
               autoComplete="tel"
@@ -433,7 +496,7 @@ export default function AfrekenenPage() {
               prefix="shipping_"
               errors={state.fieldErrors}
               requireCompany={isBusiness}
-              values={state.values}
+              values={formValues}
             />
             <label className={styles.toggle}>
               <input
@@ -448,7 +511,7 @@ export default function AfrekenenPage() {
               <Field
                 id="vatNumber"
                 name="vatNumber"
-                defaultValue={state.values?.vatNumber}
+                defaultValue={formValues?.vatNumber}
                 label="Btw-nummer"
                 placeholder="NL123456789B01"
                 required
@@ -459,7 +522,7 @@ export default function AfrekenenPage() {
               <input
                 type="checkbox"
                 name="noMarketing"
-                defaultChecked={state.values?.noMarketing != null}
+                defaultChecked={!!formValues?.noMarketing}
               />
               <span className={styles.toggleLabel}>
                 Ik wil geen vervangingsherinnering per e-mail ontvangen
@@ -479,7 +542,7 @@ export default function AfrekenenPage() {
               prefix="shipping_"
               errors={state.fieldErrors}
               requireCompany={isBusiness}
-              values={state.values}
+              values={formValues}
               zonderNaam
             />
           </fieldset>
@@ -503,7 +566,7 @@ export default function AfrekenenPage() {
                 prefix="billing_"
                 errors={state.fieldErrors}
                 requireCompany={isBusiness}
-                values={state.values}
+                values={formValues}
               />
             )}
           </fieldset>
@@ -560,7 +623,9 @@ export default function AfrekenenPage() {
           {verzending > 0 ? (
             <div className={styles.gratisNudge}>
               <span>
-                Nog <Price amount={tekortVoorGratis} /> en je verzending is gratis
+                Nog <Price amount={tekortVoorGratis} />
+                {" tot gratis verzending (vanaf "}
+                &euro;&nbsp;100 incl. btw)
               </span>
               <span
                 className={styles.balk}

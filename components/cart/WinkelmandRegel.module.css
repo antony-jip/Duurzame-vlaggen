@@ -78,6 +78,14 @@
 .quoteTag {
   margin-top: 4px;
 }
+/* Regel met ontwerpservice: geen upload-CTA maar een geruststellende note. */
+.ontwerpserviceNote {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-forest);
+  max-width: 44ch;
+}
 .controls {
   display: flex;
   flex-direction: column;

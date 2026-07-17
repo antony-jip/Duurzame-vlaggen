@@ -16,7 +16,8 @@ import { getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/collectie" },
-  title: "Collectie",
+  // Zoekterm + belofte in de SERP: "Collectie" zegt Google en de zoeker niets.
+  title: "Vlaggen bedrukken. Biologisch afbreekbaar.",
   description:
     "Bekijk onze biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. CSRD-proof, zonder microplastics, geleverd in 5 werkdagen.",
 };

@@ -7,6 +7,7 @@ import {
   Container,
   Leaf,
   Recycle,
+  ShieldCheck,
   Truck,
   Price,
 } from "@/components/ui";
@@ -17,6 +18,7 @@ import {
   type CatalogProduct,
 } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
+import { SHIPPING_FLAT } from "@/lib/pricing/local-catalog";
 import { SITE_URL, SITE_NAME, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
 import { ProcesStappen } from "@/components/ui";
@@ -37,6 +39,19 @@ const accentClass: Record<CatalogProduct["accent"], string> = {
   "copper-rust": styles.accentCopperRust,
 };
 
+/**
+ * SERP-titles in de merkstem: zoekterm + belofte, in plaats van een kale
+ * productnaam die identiek is aan elke concurrent. De template van de root-
+ * layout hangt er " | Duurzame Vlaggen" achter.
+ */
+const SEO_TITLES: Record<string, string> = {
+  baniervlag: "Baniervlag bedrukken. 0% microplastic.",
+  mastvlag: "Mastvlag bedrukken. Breekt af, valt op.",
+  beachvlag: "Beachvlag met je logo. Nergens plastic.",
+  gevelvlag: "Gevelvlag bedrukken. Je merk aan de straat.",
+  vlaggenmast: "Vlaggenmast kopen. Aluminium Easylift.",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -50,12 +65,12 @@ export async function generateMetadata({
   // korte tagline, zodat de snippet de vlag echt verkoopt.
   const description = product.description.slice(0, 158);
   return {
-    title: product.name,
+    title: SEO_TITLES[product.slug] ?? product.name,
     description,
     alternates: { canonical },
     openGraph: {
       type: "website",
-      title: `${product.name} — ${SITE_NAME}`,
+      title: `${product.name} · ${SITE_NAME}`,
       description,
       url: canonical,
       images: [
@@ -67,7 +82,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} — ${SITE_NAME}`,
+      title: `${product.name} · ${SITE_NAME}`,
       description,
       images: [product.heroImage.src],
     },
@@ -111,6 +126,27 @@ export default async function ProductPage({
     },
   });
 
+  // BreadcrumbList naast de zichtbare kruimel: zoekmachines tonen dan het pad
+  // (Collectie › Product) in plaats van een kale URL in de snippet.
+  const breadcrumbJsonLd = jsonLd({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: dict.nav.collection,
+        item: `${SITE_URL}/collectie`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: product.name,
+        item: `${SITE_URL}/collectie/${product.slug}`,
+      },
+    ],
+  });
+
   // Galerij = de eigen productbeelden. (Het generieke band-en-ringen-detail is
   // eruit: dat stond op elke vlagpagina en voegde niets toe.)
   const gallery = product.gallery;
@@ -121,6 +157,10 @@ export default async function ProductPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: productJsonLd }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
       />
       <nav className={styles.breadcrumb} aria-label="Kruimelpad">
         <Link href="/collectie">{dict.nav.collection}</Link>
@@ -138,29 +178,49 @@ export default async function ProductPage({
             accent={product.accent}
             accentClass={accentClass[product.accent]}
           />
-          <ul className={styles.trustRow}>
-            <li>
-              <Leaf size={16} aria-hidden="true" />
-              Breekt volledig af
-            </li>
-            <li>
-              <Recycle size={16} aria-hidden="true" />
-              Gedrukt in Nederland
-            </li>
-            <li>
-              <Truck size={16} aria-hidden="true" />
-              Binnen 5 werkdagen op je mast
-            </li>
-          </ul>
+          {product.category === "hardware" ? (
+            <ul className={styles.trustRow}>
+              <li>
+                <ShieldCheck size={16} aria-hidden="true" />
+                10+ jaar garantie
+              </li>
+              <li>
+                <Recycle size={16} aria-hidden="true" />
+                Inclusief montagebeugels
+              </li>
+              <li>
+                <Truck size={16} aria-hidden="true" />
+                Geleverd door heel Nederland
+              </li>
+            </ul>
+          ) : (
+            <ul className={styles.trustRow}>
+              <li>
+                <Leaf size={16} aria-hidden="true" />
+                Breekt volledig af
+              </li>
+              <li>
+                <Recycle size={16} aria-hidden="true" />
+                Gedrukt in Nederland
+              </li>
+              <li>
+                <Truck size={16} aria-hidden="true" />
+                Binnen 5 werkdagen op je mast
+              </li>
+            </ul>
+          )}
         </div>
 
         {/* Info + configurator */}
         <div className={styles.info}>
           <div className={styles.eyebrowRow}>
             {product.badge && <Badge variant="primary">{product.badge}</Badge>}
-            <Badge variant="outline">
-              {product.category === "hardware" ? "Hardware" : "Vlag"}
-            </Badge>
+            {product.badge !==
+              (product.category === "hardware" ? "Hardware" : "Vlag") && (
+              <Badge variant="outline">
+                {product.category === "hardware" ? "Hardware" : "Vlag"}
+              </Badge>
+            )}
           </div>
 
           <h1 className={styles.title}>{product.name}</h1>
@@ -179,8 +239,25 @@ export default async function ProductPage({
             </div>
             <div className={styles.specRow}>
               <dt>{dict.product.material}</dt>
-              <dd>Biologisch afbreekbaar doek</dd>
+              <dd>
+                {product.category === "hardware"
+                  ? "Hoogwaardig aluminium (Easylift)"
+                  : "Biologisch afbreekbaar doek"}
+              </dd>
             </div>
+            {/* Verzendkosten hoorden pas in de winkelmand op te duiken; de
+                drempel is een verkoopargument, dus hij staat bij de prijs.
+                Hardware heeft eigen levering (in de mast-configurator). */}
+            {product.category !== "hardware" && (
+              <div className={styles.specRow}>
+                <dt>Verzending</dt>
+                <dd>
+                  <Price amount={SHIPPING_FLAT} suffix />
+                  {" · gratis vanaf "}
+                  &euro;&nbsp;100 incl. btw
+                </dd>
+              </div>
+            )}
           </dl>
 
           {product.category === "hardware" ? (

@@ -176,6 +176,37 @@ export function effectiveDpi(pixels: number, cm: number): number {
   return pixels / (cm / CM_PER_INCH);
 }
 
+/**
+ * Minimum effective DPI of a raster design on a flag, matched op de
+ * vlag-oriëntatie die het best bij de ontwerp-verhouding past — dezelfde
+ * regel als `buildWarnings`, zodat elk DPI-getal in de UI hetzelfde rekent.
+ */
+export function minEffectiveDpi(
+  pixelWidth: number,
+  pixelHeight: number,
+  flag: FlagSize,
+): number {
+  const devNormal = ratioDeviation(
+    pixelWidth,
+    pixelHeight,
+    flag.widthCm,
+    flag.heightCm,
+  );
+  const devRotated = ratioDeviation(
+    pixelWidth,
+    pixelHeight,
+    flag.heightCm,
+    flag.widthCm,
+  );
+  const rotated = devRotated < devNormal;
+  const matchW = rotated ? flag.heightCm : flag.widthCm;
+  const matchH = rotated ? flag.widthCm : flag.heightCm;
+  return Math.min(
+    effectiveDpi(pixelWidth, matchW),
+    effectiveDpi(pixelHeight, matchH),
+  );
+}
+
 /** Relative aspect-ratio deviation between two width:height pairs (0 = equal). */
 function ratioDeviation(w1: number, h1: number, w2: number, h2: number): number {
   if (h1 <= 0 || h2 <= 0 || w2 <= 0) return Number.POSITIVE_INFINITY;
@@ -232,12 +263,9 @@ export function buildWarnings(
   const h = info.pixelHeight;
   const devNormal = ratioDeviation(w, h, flag.widthCm, flag.heightCm);
   const devRotated = ratioDeviation(w, h, flag.heightCm, flag.widthCm);
-  const rotated = devRotated < devNormal;
   const bestDev = Math.min(devNormal, devRotated);
-  const matchW = rotated ? flag.heightCm : flag.widthCm;
-  const matchH = rotated ? flag.widthCm : flag.heightCm;
 
-  const dpi = Math.min(effectiveDpi(w, matchW), effectiveDpi(h, matchH));
+  const dpi = minEffectiveDpi(w, h, flag);
   if (dpi < MIN_DPI) {
     warnings.push(
       `De resolutie is te laag voor scherp drukwerk op dit formaat (${Math.round(dpi)} dpi).`,

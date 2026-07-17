@@ -236,8 +236,9 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Overal opgezet. Nergens plastic achtergelaten.",
     description:
       "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. De doekprint breekt netjes af in plaats van als microplastic in de natuur te belanden.",
-    // priceFrom = goedkoopste maat (Straight S, 80×220 = €35) met de standaard-
-    // samenstelling "Alleen vlag" (€0) — de openingsprijs van de configurator.
+    // priceFrom = goedkoopste maat (Straight S, 80×220 = €35) met samenstelling
+    // "Alleen vlag" (€0). De configurator opent op "Vlag + stok" (+€15), dus de
+    // openingsprijs ligt hoger dan deze vanafprijs.
     priceFrom: 35,
     // The model (Straight/Square) is encoded in the size: each size belongs to
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
@@ -273,11 +274,13 @@ export const PRODUCTS: CatalogProduct[] = [
       // Wat zit erbij: alleen het doek, met stok, of compleet met stok + draagtas.
       // "Vlag + stok + tas" is de geverifieerde standaard-samenstelling (flag-stick-
       // bag-deluxe). Zie probo-mapping voor de open Probo-/prijs-verificatie.
-      // Standaard "Alleen vlag" (kale doek, €0); stok +€15, stok + tas +€22,50
-      // (zie OPTION_SURCHARGES). De eerste keuze is de default in de configurator.
+      // Default = "Vlag + stok" (eerste keuze): een nieuwe koper heeft nog geen
+      // frame en mag geen los doek als voorselectie krijgen. "Alleen vlag" (€0)
+      // blijft kiesbaar voor wie al een stok heeft; stok +€15, stok + tas +€22,50
+      // (zie OPTION_SURCHARGES).
       {
         label: "Samenstelling",
-        choices: ["Alleen vlag", "Vlag + stok", "Vlag + stok + tas"],
+        choices: ["Vlag + stok", "Vlag + stok + tas", "Alleen vlag"],
       },
       // Volledige accessoire-assortiment van de oude site (namen + prijzen ECHT).
       // Optionele keuze: in de configurator kun je hem ook weer uitzetten.

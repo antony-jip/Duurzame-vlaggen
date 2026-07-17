@@ -26,9 +26,22 @@ const ORG_JSON_LD = jsonLd({
   description:
     "Biologisch afbreekbare vlaggen voor bedrijven, gemeenten en verenigingen. Klaar voor de CSRD en zonder microplastics.",
   areaServed: "NL",
+  // Adres + telefoon maken van de webshop een vindbaar, fysiek NL-bedrijf
+  // (lokale SEO); de gegevens komen uit dezelfde bron als factuur en footer.
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: `${BEDRIJF.adres.straat}`,
+    postalCode: BEDRIJF.adres.postcode,
+    addressLocality: BEDRIJF.adres.plaats,
+    addressCountry: "NL",
+  },
+  telephone: BEDRIJF.telefoon,
+  email: BEDRIJF.email,
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer service",
+    telephone: BEDRIJF.telefoon,
+    email: BEDRIJF.email,
     availableLanguage: ["nl"],
   },
 });

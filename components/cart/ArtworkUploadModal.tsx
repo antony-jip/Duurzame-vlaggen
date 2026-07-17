@@ -6,6 +6,7 @@ import { sniffKind } from "@/lib/artwork/sniff";
 import {
   analyzeBytes,
   buildWarnings,
+  minEffectiveDpi,
   type ArtworkInfo,
   type FlagSize,
 } from "@/lib/artwork/inspect";
@@ -925,8 +926,8 @@ export function ArtworkUploadModal({
 
   // Sidebar-feiten: de vlagmaat (eindformaat), het benodigde aanleverformaat
   // (vlagmaat + 1 cm afloop rondom, dus +2 cm per zijde — zoals drukkers dat
-  // officieel vragen) en de effectieve DPI (px / (cm / 2,54)), rekening
-  // houdend met 90°/270°-rotatie. PDF = vector, dus geen zinnige DPI: "-".
+  // officieel vragen) en de effectieve DPI op de best passende vlag-oriëntatie
+  // (zelfde regel als de waarschuwingen). PDF = vector, dus geen zinnige DPI: "-".
   const sizeLabel = flag
     ? `${formatCm(flag.widthCm)} × ${formatCm(flag.heightCm)} cm`
     : "-";
@@ -936,12 +937,13 @@ export function ArtworkUploadModal({
   const dpiLabel = (() => {
     if (!selected || !selected.isImage || !flag) return "-";
     if (!selected.pixelWidth || !selected.pixelHeight) return "…";
-    const quarter = rotation === 90 || rotation === 270;
-    const pw = quarter ? selected.pixelHeight : selected.pixelWidth;
-    const ph = quarter ? selected.pixelWidth : selected.pixelHeight;
-    const dpi = Math.min(
-      pw / (flag.widthCm / 2.54),
-      ph / (flag.heightCm / 2.54),
+    // Zelfde oriëntatie-matching als buildWarnings: anders toont het paneel
+    // een ander DPI-getal dan de waarschuwing eronder. De weergave-rotatie
+    // verandert de uitkomst niet (de matching is symmetrisch onder draaien).
+    const dpi = minEffectiveDpi(
+      selected.pixelWidth,
+      selected.pixelHeight,
+      flag,
     );
     return String(Math.round(dpi));
   })();

@@ -188,11 +188,11 @@
     "copyright": "Alle rechten voorbehouden."
   },
   "errors": {
-    "generic": "Er is iets misgegaan. Probeer het later opnieuw.",
+    "generic": "Er is iets misgegaan. Probeer het opnieuw, of bel ons op 085 060 8963. Dan maken we het samen in orde.",
     "notFound": "Pagina niet gevonden",
     "notFoundBody": "De pagina die je zoekt bestaat niet of is verplaatst.",
     "backHome": "Terug naar de startpagina",
-    "paymentFailed": "De betaling is mislukt. Probeer het opnieuw.",
+    "paymentFailed": "De betaling is mislukt. Probeer het opnieuw, of bel ons op 085 060 8963. Je winkelmand blijft gewoon staan.",
     "cartEmpty": "Je winkelmand is leeg.",
     "designsIncomplete": "Nog niet elke vlag heeft een ontwerp. Wijs eerst alle ontwerpen toe of kies “later aanleveren”."
   }

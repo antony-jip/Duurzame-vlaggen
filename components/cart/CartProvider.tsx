@@ -158,7 +158,13 @@ export function CartProvider({
       if (existing) {
         return prev.map((it) =>
           it.id === existing.id
-            ? { ...it, amount: it.amount + item.amount }
+            ? {
+                ...it,
+                amount: it.amount + item.amount,
+                // Meegereisde designs (uit de configurator-ontwerpstap) horen
+                // bij de samengevoegde regel, niet stilletjes weggegooid.
+                designs: [...(it.designs ?? []), ...(item.designs ?? [])],
+              }
             : it,
         );
       }

@@ -115,6 +115,7 @@ const STEPS = [
 export default async function Home() {
   const { dict } = await getMessages();
   const products = getAllProducts();
+  const laagstePrijs = Math.min(...products.map((p) => p.priceFrom));
 
   return (
     <>
@@ -151,7 +152,7 @@ export default async function Home() {
                 Bestel direct
               </Button>
               <span className={styles.heroFrom}>
-                vanaf <Price amount={11.5} suffix />
+                vanaf <Price amount={laagstePrijs} suffix />
               </span>
             </div>
           </div>

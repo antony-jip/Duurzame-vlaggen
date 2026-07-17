@@ -14,12 +14,14 @@
  * (`@/lib/pricing/local-catalog`): geen debounce, geen netwerk-call.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./product.module.css";
 import { Badge, Button, Check, ArrowRight, Leaf, Truck, ShieldCheck } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
+import { ArtworkUploadModal } from "@/components/cart/ArtworkUploadModal";
+import { clientId, type CartDesign } from "@/components/cart/types";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
 import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
@@ -62,7 +64,7 @@ const RIJ_MAX = 12;
  */
 const OPTION_HINTS: Record<string, string> = {
   Mastzijde:
-    "Aan welke kant van het doek de mast zit. Sta met je rug in de wind: mast links? Kies links.",
+    "Aan welke kant van het doek de mast zit. Kijk naar het voorbeeld en kies wat bij jouw plek past. Twijfel je? Links is de standaard.",
   Afwerking:
     "Met tunnel schuift het doek als een koker om de mast. Dit is de standaard voor baniermasten.",
   Bandkleur:
@@ -76,6 +78,14 @@ const PRODUCT_OPTION_HINTS: Record<string, Record<string, string>> = {
   mastvlag: {
     Afwerking:
       "Hoe de vlag aan de mast komt: haken klikken op de mastlijn, koord/lus knoop je vast.",
+  },
+  beachvlag: {
+    "Gewenste afwerking":
+      "Hoe het doek om de mast sluit: een meegeprinte tunnel in je eigen ontwerp, of een elastische band in wit of zwart.",
+    Samenstelling:
+      "Wat je in huis krijgt. Nog geen beachvlag-frame? Kies minimaal Vlag + stok. Alleen vlag is het losse doek, voor wie al een stok heeft.",
+    Accessoires:
+      "De voet die je vlag overeind houdt. Grondpen voor gras en zand, kruisvoet of voetplaat voor bestrating, parasolvoet voor binnen.",
   },
   gevelvlag: {
     Mastzijde:
@@ -275,12 +285,12 @@ const SOORT_CARDS: Record<
   beachvlag: {
     Straight: {
       title: "Straightflag",
-      blurb: "Gebogen sail — strak, hoog silhouet",
+      blurb: "De klassieke druppelvorm. Hoog, strak gespannen silhouet.",
       img: "/configurator/beach/soort-straight.png",
     },
     Square: {
       title: "Squareflag",
-      blurb: "Rechthoekig — maximaal printvlak",
+      blurb: "Rechte bovenhoek. Maximaal printvlak voor je ontwerp.",
       img: "/configurator/beach/soort-square.png",
     },
   },
@@ -536,8 +546,19 @@ export function ProductConfigurator({
   // Eigen aantal per aangevinkt accessoire, sleutel "label:keuze" (default 1).
   const [multiQty, setMultiQty] = useState<Record<string, number>>({});
   const [quantity, setQuantity] = useState(1);
-  const [designService, setDesignService] = useState(false);
   const [added, setAdded] = useState(false);
+
+  // Stap "Je ontwerp": de kernbelofte ("upload gewoon je bestand") hoort ín de
+  // configurator, niet verstopt achter de winkelmand. Drie routes: nu uploaden
+  // (drukproef in de bestaande editor), later aanleveren (uploadlink na
+  // bestelling) of onze ontwerpservice.
+  type OntwerpKeuze = "upload" | "later" | "service";
+  const [ontwerpKeuze, setOntwerpKeuze] = useState<OntwerpKeuze>("upload");
+  const [ontwerp, setOntwerp] = useState<CartDesign | null>(null);
+  const [ontwerpModalOpen, setOntwerpModalOpen] = useState(false);
+  const [ontwerpFile, setOntwerpFile] = useState<File | null>(null);
+  const ontwerpInputRef = useRef<HTMLInputElement>(null);
+  const designService = ontwerpKeuze === "service";
 
   // Eigen-maat-modus: vrije breedte × hoogte in cm.
   const [customMode, setCustomMode] = useState(false);
@@ -640,6 +661,66 @@ export function ProductConfigurator({
   const show = (amount: number) => (inclVat ? amount * (1 + vatRate) : amount);
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
 
+  /** Best-effort opruimen van een niet meer gebruikt uploadbestand. */
+  function ruimOntwerpOp(path: string) {
+    void fetch("/api/artwork", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path }),
+    }).catch(() => {
+      // Achterblijvers veegt scripts/cleanup-artwork.ts op.
+    });
+  }
+
+  /** "Opslaan" in de drukproef-editor: bewaar het ontwerp voor de mandregel. */
+  function onOntwerpConfirm(
+    url: string,
+    name: string,
+    path: string,
+    warnings: string[],
+    preview: string | null,
+  ) {
+    if (ontwerp?.filePath && ontwerp.filePath !== path) {
+      ruimOntwerpOp(ontwerp.filePath);
+    }
+    setOntwerp({
+      id: clientId(),
+      quantity: 1,
+      fileUrl: url,
+      fileName: name,
+      filePath: path,
+      fileWarnings: warnings,
+      previewUrl: preview,
+    });
+    setOntwerpKeuze("upload");
+    setAdded(false);
+  }
+
+  function verwijderOntwerp() {
+    if (ontwerp?.filePath) ruimOntwerpOp(ontwerp.filePath);
+    setOntwerp(null);
+    setAdded(false);
+  }
+
+  /** Designs die met de regel de winkelmand in gaan, per gekozen route. */
+  function ontwerpDesigns(): CartDesign[] {
+    if (ontwerpKeuze === "service") return [];
+    if (ontwerpKeuze === "later") {
+      return [
+        {
+          id: clientId(),
+          quantity,
+          fileUrl: null,
+          fileName: null,
+          filePath: null,
+          fileWarnings: [],
+          previewUrl: null,
+        },
+      ];
+    }
+    return ontwerp ? [{ ...ontwerp, id: clientId(), quantity }] : [];
+  }
+
   function handleAdd() {
     if (!priceReady || sizeQuoteOnly) return;
     const baseOptions = [
@@ -664,7 +745,11 @@ export function ProductConfigurator({
       options: designService
         ? [...baseOptions, { code: "Ontwerpservice", value: `Ja (+${formatCurrency(DESIGN_SERVICE_PRICE, catalog)})` }]
         : baseOptions,
+      designs: ontwerpDesigns(),
     });
+    // Het ontwerp is nu van de mandregel; niet nogmaals aan een volgende regel
+    // hangen (verwijderen dáár zou het bestand ook hier weghalen).
+    if (ontwerpKeuze === "upload" && ontwerp) setOntwerp(null);
     setAdded(true);
   }
 
@@ -698,7 +783,8 @@ export function ProductConfigurator({
   const afwerkingStepNo = (hasSoort ? 1 : 0) + 1;
   const sizeStepNo = (hasSoort ? 1 : 0) + (afwerkingOpt ? 1 : 0) + 1;
   const optionsStepNo = sizeStepNo + 1;
-  const quantityStepNo = sizeStepNo + (uitvoeringOpts.length > 0 ? 1 : 0) + 1;
+  const ontwerpStepNo = sizeStepNo + (uitvoeringOpts.length > 0 ? 1 : 0) + 1;
+  const quantityStepNo = ontwerpStepNo + 1;
 
   /**
    * Eén optieblok (rijlabel + kaarten of mastzijde-toggle). Gedeeld door de
@@ -717,6 +803,8 @@ export function ProductConfigurator({
     const picked = isMulti
       ? (multiChoices[opt.label] ?? []).join(" · ")
       : selectedOptions[opt.label];
+    const hint =
+      PRODUCT_OPTION_HINTS[product.slug]?.[opt.label] ?? OPTION_HINTS[opt.label];
 
     // Compacte keuzerij — één regel per eigenschap: mini-voorbeeld van de
     // gekozen keuze + segmented control. De grote fotokaarten maakten van elke
@@ -730,9 +818,6 @@ export function ProductConfigurator({
       const imgFor = (choice: string) =>
         PRODUCT_OPTION_IMAGES[product.slug]?.[opt.label]?.[choice] ??
         OPTION_IMAGES[opt.label]?.[choice];
-      const hint =
-        PRODUCT_OPTION_HINTS[product.slug]?.[opt.label] ??
-        OPTION_HINTS[opt.label];
       return (
         <div key={opt.label} className={styles.optRij}>
           {/* Kop (label + uitleg) in een eigen subgrid-rij, zodat de kaarten
@@ -817,6 +902,7 @@ export function ProductConfigurator({
             <span className={styles.optionRowPick}>{picked || "Geen"}</span>
           </span>
         )}
+        {hint && <span className={styles.optionRowHint}>{hint}</span>}
                   {isBeachMast ? (
                     <div className={styles.mastToggle}>
                       <span className={styles.mastToggleMedia}>
@@ -1314,6 +1400,158 @@ export function ProductConfigurator({
           </section>
         )}
 
+        {/* Stap — Je ontwerp: dé belofte van de winkel ("upload gewoon je
+            bestand") als gewone stap in de flow, niet pas ontdekt ná de
+            koopknop. Upload opent dezelfde drukproef-editor als de winkelmand;
+            later aanleveren en ontwerpservice zijn gelijkwaardige routes. */}
+        <section className={styles.step}>
+          <header className={styles.stepHead}>
+            <span className={styles.stepDot}>{ontwerpStepNo}</span>
+            <span className={styles.stepTitle}>Je ontwerp</span>
+            <span className={styles.stepPick}>
+              {ontwerpKeuze === "service"
+                ? "Wij ontwerpen"
+                : ontwerpKeuze === "later"
+                  ? "Later aanleveren"
+                  : ontwerp
+                    ? (ontwerp.fileName ?? "Geüpload")
+                    : "Nog geen bestand"}
+            </span>
+          </header>
+
+          <input
+            ref={ontwerpInputRef}
+            type="file"
+            accept="image/jpeg,image/png,application/pdf"
+            className={styles.ontwerpInput}
+            aria-label="Ontwerpbestand kiezen"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setOntwerpFile(file);
+                setOntwerpModalOpen(true);
+                setOntwerpKeuze("upload");
+              }
+              e.target.value = "";
+            }}
+          />
+
+          <div
+            className={styles.ontwerpKeuzes}
+            role="radiogroup"
+            aria-label="Je ontwerp"
+          >
+            <button
+              type="button"
+              role="radio"
+              aria-checked={ontwerpKeuze === "upload"}
+              data-on={ontwerpKeuze === "upload" || undefined}
+              className={styles.ontwerpTegel}
+              onClick={() => {
+                setOntwerpKeuze("upload");
+                setAdded(false);
+                if (!ontwerp) ontwerpInputRef.current?.click();
+              }}
+            >
+              <span className={styles.ontwerpTegelTitel}>
+                ⬆ Upload je ontwerp
+              </span>
+              <span className={styles.ontwerpTegelSub}>
+                PDF, JPG of PNG · max 50 MB · je ziet direct de drukproef
+              </span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={ontwerpKeuze === "later"}
+              data-on={ontwerpKeuze === "later" || undefined}
+              className={styles.ontwerpTegel}
+              onClick={() => {
+                setOntwerpKeuze("later");
+                setAdded(false);
+              }}
+            >
+              <span className={styles.ontwerpTegelTitel}>Later aanleveren</span>
+              <span className={styles.ontwerpTegelSub}>
+                Bestel nu; je krijgt na het afrekenen een uploadlink per mail
+              </span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={ontwerpKeuze === "service"}
+              data-on={ontwerpKeuze === "service" || undefined}
+              className={styles.ontwerpTegel}
+              onClick={() => {
+                setOntwerpKeuze("service");
+                setAdded(false);
+              }}
+            >
+              <span className={styles.ontwerpTegelTitel}>
+                Laat ons ontwerpen
+              </span>
+              <span className={styles.ontwerpTegelSub}>
+                {fmt(DESIGN_SERVICE_PRICE)} eenmalig per order · eerst een
+                drukproef, dan pas drukken
+              </span>
+            </button>
+          </div>
+
+          {ontwerpKeuze === "upload" && ontwerp && (
+            <div className={styles.ontwerpKlaar}>
+              {ontwerp.previewUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={ontwerp.previewUrl}
+                  alt=""
+                  className={styles.ontwerpThumb}
+                />
+              ) : (
+                <span className={styles.ontwerpThumbDoc} aria-hidden="true">
+                  PDF
+                </span>
+              )}
+              <span className={styles.ontwerpKlaarNaam}>
+                <Check size={14} aria-hidden="true" /> {ontwerp.fileName}
+                {ontwerp.fileWarnings.length > 0 && (
+                  <span className={styles.ontwerpKlaarWarn}>
+                    ⚠︎ met waarschuwing, zie drukproef
+                  </span>
+                )}
+              </span>
+              <span className={styles.ontwerpKlaarActies}>
+                <button
+                  type="button"
+                  className={styles.link}
+                  onClick={() => ontwerpInputRef.current?.click()}
+                >
+                  Vervangen
+                </button>
+                <button
+                  type="button"
+                  className={styles.link}
+                  onClick={verwijderOntwerp}
+                >
+                  Verwijderen
+                </button>
+              </span>
+            </div>
+          )}
+
+          <ArtworkUploadModal
+            open={ontwerpModalOpen}
+            onClose={() => {
+              setOntwerpModalOpen(false);
+              setOntwerpFile(null);
+            }}
+            onConfirm={onOntwerpConfirm}
+            widthCm={size.widthCm}
+            heightCm={size.heightCm}
+            initialFile={ontwerpFile}
+            sjabloon={sjabloon}
+          />
+        </section>
+
         {/* Stap 3 — Aantal: "Zet je rij neer". Eén baniervlag is zelden het
             plan; ze staan in rijen bij entrees, op beursterreinen en langs de
             weg. Het aantal kies je hier letterlijk door masten te planten:
@@ -1462,29 +1700,6 @@ export function ProductConfigurator({
             </div>
           </div>
         </section>
-
-        {/* Ontwerpservice — lichte add-on */}
-        <button
-          type="button"
-          className={styles.addon}
-          role="switch"
-          aria-checked={designService}
-          data-on={designService}
-          onClick={() => {
-            setDesignService((v) => !v);
-            setAdded(false);
-          }}
-        >
-          <span className={styles.addonText}>
-            <span className={styles.addonTitle}>Laat je vlag door ons ontwerpen</span>
-            <span className={styles.addonSub}>
-              Vast bedrag · {fmt(DESIGN_SERVICE_PRICE)} · eenmalig per order
-            </span>
-          </span>
-          <span className={styles.addonSwitch} aria-hidden="true">
-            <span className={styles.addonKnob} />
-          </span>
-        </button>
 
         {/* Zelf opmaken? Het sjabloon hoort bij de gekozen maat + afwerking. */}
         {sjabloon && (

@@ -738,12 +738,14 @@
 .optionList .optionRow {
   grid-column: 1 / -1;
 }
-/* Smal scherm: kleinere kolom-minima en krappere kolomruimte, zodat de
-   keuzegroepen twee-aan-twee blijven staan in plaats van één brede kolom. */
+/* Smal scherm: één keuzegroep per rij. Twee groepen naast elkaar leest op
+   een telefoon als één 2×2-matrix (Links|Tunnel / Rechts|Geen) omdat de
+   groepslabels buiten beeld schuiven; onder elkaar blijft elke groep een
+   herkenbaar blok. De keuzes bínnen een groep staan dan juist twee-aan-twee. */
 @media (max-width: 480px) {
   .optionList {
-    grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
-    gap: 12px var(--space-sm);
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
 }
 .optionRow {
@@ -767,6 +769,14 @@
   font-size: 13px;
   letter-spacing: -0.01em;
   color: var(--accent);
+}
+/* Korte uitleg onder het groepslabel van een fotokaarten-groep (beachvlag):
+   zelfde stem als .optRijHint, maar op de volle rijbreedte. */
+.optionRowHint {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-stone);
+  max-width: 60ch;
 }
 .optionGrid {
   display: grid;
@@ -868,6 +878,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+}
+/* Smal scherm: de groepen staan onder elkaar (zie .optionList hierboven),
+   dus de keuzes bínnen een groep mogen juist twee-aan-twee. */
+@media (max-width: 480px) {
+  .optChips {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 .optChip {
   appearance: none;
@@ -2067,12 +2085,32 @@
   }
 }
 @media (max-width: 420px) {
+  /* Compacte balk: prijs op de eerste rij, aantal + knop samen op de tweede.
+     De oude volle-breedte-kolom maakte de balk ~180px hoog en bedekte een
+     kwart van het scherm terwijl je nog aan het configureren was. */
   .buyBar {
-    align-items: stretch;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-xs) var(--space-sm);
+  }
+  .priceBlock {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 10px;
+  }
+  .priceLabel {
+    display: none;
+  }
+  .priceValue {
+    font-size: 26px;
+  }
+  .buyQty {
+    flex: 0 0 auto;
   }
   .actions {
-    flex-direction: column;
-    width: 100%;
+    flex: 1 1 auto;
   }
   .actions :global(a),
   .actions :global(button) {
@@ -2234,4 +2272,132 @@
   font-size: 13px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+/* ── Stap "Je ontwerp": drie gelijkwaardige routes als keuzetegels ─────── */
+.ontwerpInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.ontwerpKeuzes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+@media (max-width: 700px) {
+  .ontwerpKeuzes {
+    grid-template-columns: 1fr;
+  }
+}
+.ontwerpTegel {
+  appearance: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-sm) 18px;
+  text-align: left;
+  background: var(--color-white);
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.ontwerpTegel:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.ontwerpTegel:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+.ontwerpTegel[data-on] {
+  border-color: var(--accent);
+  background: var(--forest-3);
+  box-shadow: var(--shadow-sm);
+}
+.ontwerpTegelTitel {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-charcoal);
+}
+.ontwerpTegelSub {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-stone);
+}
+/* Geüpload bestand: mini-drukproef + naam + vervang/verwijder. */
+.ontwerpKlaar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding: 10px 14px;
+  border: 1.5px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+}
+.ontwerpThumb {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--forest-3);
+}
+.ontwerpThumbDoc {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--forest-3);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-forest);
+}
+.ontwerpKlaarNaam {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-forest);
+  overflow-wrap: anywhere;
+}
+.ontwerpKlaarWarn {
+  font-weight: 600;
+  color: var(--color-copper-rust);
+}
+.ontwerpKlaarActies {
+  display: inline-flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+.link {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.link:hover {
+  color: var(--color-terracotta);
 }
