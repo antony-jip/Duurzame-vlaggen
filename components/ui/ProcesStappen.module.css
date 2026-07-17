@@ -6,14 +6,17 @@
 .section {
   position: relative;
   z-index: 1;
-  /* Overlap de off-white golf van de footer met de groene onderrand van de
-     waterband, zodat het naadloos in de forest-footer overloopt (geen wit). */
+  /* Overlap de golf van de footer, zodat het naadloos in de forest-footer
+     overloopt (geen wit ertussen). */
   margin-bottom: calc(-1 * clamp(22px, 3vw, 38px));
-  padding-block: clamp(44px, 6vw, 72px) clamp(150px, 18vw, 192px);
+  /* Onderruimte was clamp(150px, 18vw, 192px): dat reserveerde plek voor de
+     blauwe waterstrook die hier stond. Die is weg, dus zonder fotoband eindigt
+     de sectie gewoon in de forest-footer — anders bleef er een leeg groen gat. */
+  padding-block: clamp(44px, 6vw, 72px) clamp(56px, 7vw, 84px);
   background: var(--color-forest);
 }
 /* Solide groene cap ónder de sectie — dekt de laatste off-white golf van de
-   footer af, zonder de golvende waterrand te platten. */
+   footer af, zonder de golvende onderrand van de fotoband te platten. */
 .section::after {
   content: "";
   position: absolute;
@@ -37,9 +40,9 @@
   z-index: 1;
 }
 
-/* ---- Fotoband-variant: het maten-overzicht van het product in plaats van de
-   waterstrook. Hoger, want de plaat is hier de boodschap: alle maten in één
-   blik. De sectie reserveert er extra onderruimte voor. */
+/* ---- Fotoband-variant: producten met een maten-overzicht (sizesImage) tonen
+   dat als brede plaat boven de footer. De plaat is hier de boodschap — alle
+   maten in één blik — dus de sectie reserveert er extra onderruimte voor. */
 .sectionFotoBand {
   padding-block: clamp(44px, 6vw, 72px)
     calc(clamp(300px, 46vw, 700px) + clamp(36px, 5vw, 64px));
@@ -76,67 +79,6 @@
   /* Dun gehouden zodat de maatlabels onderin de plaat vrij blijven. */
   height: clamp(14px, 2vw, 30px);
   display: block;
-}
-
-/* ---- Waterstrook met microplastic-deeltjes, áchter de golvende groene randen.
-   Eén SVG regelt de schildervolgorde (blauw achter, groen ervoor); alleen de
-   deeltjes bewegen (zacht dobberen) — geen tegelende drift, dus geen naad. */
-.water {
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 100%;
-  height: clamp(104px, 12vw, 132px);
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-}
-.waterSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Microplastic-deeltjes die zachtjes in de blauwe strook dobberen. */
-.speck {
-  position: absolute;
-  width: 6px;
-  height: 4px;
-  border-radius: 1px;
-  opacity: 0.65;
-  animation: speck-bob 6s var(--ease-in-out) infinite alternate;
-}
-@keyframes speck-bob {
-  from {
-    transform: translateY(0) rotate(0deg);
-  }
-  to {
-    transform: translateY(-5px) rotate(38deg);
-  }
-}
-.speck1 { left: 8%; top: 40%; background: var(--color-terracotta); animation-duration: 5.5s; }
-.speck2 {
-  left: 19%; top: 52%; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--color-sage-blue); animation-duration: 7s; animation-delay: -2s;
-}
-.speck3 { left: 28%; top: 44%; width: 7px; height: 4px; background: #c9a24f; animation-duration: 6.4s; animation-delay: -3.5s; }
-.speck4 { left: 37%; top: 56%; width: 4px; height: 6px; background: var(--color-terracotta); animation-duration: 8s; animation-delay: -1s; }
-.speck5 {
-  left: 46%; top: 42%; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--color-sage-blue); animation-duration: 6.8s; animation-delay: -4.5s;
-}
-.speck6 { left: 55%; top: 54%; background: #c9a24f; animation-duration: 6.1s; animation-delay: -2.5s; }
-.speck7 {
-  left: 64%; top: 45%; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--color-terracotta); animation-duration: 7.4s; animation-delay: -5s;
-}
-.speck8 { left: 73%; top: 57%; width: 7px; height: 4px; background: var(--color-sage-blue); animation-duration: 6.7s; animation-delay: -1.5s; }
-.speck9 { left: 83%; top: 43%; width: 4px; height: 6px; background: #c9a24f; animation-duration: 7.8s; animation-delay: -3s; }
-.speck10 {
-  left: 92%; top: 53%; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--color-terracotta); animation-duration: 6.3s; animation-delay: -4s;
 }
 
 .head {
@@ -333,9 +275,6 @@
   .badgeNum,
   .pill {
     transition: none;
-  }
-  .speck {
-    animation: none;
   }
 }
 
