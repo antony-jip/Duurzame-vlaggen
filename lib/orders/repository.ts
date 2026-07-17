@@ -342,9 +342,11 @@ export async function advanceOrderStatus(
  * event_type, external_id). Used so a Mollie/Probo callback that fires twice
  * only mutates state once. `external_id` is stored inside the payload.
  *
- * Note: no DB-level unique index yet, so this is check-then-insert (a tight
- * race could double-insert). Acceptable for now; add a partial unique index if
- * callbacks ever get noisy.
+ * Een partiële unieke index (`order_events_dedupe_uidx`, migratie
+ * 20260717120000, alle bronnen behalve `portal`) dekt de race af: verliest een
+ * gelijktijdige tweede insert alsnog, dan gooit die 23505 en hertest de webhook
+ * (Mollie), waarna `hasEvent` 'm dedupliceert. Optionele verfijning: die 23505
+ * hier opvangen en als `{ inserted: false }` behandelen om de 500 te vermijden.
  */
 export async function recordEventOnce(input: {
   orderId: string;
