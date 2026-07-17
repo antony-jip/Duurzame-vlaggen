@@ -138,6 +138,25 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
         </Container>
       </section>
+
+      {/* LEVENSCYCLUS — waar het uiteindelijk om gaat: de vlag lost op en komt
+          terug als aarde. Eén beeld, geen extra kop: de tijdlijn benoemt zijn
+          eigen stappen, dus een kop erboven zou hetzelfde twee keer zeggen.
+          `unoptimized` want de image-optimizer weigert SVG zolang
+          dangerouslyAllowSVG uit staat — en een vector heeft hem toch niet
+          nodig. */}
+      <section className={styles.levenscyclus}>
+        <Container>
+          <Image
+            src="/levenscyclus/levenscyclus-tijdlijn.svg"
+            alt="De levenscyclus van een vlag in vier jaar: jouw vlag lost op, wordt aarde en gaat terug naar de natuur."
+            width={4558}
+            height={1833}
+            unoptimized
+            className={styles.levenscyclusBeeld}
+          />
+        </Container>
+      </section>
     </>
   );
 }

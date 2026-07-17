@@ -274,6 +274,19 @@
   color: var(--color-stone);
 }
 
+/* ==========================================================================
+   LEVENSCYCLUS — de tijdlijn onderaan, vlak boven de footer.
+   ========================================================================== */
+.levenscyclus {
+  background: var(--color-off-white);
+  padding-block: 0 clamp(48px, 6vw, 88px);
+}
+.levenscyclusBeeld {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Honeypot — weggeschoven in plaats van display:none, want dat slaan sommige
    bots juist over. Onbereikbaar voor toetsenbord en screenreader. */
 .honeypot {
