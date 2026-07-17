@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import styles from "./page.module.css";
 import { Badge, Container } from "@/components/ui";
 import { ContactForm } from "./ContactForm";
@@ -7,16 +8,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
   title: "Contact, offerte en advies",
   description:
-    "Neem contact op met Duurzame Vlaggen in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",
+    "Neem contact op met Duurzame Vlaggen in Enkhuizen. Stel je vraag via het formulier of bel 085 060 8963. Je hebt binnen 24 uur antwoord.",
 };
 
-// Contact channels — kept as data so the markup stays tidy.
+// Contactkanalen. GEEN mailadres: dit is een webshop en alles loopt via het
+// formulier hiernaast, zodat aanvragen gestructureerd binnenkomen in plaats van
+// als losse mail. De telefoon blijft: dat is de terugvaloptie als het formulier
+// het niet doet, en die staat ook in de foutmelding van /api/contact.
 const CHANNELS = [
-  {
-    label: "E-mail",
-    value: "info@duurzame-vlaggen.nl",
-    href: "mailto:info@duurzame-vlaggen.nl",
-  },
   {
     label: "Telefoon",
     value: "085 060 8963",
@@ -47,20 +46,36 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
 
   return (
     <>
-      {/* HERO — egaal forest vlak dat uit de header loopt, golf naar off-white. */}
+      {/* HERO — forest vlak dat uit de header loopt, golf naar off-white. Erachter
+          de distributiekaart: vanuit Enkhuizen door heel Nederland. Zelfde
+          behandeling als de zee in de footer — een gradient dooft hem weg zodat
+          het sfeer is en geen foto in een kader. Decoratief, dus aria-hidden:
+          de kop vertelt het verhaal al. */}
       <section className={styles.hero} aria-labelledby="contact-title">
+        <div className={styles.heroKaartWrap} aria-hidden="true">
+          <Image
+            src="/contact/kaart-nederland.webp"
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className={styles.heroKaart}
+          />
+        </div>
         <Container className={styles.heroInner}>
-          <Badge variant="eyebrow" className={styles.heroEyebrow}>
-            Contact
-          </Badge>
-          <h1 id="contact-title" className={styles.heroTitle}>
-            Tijd om te{" "}
-            <span className={styles.heroAccent}>wapperen</span>.
-          </h1>
-          <p className={styles.heroSub}>
-            Vraag een offerte aan of stel je vraag over CSRD en compliance. We
-            reageren binnen 24 uur. Meestal sneller.
-          </p>
+          <div className={styles.heroTekst}>
+            <Badge variant="eyebrow" className={styles.heroEyebrow}>
+              Contact
+            </Badge>
+            <h1 id="contact-title" className={styles.heroTitle}>
+              Tijd om te{" "}
+              <span className={styles.heroAccent}>wapperen</span>.
+            </h1>
+            <p className={styles.heroSub}>
+              Stel je vraag via het formulier hieronder. Je hebt binnen 24 uur
+              antwoord, meestal sneller.
+            </p>
+          </div>
         </Container>
         <svg
           className={styles.heroWave}

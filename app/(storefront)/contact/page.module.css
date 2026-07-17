@@ -13,14 +13,93 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--color-forest);
+  /* Hoog genoeg om de hele kaart te dragen: het beeld is 16:9, dus zonder deze
+     hoogte valt er altijd wat weg. Geplafonneerd zodat hij op grote schermen
+     niet de halve pagina opeet. */
+  min-height: min(56vw, 740px);
 }
+
+/* De kaart ligt als achtergrondlaag in de hero. De kop staat links (heroInner
+   is max 820px en links uitgelijnd), het kaartbeeld zit rechts van het midden —
+   die vullen elkaar aan. Daarom is de gradient RICHTINGSGEVOELIG: dicht forest
+   aan de tekstkant zodat de witte kop leesbaar blijft, oplopend doorzichtig naar
+   rechts waar de kaart mag spreken. Een vlakke waas zou beide kanten pijn doen. */
+/* De beeldlaag krijgt exact de verhouding van de kaart (2400×1340) en hangt
+   rechts. Zo vallen beeldrand en elementrand samen: `cover` vult hem dan zonder
+   iets af te snijden, én het masker hieronder pakt de échte randen. Met
+   `inset: 0` + `contain` lukte dat niet — het beeld stond dan geletterboxt
+   binnen een breder element, en juist die harde beeldrand bleef zichtbaar. */
+.heroKaartWrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  aspect-ratio: 2400 / 1340;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Het element heeft nu de beeldverhouding, dus `cover` snijdt niets af: de hele
+   kaart staat in beeld. Het masker dooft de vier randen zodat het beeld oplost
+   in het forest en geen foto in een kader wordt. */
+.heroKaart {
+  object-fit: cover;
+  object-position: center;
+  mask-image: radial-gradient(
+    ellipse 68% 70% at 52% 50%,
+    rgba(0, 0, 0, 1) 42%,
+    rgba(0, 0, 0, 0.55) 78%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 68% 70% at 52% 50%,
+    rgba(0, 0, 0, 1) 42%,
+    rgba(0, 0, 0, 0.55) 78%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+/* De gradient hoort over de VOLLE hero, niet over de beeldlaag: die hangt rechts
+   en is smaller. Als laatste kind van .hero valt hij vanzelf boven de kaart en
+   onder de kop (heroInner staat op z-index 1). */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Twee lagen: horizontaal het leesvlak voor de kop, verticaal een demping naar
+     de golf toe zodat de kaart niet met een harde rand op de overgang eindigt. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(44, 95, 79, 0.3) 0%,
+      rgba(44, 95, 79, 0) 42%,
+      rgba(44, 95, 79, 0.5) 100%
+    ),
+    linear-gradient(
+      90deg,
+      var(--color-forest) 0%,
+      rgba(44, 95, 79, 0.92) 30%,
+      rgba(44, 95, 79, 0.55) 52%,
+      rgba(44, 95, 79, 0.18) 100%
+    );
+}
+/* De Container houdt de paginabreedte en -marge aan; de tekst wordt daarbinnen
+   links uitgelijnd. Eerder zat max-width: 820px op de Container zelf, en die
+   heeft margin-inline: auto — het smalle tekstblok centreerde zich dan midden op
+   het scherm in plaats van de gutter van de rest van de pagina te volgen. */
 .heroInner {
+  position: relative;
+  z-index: 1;
+  /* Ruimer dan de andere hero's: dit vlak draagt de kaart, en die heeft hoogte
+     nodig — bij een lage hero snijdt object-fit: cover er te veel vanaf. */
+  padding-block: clamp(72px, 10vw, 152px);
+}
+.heroTekst {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-md);
   max-width: 820px;
-  padding-block: clamp(48px, 7vw, 104px);
 }
 .heroEyebrow {
   animation: fade-in-up var(--duration-slow) var(--ease-out) both;
@@ -46,6 +125,8 @@
 }
 .heroWave {
   position: relative;
+  /* Boven de kaartlaag, anders schijnt het beeld door de golf heen. */
+  z-index: 1;
   display: block;
   width: 100%;
   height: clamp(28px, 4.5vw, 64px);
@@ -191,4 +272,42 @@
   font-weight: 600;
   font-size: 13px;
   color: var(--color-stone);
+}
+
+/* Honeypot — weggeschoven in plaats van display:none, want dat slaan sommige
+   bots juist over. Onbereikbaar voor toetsenbord en screenreader. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.formFout {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #8c2f1d;
+  background: #fdf0ec;
+  border-left: 3px solid var(--color-terracotta);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.formSucces {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-forest);
+  background: rgba(44, 95, 79, 0.06);
+  border-left: 3px solid var(--color-forest);
+  border-radius: 6px;
+  padding: 20px 22px;
+}
+.formSuccesTitel {
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 4px;
 }

@@ -98,12 +98,12 @@ export function Footer() {
               Biologisch afbreekbare vlaggen voor bedrijven die hun merk laten
               wapperen zonder de planeet te belasten.
             </p>
+            {/* Geen mailadres: alles loopt via /contact, zodat aanvragen
+                gestructureerd binnenkomen in plaats van als losse mail. */}
             <address className={styles.contact}>
-<span>Duurzame Vlaggen</span>
+              <span>Duurzame Vlaggen</span>
               <span>Enkhuizen, Nederland</span>
-              <a href="mailto:info@duurzame-vlaggen.nl">
-                info@duurzame-vlaggen.nl
-              </a>
+              <Link href="/contact">Stel je vraag</Link>
               <a href="tel:+31850608963">085 060 8963</a>
             </address>
           </div>
