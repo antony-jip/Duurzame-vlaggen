@@ -281,10 +281,18 @@
   background: var(--color-off-white);
   padding-block: 0 clamp(48px, 6vw, 88px);
 }
+/* Ingetogen gehouden: dit is een contactpagina, het formulier is de hoofdzaak.
+   Vandaar kleiner dan de volle breedte en iets teruggenomen in kracht — het is
+   een sluitzin, geen tweede kop. */
 .levenscyclusBeeld {
   display: block;
   width: 100%;
+  max-width: 780px;
+  margin-inline: auto;
   height: auto;
+  /* Formaat doet het werk, niet de dekking: een illustratie ver wegfaden ziet er
+     uit als een weergavefout in plaats van als een keuze. */
+  opacity: 0.88;
 }
 
 /* Honeypot — weggeschoven in plaats van display:none, want dat slaan sommige
