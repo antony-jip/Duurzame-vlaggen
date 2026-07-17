@@ -1,7 +1,9 @@
 import { Header, Footer } from "@/components/ui";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartPaneel } from "@/components/cart/CartPaneel";
-import { getUiCatalog } from "@/lib/i18n";
+import { DictProvider } from "@/components/i18n/DictProvider";
+import { getMessages } from "@/lib/i18n";
+import { displayRateForMarket } from "@/lib/vat/rates";
 import { SITE_URL, SITE_NAME, LOGO_URL, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
 
@@ -50,24 +52,26 @@ export default async function StorefrontLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const catalog = await getUiCatalog();
+  const { catalog, market, dict } = await getMessages();
 
   return (
-    <CartProvider catalog={catalog}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }}
-      />
-      <Header />
-      <main id="main">{children}</main>
-      <Footer />
-      {/* Het winkelmand-paneel schuift open zodra er iets in de mand gaat, dus
-          het moet op elke storefront-pagina bestaan. */}
-      <CartPaneel />
-    </CartProvider>
+    <DictProvider dict={dict}>
+      <CartProvider catalog={catalog} vatRatePct={displayRateForMarket(market)}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: ORG_JSON_LD }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD }}
+        />
+        <Header />
+        <main id="main">{children}</main>
+        <Footer />
+        {/* Het winkelmand-paneel schuift open zodra er iets in de mand gaat, dus
+            het moet op elke storefront-pagina bestaan. */}
+        <CartPaneel />
+      </CartProvider>
+    </DictProvider>
   );
 }

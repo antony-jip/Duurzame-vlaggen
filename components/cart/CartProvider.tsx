@@ -25,8 +25,17 @@ import { cartRegelTotaal } from "@/lib/pricing/local-catalog";
 const STORAGE_KEY = "dv-cart-v1";
 const VAT_STORAGE_KEY = "dv-vat-incl-v1";
 
-/** NL standaard-btw-tarief, gebruikt voor de ex/incl-weergave. */
-export const VAT_RATE = 0.21;
+/**
+ * Btw-tarief voor de ex/incl-weergave, als FRACTIE (0.21), per markt.
+ *
+ * Stond hier eerder als vaste 0.21: elke markt toonde het NL-tarief, terwijl de
+ * checkout (`computeVat`) al wél het juiste tarief rekende — een Duitse
+ * bezoeker zag 21% en betaalde 19%. Het tarief komt nu server-side mee via
+ * `displayRateForMarket`, zodat pagina en winkelmand hetzelfde zeggen.
+ */
+function vatFractie(vatRatePct: number): number {
+  return vatRatePct / 100;
+}
 
 export interface CartContextValue {
   /** Current cart lines. */
@@ -39,6 +48,8 @@ export interface CartContextValue {
   hydrated: boolean;
   /** Active UI catalog, for locale-aware currency formatting. */
   catalog: UiCatalog;
+  /** Btw-tarief van deze markt als fractie (0.21 / 0.19 / 0.20), voor weergave. */
+  vatRate: number;
   /** Toont de gebruiker prijzen incl. btw? (voorkeur, persistent) */
   inclVat: boolean;
   /** Wissel tussen prijzen ex en incl btw. */
@@ -73,10 +84,14 @@ function lineSignature(item: Omit<CartItem, "id" | "amount">): string {
 export function CartProvider({
   children,
   catalog,
+  vatRatePct,
 }: {
   children: ReactNode;
   catalog: UiCatalog;
+  /** Standaard-btw-tarief van de actieve markt in PROCENTEN (21 / 19 / 20). */
+  vatRatePct: number;
 }) {
+  const vatRate = vatFractie(vatRatePct);
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [inclVat, setInclVat] = useState(false);
@@ -201,6 +216,7 @@ export function CartProvider({
       count,
       hydrated,
       catalog,
+      vatRate,
       inclVat,
       toggleVat,
       addItem,
@@ -211,7 +227,7 @@ export function CartProvider({
       paneelOpen,
       setPaneelOpen,
     };
-  }, [items, hydrated, catalog, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemDesigns, clear, paneelOpen]);
+  }, [items, hydrated, catalog, vatRate, inclVat, toggleVat, addItem, removeItem, updateAmount, setItemDesigns, clear, paneelOpen]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

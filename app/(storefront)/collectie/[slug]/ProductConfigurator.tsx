@@ -19,7 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./product.module.css";
 import { Badge, Button, Check, ArrowRight, Leaf, Truck, ShieldCheck } from "@/components/ui";
-import { useCart, VAT_RATE } from "@/components/cart/CartProvider";
+import { useCart } from "@/components/cart/CartProvider";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
 import type { CatalogProduct, CatalogSize } from "@/lib/catalog/products";
@@ -480,7 +480,7 @@ export function ProductConfigurator({
   catalog: UiCatalog;
   labels: ConfiguratorLabels;
 }) {
-  const { addItem, inclVat } = useCart();
+  const { addItem, inclVat, vatRate } = useCart();
 
   // Standaard-formaat = de "Meest gekozen" maat als die bestaat, anders de eerste.
   const defaultSizeIndex = Math.max(
@@ -615,7 +615,7 @@ export function ProductConfigurator({
   const savings = Math.round((unitBasis * quantity - lineExVat) * 100) / 100;
 
   /** Toon een ex-btw bedrag volgens de globale btw-voorkeur. */
-  const show = (amount: number) => (inclVat ? amount * (1 + VAT_RATE) : amount);
+  const show = (amount: number) => (inclVat ? amount * (1 + vatRate) : amount);
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
 
   function handleAdd() {

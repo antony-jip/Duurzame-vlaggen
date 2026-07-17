@@ -4,13 +4,14 @@
  * Prijsweergave die de globale btw-voorkeur (ex/incl) volgt.
  *
  * Prijzen worden overal ex btw doorgegeven (`amount`); dit component past het
- * NL-tarief toe wanneer de bezoeker "incl. btw" heeft gekozen en toont
- * optioneel het bijpassende label. Werkt zowel bij SSR als na hydratie: de
- * voorkeur staat standaard op ex btw, dus de server- en eerste client-render
- * komen overeen.
+ * btw-tarief van de ACTIEVE MARKT toe wanneer de bezoeker "incl. btw" heeft
+ * gekozen en toont optioneel het bijpassende label. Werkt zowel bij SSR als na
+ * hydratie: de voorkeur staat standaard op ex btw, dus de server- en eerste
+ * client-render komen overeen.
  */
 
-import { useCart, VAT_RATE } from "@/components/cart/CartProvider";
+import { useCart } from "@/components/cart/CartProvider";
+import { useDict } from "@/components/i18n/DictProvider";
 import { formatCurrency } from "@/lib/i18n/formatting";
 
 export interface PriceProps {
@@ -25,9 +26,10 @@ export interface PriceProps {
 }
 
 export function Price({ amount, className, suffix = false, suffixClassName }: PriceProps) {
-  const { catalog, inclVat } = useCart();
-  const shown = inclVat ? amount * (1 + VAT_RATE) : amount;
-  const label = inclVat ? "incl. btw" : "excl. btw";
+  const { catalog, inclVat, vatRate } = useCart();
+  const dict = useDict();
+  const shown = inclVat ? amount * (1 + vatRate) : amount;
+  const label = inclVat ? dict.product.inclVat : dict.product.exclVat;
   return (
     <>
       <span className={className}>{formatCurrency(shown, catalog)}</span>
