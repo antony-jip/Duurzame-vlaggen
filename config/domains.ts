@@ -45,9 +45,11 @@ export const MARKET_DOMAINS: Record<string, MarketConfig> = {
  */
 export const REDIRECT_DOMAINS: Record<string, { toHost: string; toPath: string }> = {
   "biologisch-afbreekbare-vlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/" },
-  "duurzame-mastvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/mastvlaggen" },
-  "duurzame-baniervlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/baniervlaggen" },
-  "duurzame-beachvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/beachvlaggen" },
+  // Target the real product routes. The plural keyword paths (/mastvlaggen …)
+  // do not exist; the catalogue lives under /collectie/<slug> (singular).
+  "duurzame-mastvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/mastvlag" },
+  "duurzame-baniervlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/baniervlag" },
+  "duurzame-beachvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/beachvlag" },
   // Open decision (spec §3): .com → en/x-default OR 301 → .nl.
   // Default to 301 → .nl until Antony decides. Remove this line to make it a market site.
   "duurzame-vlaggen.com": { toHost: "duurzame-vlaggen.nl", toPath: "/" },
