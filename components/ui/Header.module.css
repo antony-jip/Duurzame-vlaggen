@@ -11,7 +11,9 @@
   background: var(--color-forest);
 }
 
-/* ---- USP-topbar — licht, met forest vinkjes ---- */
+/* ---- USP-topbar — licht, Sora-caps met vinkjes in een forest rondje.
+   Eén regel, altijd: op smallere schermen vallen USP's één voor één weg in
+   plaats van dat de balk stapelt en de halve viewport opeet. ---- */
 .topbar {
   background: var(--color-off-white);
   border-bottom: 1px solid var(--forest-6);
@@ -21,32 +23,61 @@
   align-items: center;
   justify-content: space-between;
   gap: clamp(12px, 3vw, 32px);
-  min-height: 36px;
-  flex-wrap: wrap;
+  min-height: 38px;
+  flex-wrap: nowrap;
 }
 .topbarUsps {
   display: flex;
   align-items: center;
-  gap: clamp(16px, 4vw, 48px);
-  flex-wrap: wrap;
+  gap: clamp(14px, 3vw, 40px);
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
 }
 .topbarItem {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-charcoal);
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-charcoal) 78%, transparent);
   padding-block: 6px;
+  white-space: nowrap;
 }
 .topbarCheck {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--forest-6);
   color: var(--color-forest);
+  font-size: 9px;
   font-weight: 700;
+  line-height: 1;
 }
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .topbarItem:nth-child(n + 3) {
     display: none;
+  }
+}
+@media (max-width: 600px) {
+  .topbarItem:nth-child(n + 2) {
+    display: none;
+  }
+  /* Iets compacter zodat de eerste USP naast de btw-toggle past. */
+  .topbarItem {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    gap: 6px;
+  }
+  .topbarCheck {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
   }
 }
 
@@ -59,7 +90,9 @@
   padding-bottom: 12px;
 }
 
-/* ---- Product-subnav — donkerder forest plank onder de masthead ---- */
+/* ---- Product-subnav — donkerder forest plank onder de masthead. Elk product
+   is een tab-pill met zijn eigen vlag-glyph; de actieve pagina licht op als
+   witte pill, zodat de plank ook vertelt wáár je staat. ---- */
 .subnav {
   background: color-mix(in srgb, var(--color-forest) 82%, #10241c);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -67,8 +100,9 @@
 .subnavInner {
   display: flex;
   align-items: center;
-  gap: clamp(16px, 3vw, 40px);
-  min-height: 44px;
+  gap: clamp(4px, 1vw, 10px);
+  min-height: 48px;
+  padding-block: 7px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -76,17 +110,53 @@
   display: none;
 }
 .subnavLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-ui);
   font-weight: 600;
   font-size: 13.5px;
   letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  padding: 12px 0;
+  padding: 7px 14px;
+  border-radius: 999px;
   white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+.subnavLink svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+  transition: opacity var(--duration-fast) var(--ease-out);
 }
 .subnavLink:hover {
   color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+.subnavLink:hover svg {
+  opacity: 1;
+}
+.subnavLink[data-active] {
+  color: var(--color-forest);
+  background: var(--color-off-white);
+  font-weight: 700;
+  box-shadow: var(--shadow-xs);
+}
+.subnavLink[data-active] svg {
+  opacity: 1;
+}
+/* Mobiel scrollt de plank horizontaal; de fade rechts verklapt dat er meer is. */
+@media (max-width: 1023px) {
+  .subnavInner {
+    mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 36px),
+      transparent
+    );
+  }
 }
 
 /* ---- Brand — het witte volledige logo, gemaakt voor de forest balk ---- */
@@ -135,6 +205,13 @@
   color: #fff;
 }
 .link:hover::after {
+  right: 0;
+}
+/* Actieve sectie: dezelfde onderstreep als hover, maar dan blijvend. */
+.link[data-active] {
+  color: #fff;
+}
+.link[data-active]::after {
   right: 0;
 }
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./Footer.module.css";
 import { Container } from "./Container";
-import { ArrowRight } from "./Icon";
+import { ArrowRight, Leaf, Recycle, ShieldCheck, Truck } from "./Icon";
 import { BEDRIJF, bedrijfsAdresRegels } from "@/lib/bedrijf";
 import { getAllProducts } from "@/lib/catalog/products";
 
@@ -86,6 +86,27 @@ export function Footer() {
           </Link>
         </div>
 
+        {/* Zekerheden-rij — de winkelbeloftes nog één keer, vlak voor de
+            linkkolommen. Dit is waar een twijfelende bezoeker eindigt. */}
+        <ul className={styles.trustRow}>
+          <li>
+            <ShieldCheck size={17} aria-hidden="true" />
+            Veilig betalen via iDEAL &amp; Mollie
+          </li>
+          <li>
+            <Truck size={17} aria-hidden="true" />
+            Binnen 5 werkdagen geleverd
+          </li>
+          <li>
+            <Leaf size={17} aria-hidden="true" />
+            100% biologisch afbreekbaar doek
+          </li>
+          <li>
+            <Recycle size={17} aria-hidden="true" />
+            CSRD-materiaalpaspoort bij elke order
+          </li>
+        </ul>
+
         <div className={styles.grid}>
           <div className={styles.brandCol}>
             <Image
@@ -166,9 +187,16 @@ export function Footer() {
 
         <div className={styles.bottom}>
           <span>
-            &copy; {year}{" "}
-<span>Sign Company VOF</span>{" "}
-            · Alle rechten voorbehouden.
+            &copy; {year} <span>{BEDRIJF.rechtspersoon}</span> · Alle rechten
+            voorbehouden.
+            <span className={styles.juridisch}>
+              {[
+                BEDRIJF.kvkBevestigd ? `KvK ${BEDRIJF.kvkNummer}` : null,
+                `Btw ${BEDRIJF.btwNummer}`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
           </span>
           <div className={styles.bottomLinks}>
             <Link href="/privacyverklaring">Privacy</Link>

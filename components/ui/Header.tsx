@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 import { Container } from "./Container";
 import {
@@ -52,6 +53,7 @@ const TOPBAR_USPS = [
 const PRODUCT_LINKS = getAllProducts().map((p) => ({
   href: `/collectie/${p.slug}`,
   label: p.name,
+  slug: p.slug,
 }));
 
 /** Live cart count from the provider. Kept tiny so the rest of the header
@@ -81,6 +83,8 @@ const MEGA_PRODUCTS = getAllProducts();
 export function Header() {
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
+  // Actieve pagina in hoofd- en productnav: de bezoeker ziet waar hij is.
+  const pathname = usePathname();
 
   // Grace-timer: het paneel blijft even open terwijl de muis van de
   // Collectie-link over de subnav naar het paneel beweegt.
@@ -161,6 +165,7 @@ export function Header() {
                 <Link
                   href={item.href}
                   className={`${styles.link} ${mega ? styles.linkOpen : ""}`}
+                  data-active={pathname.startsWith("/collectie") || undefined}
                   aria-expanded={mega}
                   onFocus={openMega}
                 >
@@ -169,7 +174,12 @@ export function Header() {
                 </Link>
               </span>
             ) : (
-              <Link key={item.href} href={item.href} className={styles.link}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={styles.link}
+                data-active={pathname.startsWith(item.href) || undefined}
+              >
                 {item.label}
               </Link>
             ),
@@ -192,14 +202,27 @@ export function Header() {
         </div>
       </Container>
 
-      {/* Product-subnav — de winkelplanken direct onder de masthead. */}
+      {/* Product-subnav — de winkelplanken direct onder de masthead: elk
+          product als tab met zijn eigen vlag-glyph, en de actieve pagina als
+          lichte pill zodat je ziet in welke "plank" je staat. */}
       <nav className={styles.subnav} aria-label="Producten">
         <Container className={styles.subnavInner} as="div">
-          {PRODUCT_LINKS.map((item) => (
-            <Link key={item.href} href={item.href} className={styles.subnavLink}>
-              {item.label}
-            </Link>
-          ))}
+          {PRODUCT_LINKS.map((item) => {
+            const FlagIcon = FLAG_ICONS[item.slug] ?? FlagMast;
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={styles.subnavLink}
+                data-active={active || undefined}
+                aria-current={active ? "page" : undefined}
+              >
+                <FlagIcon size={15} aria-hidden="true" />
+                {item.label}
+              </Link>
+            );
+          })}
         </Container>
       </nav>
 

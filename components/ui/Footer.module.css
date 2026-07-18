@@ -179,6 +179,41 @@
   outline-offset: 3px;
 }
 
+/* ---- Zekerheden-rij ---- */
+.trustRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm) var(--space-lg);
+  list-style: none;
+  margin: 0;
+  padding: clamp(20px, 3vw, 32px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+.trustRow li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.85);
+}
+.trustRow svg {
+  flex-shrink: 0;
+  color: #e6a488;
+}
+@media (max-width: 1024px) {
+  .trustRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .trustRow {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---- Columns ---- */
 .grid {
   display: grid;
@@ -204,7 +239,6 @@
 .colTitle {
   font-family: var(--font-ui);
   font-weight: 700;
-  font-weight: 500;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -252,6 +286,14 @@
   font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.02em;
+}
+/* KvK/btw op eigen regel onder de copyright: vindbaar voor wie het zoekt,
+   onzichtbaar stil voor wie het niet zoekt. */
+.juridisch {
+  display: block;
+  margin-top: 4px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
 }
 /* De bedrijfsnaam-link erft anders de donkergroene globale linkkleur —
    onleesbaar op de donkere footer. */

@@ -164,6 +164,20 @@ export const PRODUCTS: CatalogProduct[] = [
       // 772-baniervlaggen is dezelfde opname als de hero (762) — eruit gehaald
       // zodat de galerij geen dubbele foto toont.
       BRAND_IMAGES.banieren,
+      // Eigen praktijkfoto's van geleverd klantwerk (lokaal in
+      // public/baniervlag, bijgesneden en verkleind uit de originelen).
+      {
+        src: "/baniervlag/banieren-straatbeeld.webp",
+        alt: "Twee baniervlaggen in eigen huisstijl in een dorpsstraat",
+      },
+      {
+        src: "/baniervlag/banieren-velddag.webp",
+        alt: "Drie doorgedrukte baniervlaggen met bladmotief op een velddag",
+      },
+      {
+        src: "/baniervlag/banieren-oranje-rij.webp",
+        alt: "Drie oranje baniervlaggen op rij langs de weg",
+      },
       img(
         "1018-baniervlaggen-maten-overzichten.webp",
         "Overzicht van beschikbare baniervlag-maten",
@@ -323,6 +337,11 @@ export const PRODUCTS: CatalogProduct[] = [
         "1400-duurzame-square-beachvlaggen.webp",
         "Duurzame square beachvlaggen buiten opgesteld",
       ),
+      // Eigen praktijkfoto van geleverd klantwerk (lokaal in public/beachvlag).
+      {
+        src: "/beachvlag/beachvlag-straatbeeld.webp",
+        alt: "Paarse beachvlag met eigen ontwerp langs de straat",
+      },
     ],
     accent: "terracotta",
     // ORDERABLE (2026-07-13, owner-confirmed). Default code `beachflag-straight`;
@@ -375,12 +394,9 @@ export const PRODUCTS: CatalogProduct[] = [
       "763-duurzame-gevelvlag.webp",
       "Duurzame gevelvlag aan een uithouder",
     ),
-    gallery: [
-      img(
-        "771-gevelvlaggen-duurzame-vlaggen.webp",
-        "Gevelvlaggen aan een bedrijfspand",
-      ),
-    ],
+    // 771-gevelvlaggen is dezelfde opname als de hero (763) — eruit gehaald
+    // zodat de galerij geen dubbele foto toont.
+    gallery: [],
     accent: "sage-purple",
     // ORDERABLE (2026-07-13, owner-confirmed). Chain: amount → flag-ciclo → size
     // preset → flag-pole-side → landscape-strap-cord-loop (fixed finishing), see
