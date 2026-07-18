@@ -927,3 +927,14 @@
 .arrowLink:hover svg {
   transform: translateX(4px);
 }
+
+/* Verdiepingsverwijzing onder een sectie (bv. naar flag-ciclo.nl). */
+.verdieping {
+  margin-top: var(--space-lg);
+  font-size: 15px;
+  color: var(--color-stone);
+  max-width: 62ch;
+}
+.verdieping a {
+  font-weight: 700;
+}

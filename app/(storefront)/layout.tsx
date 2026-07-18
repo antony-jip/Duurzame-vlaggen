@@ -23,6 +23,9 @@ const ORG_JSON_LD = jsonLd({
   alternateName: SITE_NAME,
   url: SITE_URL,
   logo: LOGO_URL,
+  // Eigen kennisdomein over het doek; wederzijdse verwijzing (dat domein
+  // noemt ons als publisher) helpt Google de twee sites als één entiteit zien.
+  sameAs: ["https://flag-ciclo.nl"],
   description:
     "Biologisch afbreekbare vlaggen voor bedrijven, gemeenten en verenigingen. Klaar voor de CSRD en zonder microplastics.",
   areaServed: "NL",

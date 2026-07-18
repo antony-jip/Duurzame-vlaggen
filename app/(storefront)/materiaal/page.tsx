@@ -186,6 +186,15 @@ export default function MateriaalPage() {
               </ul>
             </div>
           </div>
+          {/* Verdieping op ons eigen kennisdomein: wie het naadje van de kous
+              wil (testdata, rPET-vergelijking, werking) leest door op
+              flag-ciclo.nl; die site linkt voor bestellen weer hierheen. */}
+          <p className={styles.verdieping}>
+            Het hele verhaal achter het doek, van de testdata tot de
+            vergelijking met gerecycled rPET, lees je op{" "}
+            <a href="https://flag-ciclo.nl">flag-ciclo.nl</a>, ons
+            kennisdomein over Flag-CiCLO.
+          </p>
         </Container>
       </section>
 

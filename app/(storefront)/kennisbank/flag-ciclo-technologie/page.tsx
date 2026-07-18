@@ -207,6 +207,12 @@ export default function FlagCicloTechnologiePage() {
               Bekijk alle certificeringen en testresultaten{" "}
               <ArrowRight size={16} />
             </Link>
+            <p className={styles.verdieping}>
+              Nog dieper de stof in? Op{" "}
+              <a href="https://flag-ciclo.nl">flag-ciclo.nl</a>, ons
+              kennisdomein over het doek, vind je de werking in animatie en de
+              vergelijking met gerecycled rPET.
+            </p>
           </div>
         </Container>
       </section>
