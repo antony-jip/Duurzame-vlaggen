@@ -124,7 +124,9 @@
       "phoneInvalid": "Veuillez saisir un numéro de téléphone valide.",
       "postalCodeInvalid": "Veuillez saisir un code postal valide.",
       "vatNumberInvalid": "Veuillez saisir un numéro de TVA valide.",
-      "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié."
+      "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié.",
+      "factuurZakelijk": "Le paiement sur facture est réservé aux commandes professionnelles.",
+      "factuurLand": "Le paiement sur facture est disponible pour les entreprises aux Pays-Bas, en Allemagne, en Autriche et en France. Sinon, choisissez le paiement direct."
     }
   },
   "order": {

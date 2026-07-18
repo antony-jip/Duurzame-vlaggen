@@ -31,6 +31,7 @@ import {
   heeftOntwerpserviceOptie,
   type CheckoutLine,
 } from "@/components/cart/types";
+import { billieBeschikbaarVoorLand } from "@/lib/orders/billie";
 import { getProduct } from "@/lib/catalog/products";
 import { buildProboOptions } from "@/lib/catalog/probo-mapping";
 import { publicEnv } from "@/lib/env";
@@ -214,6 +215,24 @@ export async function checkoutAction(
     }
   }
 
+  // --- Betaalmethode: factuur (Billie) alleen zakelijk en in de landen waar
+  // de methode bestaat. De UI toont de keuze alleen bij "Ik bestel zakelijk";
+  // dit is de autoritaire check op de payload. ---
+  const paymentMethod =
+    str(formData, "paymentMethod") === "billie" ? ("billie" as const) : undefined;
+  if (paymentMethod) {
+    if (!isBusiness) {
+      fieldErrors.paymentMethod = v.factuurZakelijk;
+    } else {
+      const factuurLand =
+        str(formData, sameAsBilling ? "shipping_country" : "billing_country") ||
+        "NL";
+      if (!billieBeschikbaarVoorLand(factuurLand)) {
+        fieldErrors.paymentMethod = v.factuurLand;
+      }
+    }
+  }
+
   if (Object.keys(fieldErrors).length > 0) {
     return {
       status: "error",
@@ -320,6 +339,7 @@ export async function checkoutAction(
     billingAddress,
     shippingAddress,
     items: draftItems,
+    paymentMethod,
   };
 
   let checkoutUrl: string | null = null;

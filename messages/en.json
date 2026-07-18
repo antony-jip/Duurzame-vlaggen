@@ -124,7 +124,9 @@
       "phoneInvalid": "Please enter a valid phone number.",
       "postalCodeInvalid": "Please enter a valid postal code.",
       "vatNumberInvalid": "Please enter a valid VAT number.",
-      "vatNumberNotVerified": "This VAT number could not be verified."
+      "vatNumberNotVerified": "This VAT number could not be verified.",
+      "factuurZakelijk": "Invoice payment is only available for business orders.",
+      "factuurLand": "Invoice payment is available for businesses in the Netherlands, Germany, Austria and France. Otherwise choose direct payment."
     }
   },
   "order": {

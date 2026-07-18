@@ -124,7 +124,9 @@
       "phoneInvalid": "Bitte geben Sie eine gültige Telefonnummer ein.",
       "postalCodeInvalid": "Bitte geben Sie eine gültige Postleitzahl ein.",
       "vatNumberInvalid": "Bitte geben Sie eine gültige USt-IdNr. ein.",
-      "vatNumberNotVerified": "Diese USt-IdNr. konnte nicht verifiziert werden."
+      "vatNumberNotVerified": "Diese USt-IdNr. konnte nicht verifiziert werden.",
+      "factuurZakelijk": "Kauf auf Rechnung ist nur für Geschäftsbestellungen verfügbar.",
+      "factuurLand": "Kauf auf Rechnung ist für Unternehmen in den Niederlanden, Deutschland, Österreich und Frankreich verfügbar. Wählen Sie andernfalls die Direktzahlung."
     }
   },
   "order": {

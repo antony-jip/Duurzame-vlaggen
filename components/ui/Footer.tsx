@@ -91,7 +91,7 @@ export function Footer() {
         <ul className={styles.trustRow}>
           <li>
             <ShieldCheck size={17} aria-hidden="true" />
-            Veilig betalen via iDEAL &amp; Mollie
+            iDEAL, creditcard of zakelijk op factuur
           </li>
           <li>
             <Truck size={17} aria-hidden="true" />

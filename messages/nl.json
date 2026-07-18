@@ -124,7 +124,9 @@
       "phoneInvalid": "Vul een geldig telefoonnummer in.",
       "postalCodeInvalid": "Vul een geldige postcode in.",
       "vatNumberInvalid": "Vul een geldig btw-nummer in.",
-      "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd."
+      "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd.",
+      "factuurZakelijk": "Betalen op factuur is alleen beschikbaar voor zakelijke bestellingen.",
+      "factuurLand": "Betalen op factuur kan voor bedrijven in Nederland, Duitsland, Oostenrijk en Frankrijk. Kies anders voor direct betalen."
     }
   },
   "order": {

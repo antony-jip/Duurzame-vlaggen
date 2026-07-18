@@ -6,6 +6,7 @@ import type { Json, OrderRow } from "@/lib/db/types";
 
 import type { ProboAddress, ProboOptionInput } from "@/lib/catalog/probo-mapping";
 import { createPayment, getPayment } from "@/lib/mollie/payments";
+import { billieRegels, naarMollieAdres } from "./billie";
 import { computeVat } from "@/lib/vat";
 import { computeOrderTotals } from "@/lib/pricing";
 import { getProduct } from "@/lib/catalog/products";
@@ -123,6 +124,12 @@ export interface CheckoutInput {
   /** Ship-to address — drives Probo delivery pricing and the VAT country. */
   shippingAddress: ProboAddress;
   items: OrderItemDraft[];
+  /**
+   * "billie" = zakelijk achteraf betalen op factuur via Mollie/Billie; de
+   * betaling krijgt dan het factuuradres en de orderregels mee. Afwezig =
+   * gewone Mollie-checkout (iDEAL enz.).
+   */
+  paymentMethod?: "billie";
 }
 
 // ---------------------------------------------------------------------------
@@ -363,6 +370,20 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   // handmatig gereconcilieerd ("Ververs betaling" in de admin); in productie
   // draait de webhook gewoon.
   const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(appUrl);
+  // Betalen op factuur (Billie) eist adres + orderregels op de betaling; de
+  // action valideert vooraf dat de klant zakelijk is en het land ondersteund.
+  const billie =
+    input.paymentMethod === "billie"
+      ? {
+          method: "billie",
+          billingAddress: naarMollieAdres(
+            input.billingAddress ?? input.shippingAddress,
+            input.email,
+          ),
+          shippingAddress: naarMollieAdres(input.shippingAddress, input.email),
+          lines: billieRegels(quote),
+        }
+      : {};
   const payment = await createPayment({
     amount: quote.totals.total,
     currency: quote.currency,
@@ -370,6 +391,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     redirectUrl: `${appUrl}/order/${order.id}`,
     ...(isLocalhost ? {} : { webhookUrl: `${appUrl}/api/webhooks/mollie` }),
     metadata: { orderId: order.id, orderNumber: order.order_number },
+    ...billie,
   });
 
   const updated = await advanceOrderStatus(order.id, "awaiting_payment", {

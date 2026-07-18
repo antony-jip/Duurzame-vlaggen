@@ -432,7 +432,8 @@ export default function AfrekenenPage() {
         </ol>
         <p className={styles.headSub}>
           <ShieldCheck size={15} aria-hidden="true" />
-          Veilig betalen via iDEAL. Binnen 5 werkdagen geleverd.
+          Veilig betalen via iDEAL of zakelijk op factuur. Binnen 5 werkdagen
+          geleverd.
         </p>
       </div>
 
@@ -570,6 +571,48 @@ export default function AfrekenenPage() {
               />
             )}
           </fieldset>
+
+          {/* Betaalwijze — alleen zakelijk: naast direct betalen ook achteraf
+              op factuur via Billie (Mollie). De server-action valideert de
+              keuze opnieuw; consumenten betalen altijd direct. */}
+          {isBusiness && (
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Betaling</legend>
+              <label className={styles.toggle}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="direct"
+                  defaultChecked={formValues?.paymentMethod !== "billie"}
+                />
+                <span className={styles.toggleLabel}>
+                  Direct betalen (iDEAL, creditcard)
+                </span>
+              </label>
+              <label className={styles.toggle}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="billie"
+                  defaultChecked={formValues?.paymentMethod === "billie"}
+                />
+                <span className={styles.toggleLabel}>
+                  Achteraf betalen op factuur (14 dagen)
+                </span>
+              </label>
+              <p className={styles.adresHulp}>
+                Op factuur loopt via Billie, de zakelijke betaalpartner van
+                Mollie: directe goedkeuring bij het afrekenen, wij gaan meteen
+                voor je aan de slag. Beschikbaar voor bedrijven in Nederland,
+                Duitsland, Oostenrijk en Frankrijk.
+              </p>
+              {state.fieldErrors?.paymentMethod && (
+                <p className={styles.veldFout} role="alert">
+                  {state.fieldErrors.paymentMethod}
+                </p>
+              )}
+            </fieldset>
+          )}
         </form>
         </div>
 
@@ -677,8 +720,8 @@ export default function AfrekenenPage() {
           </Button>
           <ul className={styles.trust}>
             <li>
-              <ShieldCheck size={16} aria-hidden="true" /> Veilig betalen via
-              iDEAL &amp; Mollie
+              <ShieldCheck size={16} aria-hidden="true" /> iDEAL, creditcard of
+              zakelijk op factuur
             </li>
             <li>
               <Leaf size={16} aria-hidden="true" /> CSRD-materiaalpaspoort bij

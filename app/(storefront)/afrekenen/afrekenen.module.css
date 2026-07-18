@@ -187,6 +187,12 @@
   font-size: 13px;
   color: var(--color-stone);
 }
+/* Foutmelding bij een keuzegroep zonder eigen Field (bv. betaalwijze). */
+.veldFout {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #ef4444;
+}
 
 @media (max-width: 520px) {
   .rowAdres {
