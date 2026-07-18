@@ -140,7 +140,10 @@
       "problemSubtitle": "Keine Sorge, Ihre Bestellung wartet weiterhin auf Sie. Versuchen Sie die Zahlung erneut, dann legen wir doch noch los.",
       "trackPromise": "Sobald wir Ihre Bestellung bearbeitet haben, erhalten Sie einen Track-und-Trace-Link per E-Mail. Damit verfolgen Sie Ihre Fahnen bis vor die Tür.",
       "retryCta": "Zahlung erneut versuchen",
-      "payCta": "Rechnung bezahlen"
+      "payCta": "Rechnung bezahlen",
+      "invoiceView": "Rechnung ansehen (PDF)",
+      "invoiceDownload": "Rechnung herunterladen",
+      "contactPrompt": "Fragen zur Bestellung? Telefon {phone} oder E-Mail {email}."
     },
     "steps": {
       "heading": "Wie es jetzt weitergeht",

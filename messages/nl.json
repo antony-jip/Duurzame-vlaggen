@@ -140,7 +140,10 @@
       "problemSubtitle": "Geen zorgen, je bestelling staat nog voor je klaar. Probeer de betaling opnieuw, dan gaan we alsnog aan de slag.",
       "trackPromise": "Zodra we je bestelling hebben verwerkt, ontvang je een track & trace-link per e-mail. Daarmee volg je je vlaggen tot aan de deur.",
       "retryCta": "Betaling opnieuw proberen",
-      "payCta": "Betaal je factuur"
+      "payCta": "Betaal je factuur",
+      "invoiceView": "Bekijk factuur (pdf)",
+      "invoiceDownload": "Factuur downloaden",
+      "contactPrompt": "Vragen over je bestelling? Bel {phone} of mail {email}."
     },
     "steps": {
       "heading": "Wat er nu gebeurt",
