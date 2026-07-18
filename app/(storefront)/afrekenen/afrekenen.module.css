@@ -484,3 +484,13 @@
   letter-spacing: 0.04em;
   color: var(--color-stone);
 }
+
+/* Btw-subregel direct onder het totaal: klein, rechts, geen zin maar een feit. */
+.totaalSub {
+  text-align: right;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-stone);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}

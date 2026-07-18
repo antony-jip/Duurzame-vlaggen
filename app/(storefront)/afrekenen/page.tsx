@@ -674,21 +674,20 @@ export default function AfrekenenPage() {
               <Price amount={teBetalen} />
             </strong>
           </div>
-          {/* Geen twijfel over btw op het beslismoment: benoem expliciet wat
-              het totaal is (ex of incl) én wat de andere kant kost, met
-              bedragen. Volgt de globale ex/incl-toggle. */}
-          <p className={styles.summaryNote}>
+          {/* Geen twijfel over btw op het beslismoment: één strakke subregel
+              onder het totaal die zegt wat dit bedrag is (ex of incl) en wat
+              de andere kant is. Volgt de globale ex/incl-toggle. */}
+          <p className={styles.totaalSub}>
             {inclVat ? (
               <>
-                Dit totaal is <strong>inclusief {Math.round(vatRate * 100)}% btw</strong>{" "}
-                ({formatCurrency(Math.round(teBetalen * vatRate * 100) / 100, catalog)} btw)
-                · exclusief btw: {formatCurrency(teBetalen, catalog)}
+                incl. {Math.round(vatRate * 100)}% btw ·{" "}
+                {formatCurrency(teBetalen, catalog)} excl. btw
               </>
             ) : (
               <>
-                Dit totaal is <strong>exclusief btw</strong> · inclusief{" "}
-                {Math.round(vatRate * 100)}% btw betaal je{" "}
-                {formatCurrency(Math.round(teBetalen * (1 + vatRate) * 100) / 100, catalog)}
+                excl. btw ·{" "}
+                {formatCurrency(Math.round(teBetalen * (1 + vatRate) * 100) / 100, catalog)}{" "}
+                incl. {Math.round(vatRate * 100)}% btw
               </>
             )}
           </p>
