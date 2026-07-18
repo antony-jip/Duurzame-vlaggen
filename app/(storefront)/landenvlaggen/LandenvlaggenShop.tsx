@@ -12,6 +12,7 @@
  */
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import styles from "./landenvlaggen.module.css";
 import { Button, Check, Price } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
@@ -39,7 +40,17 @@ function zoekNorm(s: string): string {
     .toLowerCase();
 }
 
-export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
+export function LandenvlaggenShop({
+  landen,
+  slugs,
+  initieleLandCode,
+}: {
+  landen: Land[];
+  /** Landcode → unieke slug, om de landtegels als echte links te renderen. */
+  slugs: Record<string, string>;
+  /** Op een landpagina: dit land staat meteen voorgeselecteerd in het paneel. */
+  initieleLandCode?: string;
+}) {
   const { addItem } = useCart();
 
   // Populaire landen in vaste volgorde bovenaan, afgeleid uit de server-lijst
@@ -53,8 +64,15 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
   // beter dan een kapotte bestelknop.
   const product = getProduct("mastvlag");
 
+  // Op een landpagina staat het land al vast (server-side gekozen via de slug):
+  // start met dat land voorgeselecteerd, zodat SSR-HTML en client-hydratie exact
+  // gelijk zijn. Op de hub (geen initieel land) begint het paneel leeg.
+  const initieelLand = initieleLandCode
+    ? (landen.find((l) => l.code === initieleLandCode) ?? null)
+    : null;
+
   const [zoek, setZoek] = useState("");
-  const [land, setLand] = useState<Land | null>(null);
+  const [land, setLand] = useState<Land | null>(initieelLand);
   // Aantal per formaat (maatlabel → stuks, default 0): zo bestel je meerdere
   // formaten van één land in één keer.
   const [aantallen, setAantallen] = useState<Record<string, number>>({});
@@ -62,7 +80,6 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
   const [voortgang, setVoortgang] = useState<string | null>(null);
   const [fout, setFout] = useState<string | null>(null);
   const [toegevoegd, setToegevoegd] = useState(false);
-  const paneelRef = useRef<HTMLDivElement>(null);
   const zoekRef = useRef<HTMLInputElement>(null);
 
   if (!product) return null;
@@ -102,15 +119,6 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
     }));
     setFout(null);
     setToegevoegd(false);
-  }
-
-  function kiesLand(l: Land) {
-    setLand(l);
-    setFout(null);
-    setToegevoegd(false);
-    setAantallen({});
-    // Op mobiel staat het bestelpaneel onder de lijst — even in beeld brengen.
-    paneelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   /** Succes-vervolg: selectie leeg, terug naar de lijst, zoekveld klaar. */
@@ -214,16 +222,20 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
 
   // `groot` — de "Veel gekozen"-tegels zijn iets groter met een prominentere
   // vlag, zodat ze zich visueel onderscheiden van de rustige A-Z-lijst.
+  //
+  // Elke tegel is een échte link naar /landenvlaggen/{slug}: zo vindt Google de
+  // per-land-pagina's (client-side buttons zijn onvindbaar) en houdt Next de
+  // navigatie snel via prefetch. Op een landpagina rendert diezelfde shop het
+  // gekozen land meteen voorgeselecteerd (initieleLandCode).
   function landKnop(l: Land, groot = false) {
     const actief = land?.code === l.code;
     return (
-      <button
+      <Link
         key={l.code}
-        type="button"
+        href={`/landenvlaggen/${slugs[l.code]}`}
         className={groot ? `${styles.landKnop} ${styles.landKnopGroot}` : styles.landKnop}
         data-actief={actief || undefined}
-        onClick={() => kiesLand(l)}
-        aria-pressed={actief}
+        aria-current={actief ? "page" : undefined}
       >
         {/* Statische SVG uit public/ — next/image optimaliseert geen SVG. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -241,7 +253,7 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
             <Check size={13} />
           </span>
         )}
-      </button>
+      </Link>
     );
   }
 
@@ -290,7 +302,7 @@ export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
       </section>
 
       {/* Kolom 2 — bestellen */}
-      <div className={styles.paneelWrap} ref={paneelRef}>
+      <div className={styles.paneelWrap}>
         <section className={styles.paneel} aria-label="Je bestelling">
           {land ? (
             <>

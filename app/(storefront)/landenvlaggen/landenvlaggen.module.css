@@ -192,6 +192,7 @@
   letter-spacing: -0.01em;
   color: var(--color-charcoal);
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
 }

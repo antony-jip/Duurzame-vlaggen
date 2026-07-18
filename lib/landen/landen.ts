@@ -82,7 +82,8 @@ export function alleLanden(): Land[] {
 
 /**
  * Bestandsnaam-slug van een landnaam: "Curaçao" → "curacao". Voor de naam van
- * het gegenereerde drukbestand (landenvlag-nederland.png).
+ * het gegenereerde drukbestand (landenvlag-nederland.png) én de basis van de
+ * per-land-landingspagina (/landenvlaggen/curacao).
  */
 export function landSlug(naam: string): string {
   return naam
@@ -91,4 +92,64 @@ export function landSlug(naam: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+/** Eén land met zijn unieke, botsingsvrije URL-slug. */
+export interface LandMetSlug extends Land {
+  /** Unieke slug binnen alle landen; basis is `landSlug(naam)`. */
+  slug: string;
+}
+
+/**
+ * Slug-index over álle landen, met botsingsbewaking.
+ *
+ * De slug is standaard `landSlug(naam)` (bv. "duitsland"). Zouden twee landen
+ * dezelfde basis-slug opleveren — de NL-namen van Intl.DisplayNames zijn niet
+ * gegarandeerd uniek na normalisatie — dan krijgen álle botsende landen de
+ * landcode als suffix (`{basis}-{code}`). Dat is deterministisch: het hangt
+ * niet af van de sorteervolgorde, dus dezelfde landcode levert altijd dezelfde
+ * URL. Landen met een unieke basis houden hun schone slug.
+ *
+ * Gememoïseerd: `alleLanden()` bouwt per aanroep nieuwe Intl-objecten, en
+ * `generateStaticParams`/`generateMetadata`/de pagina vragen dit meermaals op.
+ */
+let slugIndexCache: {
+  lijst: LandMetSlug[];
+  opSlug: Map<string, LandMetSlug>;
+} | null = null;
+
+function slugIndex() {
+  if (slugIndexCache) return slugIndexCache;
+  const landen = alleLanden();
+  const basisAantal = new Map<string, number>();
+  for (const l of landen) {
+    const basis = landSlug(l.naam);
+    basisAantal.set(basis, (basisAantal.get(basis) ?? 0) + 1);
+  }
+  const lijst: LandMetSlug[] = landen.map((land) => {
+    const basis = landSlug(land.naam);
+    const slug =
+      (basisAantal.get(basis) ?? 0) > 1 ? `${basis}-${land.code}` : basis;
+    return { ...land, slug };
+  });
+  const opSlug = new Map(lijst.map((l) => [l.slug, l]));
+  slugIndexCache = { lijst, opSlug };
+  return slugIndexCache;
+}
+
+/** Alle landen (NL-gesorteerd) met hun unieke URL-slug. */
+export function alleLandenMetSlug(): LandMetSlug[] {
+  return slugIndex().lijst;
+}
+
+/** Landcode → unieke slug, voor het bouwen van links naar de landpagina's. */
+export function slugsPerLandcode(): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const l of slugIndex().lijst) out[l.code] = l.slug;
+  return out;
+}
+
+/** Resolver: slug → land, of undefined bij een onbekende slug (→ notFound). */
+export function vindLandOpSlug(slug: string): LandMetSlug | undefined {
+  return slugIndex().opSlug.get(slug);
 }

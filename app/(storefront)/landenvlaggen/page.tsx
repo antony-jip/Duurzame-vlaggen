@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import styles from "./landenvlaggen.module.css";
-import { Container, Check, Leaf, ShieldCheck, Truck } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { getProduct } from "@/lib/catalog/products";
-import { alleLanden } from "@/lib/landen/landen";
+import { alleLanden, slugsPerLandcode } from "@/lib/landen/landen";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
 import { LandenvlaggenShop } from "./LandenvlaggenShop";
+import { Afwerking, TrustStrip } from "./Deelblokken";
 
 /**
  * Landenvlaggen — één goed vindbare bestelpagina voor alle landvlaggen.
@@ -33,6 +32,8 @@ export default function LandenvlaggenPage() {
   // opbouwen kregen sommige landnamen een andere tekst dan de SSR-HTML en
   // klapte de hydration om. Nu rendert client exact wat de server stuurde.
   const landen = alleLanden();
+  // Landcode → unieke slug, zodat de tegels echte links naar de landpagina's zijn.
+  const slugs = slugsPerLandcode();
 
   // Product-structured data: de landenvlag als eigen aanbieding, geprijsd
   // vanaf de kleinste mastvlag-maat.
@@ -74,57 +75,15 @@ export default function LandenvlaggenPage() {
           automatisch van de officiële vlag, gedrukt op biologisch afbreekbaar
           mastvlag-doek. Niets aanleveren, geen microplastics.
         </p>
-        <ul className={styles.trustStrip}>
-          <li>
-            <Truck size={16} aria-hidden="true" />
-            Binnen 5 werkdagen op je mast · buitenland 1,5 week
-          </li>
-          <li>
-            <ShieldCheck size={16} aria-hidden="true" />
-            Drukbestand maken wij
-          </li>
-          <li>
-            <Leaf size={16} aria-hidden="true" />
-            100% biologisch afbreekbaar doek
-          </li>
-          <li>
-            <Check size={16} aria-hidden="true" />
-            Gratis verzending vanaf &euro;&nbsp;100 incl. btw
-          </li>
-        </ul>
+        <TrustStrip />
       </header>
 
-      <LandenvlaggenShop landen={landen} />
+      <LandenvlaggenShop landen={landen} slugs={slugs} />
 
       {/* Afwerking: compact infoblok onder de shop. Inhoud komt 1-op-1 uit de
           mastvlag-catalogus en de configurator-hints; wie iets anders wil dan
           de standaard (haken, wit) kan door naar de mastvlag-configurator. */}
-      <section className={styles.afwerking} aria-labelledby="afwerking-titel">
-        <Image
-          src="/configurator/afwerking/mastvlag-haken.jpeg"
-          alt="Mastzijde van de mastvlag: witte band met haken voor de mastlijn"
-          width={220}
-          height={220}
-          className={styles.afwerkingBeeld}
-        />
-        <div className={styles.afwerkingTekst}>
-          <h2 id="afwerking-titel" className={styles.afwerkingTitel}>
-            Zo werken we je vlag af
-          </h2>
-          <p className={styles.afwerkingBody}>
-            Je landenvlag is een mastvlag van biologisch afbreekbaar
-            Flag-CiCLO&reg;-doek, rondom afgewerkt. Aan de mastzijde zit een
-            stevige band met haken (clips): die klik je zo op de mastlijn. Band
-            en garen zijn standaard wit; de kleur van het doek is gewoon je
-            vlag.
-          </p>
-          <p className={styles.afwerkingBody}>
-            Liever koord en lus om vast te knopen, of een zwarte band? Die
-            keuzes vind je in de{" "}
-            <Link href="/collectie/mastvlag">mastvlag-configurator</Link>.
-          </p>
-        </div>
-      </section>
+      <Afwerking />
     </Container>
   );
 }
