@@ -30,6 +30,7 @@ import {
   ontwerpserviceVoorOrder,
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/pricing/local-catalog";
+import { formatCurrency } from "@/lib/i18n/formatting";
 import { checkoutAction } from "./actions";
 import { useAdresZoeker, useAdresZoekerBijTypen } from "./useAdresZoeker";
 import { initialCheckoutState } from "./checkout-state";
@@ -286,7 +287,7 @@ function AddressFields({
 }
 
 export default function AfrekenenPage() {
-  const { items, subtotal, hydrated, inclVat, clear } = useCart();
+  const { items, subtotal, hydrated, inclVat, vatRate, catalog, clear } = useCart();
   const [state, formAction, isPending] = useActionState(
     checkoutAction,
     initialCheckoutState,
@@ -673,8 +674,22 @@ export default function AfrekenenPage() {
               <Price amount={teBetalen} />
             </strong>
           </div>
-          <p className={styles.summaryNote}>
-            Prijzen zijn {inclVat ? "inclusief" : "exclusief"} btw.
+          {/* Geen twijfel over btw op het beslismoment: één strakke subregel
+              onder het totaal die zegt wat dit bedrag is (ex of incl) en wat
+              de andere kant is. Volgt de globale ex/incl-toggle. */}
+          <p className={styles.totaalSub}>
+            {inclVat ? (
+              <>
+                incl. {Math.round(vatRate * 100)}% btw ·{" "}
+                {formatCurrency(teBetalen, catalog)} excl. btw
+              </>
+            ) : (
+              <>
+                excl. btw ·{" "}
+                {formatCurrency(Math.round(teBetalen * (1 + vatRate) * 100) / 100, catalog)}{" "}
+                incl. {Math.round(vatRate * 100)}% btw
+              </>
+            )}
           </p>
 
           {/* Gratis-verzending-drempel: zonder dit merkt de klant pas op de
