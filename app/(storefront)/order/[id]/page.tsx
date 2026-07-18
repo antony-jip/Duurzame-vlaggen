@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import styles from "./order.module.css";
 import { Bladeren } from "./Bladeren";
 import { MandLegen } from "./MandLegen";
-import { Badge, Button, Card, Container, Check } from "@/components/ui";
+import { Badge, Button, Card, Container, Check, Document } from "@/components/ui";
 import { getMessages } from "@/lib/i18n";
 import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
 import { countPendingDesigns, getOrderById } from "@/lib/orders/repository";
@@ -152,6 +152,31 @@ export default async function OrderConfirmationPage({
     { titel: s.production, body: s.productionBody },
     { titel: s.shipped, body: s.shippedBody },
   ];
+  const c = dict.order.confirmation;
+
+  // Factuurpreview + betaal/downloadknoppen verschijnen zodra er een
+  // prijs-snapshot is. Bij een probleem-status ligt de nadruk op de retry, dus
+  // dan tonen we de factuur bewust niet.
+  const heeftFactuur = order.total != null && toon !== "probleem";
+  const factuurHref = `/order/${order.id}/factuur`;
+
+  const contactBlok = (
+    <p className={styles.contactBlok}>
+      {(() => {
+        const [voorTel, restNaTel] = c.contactPrompt.split("{phone}");
+        const [tussen, naMail] = (restNaTel ?? "").split("{email}");
+        return (
+          <>
+            {voorTel}
+            <a href={`tel:${BEDRIJF.telefoon.replace(/\s/g, "")}`}>{BEDRIJF.telefoon}</a>
+            {tussen}
+            <a href={`mailto:${BEDRIJF.email}`}>{BEDRIJF.email}</a>
+            {naMail}
+          </>
+        );
+      })()}
+    </p>
+  );
 
   return (
     <Container as="section" className={styles.page} aria-labelledby="order-title">
@@ -161,190 +186,186 @@ export default async function OrderConfirmationPage({
           /afrekenen wijst en de regels dus nog nodig zijn. */}
       <MandLegen orderId={order.id} actief={toon !== "probleem"} />
 
+      {/* ── Hero — compact: chip links, tekst rechts ──────────────────────── */}
       <div className={`${styles.hero} ${styles[toon]}`}>
         <span className={styles.checkChip} aria-hidden="true">
-          {toon === "probleem" ? <span className={styles.bang}>!</span> : <Check size={32} />}
+          {toon === "probleem" ? <span className={styles.bang}>!</span> : <Check size={30} />}
         </span>
-        <span className={styles.orderTag}>
-          {dict.order.confirmation.orderNumber} {order.order_number}
-        </span>
-        <h1 id="order-title" className={styles.heroTitle}>
-          {hero.title}
-        </h1>
-        <p className={styles.heroSub}>{hero.sub}</p>
-
-        {toon === "probleem" && (
-          <Button as="a" href="/afrekenen" variant="primary" className={styles.heroCta}>
-            {dict.order.confirmation.retryCta}
-          </Button>
-        )}
-
-        {/* Op rekening: de klant landt hier direct na het plaatsen. De factuur
-            met betaallink staat in zijn mail, maar hier direct betalen kan ook,
-            met de factuur ernaast als preview (browser-PDF-viewer, incl.
-            downloadknop). */}
-        {toon === "wachten" && order.mollie_payment_link_url && (
-          <div className={styles.heroActies}>
-            <Button
-              as="a"
-              href={order.mollie_payment_link_url}
-              variant="primary"
-              className={styles.heroCta}
-            >
-              {dict.order.confirmation.payCta}
+        <div className={styles.heroBody}>
+          <span className={styles.orderTag}>
+            {c.orderNumber} {order.order_number}
+          </span>
+          <h1 id="order-title" className={styles.heroTitle}>
+            {hero.title}
+          </h1>
+          <p className={styles.heroSub}>{hero.sub}</p>
+          {toon === "probleem" && (
+            <Button as="a" href="/afrekenen" variant="primary" className={styles.heroCta}>
+              {c.retryCta}
             </Button>
-            <Button
-              as="a"
-              href={`/order/${order.id}/factuur`}
-              target="_blank"
-              rel="noopener"
-              variant="secondary"
-              className={styles.heroCta}
-            >
-              {dict.order.confirmation.invoiceView}
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {pendingDesigns > 0 && order.portal_token && (
-        <Card className={styles.stepsCard} elevation="raised">
-          <p className={styles.trackPromise} role="status">
-            <span className={styles.trackIcon} aria-hidden="true">
-              →
-            </span>
-            {dict.order.portal.pending.replace("{count}", String(pendingDesigns))}
-          </p>
-          <div className={styles.actions}>
-            <Button as="a" href={`/aanleveren/${order.portal_token}`} variant="primary">
-              {dict.order.portal.cta}
-            </Button>
-          </div>
-        </Card>
-      )}
+      {/* ── Statusbalk — de kerncijfers in één rij ────────────────────────── */}
+      <div className={styles.statusBar}>
+        <div className={styles.statusCell}>
+          <span className={styles.cellLabel}>{c.orderNumber}</span>
+          <span className={styles.cellValue}>{order.order_number}</span>
+        </div>
+        <div className={styles.statusCell}>
+          <span className={styles.cellLabel}>{dict.order.statusLabel}</span>
+          <span className={styles.cellValue}>
+            <Badge variant={status.variant}>{status.label}</Badge>
+          </span>
+        </div>
+        <div className={`${styles.statusCell} ${styles.total}`}>
+          <span className={styles.cellLabel}>
+            {dict.checkout.total} ({dict.product.inclVat})
+          </span>
+          <span className={styles.cellValue}>
+            {order.total != null
+              ? formatCurrency(order.total, catalog, order.currency)
+              : "—"}
+          </span>
+        </div>
+        <div className={styles.statusCell}>
+          <span className={styles.cellLabel}>{dict.order.orderedOn}</span>
+          <span className={styles.cellValue}>{formatDate(order.created_at, catalog)}</span>
+        </div>
+      </div>
 
-      {toon !== "probleem" && (
-        <Card className={styles.stepsCard} elevation="raised">
-          <h2 className={styles.stepsHeading}>{s.heading}</h2>
-          <ol className={styles.steps}>
-            {stapCopy.map((stap, i) => (
-              <li key={stap.titel} className={`${styles.step} ${styles[stappen[i]]}`}>
-                <span className={styles.stepDot} aria-hidden="true">
-                  {stappen[i] === "af" ? <Check size={14} /> : i + 1}
+      {/* ── Dashboard — links de voortgang, rechts de factuur ─────────────── */}
+      <div className={heeftFactuur ? styles.dash : styles.dashSingle}>
+        <div className={styles.dashMain}>
+          {pendingDesigns > 0 && order.portal_token && (
+            <Card className={styles.panel} elevation="raised">
+              <p className={styles.trackPromise} role="status">
+                <span className={styles.trackIcon} aria-hidden="true">
+                  →
                 </span>
-                <div className={styles.stepText}>
-                  <span className={styles.stepTitle}>{stap.titel}</span>
-                  <span className={styles.stepBody}>{stap.body}</span>
+                {dict.order.portal.pending.replace("{count}", String(pendingDesigns))}
+              </p>
+              <div className={styles.actions}>
+                <Button as="a" href={`/aanleveren/${order.portal_token}`} variant="primary">
+                  {dict.order.portal.cta}
+                </Button>
+              </div>
+            </Card>
+          )}
+
+          {toon !== "probleem" && (
+            <Card className={styles.panel} elevation="raised">
+              <h2 className={styles.panelHeading}>{s.heading}</h2>
+              <ol className={styles.steps}>
+                {stapCopy.map((stap, i) => (
+                  <li key={stap.titel} className={`${styles.step} ${styles[stappen[i]]}`}>
+                    <span className={styles.stepDot} aria-hidden="true">
+                      {stappen[i] === "af" ? <Check size={14} /> : i + 1}
+                    </span>
+                    <div className={styles.stepText}>
+                      <span className={styles.stepTitle}>{stap.titel}</span>
+                      <span className={styles.stepBody}>{stap.body}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <p className={styles.trackPromise}>
+                <span className={styles.trackIcon} aria-hidden="true">
+                  →
+                </span>
+                {order.tracking_url ? dict.order.tracking : c.trackPromise}
+              </p>
+
+              {order.tracking_url && (
+                <div className={styles.actions}>
+                  <Button as="a" href={order.tracking_url} variant="primary">
+                    {dict.order.tracking}
+                  </Button>
                 </div>
-              </li>
-            ))}
-          </ol>
+              )}
+            </Card>
+          )}
 
-          <p className={styles.trackPromise}>
-            <span className={styles.trackIcon} aria-hidden="true">
-              →
-            </span>
-            {order.tracking_url
-              ? dict.order.tracking
-              : dict.order.confirmation.trackPromise}
-          </p>
-
-          {order.tracking_url && (
+          {/* Adres, e-mailbevestiging en klantcontact bij elkaar. */}
+          <Card className={styles.panel} elevation="raised">
+            {shipping && (
+              <AddressSummary label={dict.checkout.shippingAddress} address={shipping} />
+            )}
+            <p className="text-sm">
+              {c.emailSent.replace("{email}", order.email)}
+            </p>
             <div className={styles.actions}>
-              <Button as="a" href={order.tracking_url} variant="primary">
-                {dict.order.tracking}
+              <Button as="a" href="/collectie" variant="secondary">
+                {dict.common.cta.continueShopping}
               </Button>
             </div>
-          )}
-        </Card>
-      )}
-
-      <Card className={styles.card} elevation="raised">
-        <div className={styles.grid}>
-          <div className={styles.cell}>
-            <span className={styles.cellLabel}>
-              {dict.order.confirmation.orderNumber}
-            </span>
-            <span className={styles.cellValue}>{order.order_number}</span>
-          </div>
-          <div className={styles.cell}>
-            <span className={styles.cellLabel}>Status</span>
-            <span className={styles.cellValue}>
-              <Badge variant={status.variant}>{status.label}</Badge>
-            </span>
-          </div>
-          <div className={styles.cell}>
-            <span className={styles.cellLabel}>Besteldatum</span>
-            <span className={styles.cellValue}>
-              {formatDate(order.created_at, catalog)}
-            </span>
-          </div>
-          <div className={styles.cell}>
-            <span className={styles.cellLabel}>{dict.checkout.email}</span>
-            <span className={styles.cellValue}>{order.email}</span>
-          </div>
+            {contactBlok}
+          </Card>
         </div>
 
-        <hr className={styles.divider} />
+        {heeftFactuur && (
+          <aside className={styles.dashSide}>
+            <Card className={styles.invoiceCard} elevation="raised">
+              <div className={styles.invoiceHead}>
+                <h2 className={styles.panelHeading}>{c.invoiceTitle}</h2>
+                <div className={styles.invoiceActies}>
+                  {toon === "wachten" && order.mollie_payment_link_url && (
+                    <Button
+                      as="a"
+                      href={order.mollie_payment_link_url}
+                      variant="primary"
+                      size="sm"
+                    >
+                      {c.payCta}
+                    </Button>
+                  )}
+                  <Button
+                    as="a"
+                    href={`${factuurHref}?download=1`}
+                    variant="secondary"
+                    size="sm"
+                  >
+                    {c.invoiceDownload}
+                  </Button>
+                </div>
+              </div>
 
-        <div className={styles.grid}>
-          <div className={`${styles.cell} ${styles.total}`}>
-            <span className={styles.cellLabel}>
-              {dict.checkout.total} ({dict.product.inclVat})
-            </span>
-            <span className={styles.cellValue}>
-              {order.total != null
-                ? formatCurrency(order.total, catalog, order.currency)
-                : "—"}
-            </span>
-          </div>
-          {shipping && (
-            <AddressSummary
-              label={dict.checkout.shippingAddress}
-              address={shipping}
-            />
-          )}
-        </div>
-
-        <p className="text-sm">
-          {dict.order.confirmation.emailSent.replace("{email}", order.email)}
-        </p>
-
-        <div className={styles.actions}>
-          {/* Factuur altijd bij de hand zodra er een prijs-snapshot is; ook ná
-              betaling wil je hem voor je administratie kunnen pakken. */}
-          {order.total != null && toon !== "probleem" && (
-            <Button
-              as="a"
-              href={`/order/${order.id}/factuur?download=1`}
-              variant="secondary"
-            >
-              {dict.order.confirmation.invoiceDownload}
-            </Button>
-          )}
-          <Button as="a" href="/collectie" variant="secondary">
-            {dict.common.cta.continueShopping}
-          </Button>
-        </div>
-
-        {/* Klantcontact in de persoonlijke (sage-purple) kleur, conform de
-            styleguide-semantiek: dit is de mens-tot-mens-route. */}
-        <p className={styles.contactBlok}>
-          {(() => {
-            const [voorTel, restNaTel] = dict.order.confirmation.contactPrompt.split("{phone}");
-            const [tussen, naMail] = (restNaTel ?? "").split("{email}");
-            return (
-              <>
-                {voorTel}
-                <a href={`tel:${BEDRIJF.telefoon.replace(/\s/g, "")}`}>{BEDRIJF.telefoon}</a>
-                {tussen}
-                <a href={`mailto:${BEDRIJF.email}`}>{BEDRIJF.email}</a>
-                {naMail}
-              </>
-            );
-          })()}
-        </p>
-      </Card>
+              {/* Preview in A4-verhouding. `<object>` toont de PDF in de
+                  browser-viewer; lukt dat niet (o.a. veel mobiele browsers),
+                  dan valt hij terug op de kaart met "Bekijk factuur". Daarnaast
+                  vervangt een media-query de object door diezelfde kaart op
+                  smalle schermen, want daar is embedden onbetrouwbaar. */}
+              <div className={styles.invoiceFrame}>
+                <object
+                  className={styles.invoiceObject}
+                  data={`${factuurHref}#toolbar=0&view=FitH`}
+                  type="application/pdf"
+                  aria-label={c.invoiceTitle}
+                >
+                  <div className={styles.invoiceFallback}>
+                    <span className={styles.invoiceIcon} aria-hidden="true">
+                      <Document size={28} />
+                    </span>
+                    <Button as="a" href={factuurHref} target="_blank" rel="noopener" variant="secondary" size="sm">
+                      {c.invoiceView}
+                    </Button>
+                  </div>
+                </object>
+                <div className={styles.invoiceMobile}>
+                  <span className={styles.invoiceIcon} aria-hidden="true">
+                    <Document size={28} />
+                  </span>
+                  <Button as="a" href={factuurHref} target="_blank" rel="noopener" variant="secondary" size="sm">
+                    {c.invoiceView}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </aside>
+        )}
+      </div>
     </Container>
   );
 }

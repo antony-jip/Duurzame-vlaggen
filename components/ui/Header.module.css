@@ -215,6 +215,20 @@
   right: 0;
 }
 
+/* Klantcontact in de persoonlijke kleur (sage-purple, styleguide §2): een
+   lichte paarse tint zodat het contrast op de forest-balk overeind blijft —
+   dezelfde tint als de contact-links in de footer. */
+.linkContact {
+  color: #cfc4e6;
+}
+.linkContact::after {
+  background: #cfc4e6;
+}
+.linkContact:hover,
+.linkContact[data-active] {
+  color: #e2daf5;
+}
+
 /* ---- Mega-menu ---- */
 .megaWrap {
   display: inline-flex;
@@ -760,6 +774,15 @@
 .overlayLink:hover,
 .overlayLink:active {
   color: #eaa886;
+}
+/* Klantcontact: dezelfde persoonlijke paarse tint als in de desktop-nav en de
+   footer, zodat "Contact" ook in het mobiele menu de mens-tot-mens-route is. */
+.overlayLinkContact {
+  color: #cfc4e6;
+}
+.overlayLinkContact:hover,
+.overlayLinkContact:active {
+  color: #e2daf5;
 }
 
 .overlayFoot {

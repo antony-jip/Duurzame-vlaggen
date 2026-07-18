@@ -177,7 +177,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={styles.link}
+                className={`${styles.link}${item.href === "/contact" ? ` ${styles.linkContact}` : ""}`}
                 data-active={pathname.startsWith(item.href) || undefined}
               >
                 {item.label}
@@ -299,7 +299,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={styles.overlayLink}
+                  className={`${styles.overlayLink}${item.href === "/contact" ? ` ${styles.overlayLinkContact}` : ""}`}
                   onClick={() => setOpen(false)}
                 >
                   {item.label}

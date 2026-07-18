@@ -2,7 +2,15 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type RGB } from "pdf-lib";
+import {
+  PDFDocument,
+  PDFName,
+  PDFString,
+  StandardFonts,
+  rgb,
+  type PDFFont,
+  type RGB,
+} from "pdf-lib";
 
 import type { OrderRow, OrderItemRow } from "@/lib/db/types";
 import { getProduct } from "@/lib/catalog/products";
@@ -347,6 +355,55 @@ export async function generateFactuur(
       : `Te voldoen op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, onder vermelding van ${order.order_number}.`,
     { x: MARGIN + 10, y: y - 10, size: 9, font, color: betaald ? FOREST : INK },
   );
+
+  // === Online betalen =======================================================
+  // Alleen zolang er nog te betalen valt: een op-rekening-order met een
+  // Mollie-betaallink die nog niet is voldaan. Ná betaling mag de factuur niet
+  // meer tot betalen uitnodigen, dus dan verschijnt dit blok bewust niet.
+  const betaalLink = !betaald ? order.mollie_payment_link_url : null;
+  if (betaalLink) {
+    y -= 20;
+    const btnW = 240;
+    const btnH = 30;
+    const btnX = MARGIN;
+    const btnY = y - btnH;
+    // Forest knop met witte bold tekst — dezelfde primaire-CTA-taal als de site.
+    page.drawRectangle({ x: btnX, y: btnY, width: btnW, height: btnH, color: FOREST });
+    const label = "Betaal deze factuur online";
+    page.drawText(label, {
+      x: btnX + 16,
+      y: btnY + (btnH - 11) / 2,
+      size: 11,
+      font: bold,
+      color: WHITE,
+    });
+
+    // Klikbare link-annotatie over de knop. pdf-lib kent hier geen high-level
+    // API voor, dus we bouwen de annotatie-dict met de hand (Subtype /Link,
+    // Rect over de knop, A met /S /URI) en hangen hem in de Annots-array.
+    const annot = doc.context.obj({
+      Type: "Annot",
+      Subtype: "Link",
+      Rect: [btnX, btnY, btnX + btnW, btnY + btnH],
+      Border: [0, 0, 0],
+      A: { Type: "Action", S: "URI", URI: PDFString.of(betaalLink) },
+    });
+    const annotRef = doc.context.register(annot);
+    let annots = page.node.Annots();
+    if (!annots) {
+      annots = doc.context.obj([]);
+      page.node.set(PDFName.of("Annots"), annots);
+    }
+    annots.push(annotRef);
+
+    // De URL ook leesbaar eronder, voor wie de factuur uitprint.
+    let yUrl = btnY - 14;
+    for (const regel of wrap(betaalLink, font, 8, CONTENT_W)) {
+      page.drawText(regel, { x: btnX, y: yUrl, size: 8, font, color: SAGE_BLUE });
+      yUrl -= 11;
+    }
+    y = yUrl - 4;
+  }
 
   // === Voet =================================================================
   page.drawRectangle({ x: 0, y: 0, width: PAGE_W, height: 3, color: TERRACOTTA });

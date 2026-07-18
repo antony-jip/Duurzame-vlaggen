@@ -141,6 +141,7 @@
       "trackPromise": "Dès que nous aurons traité votre commande, vous recevrez un lien de suivi par e-mail. Il vous permet de suivre vos drapeaux jusqu’à votre porte.",
       "retryCta": "Réessayer le paiement",
       "payCta": "Payer votre facture",
+      "invoiceTitle": "Facture",
       "invoiceView": "Voir la facture (PDF)",
       "invoiceDownload": "Télécharger la facture",
       "contactPrompt": "Des questions sur votre commande ? Appelez le {phone} ou écrivez à {email}."
@@ -166,6 +167,8 @@
     "tracking": "Suivre votre colis",
     "trackingNumber": "Numéro de suivi",
     "estimatedDelivery": "Livraison prévue",
+    "statusLabel": "Statut",
+    "orderedOn": "Date de commande",
     "portal": {
       "pending": "Il manque encore {count} design(s) pour ta commande. Envoie-les quand cela t'arrange.",
       "cta": "Fournir mes designs"
