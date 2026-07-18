@@ -18,9 +18,9 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-gemeenten" },
-  title: "Voor gemeenten. Duurzame gemeentevlaggen zonder microplastics",
+  title: "Gemeentevlaggen zonder microplastics",
   description:
-    "Biologisch afbreekbare gemeentevlaggen: zero microplastics in de openbare ruimte, meetbaar voor MVI-rapportages en geschikt voor aanbestedingen. Complete documentatie inbegrepen.",
+    "Biologisch afbreekbare gemeentevlaggen: geen microplastics in de openbare ruimte, meetbaar voor MVI-rapportages en aanbestedingen. Documentatie inbegrepen.",
 };
 
 const WAVE_PATH =

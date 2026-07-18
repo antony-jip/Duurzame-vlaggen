@@ -29,20 +29,6 @@ export function generateStaticParams() {
   return alleLandenMetSlug().map((l) => ({ land: l.slug }));
 }
 
-/**
- * Mastvlag-formaten als leesbare reeks voor de meta-description, bv.
- * "150 × 100 tot 350 × 225 cm". Afgeleid uit de catalogus, zodat de tekst
- * meebeweegt als de maten wijzigen.
- */
-function formatenReeks(): string {
-  const mastvlag = getProduct("mastvlag");
-  const sizes = mastvlag?.sizes ?? [];
-  if (sizes.length === 0) return "meerdere formaten";
-  const eerste = sizes[0].label.replace(/\s*cm$/, "");
-  const laatste = sizes[sizes.length - 1].label.replace(/\s*cm$/, "");
-  return `${eerste} tot ${laatste} cm`;
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -53,7 +39,9 @@ export async function generateMetadata({
   if (!land) return { title: "Land niet gevonden" };
 
   const canonical = `/landenvlaggen/${land.slug}`;
-  const description = `Bestel de vlag van ${land.naam} als mastvlag van biologisch afbreekbaar doek, in vijf formaten (${formatenReeks()}). Wij maken het drukbestand, jij levert niets aan. Binnen 5 werkdagen op je mast.`;
+  // Kort genoeg voor de SERP (ook bij lange landnamen); de formatenreeks
+  // maakte hem 200+ tekens en Google kapte hem af.
+  const description = `Bestel de vlag van ${land.naam} als mastvlag van biologisch afbreekbaar doek, in vijf formaten. Wij maken het drukbestand. Binnen 5 werkdagen op je mast.`;
 
   return {
     // Vast patroon dat voor álle 249 landen klopt: geen bijvoeglijke vormen

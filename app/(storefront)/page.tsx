@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     absolute: "Duurzame Vlaggen. Biologisch afbreekbaar.",
   },
   description:
-    "Elke gewone vlag wappert uiteen tot microplastic. De onze niet. Biologisch afbreekbare baniervlaggen, mastvlaggen, gevelvlaggen en beachflags. Onderbouwd voor je duurzaamheidsverslag, binnen 5 werkdagen geleverd.",
+    "Elke gewone vlag wappert uiteen tot microplastic. De onze niet. Biologisch afbreekbare banier-, mast-, gevel- en beachvlaggen. Binnen 5 werkdagen geleverd.",
 };
 
 /* De vier geruststellingen, als strip onder de vlaggen in plaats van als eigen

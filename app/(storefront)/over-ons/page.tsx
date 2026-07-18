@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/over-ons" },
   title: "Ons verhaal. Duurzame Vlaggen",
   description:
-    "De vlaggenbranche concurreert op de laagste prijs, en het doek is het kind van de rekening. Flag-CiCLO® is wél ander doek: het breekt volledig af. Voor bedrijven die op een duurzame manier willen opvallen.",
+    "De vlaggenbranche concurreert op prijs, het doek is het kind van de rekening. Flag-CiCLO® breekt volledig af. Voor bedrijven die duurzaam willen opvallen.",
 };
 
 /* Wat de klant eraan heeft, niet waar wij voor staan. Drie bezwaren, in de
