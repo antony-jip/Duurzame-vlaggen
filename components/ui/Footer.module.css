@@ -272,6 +272,16 @@
   font-style: normal;
 }
 
+/* Klantcontact in de persoonlijke kleur (sage-purple): op het donkere forest
+   als lichte paarse tint, zodat het contrast overeind blijft. */
+.contact a {
+  color: #cfc4e6;
+  font-weight: 600;
+}
+.contact a:hover {
+  color: #e2daf5;
+}
+
 /* ---- Bottom bar ---- */
 .bottom {
   display: flex;

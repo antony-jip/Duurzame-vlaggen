@@ -140,7 +140,10 @@
       "problemSubtitle": "Pas d’inquiétude, votre commande vous attend toujours. Réessayez le paiement et nous nous mettons au travail.",
       "trackPromise": "Dès que nous aurons traité votre commande, vous recevrez un lien de suivi par e-mail. Il vous permet de suivre vos drapeaux jusqu’à votre porte.",
       "retryCta": "Réessayer le paiement",
-      "payCta": "Payer votre facture"
+      "payCta": "Payer votre facture",
+      "invoiceView": "Voir la facture (PDF)",
+      "invoiceDownload": "Télécharger la facture",
+      "contactPrompt": "Des questions sur votre commande ? Appelez le {phone} ou écrivez à {email}."
     },
     "steps": {
       "heading": "Les prochaines étapes",

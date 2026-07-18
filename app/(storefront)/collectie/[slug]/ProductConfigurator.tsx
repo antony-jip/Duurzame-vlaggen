@@ -228,9 +228,12 @@ const PRODUCT_OPTION_IMAGES: Record<
   },
   baniervlag: {
     Mastzijde: {
-      // Echte staande-banier-renders (mast links/rechts) van Antony.
-      Links: "/configurator/mastzijde/banier-links.jpg",
-      Rechts: "/configurator/mastzijde/banier-rechts.jpg",
+      // Echte staande-banier-renders van Antony. De bestandsnamen zijn vanuit
+      // het DOEK benoemd en de keuze vanuit de MAST; visueel stonden Links en
+      // Rechts daardoor verwisseld (melding Antony 2026-07-18), dus de mapping
+      // is hier bewust gekruist.
+      Links: "/configurator/mastzijde/banier-rechts.jpg",
+      Rechts: "/configurator/mastzijde/banier-links.jpg",
     },
     Afwerking: {
       Tunnel: "/configurator/afwerking/tunnel.webp",

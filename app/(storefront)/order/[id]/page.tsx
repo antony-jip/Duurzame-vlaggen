@@ -7,6 +7,7 @@ import { Badge, Button, Card, Container, Check } from "@/components/ui";
 import { getMessages } from "@/lib/i18n";
 import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
 import { countPendingDesigns, getOrderById } from "@/lib/orders/repository";
+import { BEDRIJF } from "@/lib/bedrijf";
 import type { OrderStatus } from "@/lib/db/types";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { ProboAddress } from "@/lib/catalog/probo-mapping";
@@ -179,16 +180,30 @@ export default async function OrderConfirmationPage({
         )}
 
         {/* Op rekening: de klant landt hier direct na het plaatsen. De factuur
-            met betaallink staat in zijn mail, maar hier direct betalen kan ook. */}
+            met betaallink staat in zijn mail, maar hier direct betalen kan ook,
+            met de factuur ernaast als preview (browser-PDF-viewer, incl.
+            downloadknop). */}
         {toon === "wachten" && order.mollie_payment_link_url && (
-          <Button
-            as="a"
-            href={order.mollie_payment_link_url}
-            variant="primary"
-            className={styles.heroCta}
-          >
-            {dict.order.confirmation.payCta}
-          </Button>
+          <div className={styles.heroActies}>
+            <Button
+              as="a"
+              href={order.mollie_payment_link_url}
+              variant="primary"
+              className={styles.heroCta}
+            >
+              {dict.order.confirmation.payCta}
+            </Button>
+            <Button
+              as="a"
+              href={`/order/${order.id}/factuur`}
+              target="_blank"
+              rel="noopener"
+              variant="secondary"
+              className={styles.heroCta}
+            >
+              {dict.order.confirmation.invoiceView}
+            </Button>
+          </div>
         )}
       </div>
 
@@ -296,10 +311,39 @@ export default async function OrderConfirmationPage({
         </p>
 
         <div className={styles.actions}>
+          {/* Factuur altijd bij de hand zodra er een prijs-snapshot is; ook ná
+              betaling wil je hem voor je administratie kunnen pakken. */}
+          {order.total != null && toon !== "probleem" && (
+            <Button
+              as="a"
+              href={`/order/${order.id}/factuur?download=1`}
+              variant="secondary"
+            >
+              {dict.order.confirmation.invoiceDownload}
+            </Button>
+          )}
           <Button as="a" href="/collectie" variant="secondary">
             {dict.common.cta.continueShopping}
           </Button>
         </div>
+
+        {/* Klantcontact in de persoonlijke (sage-purple) kleur, conform de
+            styleguide-semantiek: dit is de mens-tot-mens-route. */}
+        <p className={styles.contactBlok}>
+          {(() => {
+            const [voorTel, restNaTel] = dict.order.confirmation.contactPrompt.split("{phone}");
+            const [tussen, naMail] = (restNaTel ?? "").split("{email}");
+            return (
+              <>
+                {voorTel}
+                <a href={`tel:${BEDRIJF.telefoon.replace(/\s/g, "")}`}>{BEDRIJF.telefoon}</a>
+                {tussen}
+                <a href={`mailto:${BEDRIJF.email}`}>{BEDRIJF.email}</a>
+                {naMail}
+              </>
+            );
+          })()}
+        </p>
       </Card>
     </Container>
   );
