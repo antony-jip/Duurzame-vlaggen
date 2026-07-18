@@ -388,40 +388,28 @@
   gap: 6px;
 }
 
+/* Formaatregel: links de maat-info (label, advies, prijs, badge), rechts een
+   aantal-stepper. Aantal > 0 kleurt de regel actief. */
 .maat {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "label advies prijs"
-    "pop pop pop";
-  align-items: baseline;
-  column-gap: 10px;
+    "label stepper"
+    "advies stepper"
+    "prijs stepper"
+    "pop stepper";
+  column-gap: 12px;
+  row-gap: 2px;
   padding: 10px 14px;
   background: white;
   border: 2px solid var(--forest-6);
   border-radius: var(--radius-md);
-  cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
-}
-
-.maat:hover {
-  border-color: var(--color-forest);
 }
 
 .maat[data-actief] {
   border-color: var(--color-forest);
   background: var(--forest-3);
-}
-
-.maat input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.maat:has(input:focus-visible) {
-  outline: 3px solid var(--color-forest);
-  outline-offset: 2px;
 }
 
 .maatLabel {
@@ -452,6 +440,14 @@
   color: var(--color-forest);
 }
 
+.maatPerStuk {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--color-stone);
+}
+
 .maatPopulair {
   grid-area: pop;
   justify-self: start;
@@ -467,19 +463,21 @@
   border-radius: var(--radius-sm);
 }
 
-.stepper {
+.maatStepper {
+  grid-area: stepper;
+  align-self: center;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   border: 2px solid var(--forest-6);
   border-radius: var(--radius-md);
-  padding: 4px;
-  justify-self: start;
+  padding: 3px;
+  background: white;
 }
 
 .stepKnop {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -509,11 +507,11 @@
 }
 
 .stepWaarde {
-  min-width: 44px;
+  min-width: 32px;
   text-align: center;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   color: var(--color-charcoal);
 }
 
@@ -613,6 +611,59 @@
   color: var(--color-stone);
 }
 
+/* Succes-staat na toevoegen: rustig sage-blue blok met een vervolg-actie. */
+.succesBlok {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--sage-blue-6);
+  border: 2px solid var(--sage-blue-8);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.succesIcoon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-sage-blue);
+  color: white;
+}
+
+.succesInhoud {
+  display: grid;
+  gap: 4px;
+}
+
+.succesTekst {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-charcoal);
+}
+
+.succesActie {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.succesActie:hover {
+  color: var(--color-terracotta);
+}
+
 /* Lege staat: rustig maar uitnodigend — gecentreerd, met wat lucht. */
 .leegPaneel {
   display: grid;
@@ -627,6 +678,69 @@
   height: 44px;
   color: var(--color-forest);
   opacity: 0.5;
+}
+
+/* ---- Afwerking-infoblok onder de shop ------------------------------------- */
+
+.afwerking {
+  margin-top: var(--space-2xl);
+  max-width: 880px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: center;
+  background: white;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-xl);
+  padding: var(--space-md);
+}
+
+.afwerkingBeeld {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--forest-6);
+}
+
+.afwerkingTekst {
+  display: grid;
+  gap: 8px;
+}
+
+.afwerkingTitel {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+
+.afwerkingBody {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-charcoal);
+}
+
+.afwerkingBody a {
+  color: var(--color-forest);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.afwerkingBody a:hover {
+  color: var(--color-terracotta);
+}
+
+@media (max-width: 640px) {
+  .afwerking {
+    grid-template-columns: 1fr;
+    margin-top: var(--space-xl);
+  }
+
+  .afwerkingBeeld {
+    max-width: 240px;
+  }
 }
 
 /* ---- Mobiel --------------------------------------------------------------- */
