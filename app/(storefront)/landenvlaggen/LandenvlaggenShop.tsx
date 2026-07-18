@@ -224,6 +224,18 @@ export function LandenvlaggenShop() {
         <section className={styles.paneel} aria-label="Je bestelling">
           {land ? (
             <>
+              {/* Designwens: de gekozen vlag als subtiele achtergrond van het
+                  paneel. Puur decoratief (aria-hidden, geen pointer-events);
+                  de key laat de laag per land opnieuw infaden. */}
+              <div className={styles.paneelAchtergrond} aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  key={land.code}
+                  src={vlagSrc(land.code)}
+                  alt=""
+                  className={styles.paneelAchtergrondVlag}
+                />
+              </div>
               <div className={styles.previewWrap}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

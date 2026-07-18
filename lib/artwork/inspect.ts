@@ -280,7 +280,7 @@ export function buildWarnings(
 function ratioWarning(w: number, h: number, flag: FlagSize): string {
   const design = formatRatio(w, h);
   const flagRatio = formatRatio(flag.widthCm, flag.heightCm);
-  return `De verhouding van je ontwerp (${design}) wijkt af van de vlagmaat (${flagRatio}) — het ontwerp wordt geschaald of bijgesneden.`;
+  return `De verhouding van je ontwerp (${design}) wijkt af van de vlagmaat (${flagRatio}). Het ontwerp wordt geschaald of bijgesneden.`;
 }
 
 /**

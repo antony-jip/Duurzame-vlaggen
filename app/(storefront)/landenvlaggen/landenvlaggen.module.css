@@ -199,6 +199,8 @@
 }
 
 .paneel {
+  position: relative;
+  overflow: hidden;
   display: grid;
   gap: var(--space-sm);
   background: white;
@@ -206,6 +208,66 @@
   border-radius: var(--radius-xl);
   padding: var(--space-md);
   box-shadow: var(--shadow-md);
+}
+
+/* Paneelcontent boven de vlag-achtergrondlaag houden (die is positioned en
+   zou anders óver de statische siblings schilderen). */
+.paneel > :not(.paneelAchtergrond) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Gekozen vlag als subtiele paneelachtergrond --------------------------
+   Absolute laag achter de content: de vlag-SVG fors geblurd en op lage
+   dekking, met een witte gradient eroverheen zodat tekst en knoppen ruim
+   leesbaar blijven. Zachte fade bij land-wissel via een CSS-animatie (de img
+   remount per land door zijn key). */
+
+.paneelAchtergrond {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.paneelAchtergrondVlag {
+  position: absolute;
+  /* Randen buiten het paneel: blur mag geen vage witrand tonen. */
+  inset: -48px;
+  width: calc(100% + 96px);
+  height: calc(100% + 96px);
+  object-fit: cover;
+  filter: blur(24px) saturate(1.1);
+  opacity: 0.16;
+  animation: paneel-vlag-in var(--duration-slow) var(--ease-out) both;
+}
+
+.paneelAchtergrond::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.82) 42%,
+    rgba(255, 255, 255, 0.96) 100%
+  );
+}
+
+@keyframes paneel-vlag-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.16;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paneelAchtergrondVlag {
+    animation: none;
+  }
 }
 
 .previewWrap {
