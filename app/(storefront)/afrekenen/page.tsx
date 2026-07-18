@@ -574,13 +574,10 @@ export default function AfrekenenPage() {
           </fieldset>
 
           {/* Betaalwijze — alleen zakelijk: naast direct betalen ook achteraf
-              op factuur via Billie (Mollie). De server-action valideert de
-              keuze opnieuw; consumenten betalen altijd direct.
-
-              Achter een schakelaar tot Billie in het Mollie-dashboard is
-              geactiveerd: een klant die een niet-actieve methode kiest zou op
-              een kale Mollie-fout stranden. Zet NEXT_PUBLIC_FACTUUR_ACTIEF=1
-              (Vercel env + redeploy) zodra Mollie Billie heeft vrijgegeven. */}
+              op factuur. De factuur gaat direct per mail de deur uit, met een
+              Mollie-betaallink (overboeking, 14 dagen); de server-action
+              valideert de keuze opnieuw. Consumenten betalen altijd direct.
+              Aanzetten via NEXT_PUBLIC_FACTUUR_ACTIEF=1. */}
           {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1" && isBusiness && (
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Betaling</legend>
@@ -589,7 +586,7 @@ export default function AfrekenenPage() {
                   type="radio"
                   name="paymentMethod"
                   value="direct"
-                  defaultChecked={formValues?.paymentMethod !== "billie"}
+                  defaultChecked={formValues?.paymentMethod !== "factuur"}
                 />
                 <span className={styles.toggleLabel}>
                   Direct betalen (iDEAL, creditcard)
@@ -599,18 +596,17 @@ export default function AfrekenenPage() {
                 <input
                   type="radio"
                   name="paymentMethod"
-                  value="billie"
-                  defaultChecked={formValues?.paymentMethod === "billie"}
+                  value="factuur"
+                  defaultChecked={formValues?.paymentMethod === "factuur"}
                 />
                 <span className={styles.toggleLabel}>
                   Achteraf betalen op factuur (14 dagen)
                 </span>
               </label>
               <p className={styles.adresHulp}>
-                Op factuur loopt via Billie, de zakelijke betaalpartner van
-                Mollie: directe goedkeuring bij het afrekenen, wij gaan meteen
-                voor je aan de slag. Beschikbaar voor bedrijven in Nederland,
-                Duitsland, Oostenrijk en Frankrijk.
+                Je ontvangt de factuur direct per e-mail, met een betaallink:
+                online betalen of gewoon overboeken, binnen 14 dagen. Wij gaan
+                intussen voor je aan de slag.
               </p>
               {state.fieldErrors?.paymentMethod && (
                 <p className={styles.veldFout} role="alert">

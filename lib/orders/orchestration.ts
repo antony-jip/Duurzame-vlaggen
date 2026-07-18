@@ -29,6 +29,7 @@ import {
   recordEventOnce,
 } from "@/lib/orders/repository";
 import { sendMateriaalpaspoortEmail, sendMailInhoud } from "@/lib/email/send";
+import { factuurMail } from "@/lib/email/templates";
 import { ontwerpenAanleveren } from "@/lib/email/templates";
 
 /**
@@ -125,11 +126,15 @@ export interface CheckoutInput {
   shippingAddress: ProboAddress;
   items: OrderItemDraft[];
   /**
-   * "billie" = zakelijk achteraf betalen op factuur via Mollie/Billie; de
-   * betaling krijgt dan het factuuradres en de orderregels mee. Afwezig =
-   * gewone Mollie-checkout (iDEAL enz.).
+   * Zakelijk achteraf betalen:
+   * - "factuur": wij mailen direct een factuur (Resend) en de betaling wordt
+   *   een Mollie-overboeking met 14 dagen vervaltermijn; de webhook zet de
+   *   order vanzelf op betaald zodra het geld binnen is.
+   * - "billie": via Mollie/Billie (kredietcheck), pas bruikbaar zodra Billie
+   *   in het Mollie-dashboard actief is.
+   * Afwezig = gewone Mollie-checkout (iDEAL enz.).
    */
-  paymentMethod?: "billie";
+  paymentMethod?: "billie" | "factuur";
 }
 
 // ---------------------------------------------------------------------------
@@ -370,8 +375,12 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   // handmatig gereconcilieerd ("Ververs betaling" in de admin); in productie
   // draait de webhook gewoon.
   const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(appUrl);
-  // Betalen op factuur (Billie) eist adres + orderregels op de betaling; de
-  // action valideert vooraf dat de klant zakelijk is en het land ondersteund.
+  // Factuurflow: de betaling wordt een overboeking met 14 dagen
+  // vervaltermijn; de klant krijgt de factuur (met betaallink) per mail.
+  const factuur = input.paymentMethod === "factuur";
+  const vervaldatum = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  // Betalen via Billie eist adres + orderregels op de betaling; de action
+  // valideert vooraf dat de klant zakelijk is en het land ondersteund.
   const billie =
     input.paymentMethod === "billie"
       ? {
@@ -391,6 +400,12 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     redirectUrl: `${appUrl}/order/${order.id}`,
     ...(isLocalhost ? {} : { webhookUrl: `${appUrl}/api/webhooks/mollie` }),
     metadata: { orderId: order.id, orderNumber: order.order_number },
+    ...(factuur
+      ? {
+          method: "banktransfer",
+          dueDate: vervaldatum.toISOString().slice(0, 10),
+        }
+      : {}),
     ...billie,
   });
 
@@ -406,6 +421,56 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     externalId: payment.id,
     data: { status: payment.status },
   });
+
+  // Factuurflow: de factuur gaat direct de deur uit (best-effort en
+  // idempotent; een mailstoring mag de bestelling nooit blokkeren) en de
+  // klant landt op de orderbevestiging in plaats van op Mollie.
+  if (factuur) {
+    try {
+      const event = await recordEventOnce({
+        orderId: order.id,
+        source: "system",
+        eventType: "factuur.sent",
+        externalId: `factuur-${order.id}`,
+        data: { betaallink: payment.checkoutUrl },
+      });
+      if (event.inserted) {
+        const regels = [
+          ...quote.lines.map((l) => ({
+            omschrijving: `${l.draft.amount}× ${
+              l.draft.productName ?? l.draft.productType
+            }${l.draft.sizeLabel ? ` (${l.draft.sizeLabel})` : ""}`,
+            bedragExVat: l.linePrice,
+          })),
+          ...(quote.designService > 0
+            ? [{ omschrijving: "Ontwerpservice", bedragExVat: quote.designService }]
+            : []),
+        ];
+        const mail = factuurMail({
+          order: updated,
+          regels,
+          betaallink: payment.checkoutUrl,
+          vervaldatum: vervaldatum.toLocaleDateString("nl-NL", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+        });
+        await sendMailInhoud(input.email, mail);
+      }
+    } catch (err) {
+      console.error(
+        `[checkout] factuurmail voor ${order.order_number} mislukt: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+    return {
+      order: updated,
+      quote,
+      checkoutUrl: `${appUrl}/order/${order.id}`,
+    };
+  }
 
   return { order: updated, quote, checkoutUrl: payment.checkoutUrl };
 }

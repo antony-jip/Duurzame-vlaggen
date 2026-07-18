@@ -44,6 +44,9 @@ export interface CreatePaymentInput {
   webhookUrl?: string;
   metadata?: Record<string, unknown>;
   method?: string;
+  /** Vervaldatum (YYYY-MM-DD) voor overboekingen; Mollie houdt de betaling
+   *  tot die datum open (factuurflow: 14 dagen betaaltermijn). */
+  dueDate?: string;
   /** Vereist voor factuur-methodes (Billie): factuuradres mét bedrijfsnaam. */
   billingAddress?: MollieAddress;
   shippingAddress?: MollieAddress;
@@ -84,6 +87,7 @@ export async function createPayment(
     ...(input.webhookUrl ? { webhookUrl: input.webhookUrl } : {}),
     ...(input.metadata ? { metadata: input.metadata } : {}),
     ...(input.method ? { method: input.method } : {}),
+    ...(input.dueDate ? { dueDate: input.dueDate } : {}),
     ...(input.billingAddress ? { billingAddress: input.billingAddress } : {}),
     ...(input.shippingAddress ? { shippingAddress: input.shippingAddress } : {}),
     ...(input.lines ? { lines: input.lines } : {}),

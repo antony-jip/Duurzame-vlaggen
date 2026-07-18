@@ -1,6 +1,7 @@
 import "server-only";
 import type { OrderRow } from "@/lib/db/types";
 import { mailLayout, alinea, fijn, blok, platteTekst } from "./layout";
+import { BEDRIJF, bedrijfsAdresRegels, factuurVoetRegels } from "@/lib/bedrijf";
 
 /**
  * Klantmails per fase. Spiegelt de snelknoppen op de order-detailpagina.
@@ -120,6 +121,102 @@ function vraag(order: OrderRow, bericht: string): MailInhoud {
         fijn("Reageer gerust op deze mail, dan pakken we het op."),
     }),
     tekst: platteTekst([aanhef(order), "", bericht]),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Factuur (zakelijk achteraf betalen)
+// ---------------------------------------------------------------------------
+
+function eur(bedrag: number): string {
+  return `€ ${bedrag.toFixed(2).replace(".", ",")}`;
+}
+
+/**
+ * De factuur voor "achteraf betalen op factuur": automatisch verstuurd zodra
+ * de order geplaatst is. Factuurnummer = ordernummer, betaaltermijn 14 dagen;
+ * de betaallink is Mollie's overboekingspagina (online betalen of de
+ * IBAN-gegevens voor een handmatige overboeking).
+ *
+ * Wettelijke velden: volledige naam + adres + KvK/btw van de verkoper
+ * (factuurVoetRegels), factuurdatum, factuurnummer, bedragen ex btw, het
+ * btw-bedrag en -tarief (of de vermelding "btw verlegd").
+ */
+export function factuurMail(input: {
+  order: OrderRow;
+  regels: Array<{ omschrijving: string; bedragExVat: number }>;
+  betaallink: string | null;
+  vervaldatum: string;
+}): MailInhoud {
+  const { order, regels, betaallink, vervaldatum } = input;
+  const factuurdatum = new Date().toLocaleDateString("nl-NL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const regelHtml = regels
+    .map(
+      (r) =>
+        `${escapeHtmlText(r.omschrijving)} · ${eur(r.bedragExVat)} excl. btw`,
+    )
+    .join("<br/>");
+  const btwRegel = order.reverse_charge
+    ? "Btw verlegd"
+    : `Btw (${order.vat_rate ?? 21}%): ${eur(order.vat_amount ?? 0)}`;
+
+  return {
+    onderwerp: `Factuur ${order.order_number} · betaal binnen 14 dagen`,
+    html: mailLayout({
+      titel: "Je factuur",
+      ondertitel: `${order.order_number} · ${factuurdatum}`,
+      inhoud:
+        alinea(aanhef(order)) +
+        alinea(
+          "Bedankt voor je bestelling. Je koos voor betalen op factuur; dit is hem. " +
+            `Betaal binnen 14 dagen (uiterlijk ${vervaldatum}), dan gaan wij intussen voor je aan de slag.`,
+        ) +
+        blok(
+          `<strong>Factuurnummer</strong><br/>${order.order_number}<br/><br/>` +
+            `<strong>Bestelling</strong><br/>${regelHtml}<br/><br/>` +
+            `<strong>Verzendkosten</strong><br/>${
+              (order.shipping_cost ?? 0) > 0 ? `${eur(order.shipping_cost ?? 0)} excl. btw` : "Gratis"
+            }<br/><br/>` +
+            `<strong>${btwRegel.split(":")[0]}</strong><br/>${
+              order.reverse_charge ? "Van toepassing" : eur(order.vat_amount ?? 0)
+            }<br/><br/>` +
+            `<strong>Te betalen</strong><br/>${eur(order.total ?? 0)}`,
+        ) +
+        alinea(
+          betaallink
+            ? "Betalen kan direct via de knop hieronder; daar staan ook de rekeninggegevens en het betalingskenmerk voor een handmatige overboeking."
+            : "De betaalinstructies ontvang je apart van ons.",
+        ) +
+        fijn(
+          [
+            ...factuurVoetRegels().slice(0, 1),
+            bedrijfsAdresRegels().join(", "),
+            `Vragen over deze factuur? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
+          ].join("<br/>"),
+        ),
+      knop: betaallink
+        ? { label: "Bekijk betaalinstructies", url: betaallink }
+        : undefined,
+    }),
+    tekst: platteTekst([
+      aanhef(order),
+      "",
+      `Factuur ${order.order_number} (${factuurdatum}). Betaal binnen 14 dagen, uiterlijk ${vervaldatum}.`,
+      "",
+      ...regels.map((r) => `${r.omschrijving}: ${eur(r.bedragExVat)} excl. btw`),
+      `Verzendkosten: ${(order.shipping_cost ?? 0) > 0 ? `${eur(order.shipping_cost ?? 0)} excl. btw` : "Gratis"}`,
+      btwRegel,
+      `Te betalen: ${eur(order.total ?? 0)}`,
+      "",
+      betaallink ? `Betaalinstructies: ${betaallink}` : "",
+      "",
+      ...factuurVoetRegels(),
+    ]),
   };
 }
 

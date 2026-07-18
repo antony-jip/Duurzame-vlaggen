@@ -168,6 +168,68 @@ beschrijf("betaalflow (mock-Mollie)", () => {
       "awaiting_files",
     );
   });
+
+  it("factuur-route: overboeking met vervaldatum, klant naar orderpagina", async () => {
+    const { placeOrder, handleMolliePayment } = await import("./orchestration");
+    const { getOrderById } = await import("./repository");
+
+    const resultaat = await placeOrder({
+      market: "nl-NL",
+      email: "flowtest-factuur@example.com",
+      isBusiness: true,
+      vatNumber: "NL006284267B01",
+      paymentMethod: "factuur",
+      shippingAddress: {
+        company_name: "Sign Company VOF",
+        first_name: "Antony",
+        last_name: "Bootsma",
+        street: "De Drie Kronen",
+        house_number: "115",
+        postal_code: "1601 MT",
+        city: "Enkhuizen",
+        country: "NL",
+      },
+      items: [
+        {
+          proboProductCode: "flag-ciclo",
+          productType: "mastvlag",
+          productName: "Mastvlag",
+          options: [],
+          amount: 4,
+          sizeLabel: "225 × 150 cm",
+          selections: { Formaat: "225 × 150 cm" },
+          designs: [{ quantity: 4, fileUrl: null }],
+        },
+      ],
+    });
+    aangemaakteOrders.push(resultaat.order.id);
+
+    // De klant gaat naar de orderbevestiging; de betaallink zit in de factuur.
+    expect(resultaat.checkoutUrl).toBe(
+      `http://localhost:3000/order/${resultaat.order.id}`,
+    );
+    expect(resultaat.order.status).toBe("awaiting_payment");
+
+    const paymentId = resultaat.order.mollie_payment_id as string;
+    const betaling = (await (
+      await fetch(`http://localhost:3200/v2/payments/${paymentId}`)
+    ).json()) as { method: string; request: { dueDate: string } };
+    expect(betaling.method).toBe("banktransfer");
+    // Vervaldatum 14 dagen vooruit (dagnauwkeurig, tijdzone-tolerant).
+    const verwacht = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
+    expect(betaling.request.dueDate).toBe(verwacht);
+
+    // Overboeking komt binnen → webhook → paid → awaiting_files (later-slot).
+    await fetch(`http://localhost:3200/flip/${paymentId}/paid`, {
+      method: "POST",
+    });
+    await handleMolliePayment(paymentId);
+    expect((await getOrderById(resultaat.order.id))?.status).toBe(
+      "awaiting_files",
+    );
+  });
 });
 
 afterAll(async () => {
