@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./landenvlaggen.module.css";
 import { Container, Check, Leaf, ShieldCheck, Truck } from "@/components/ui";
 import { getProduct } from "@/lib/catalog/products";
+import { alleLanden } from "@/lib/landen/landen";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
 import { LandenvlaggenShop } from "./LandenvlaggenShop";
@@ -25,6 +26,13 @@ export const metadata: Metadata = {
 
 export default function LandenvlaggenPage() {
   const mastvlag = getProduct("mastvlag");
+
+  // De landenlijst (Nederlandse namen + NL-sortering) komt uit Intl.DisplayNames.
+  // Dat gebeurt bewust hier, server-side: de ICU-tabellen van Node en de browser
+  // verschillen per versie, dus als de client-component deze lijst zelf zou
+  // opbouwen kregen sommige landnamen een andere tekst dan de SSR-HTML en
+  // klapte de hydration om. Nu rendert client exact wat de server stuurde.
+  const landen = alleLanden();
 
   // Product-structured data: de landenvlag als eigen aanbieding, geprijsd
   // vanaf de kleinste mastvlag-maat.
@@ -86,7 +94,7 @@ export default function LandenvlaggenPage() {
         </ul>
       </header>
 
-      <LandenvlaggenShop />
+      <LandenvlaggenShop landen={landen} />
 
       {/* Afwerking: compact infoblok onder de shop. Inhoud komt 1-op-1 uit de
           mastvlag-catalogus en de configurator-hints; wie iets anders wil dan

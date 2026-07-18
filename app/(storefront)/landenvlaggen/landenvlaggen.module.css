@@ -37,13 +37,16 @@
   color: var(--color-charcoal);
 }
 
-/* ---- Trust-strip in de kop: levertijd voorop -------------------------------- */
+/* ---- Trust-strip in de kop: levertijd voorop -------------------------------
+   Zelfde chip-idioom als de trust-rij op de productpagina's (forest-3 pill,
+   Sora UI 700), zodat de landenvlaggen-pagina als familie voelt. Levertijd is
+   de belangrijkste belofte en krijgt daarom als enige een gevulde forest-chip. */
 
 .trustStrip {
-  margin-top: 4px;
+  margin-top: var(--space-xs);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px var(--space-md);
+  gap: var(--space-xs);
   list-style: none;
   padding: 0;
 }
@@ -51,11 +54,16 @@
 .trustStrip li {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--color-charcoal);
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
 }
 
 .trustStrip svg {
@@ -63,9 +71,15 @@
   flex: 0 0 auto;
 }
 
-/* Levertijd is het eerste en belangrijkste punt: net wat meer nadruk. */
+/* Levertijd is het eerste en belangrijkste punt: gevulde chip als accent. */
 .trustStrip li:first-child {
-  font-weight: 700;
+  background: var(--color-forest);
+  border-color: var(--color-forest);
+  color: #fff;
+}
+
+.trustStrip li:first-child svg {
+  color: #fff;
 }
 
 /* ---- Twee kolommen: landenlijst | bestelpaneel ---------------------------- */
@@ -255,11 +269,19 @@
   /* scrollIntoView bij landkeuze (mobiel): niet onder de sticky siteheader
      eindigen. */
   scroll-margin-top: 88px;
+  /* Het paneel is met vijf formaten hoger dan een laptop-viewport. Zonder deze
+     begrenzing blijft het sticky-paneel bovenaan hangen en vallen het totaal en
+     de bestelknop onder de vouw, onbereikbaar terwijl je de landenlijst scrolt.
+     Nu scrolt een te hoog paneel intern, zodat de CTA altijd bereikbaar is. */
+  max-height: calc(100dvh - 112px);
+  overflow-y: auto;
 }
 
 @media (max-width: 1024px) {
   .paneelWrap {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
 
@@ -476,8 +498,8 @@
 }
 
 .stepKnop {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -765,5 +787,11 @@
 
   .landKnopGroot {
     padding: 12px;
+  }
+
+  /* Ruimere tik-doelen voor de aantal-stepper op touch. */
+  .stepKnop {
+    width: 40px;
+    height: 40px;
   }
 }

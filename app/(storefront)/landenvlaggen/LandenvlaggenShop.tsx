@@ -18,7 +18,6 @@ import { useCart } from "@/components/cart/CartProvider";
 import { clientId } from "@/components/cart/types";
 import { uploadOne } from "@/lib/artwork/upload";
 import {
-  alleLanden,
   landSlug,
   POPULAIRE_LAND_CODES,
   vlagSrc,
@@ -32,12 +31,6 @@ import {
   staffelDiscount,
 } from "@/lib/pricing/local-catalog";
 
-// Module-scope: één keer opbouwen (SSR én client), niet per render.
-const LANDEN = alleLanden();
-const POPULAIR = POPULAIRE_LAND_CODES.map((code) =>
-  LANDEN.find((l) => l.code === code),
-).filter((l): l is Land => l !== undefined);
-
 /** Diakriet-ongevoelig zoeken: "curacao" vindt "Curaçao". */
 function zoekNorm(s: string): string {
   return s
@@ -46,8 +39,14 @@ function zoekNorm(s: string): string {
     .toLowerCase();
 }
 
-export function LandenvlaggenShop() {
+export function LandenvlaggenShop({ landen }: { landen: Land[] }) {
   const { addItem } = useCart();
+
+  // Populaire landen in vaste volgorde bovenaan, afgeleid uit de server-lijst
+  // (zelfde namen als de SSR-HTML, geen eigen Intl-aanroep op de client).
+  const populair = POPULAIRE_LAND_CODES.map((code) =>
+    landen.find((l) => l.code === code),
+  ).filter((l): l is Land => l !== undefined);
 
   // De mastvlag draagt maten, prijzen en opties; de shop is er een schil
   // omheen. Bestaat hij onverhoopt niet meer, dan rendert de shop niets —
@@ -70,8 +69,8 @@ export function LandenvlaggenShop() {
 
   const q = zoekNorm(zoek.trim());
   const resultaten = q
-    ? LANDEN.filter((l) => zoekNorm(l.naam).includes(q) || l.code === q)
-    : LANDEN;
+    ? landen.filter((l) => zoekNorm(l.naam).includes(q) || l.code === q)
+    : landen;
 
   // Normale mastvlag-defaultopties (eerste keuze per optie), zoals de
   // configurator ze ook voorselecteert: Links, Haken (Clips), Wit.
@@ -268,7 +267,7 @@ export function LandenvlaggenShop() {
           <div className={styles.groep}>
             <h2 className={styles.groepTitel}>Veel gekozen</h2>
             <div className={styles.landGridPopulair}>
-              {POPULAIR.map((l) => landKnop(l, true))}
+              {populair.map((l) => landKnop(l, true))}
             </div>
           </div>
         )}
@@ -317,7 +316,7 @@ export function LandenvlaggenShop() {
               </div>
               <h2 className={styles.paneelTitel}>Vlag van {land.naam}</h2>
               <p className={styles.paneelSub}>
-                Mastvlag van biologisch afbreekbaar doek · drukbestand maken wij
+                Mastvlag van biologisch afbreekbaar doek
               </p>
 
               {/* Aantal per formaat: meerdere formaten van één land in één
@@ -355,7 +354,13 @@ export function LandenvlaggenShop() {
                         >
                           −
                         </button>
-                        <span className={styles.stepWaarde}>{aantal}</span>
+                        <span
+                          className={styles.stepWaarde}
+                          aria-live="polite"
+                          aria-atomic="true"
+                        >
+                          {aantal}
+                        </span>
                         <button
                           type="button"
                           className={styles.stepKnop}
