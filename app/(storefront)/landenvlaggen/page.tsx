@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import styles from "./landenvlaggen.module.css";
-import { Container, Leaf, Recycle, ShieldCheck, Truck } from "@/components/ui";
+import { Container, Check, Leaf, ShieldCheck, Truck } from "@/components/ui";
 import { getProduct } from "@/lib/catalog/products";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
@@ -52,6 +52,9 @@ export default function LandenvlaggenPage() {
         dangerouslySetInnerHTML={{ __html: productJsonLd }}
       />
 
+      {/* Kop als één compact blok: titel, intro en de zekerheden (levertijd
+          voorop) vlak boven de shop. De USP-rij die hier eerst onderaan de
+          pagina stond is hierin opgegaan; niets staat dubbel. */}
       <header className={styles.kop}>
         <h1 className={styles.titel}>
           De vlag van <span className={styles.titelAccent}>elk land</span>
@@ -61,28 +64,27 @@ export default function LandenvlaggenPage() {
           automatisch van de officiële vlag, gedrukt op biologisch afbreekbaar
           mastvlag-doek. Niets aanleveren, geen microplastics.
         </p>
+        <ul className={styles.trustStrip}>
+          <li>
+            <Truck size={16} aria-hidden="true" />
+            Binnen 5 werkdagen op je mast · buitenland 1,5 week
+          </li>
+          <li>
+            <ShieldCheck size={16} aria-hidden="true" />
+            Drukbestand maken wij
+          </li>
+          <li>
+            <Leaf size={16} aria-hidden="true" />
+            100% biologisch afbreekbaar doek
+          </li>
+          <li>
+            <Check size={16} aria-hidden="true" />
+            Gratis verzending vanaf &euro;&nbsp;100 incl. btw
+          </li>
+        </ul>
       </header>
 
       <LandenvlaggenShop />
-
-      <ul className={styles.uspRij}>
-        <li>
-          <Leaf size={16} aria-hidden="true" />
-          100% biologisch afbreekbaar doek
-        </li>
-        <li>
-          <ShieldCheck size={16} aria-hidden="true" />
-          Drukbestand automatisch gemaakt
-        </li>
-        <li>
-          <Truck size={16} aria-hidden="true" />
-          Binnen 5 werkdagen op je mast
-        </li>
-        <li>
-          <Recycle size={16} aria-hidden="true" />
-          Gedrukt in Nederland
-        </li>
-      </ul>
     </Container>
   );
 }

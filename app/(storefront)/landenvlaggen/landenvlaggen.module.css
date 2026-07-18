@@ -4,11 +4,13 @@
   padding-block: var(--space-xl) var(--space-3xl);
 }
 
+/* Kop als één compact blok (titel + intro + zekerheden): weinig verticale
+   ruimte, zodat de shop vrijwel direct in beeld staat. */
 .kop {
-  max-width: 720px;
-  margin-bottom: var(--space-xl);
+  max-width: 780px;
+  margin-bottom: var(--space-lg);
   display: grid;
-  gap: var(--space-sm);
+  gap: 12px;
   justify-items: start;
 }
 
@@ -33,6 +35,37 @@
   font-size: clamp(16px, 1.8vw, 18px);
   line-height: 1.65;
   color: var(--color-charcoal);
+}
+
+/* ---- Trust-strip in de kop: levertijd voorop -------------------------------- */
+
+.trustStrip {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px var(--space-md);
+  list-style: none;
+  padding: 0;
+}
+
+.trustStrip li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--color-charcoal);
+}
+
+.trustStrip svg {
+  color: var(--color-forest);
+  flex: 0 0 auto;
+}
+
+/* Levertijd is het eerste en belangrijkste punt: net wat meer nadruk. */
+.trustStrip li:first-child {
+  font-weight: 700;
 }
 
 /* ---- Twee kolommen: landenlijst | bestelpaneel ---------------------------- */
@@ -68,18 +101,25 @@
   color: var(--color-charcoal);
 }
 
+/* Het zoekveld is de primaire actie op de pagina: groter en met wat meer
+   aanwezigheid dan een standaard formulierveld. */
 .zoekVeld {
   font-family: var(--font-ui);
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: -0.01em;
   color: var(--color-charcoal);
   width: 100%;
-  padding: var(--space-sm) 20px;
+  padding: 18px 22px;
   background: white;
   border: 2px solid var(--forest-6);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
   transition: all var(--duration-base) var(--ease-out);
+}
+
+.zoekVeld:hover:not(:focus) {
+  border-color: var(--forest-8);
 }
 
 .zoekVeld:focus {
@@ -107,10 +147,19 @@
   color: var(--color-stone);
 }
 
+/* A-Z-lijst: rustig en regelmatig — vaste tegelhoogte, nette kolommen. */
 .landGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 8px;
+}
+
+/* "Veel gekozen": iets grotere tegels met een prominentere vlag, zodat de
+   populaire landen zich onderscheiden van de A-Z-lijst eronder. */
+.landGridPopulair {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
 }
 
 .landKnop {
@@ -118,6 +167,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 44px;
   padding: 10px 12px;
   background: white;
   border: 2px solid var(--forest-6);
@@ -130,6 +180,18 @@
   text-align: left;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
+}
+
+.landKnopGroot {
+  gap: 12px;
+  padding: 14px;
+  font-size: 15px;
+}
+
+.landKnopGroot .landVlagje {
+  width: 44px;
+  height: 33px;
+  border-radius: 4px;
 }
 
 .landKnop:hover {
@@ -190,6 +252,9 @@
 .paneelWrap {
   position: sticky;
   top: 96px;
+  /* scrollIntoView bij landkeuze (mobiel): niet onder de sticky siteheader
+     eindigen. */
+  scroll-margin-top: 88px;
 }
 
 @media (max-width: 1024px) {
@@ -452,13 +517,17 @@
   color: var(--color-charcoal);
 }
 
+/* Totaal als afgebakende band: de beslisregel vlak boven de knop krijgt
+   visueel gewicht zonder nieuw decor. */
 .totaalRij {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-sm);
-  padding-top: var(--space-sm);
-  border-top: 2px solid var(--forest-6);
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: var(--forest-3);
+  border-radius: var(--radius-md);
 }
 
 .totaalLabel {
@@ -544,11 +613,13 @@
   color: var(--color-stone);
 }
 
+/* Lege staat: rustig maar uitnodigend — gecentreerd, met wat lucht. */
 .leegPaneel {
   display: grid;
   gap: var(--space-sm);
-  justify-items: start;
-  padding: var(--space-sm) 0;
+  justify-items: center;
+  text-align: center;
+  padding: var(--space-lg) var(--space-xs);
 }
 
 .leegVlag {
@@ -558,28 +629,27 @@
   opacity: 0.5;
 }
 
-/* ---- USP-rij onder de shop ------------------------------------------------ */
+/* ---- Mobiel --------------------------------------------------------------- */
 
-.uspRij {
-  margin-top: var(--space-xl);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm) var(--space-lg);
-  list-style: none;
-  padding: 0;
-}
+@media (max-width: 640px) {
+  .page {
+    padding-block: var(--space-lg) var(--space-2xl);
+  }
 
-.uspRij li {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--color-charcoal);
-}
+  .kop {
+    margin-bottom: var(--space-md);
+  }
 
-.uspRij svg {
-  color: var(--color-forest);
-  flex: 0 0 auto;
+  /* Twee kolommen vlaggetjes op een telefoon; tegels blijven ≥44px hoog. */
+  .landGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .landGridPopulair {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .landKnopGroot {
+    padding: 12px;
+  }
 }
