@@ -7,10 +7,15 @@ import { BEDRIJF, bedrijfsAdresRegels } from "@/lib/bedrijf";
 import { getAllProducts } from "@/lib/catalog/products";
 
 // Derive from the catalogue so slugs never drift from the real product pages.
-const PRODUCT_LINKS = getAllProducts().map((p) => ({
-  href: `/collectie/${p.slug}`,
-  label: p.name,
-}));
+// Landenvlaggen is geen eigen catalogusproduct (het is de mastvlag met een
+// automatisch drukbestand) en staat er daarom handmatig bij.
+const PRODUCT_LINKS = [
+  ...getAllProducts().map((p) => ({
+    href: `/collectie/${p.slug}`,
+    label: p.name,
+  })),
+  { href: "/landenvlaggen", label: "Landenvlaggen" },
+];
 
 // Segment-landingpagina's.
 const AUDIENCE_LINKS = [

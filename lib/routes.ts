@@ -14,6 +14,7 @@ import { getAllProducts } from "@/lib/catalog/products";
 export const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: "/", priority: 1 },
   { path: "/collectie", priority: 0.9 },
+  { path: "/landenvlaggen", priority: 0.8 },
   { path: "/voor-bedrijven", priority: 0.8 },
   { path: "/voor-gemeenten", priority: 0.8 },
   { path: "/voor-verenigingen", priority: 0.8 },

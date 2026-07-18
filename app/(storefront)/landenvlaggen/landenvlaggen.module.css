@@ -1,0 +1,523 @@
+/* Landenvlaggen-shop — layout en detailstijl per STYLEGUIDE V5.0. */
+
+.page {
+  padding-block: var(--space-xl) var(--space-3xl);
+}
+
+.kop {
+  max-width: 720px;
+  margin-bottom: var(--space-xl);
+  display: grid;
+  gap: var(--space-sm);
+  justify-items: start;
+}
+
+.titel {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(36px, 5vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-charcoal);
+}
+
+.titelAccent {
+  background: linear-gradient(100deg, var(--color-terracotta), #e08a66);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.intro {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.8vw, 18px);
+  line-height: 1.65;
+  color: var(--color-charcoal);
+}
+
+/* ---- Twee kolommen: landenlijst | bestelpaneel ---------------------------- */
+
+.shop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .shop {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Kolom 1: kiezer ------------------------------------------------------ */
+
+.kiezer {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.zoekLabel {
+  display: block;
+  margin-bottom: calc(-1 * var(--space-sm));
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+}
+
+.zoekVeld {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  width: 100%;
+  padding: var(--space-sm) 20px;
+  background: white;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-base) var(--ease-out);
+}
+
+.zoekVeld:focus {
+  outline: none;
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 4px var(--forest-3);
+}
+
+.zoekVeld::placeholder {
+  color: var(--color-stone);
+  opacity: 0.6;
+}
+
+.groep {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.groepTitel {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+
+.landGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.landKnop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: white;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.landKnop:hover {
+  border-color: var(--color-forest);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.landKnop:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+
+.landKnop[data-actief] {
+  border-color: var(--color-forest);
+  background: var(--forest-3);
+  box-shadow: var(--shadow-sm);
+}
+
+.landVlagje {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 23px;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px var(--forest-6);
+}
+
+.landNaam {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.landCheck {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-forest);
+  color: white;
+  flex: 0 0 auto;
+}
+
+.geenResultaat {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-stone);
+  padding: var(--space-sm) 0;
+}
+
+/* ---- Kolom 2: bestelpaneel ------------------------------------------------ */
+
+.paneelWrap {
+  position: sticky;
+  top: 96px;
+}
+
+@media (max-width: 1024px) {
+  .paneelWrap {
+    position: static;
+  }
+}
+
+.paneel {
+  display: grid;
+  gap: var(--space-sm);
+  background: white;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-xl);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-md);
+}
+
+.previewWrap {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--forest-6);
+  line-height: 0;
+}
+
+.preview {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.paneelTitel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: var(--color-charcoal);
+}
+
+.paneelSub {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
+.veld {
+  display: grid;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.veldLabel {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+  padding: 0;
+}
+
+.maten {
+  display: grid;
+  gap: 6px;
+}
+
+.maat {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "label advies prijs"
+    "pop pop pop";
+  align-items: baseline;
+  column-gap: 10px;
+  padding: 10px 14px;
+  background: white;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.maat:hover {
+  border-color: var(--color-forest);
+}
+
+.maat[data-actief] {
+  border-color: var(--color-forest);
+  background: var(--forest-3);
+}
+
+.maat input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.maat:has(input:focus-visible) {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+
+.maatLabel {
+  grid-area: label;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-charcoal);
+  white-space: nowrap;
+}
+
+.maatAdvies {
+  grid-area: advies;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-stone);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maatPrijs {
+  grid-area: prijs;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--color-forest);
+}
+
+.maatPopulair {
+  grid-area: pop;
+  justify-self: start;
+  margin-top: 4px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: white;
+  background: var(--color-sage-blue);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 2px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  justify-self: start;
+}
+
+.stepKnop {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--forest-3);
+  color: var(--color-forest);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.stepKnop:hover:not(:disabled) {
+  background: var(--forest-6);
+}
+
+.stepKnop:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepKnop:focus-visible {
+  outline: 3px solid var(--color-forest);
+  outline-offset: 2px;
+}
+
+.stepWaarde {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--color-charcoal);
+}
+
+.totaalRij {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 2px solid var(--forest-6);
+}
+
+.totaalLabel {
+  display: grid;
+  gap: 2px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-charcoal);
+}
+
+.totaalKorting {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-sage-blue);
+}
+
+.totaalBedrag {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: var(--color-forest);
+}
+
+.totaalBtw {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-stone);
+}
+
+.bezigNoot {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
+.foutBlok {
+  display: grid;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 2px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.foutTekst {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-charcoal);
+}
+
+.foutOpnieuw {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.foutOpnieuw:hover {
+  color: var(--color-terracotta);
+}
+
+.gerustNoot {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
+.leegPaneel {
+  display: grid;
+  gap: var(--space-sm);
+  justify-items: start;
+  padding: var(--space-sm) 0;
+}
+
+.leegVlag {
+  width: 48px;
+  height: 44px;
+  color: var(--color-forest);
+  opacity: 0.5;
+}
+
+/* ---- USP-rij onder de shop ------------------------------------------------ */
+
+.uspRij {
+  margin-top: var(--space-xl);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  list-style: none;
+  padding: 0;
+}
+
+.uspRij li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--color-charcoal);
+}
+
+.uspRij svg {
+  color: var(--color-forest);
+  flex: 0 0 auto;
+}

@@ -20,6 +20,9 @@
 # production
 /build
 
+# gegenereerd — landenvlag-SVG's uit flag-icons (scripts/sync-flag-icons.mjs)
+/public/flags/
+
 # misc
 .DS_Store
 *.pem

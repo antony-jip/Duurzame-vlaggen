@@ -2401,3 +2401,25 @@
 .link:hover {
   color: var(--color-terracotta);
 }
+
+/* Tip op de mastvlag-pagina: landvlaggen hebben een eigen bestelpagina. */
+.landenTip {
+  margin-top: var(--space-sm);
+  padding: 12px 16px;
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-charcoal);
+}
+.landenTip a {
+  color: var(--color-forest);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.landenTip a:hover {
+  color: var(--color-terracotta);
+}

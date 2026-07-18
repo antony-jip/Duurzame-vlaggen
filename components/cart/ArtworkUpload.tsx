@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
 import { rasterizePdfSrc } from "@/lib/artwork/preview";
-import { sniffKind } from "@/lib/artwork/sniff";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { deleteOrphan, uploadOne, type UploadedFile } from "@/lib/artwork/upload";
 import { ArtworkUploadModal } from "./ArtworkUploadModal";
 import type { ProofFinish, ProofShape } from "./ArtworkProof";
 import { clientId, type CartDesign } from "./types";
@@ -24,96 +23,12 @@ import styles from "./ArtworkUpload.module.css";
  * een uploadlink per e-mail.
  */
 
-const MAX_BYTES = 50 * 1024 * 1024; // 50 MB, spiegelt server + bucket
-const BUCKET = "order-artwork";
+// Upload-route (sniff → sign → Storage → finalize) en orphan-cleanup delen we
+// met de landenvlaggen-shop via lib/artwork/upload.
 
 interface BatchProgress {
   done: number;
   total: number;
-}
-
-interface UploadedFile {
-  url: string;
-  name: string;
-  path: string;
-  warnings: string[];
-}
-
-async function deleteOrphan(path: string): Promise<void> {
-  // Best-effort; a leftover file is swept by scripts/cleanup-artwork.ts.
-  try {
-    await fetch("/api/artwork", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path }),
-    });
-  } catch {
-    // ignore
-  }
-}
-
-/**
- * Eén bestand door de bestaande upload-API (zelfde route als de modal):
- * client-sniff → sign → rechtstreeks naar Storage → finalize. Gooit met een
- * klantleesbare melding bij elke misser.
- */
-async function uploadOne(
-  file: File,
-  size: { widthCm?: number; heightCm?: number },
-): Promise<UploadedFile> {
-  if (file.size > MAX_BYTES) throw new Error("te groot (max 50 MB)");
-
-  const headBytes = new Uint8Array(await file.slice(0, 16).arrayBuffer());
-  if (!sniffKind(headBytes)) throw new Error("geen geldige PDF, JPG of PNG");
-
-  const signRes = await fetch("/api/artwork", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "sign",
-      fileName: file.name,
-      fileType: file.type,
-      fileSize: file.size,
-    }),
-  });
-  const signData = (await signRes.json()) as {
-    path?: string;
-    token?: string;
-    error?: string;
-  };
-  if (!signRes.ok || !signData.path || !signData.token) {
-    throw new Error(signData.error ?? "uploaden voorbereiden mislukt");
-  }
-
-  const supabase = createSupabaseBrowserClient();
-  const { error: uploadError } = await supabase.storage
-    .from(BUCKET)
-    .uploadToSignedUrl(signData.path, signData.token, file, {
-      contentType: file.type,
-    });
-  if (uploadError) throw new Error("uploaden mislukt");
-
-  const finRes = await fetch("/api/artwork", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "finalize", path: signData.path, ...size }),
-  });
-  const finData = (await finRes.json()) as {
-    url?: string;
-    name?: string;
-    warnings?: string[];
-    error?: string;
-  };
-  if (!finRes.ok || !finData.url) {
-    throw new Error(finData.error ?? "bestand kon niet worden verwerkt");
-  }
-
-  return {
-    url: finData.url,
-    name: finData.name ?? file.name,
-    path: signData.path,
-    warnings: finData.warnings ?? [],
-  };
 }
 
 function isImageDesign(design: CartDesign): boolean {
