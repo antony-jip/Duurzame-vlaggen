@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import styles from "./order.module.css";
 import { Bladeren } from "./Bladeren";
+import { MandLegen } from "./MandLegen";
 import { Badge, Button, Card, Container, Check } from "@/components/ui";
 import { getMessages } from "@/lib/i18n";
 import { formatCurrency, formatDate } from "@/lib/i18n/formatting";
@@ -154,6 +155,10 @@ export default async function OrderConfirmationPage({
   return (
     <Container as="section" className={styles.page} aria-labelledby="order-title">
       {toon === "feest" && <Bladeren />}
+      {/* De bestelling staat server-side vast, dus de mand heeft zijn werk
+          gedaan — behalve bij een probleem-status, waar de retry-knop naar
+          /afrekenen wijst en de regels dus nog nodig zijn. */}
+      <MandLegen orderId={order.id} actief={toon !== "probleem"} />
 
       <div className={`${styles.hero} ${styles[toon]}`}>
         <span className={styles.checkChip} aria-hidden="true">
