@@ -218,8 +218,14 @@ export async function checkoutAction(
   // --- Betaalmethode: factuur (Billie) alleen zakelijk en in de landen waar
   // de methode bestaat. De UI toont de keuze alleen bij "Ik bestel zakelijk";
   // dit is de autoritaire check op de payload. ---
+  // Zelfde schakelaar als de UI: zolang Billie niet in het Mollie-dashboard
+  // actief is, valt een (verouderde) factuur-keuze terug op direct betalen —
+  // de klant kan op de Mollie-pagina alsnog elke actieve methode kiezen.
+  const factuurActief = process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1";
   const paymentMethod =
-    str(formData, "paymentMethod") === "billie" ? ("billie" as const) : undefined;
+    factuurActief && str(formData, "paymentMethod") === "billie"
+      ? ("billie" as const)
+      : undefined;
   if (paymentMethod) {
     if (!isBusiness) {
       fieldErrors.paymentMethod = v.factuurZakelijk;

@@ -432,8 +432,9 @@ export default function AfrekenenPage() {
         </ol>
         <p className={styles.headSub}>
           <ShieldCheck size={15} aria-hidden="true" />
-          Veilig betalen via iDEAL of zakelijk op factuur. Binnen 5 werkdagen
-          geleverd.
+          {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1"
+            ? "Veilig betalen via iDEAL of zakelijk op factuur. Binnen 5 werkdagen geleverd."
+            : "Veilig betalen via iDEAL. Binnen 5 werkdagen geleverd."}
         </p>
       </div>
 
@@ -574,8 +575,13 @@ export default function AfrekenenPage() {
 
           {/* Betaalwijze — alleen zakelijk: naast direct betalen ook achteraf
               op factuur via Billie (Mollie). De server-action valideert de
-              keuze opnieuw; consumenten betalen altijd direct. */}
-          {isBusiness && (
+              keuze opnieuw; consumenten betalen altijd direct.
+
+              Achter een schakelaar tot Billie in het Mollie-dashboard is
+              geactiveerd: een klant die een niet-actieve methode kiest zou op
+              een kale Mollie-fout stranden. Zet NEXT_PUBLIC_FACTUUR_ACTIEF=1
+              (Vercel env + redeploy) zodra Mollie Billie heeft vrijgegeven. */}
+          {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1" && isBusiness && (
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Betaling</legend>
               <label className={styles.toggle}>
@@ -720,8 +726,10 @@ export default function AfrekenenPage() {
           </Button>
           <ul className={styles.trust}>
             <li>
-              <ShieldCheck size={16} aria-hidden="true" /> iDEAL, creditcard of
-              zakelijk op factuur
+              <ShieldCheck size={16} aria-hidden="true" />{" "}
+              {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1"
+                ? "iDEAL, creditcard of zakelijk op factuur"
+                : "Veilig betalen via iDEAL & Mollie"}
             </li>
             <li>
               <Leaf size={16} aria-hidden="true" /> CSRD-materiaalpaspoort bij

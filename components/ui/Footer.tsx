@@ -91,7 +91,9 @@ export function Footer() {
         <ul className={styles.trustRow}>
           <li>
             <ShieldCheck size={17} aria-hidden="true" />
-            iDEAL, creditcard of zakelijk op factuur
+            {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1"
+              ? "iDEAL, creditcard of zakelijk op factuur"
+              : "Veilig betalen via iDEAL & Mollie"}
           </li>
           <li>
             <Truck size={17} aria-hidden="true" />
