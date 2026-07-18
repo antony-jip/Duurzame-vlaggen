@@ -149,13 +149,15 @@ export function LandenvlaggenShop() {
     }
   }
 
-  function landKnop(l: Land) {
+  // `groot` — de "Veel gekozen"-tegels zijn iets groter met een prominentere
+  // vlag, zodat ze zich visueel onderscheiden van de rustige A-Z-lijst.
+  function landKnop(l: Land, groot = false) {
     const actief = land?.code === l.code;
     return (
       <button
         key={l.code}
         type="button"
-        className={styles.landKnop}
+        className={groot ? `${styles.landKnop} ${styles.landKnopGroot}` : styles.landKnop}
         data-actief={actief || undefined}
         onClick={() => kiesLand(l)}
         aria-pressed={actief}
@@ -165,8 +167,8 @@ export function LandenvlaggenShop() {
         <img
           src={vlagSrc(l.code)}
           alt=""
-          width={30}
-          height={23}
+          width={groot ? 44 : 30}
+          height={groot ? 33 : 23}
           loading="lazy"
           className={styles.landVlagje}
         />
@@ -200,7 +202,9 @@ export function LandenvlaggenShop() {
         {!q && (
           <div className={styles.groep}>
             <h2 className={styles.groepTitel}>Veel gekozen</h2>
-            <div className={styles.landGrid}>{POPULAIR.map(landKnop)}</div>
+            <div className={styles.landGridPopulair}>
+              {POPULAIR.map((l) => landKnop(l, true))}
+            </div>
           </div>
         )}
 
@@ -209,7 +213,9 @@ export function LandenvlaggenShop() {
             {q ? `Resultaten (${resultaten.length})` : "Alle landen (A tot Z)"}
           </h2>
           {resultaten.length > 0 ? (
-            <div className={styles.landGrid}>{resultaten.map(landKnop)}</div>
+            <div className={styles.landGrid}>
+              {resultaten.map((l) => landKnop(l))}
+            </div>
           ) : (
             <p className={styles.geenResultaat}>
               Geen land gevonden voor &ldquo;{zoek.trim()}&rdquo;. Controleer de
@@ -340,6 +346,7 @@ export function LandenvlaggenShop() {
 
               <Button
                 variant="primary"
+                size="lg"
                 fullWidth
                 loading={bezig}
                 disabled={bezig}
