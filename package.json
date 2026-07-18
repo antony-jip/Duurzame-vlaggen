@@ -6,7 +6,10 @@
     "node": ">=22 <25"
   },
   "scripts": {
+    "predev": "node scripts/sync-flag-icons.mjs",
     "dev": "next dev",
+    "postinstall": "node scripts/sync-flag-icons.mjs",
+    "prebuild": "node scripts/sync-flag-icons.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -17,6 +20,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.2",
+    "flag-icons": "^7.5.0",
     "next": "16.2.10",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.1.200",

@@ -260,6 +260,17 @@ export default async function ProductPage({
             )}
           </dl>
 
+          {/* Landvlaggen hebben een eigen bestelpagina met kant-en-klaar
+              drukbestand — wie hier landt voor de vlag van een land hoeft de
+              configurator niet in. */}
+          {product.slug === "mastvlag" && (
+            <p className={styles.landenTip}>
+              <strong>Landvlag nodig?</strong> Bekijk onze{" "}
+              <Link href="/landenvlaggen">landenvlaggen</Link>: kies je land, wij
+              maken het drukbestand. Je hoeft niets aan te leveren.
+            </p>
+          )}
+
           {product.category === "hardware" ? (
             <VlaggenmastConfigurator product={product} catalog={catalog} />
           ) : (
