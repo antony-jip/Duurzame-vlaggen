@@ -146,6 +146,7 @@ export async function sendMailInhoud(
   to: string,
   mail: { onderwerp: string; html: string; tekst: string },
   headers?: Record<string, string>,
+  bijlagen?: Array<{ filename: string; content: Buffer }>,
 ): Promise<SendResult> {
   const resend = getResendClient();
   if (!resend) {
@@ -160,6 +161,7 @@ export async function sendMailInhoud(
       html: mail.html,
       text: mail.tekst,
       ...(headers ? { headers } : {}),
+      ...(bijlagen && bijlagen.length ? { attachments: bijlagen } : {}),
     });
     if (error) {
       console.error(`[email] Resend-fout bij "${mail.onderwerp}" naar ${to}:`, error);

@@ -102,6 +102,11 @@ export type Database = {
           total: number | null;
           mollie_payment_id: string | null;
           mollie_status: string | null;
+          /** Mollie-betaallink (pl_…); non-null = op-rekening-order. */
+          mollie_payment_link_id: string | null;
+          mollie_payment_link_url: string | null;
+          /** Eenmalige betaalherinnering (op rekening) verstuurd op. */
+          payment_reminder_sent_at: string | null;
           probo_order_id: string | null;
           probo_status: string | null;
           carrier: string | null;
@@ -138,6 +143,9 @@ export type Database = {
           total?: number | null;
           mollie_payment_id?: string | null;
           mollie_status?: string | null;
+          mollie_payment_link_id?: string | null;
+          mollie_payment_link_url?: string | null;
+          payment_reminder_sent_at?: string | null;
           probo_order_id?: string | null;
           probo_status?: string | null;
           carrier?: string | null;

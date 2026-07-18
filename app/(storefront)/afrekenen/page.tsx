@@ -304,6 +304,14 @@ export default function AfrekenenPage() {
   const [sameAsBilling, setSameAsBilling] = useState(() =>
     savedValues ? savedValues.sameAsBilling !== "" : true,
   );
+  // Op rekening verschijnt pas zodra er een bedrijfsnaam staat (de server
+  // valideert dat opnieuw); de gekozen betaalwijze stuurt de knoptekst.
+  const [heeftBedrijfsnaam, setHeeftBedrijfsnaam] = useState(
+    () => (savedValues?.shipping_company_name ?? "").trim() !== "",
+  );
+  const [opRekening, setOpRekening] = useState(
+    () => savedValues?.paymentMethod === "op_rekening",
+  );
 
   // Elke wijziging bewaren. `items` is een verborgen serialisatie van de mand
   // en hoort niet in de opslag.
@@ -317,6 +325,8 @@ export default function AfrekenenPage() {
       for (const k of FORM_CHECKBOXES) {
         entries[k] = fd.has(k) ? "on" : "";
       }
+      setHeeftBedrijfsnaam((entries.shipping_company_name ?? "").trim() !== "");
+      setOpRekening(entries.paymentMethod === "op_rekening");
       sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(entries));
     } catch {
       // Storage vol of geblokkeerd: het formulier werkt gewoon door.
@@ -415,6 +425,12 @@ export default function AfrekenenPage() {
     items,
     (slug) => getProduct(slug)?.category === "hardware",
   );
+  // Op rekening rekent niet direct af; de knop moet dat niet beloven.
+  const submitLabel = hasQuoteOnly
+    ? "Offerte aanvragen"
+    : opRekening
+      ? "Bestelling plaatsen"
+      : "Nu betalen";
 
   return (
     <Container
@@ -432,9 +448,8 @@ export default function AfrekenenPage() {
         </ol>
         <p className={styles.headSub}>
           <ShieldCheck size={15} aria-hidden="true" />
-          {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1"
-            ? "Veilig betalen via iDEAL of zakelijk op factuur. Binnen 5 werkdagen geleverd."
-            : "Veilig betalen via iDEAL. Binnen 5 werkdagen geleverd."}
+          Veilig betalen via iDEAL of zakelijk op rekening. Binnen 5 werkdagen
+          geleverd.
         </p>
       </div>
 
@@ -573,12 +588,11 @@ export default function AfrekenenPage() {
             )}
           </fieldset>
 
-          {/* Betaalwijze — alleen zakelijk: naast direct betalen ook achteraf
-              op factuur. De factuur gaat direct per mail de deur uit, met een
-              Mollie-betaallink (overboeking, 14 dagen); de server-action
-              valideert de keuze opnieuw. Consumenten betalen altijd direct.
-              Aanzetten via NEXT_PUBLIC_FACTUUR_ACTIEF=1. */}
-          {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1" && isBusiness && (
+          {/* Betaalwijze — naast direct betalen ook op rekening, zodra er een
+              bedrijfsnaam is ingevuld (de server-action valideert dat
+              opnieuw). De factuur gaat direct per mail de deur uit, met een
+              Mollie-betaallink; productie start pas na betaling. */}
+          {heeftBedrijfsnaam && (
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Betaling</legend>
               <label className={styles.toggle}>
@@ -586,7 +600,7 @@ export default function AfrekenenPage() {
                   type="radio"
                   name="paymentMethod"
                   value="direct"
-                  defaultChecked={formValues?.paymentMethod !== "factuur"}
+                  defaultChecked={formValues?.paymentMethod !== "op_rekening"}
                 />
                 <span className={styles.toggleLabel}>
                   Direct betalen (iDEAL, creditcard)
@@ -596,17 +610,17 @@ export default function AfrekenenPage() {
                 <input
                   type="radio"
                   name="paymentMethod"
-                  value="factuur"
-                  defaultChecked={formValues?.paymentMethod === "factuur"}
+                  value="op_rekening"
+                  defaultChecked={formValues?.paymentMethod === "op_rekening"}
                 />
                 <span className={styles.toggleLabel}>
-                  Achteraf betalen op factuur (14 dagen)
+                  Op rekening (factuur per e-mail, 14 dagen)
                 </span>
               </label>
               <p className={styles.adresHulp}>
                 Je ontvangt de factuur direct per e-mail, met een betaallink:
-                online betalen of gewoon overboeken, binnen 14 dagen. Wij gaan
-                intussen voor je aan de slag.
+                iDEAL, creditcard of overboeken, binnen 14 dagen. We starten de
+                productie zodra je betaling binnen is.
               </p>
               {state.fieldErrors?.paymentMethod && (
                 <p className={styles.veldFout} role="alert">
@@ -718,14 +732,12 @@ export default function AfrekenenPage() {
             icon={<ArrowRight />}
             className={styles.submit}
           >
-            {hasQuoteOnly ? "Offerte aanvragen" : "Nu betalen"}
+            {submitLabel}
           </Button>
           <ul className={styles.trust}>
             <li>
-              <ShieldCheck size={16} aria-hidden="true" />{" "}
-              {process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1"
-                ? "iDEAL, creditcard of zakelijk op factuur"
-                : "Veilig betalen via iDEAL & Mollie"}
+              <ShieldCheck size={16} aria-hidden="true" /> iDEAL, creditcard of
+              zakelijk op rekening
             </li>
             <li>
               <Leaf size={16} aria-hidden="true" /> CSRD-materiaalpaspoort bij
@@ -764,7 +776,7 @@ export default function AfrekenenPage() {
           loading={isPending}
           icon={<ArrowRight />}
         >
-          {hasQuoteOnly ? "Offerte aanvragen" : "Nu betalen"}
+          {submitLabel}
         </Button>
       </div>
     </Container>

@@ -125,7 +125,7 @@ function vraag(order: OrderRow, bericht: string): MailInhoud {
 }
 
 // ---------------------------------------------------------------------------
-// Factuur (zakelijk achteraf betalen)
+// Factuur (op rekening)
 // ---------------------------------------------------------------------------
 
 function eur(bedrag: number): string {
@@ -133,10 +133,11 @@ function eur(bedrag: number): string {
 }
 
 /**
- * De factuur voor "achteraf betalen op factuur": automatisch verstuurd zodra
- * de order geplaatst is. Factuurnummer = ordernummer, betaaltermijn 14 dagen;
- * de betaallink is Mollie's overboekingspagina (online betalen of de
- * IBAN-gegevens voor een handmatige overboeking).
+ * De factuur voor "op rekening": automatisch verstuurd zodra de order
+ * geplaatst is, met de factuur-PDF als bijlage. Factuurnummer = ordernummer,
+ * betaaltermijn 14 dagen; de betaallink is een Mollie-betaallink waar de klant
+ * zelf kiest (iDEAL, creditcard of overboeking). Productie start pas na
+ * betaling en dat zegt de mail ook.
  *
  * Wettelijke velden: volledige naam + adres + KvK/btw van de verkoper
  * (factuurVoetRegels), factuurdatum, factuurnummer, bedragen ex btw, het
@@ -173,8 +174,8 @@ export function factuurMail(input: {
       inhoud:
         alinea(aanhef(order)) +
         alinea(
-          "Bedankt voor je bestelling. Je koos voor betalen op factuur; dit is hem. " +
-            `Betaal binnen 14 dagen (uiterlijk ${vervaldatum}), dan gaan wij intussen voor je aan de slag.`,
+          "Bedankt voor je bestelling. Je koos voor betalen op rekening; hierbij je factuur, ook als PDF in de bijlage. " +
+            `Betaal binnen 14 dagen (uiterlijk ${vervaldatum}). Zodra je betaling binnen is, starten we de productie van je vlaggen.`,
         ) +
         blok(
           `<strong>Factuurnummer</strong><br/>${order.order_number}<br/><br/>` +
@@ -189,8 +190,8 @@ export function factuurMail(input: {
         ) +
         alinea(
           betaallink
-            ? "Betalen kan direct via de knop hieronder; daar staan ook de rekeninggegevens en het betalingskenmerk voor een handmatige overboeking."
-            : "De betaalinstructies ontvang je apart van ons.",
+            ? "Betalen kan direct via de knop hieronder. Je kiest daar zelf hoe: iDEAL, creditcard of overboeking."
+            : `Betalen kan per overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, onder vermelding van ${order.order_number}.`,
         ) +
         fijn(
           [
@@ -200,22 +201,78 @@ export function factuurMail(input: {
           ].join("<br/>"),
         ),
       knop: betaallink
-        ? { label: "Bekijk betaalinstructies", url: betaallink }
+        ? { label: "Betaal je factuur", url: betaallink }
         : undefined,
     }),
     tekst: platteTekst([
       aanhef(order),
       "",
       `Factuur ${order.order_number} (${factuurdatum}). Betaal binnen 14 dagen, uiterlijk ${vervaldatum}.`,
+      "Zodra je betaling binnen is, starten we de productie van je vlaggen.",
       "",
       ...regels.map((r) => `${r.omschrijving}: ${eur(r.bedragExVat)} excl. btw`),
       `Verzendkosten: ${(order.shipping_cost ?? 0) > 0 ? `${eur(order.shipping_cost ?? 0)} excl. btw` : "Gratis"}`,
       btwRegel,
       `Te betalen: ${eur(order.total ?? 0)}`,
       "",
-      betaallink ? `Betaalinstructies: ${betaallink}` : "",
+      betaallink
+        ? `Betalen: ${betaallink}`
+        : `Betalen: overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, o.v.v. ${order.order_number}`,
       "",
       ...factuurVoetRegels(),
+    ]),
+  };
+}
+
+/**
+ * Eenmalige betaalherinnering voor een op-rekening-order die na 7 dagen nog
+ * niet betaald is. Vriendelijk en actief: de klant weet wat hij kan doen, en
+ * dat de productie start zodra de betaling binnen is. Verstuurd door de cron
+ * /api/cron/betaalherinnering; de eenmaligheid bewaakt
+ * orders.payment_reminder_sent_at.
+ */
+export function betaalherinneringMail(input: {
+  order: OrderRow;
+  betaallink: string | null;
+  vervaldatum: string;
+}): MailInhoud {
+  const { order, betaallink, vervaldatum } = input;
+  return {
+    onderwerp: `Herinnering · factuur ${order.order_number} staat nog open`,
+    html: mailLayout({
+      titel: "Je factuur staat nog open",
+      ondertitel: order.order_number,
+      inhoud:
+        alinea(aanhef(order)) +
+        alinea(
+          `Een week geleden plaatste je bestelling ${order.order_number} op rekening. We hebben je betaling nog niet gezien, dus een vriendelijke herinnering: het openstaande bedrag is ${eur(order.total ?? 0)}, te betalen uiterlijk ${vervaldatum}.`,
+        ) +
+        alinea(
+          "We maken en versturen je vlaggen zodra je betaling binnen is. Betaal je vandaag, dan gaan we direct voor je aan de slag.",
+        ) +
+        alinea(
+          betaallink
+            ? "Betalen doe je via de knop hieronder: iDEAL, creditcard of overboeking, wat jou het beste uitkomt."
+            : `Betalen kan per overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, onder vermelding van ${order.order_number}.`,
+        ) +
+        fijn(
+          `Al betaald? Dan kruisen dit bericht en je betaling elkaar en hoef je niets te doen. Vragen? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
+        ),
+      knop: betaallink ? { label: "Betaal je factuur", url: betaallink } : undefined,
+    }),
+    tekst: platteTekst([
+      aanhef(order),
+      "",
+      `Een week geleden plaatste je bestelling ${order.order_number} op rekening. We hebben je betaling nog niet gezien.`,
+      `Openstaand bedrag: ${eur(order.total ?? 0)}, te betalen uiterlijk ${vervaldatum}.`,
+      "",
+      "We maken en versturen je vlaggen zodra je betaling binnen is. Betaal je vandaag, dan gaan we direct voor je aan de slag.",
+      "",
+      betaallink
+        ? `Betalen: ${betaallink}`
+        : `Betalen: overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, o.v.v. ${order.order_number}`,
+      "",
+      `Al betaald? Dan kruisen dit bericht en je betaling elkaar en hoef je niets te doen. Vragen? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
     ]),
   };
 }

@@ -269,6 +269,49 @@ export async function listShippedOrdersBetween(
   return (data ?? []) as OrderRow[];
 }
 
+// --- Betaalherinnering (op rekening) ----------------------------------------------
+
+/**
+ * Op-rekening-orders (herkenbaar aan een betaallink) die vóór `beforeIso`
+ * geplaatst zijn, nog op betaling wachten en nog geen herinnering kregen.
+ * Kandidatenlijst voor de cron /api/cron/betaalherinnering.
+ */
+export async function listOpRekeningReminderCandidates(
+  beforeIso: string,
+): Promise<OrderRow[]> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("status", "awaiting_payment")
+    .not("mollie_payment_link_id", "is", null)
+    .is("payment_reminder_sent_at", null)
+    .lt("created_at", beforeIso)
+    .order("created_at", { ascending: true });
+  if (error) {
+    throw new Error(`listOpRekeningReminderCandidates failed: ${error.message}`);
+  }
+  return (data ?? []) as OrderRow[];
+}
+
+/**
+ * Claim de eenmalige betaalherinnering: stempelt `payment_reminder_sent_at`,
+ * maar alleen als dat veld nog leeg is. `false` betekent dat een eerdere (of
+ * gelijktijdige) run hem al claimde — dan NIET mailen. Claimen gebeurt vóór
+ * het verzenden, dus de herinnering gaat hoogstens één keer de deur uit.
+ */
+export async function claimBetaalherinnering(orderId: string): Promise<boolean> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ payment_reminder_sent_at: new Date().toISOString() })
+    .eq("id", orderId)
+    .is("payment_reminder_sent_at", null)
+    .select("id");
+  if (error) throw new Error(`claimBetaalherinnering failed: ${error.message}`);
+  return (data ?? []).length > 0;
+}
+
 // --- Marketing-suppressies (AVG opt-out) ------------------------------------------
 
 export async function isEmailSuppressed(email: string): Promise<boolean> {

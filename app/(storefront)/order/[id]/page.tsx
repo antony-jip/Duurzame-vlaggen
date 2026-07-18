@@ -172,6 +172,19 @@ export default async function OrderConfirmationPage({
             {dict.order.confirmation.retryCta}
           </Button>
         )}
+
+        {/* Op rekening: de klant landt hier direct na het plaatsen. De factuur
+            met betaallink staat in zijn mail, maar hier direct betalen kan ook. */}
+        {toon === "wachten" && order.mollie_payment_link_url && (
+          <Button
+            as="a"
+            href={order.mollie_payment_link_url}
+            variant="primary"
+            className={styles.heroCta}
+          >
+            {dict.order.confirmation.payCta}
+          </Button>
+        )}
       </div>
 
       {pendingDesigns > 0 && order.portal_token && (

@@ -125,8 +125,7 @@
       "postalCodeInvalid": "Vul een geldige postcode in.",
       "vatNumberInvalid": "Vul een geldig btw-nummer in.",
       "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd.",
-      "factuurZakelijk": "Betalen op factuur is alleen beschikbaar voor zakelijke bestellingen.",
-      "factuurLand": "Betalen op factuur kan voor bedrijven in Nederland, Duitsland, Oostenrijk en Frankrijk. Kies anders voor direct betalen."
+      "opRekeningBedrijfsnaam": "Vul je bedrijfsnaam in om op rekening te kunnen bestellen."
     }
   },
   "order": {
@@ -140,7 +139,8 @@
       "problemTitle": "De betaling is niet gelukt",
       "problemSubtitle": "Geen zorgen, je bestelling staat nog voor je klaar. Probeer de betaling opnieuw, dan gaan we alsnog aan de slag.",
       "trackPromise": "Zodra we je bestelling hebben verwerkt, ontvang je een track & trace-link per e-mail. Daarmee volg je je vlaggen tot aan de deur.",
-      "retryCta": "Betaling opnieuw proberen"
+      "retryCta": "Betaling opnieuw proberen",
+      "payCta": "Betaal je factuur"
     },
     "steps": {
       "heading": "Wat er nu gebeurt",

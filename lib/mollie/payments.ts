@@ -8,33 +8,6 @@ import { molliePaymentSchema, mollieWebhookSchema } from "./schemas";
  * small, typed shapes while always returning `raw` for callers that need more.
  */
 
-/** Adresvorm zoals Mollie hem verwacht (o.a. verplicht voor Billie). */
-export interface MollieAddress {
-  organizationName?: string;
-  givenName?: string;
-  familyName?: string;
-  email?: string;
-  streetAndNumber?: string;
-  postalCode?: string;
-  city?: string;
-  country?: string;
-}
-
-/**
- * Orderregel voor betaalmethodes die regel-informatie eisen (Billie, Klarna).
- * Bedragen zijn incl. btw; Mollie valideert dat `unitPrice × quantity` gelijk
- * is aan `totalAmount` en dat de regels optellen tot het betaalbedrag.
- */
-export interface MolliePaymentLine {
-  description: string;
-  quantity: number;
-  unitPrice: { currency: string; value: string };
-  totalAmount: { currency: string; value: string };
-  /** Percentage als string, bv. "21.00". */
-  vatRate: string;
-  vatAmount: { currency: string; value: string };
-}
-
 /** Input for {@link createPayment}. `amount` is a plain euro number. */
 export interface CreatePaymentInput {
   amount: number;
@@ -43,15 +16,6 @@ export interface CreatePaymentInput {
   redirectUrl: string;
   webhookUrl?: string;
   metadata?: Record<string, unknown>;
-  method?: string;
-  /** Vervaldatum (YYYY-MM-DD) voor overboekingen; Mollie houdt de betaling
-   *  tot die datum open (factuurflow: 14 dagen betaaltermijn). */
-  dueDate?: string;
-  /** Vereist voor factuur-methodes (Billie): factuuradres mét bedrijfsnaam. */
-  billingAddress?: MollieAddress;
-  shippingAddress?: MollieAddress;
-  /** Vereist voor factuur-methodes (Billie): de orderregels incl. btw. */
-  lines?: MolliePaymentLine[];
 }
 
 /** Normalised result of {@link createPayment}. */
@@ -86,11 +50,6 @@ export async function createPayment(
     redirectUrl: input.redirectUrl,
     ...(input.webhookUrl ? { webhookUrl: input.webhookUrl } : {}),
     ...(input.metadata ? { metadata: input.metadata } : {}),
-    ...(input.method ? { method: input.method } : {}),
-    ...(input.dueDate ? { dueDate: input.dueDate } : {}),
-    ...(input.billingAddress ? { billingAddress: input.billingAddress } : {}),
-    ...(input.shippingAddress ? { shippingAddress: input.shippingAddress } : {}),
-    ...(input.lines ? { lines: input.lines } : {}),
   };
 
   const raw = await mollieRequest("/payments", { method: "POST", json: body });

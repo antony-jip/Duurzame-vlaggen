@@ -214,18 +214,16 @@ export async function checkoutAction(
     }
   }
 
-  // --- Betaalmethode: achteraf op factuur alleen zakelijk. De UI toont de
-  // keuze alleen bij "Ik bestel zakelijk"; dit is de autoritaire check. De
-  // factuurflow loopt via een Mollie-overboeking met 14 dagen vervaltermijn,
-  // dus er is geen landenrestrictie zoals bij Billie. Zelfde schakelaar als
-  // de UI (NEXT_PUBLIC_FACTUUR_ACTIEF). ---
-  const factuurActief = process.env.NEXT_PUBLIC_FACTUUR_ACTIEF === "1";
+  // --- Betaalmethode: op rekening kan alleen met een ingevulde bedrijfsnaam.
+  // De UI toont de keuze pas zodra die is ingevuld; dit is de autoritaire
+  // check. Geen landenrestrictie: op rekening werkt voor alle landen die de
+  // shop bedient (de betaallink is een gewone Mollie-betaling). ---
   const paymentMethod =
-    factuurActief && str(formData, "paymentMethod") === "factuur"
-      ? ("factuur" as const)
+    str(formData, "paymentMethod") === "op_rekening"
+      ? ("op_rekening" as const)
       : undefined;
-  if (paymentMethod && !isBusiness) {
-    fieldErrors.paymentMethod = v.factuurZakelijk;
+  if (paymentMethod && !str(formData, "shipping_company_name")) {
+    fieldErrors.paymentMethod = v.opRekeningBedrijfsnaam;
   }
 
   if (Object.keys(fieldErrors).length > 0) {

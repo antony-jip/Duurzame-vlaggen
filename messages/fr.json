@@ -125,8 +125,7 @@
       "postalCodeInvalid": "Veuillez saisir un code postal valide.",
       "vatNumberInvalid": "Veuillez saisir un numéro de TVA valide.",
       "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié.",
-      "factuurZakelijk": "Le paiement sur facture est réservé aux commandes professionnelles.",
-      "factuurLand": "Le paiement sur facture est disponible pour les entreprises aux Pays-Bas, en Allemagne, en Autriche et en France. Sinon, choisissez le paiement direct."
+      "opRekeningBedrijfsnaam": "Indiquez le nom de votre entreprise pour commander sur facture."
     }
   },
   "order": {
@@ -140,7 +139,8 @@
       "problemTitle": "Le paiement n’a pas abouti",
       "problemSubtitle": "Pas d’inquiétude, votre commande vous attend toujours. Réessayez le paiement et nous nous mettons au travail.",
       "trackPromise": "Dès que nous aurons traité votre commande, vous recevrez un lien de suivi par e-mail. Il vous permet de suivre vos drapeaux jusqu’à votre porte.",
-      "retryCta": "Réessayer le paiement"
+      "retryCta": "Réessayer le paiement",
+      "payCta": "Payer votre facture"
     },
     "steps": {
       "heading": "Les prochaines étapes",

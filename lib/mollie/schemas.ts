@@ -43,6 +43,30 @@ export const molliePaymentSchema = z
 export type MolliePayment = z.infer<typeof molliePaymentSchema>;
 
 /**
+ * The subset of a Mollie Payment Link resource we rely on (Payment Links API,
+ * `POST /payment-links` and `GET /payment-links/:id`). `_links.paymentLink` is
+ * the URL the customer pays on; `paidAt` is set once the link is paid.
+ */
+export const molliePaymentLinkSchema = z
+  .object({
+    id: z.string(),
+    paidAt: z.string().nullish(),
+    expiresAt: z.string().nullish(),
+    _links: z
+      .object({
+        paymentLink: z
+          .object({ href: z.string() })
+          .passthrough()
+          .nullish(),
+      })
+      .passthrough()
+      .optional(),
+  })
+  .passthrough();
+
+export type MolliePaymentLink = z.infer<typeof molliePaymentLinkSchema>;
+
+/**
  * The webhook payload Mollie POSTs (form-urlencoded, parsed into an object).
  * Mollie sends only the payment `id`; never trust anything else from it.
  */
