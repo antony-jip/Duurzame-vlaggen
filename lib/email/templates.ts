@@ -1,5 +1,5 @@
 import "server-only";
-import type { OrderRow } from "@/lib/db/types";
+import type { OrderRow, OrderItemRow } from "@/lib/db/types";
 import { mailLayout, alinea, fijn, blok, platteTekst } from "./layout";
 import { BEDRIJF, bedrijfsAdresRegels, factuurVoetRegels } from "@/lib/bedrijf";
 
@@ -402,6 +402,56 @@ export function portaalNotificatie(input: {
       `Klant ${input.order.email} heeft een ontwerp ${actie} voor ${input.itemLabel} (order ${input.order.order_number}).`,
       `Bestand: ${input.fileName}`,
       status,
+      input.adminUrl,
+    ]),
+  };
+}
+
+/**
+ * Interne notificatie: er is zojuist een bestelling betaald. Dit is de enige
+ * mail die ons bij een nieuwe order bereikt; zonder deze mail zie je een
+ * bestelling pas als de klant een ontwerp aanlevert (portaalNotificatie) of
+ * als je zelf in de admin kijkt.
+ */
+export function nieuweBestellingNotificatie(input: {
+  order: OrderRow;
+  items: OrderItemRow[];
+  pending: number;
+  adminUrl: string;
+}): MailInhoud {
+  const { order, items, pending } = input;
+  const regels = items.map(
+    (item) =>
+      `${item.amount}× ${item.product_name ?? item.probo_product_code}`,
+  );
+  const vervolg =
+    pending === 0
+      ? "Alle ontwerpen zitten al bij de bestelling. De order kan bij Probo besteld worden (Markeer besteld in de admin)."
+      : pending === 1
+        ? "De klant moet nog 1 ontwerp aanleveren. Je krijgt bericht zodra het binnen is."
+        : `De klant moet nog ${pending} ontwerpen aanleveren. Je krijgt bericht zodra alles binnen is.`;
+
+  return {
+    onderwerp: `Nieuwe bestelling · ${order.order_number} · ${eur(order.total ?? 0)}`,
+    html: mailLayout({
+      titel: "Nieuwe bestelling",
+      ondertitel: order.order_number,
+      inhoud:
+        alinea(
+          `<strong>${escapeHtmlText(order.email)}</strong> heeft zojuist betaald.`,
+        ) +
+        blok(
+          `<strong>Bedrag</strong><br/>${eur(order.total ?? 0)}<br/><br/>` +
+            `<strong>Bestelling</strong><br/>${regels.map(escapeHtmlText).join("<br/>")}<br/><br/>` +
+            `<strong>Vervolg</strong><br/>${vervolg}`,
+        ),
+      knop: { label: "Bekijk de order in de admin", url: input.adminUrl },
+    }),
+    tekst: platteTekst([
+      `${order.email} heeft zojuist betaald (order ${order.order_number}).`,
+      `Bedrag: ${eur(order.total ?? 0)}`,
+      ...regels,
+      vervolg,
       input.adminUrl,
     ]),
   };

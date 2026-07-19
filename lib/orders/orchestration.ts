@@ -30,7 +30,10 @@ import {
 } from "@/lib/orders/repository";
 import { sendMateriaalpaspoortEmail, sendMailInhoud } from "@/lib/email/send";
 import { factuurMail } from "@/lib/email/templates";
-import { ontwerpenAanleveren } from "@/lib/email/templates";
+import {
+  ontwerpenAanleveren,
+  nieuweBestellingNotificatie,
+} from "@/lib/email/templates";
 import { generateFactuur } from "@/lib/factuur/generate";
 
 /**
@@ -603,6 +606,9 @@ export async function handleMolliePayment(
     // aparte e-mail. Best-effort en idempotent — faalt stil met log, en mag de
     // betaalflow nooit blokkeren.
     await sendMateriaalpaspoortOnce(order.id);
+    // En intern: zonder deze melding blijft een betaalde order onopgemerkt tot
+    // de klant een ontwerp aanlevert of je zelf in de admin kijkt.
+    await sendNieuweBestellingNotificatieOnce(order.id, pending);
     // Verder blijft de order staan (paid of awaiting_files): inkoop en
     // verzending gaan met de hand, vanuit de admin.
     return;
@@ -683,6 +689,53 @@ export async function sendOntwerpenAanleverenOnce(
     await sendMailInhoud(order.email, mail);
   } catch (err) {
     console.error(`[portal] aanlevermail mislukt voor order ${orderId}:`, err);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Interne notificatie bij een nieuwe bestelling (best-effort, idempotent)
+// ---------------------------------------------------------------------------
+
+/**
+ * Meld ons intern dat een bestelling betaald is, exact één keer per order.
+ * Idempotent via `recordEventOnce`, zodat een Mollie-webhook-retry niet twee
+ * meldingen geeft; best-effort zoals de andere mails — een mailstoring mag de
+ * betaalflow nooit blokkeren. Gaat naar `orderNotifyEmail` (valt terug op het
+ * eerste adres uit ADMIN_EMAILS); is dat leeg, dan gebeurt er niets.
+ */
+async function sendNieuweBestellingNotificatieOnce(
+  orderId: string,
+  pending: number,
+): Promise<void> {
+  const notifyTo = serverEnv.orderNotifyEmail;
+  if (!notifyTo) return;
+
+  try {
+    const event = await recordEventOnce({
+      orderId,
+      source: "system",
+      eventType: "order.notified",
+    });
+    if (!event.inserted) return;
+
+    const order = await getOrderById(orderId);
+    if (!order) return;
+    const items = await getOrderItems(orderId);
+
+    await sendMailInhoud(
+      notifyTo,
+      nieuweBestellingNotificatie({
+        order,
+        items,
+        pending,
+        adminUrl: `${publicEnv.appUrl}/admin/orders/${order.id}`,
+      }),
+    );
+  } catch (err) {
+    console.error(
+      `[order] interne notificatie mislukt voor order ${orderId}:`,
+      err,
+    );
   }
 }
 

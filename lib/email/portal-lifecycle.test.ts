@@ -4,6 +4,7 @@ import {
   lifecycleMail,
   ontwerpenAanleveren,
   portaalNotificatie,
+  nieuweBestellingNotificatie,
 } from "@/lib/email/templates";
 
 /**
@@ -127,4 +128,47 @@ describe("lifecycleMail", () => {
       expect(mail.html).toContain("DV-20260716-TEST");
     });
   }
+});
+
+describe("nieuweBestellingNotificatie", () => {
+  const items = [
+    { amount: 3, product_name: "Baniervlag", probo_product_code: "flag-ciclo" },
+    { amount: 1, product_name: null, probo_product_code: "flag-mesh" },
+  ] as unknown as Parameters<typeof nieuweBestellingNotificatie>[0]["items"];
+
+  it("noemt bedrag, regels en het resterende aantal ontwerpen", () => {
+    const mail = nieuweBestellingNotificatie({
+      order: order(),
+      items,
+      pending: 2,
+      adminUrl: "https://site/admin/orders/o1",
+    });
+    expect(mail.onderwerp).toContain("DV-20260716-TEST");
+    expect(mail.onderwerp).toContain("€ 121,00");
+    expect(mail.html).toContain("3× Baniervlag");
+    // Zonder product_name valt de regel terug op de Probo-code.
+    expect(mail.html).toContain("1× flag-mesh");
+    expect(mail.tekst).toContain("nog 2 ontwerpen");
+    expect(mail.html).toContain("https://site/admin/orders/o1");
+  });
+
+  it("meldt bij pending 0 dat de order bij Probo besteld kan worden", () => {
+    const mail = nieuweBestellingNotificatie({
+      order: order(),
+      items,
+      pending: 0,
+      adminUrl: "https://site/admin/orders/o1",
+    });
+    expect(mail.tekst).toContain("Markeer besteld");
+  });
+
+  it("escapet klantinvoer in het e-mailadres", () => {
+    const mail = nieuweBestellingNotificatie({
+      order: order({ email: "<script>@x.nl" }),
+      items,
+      pending: 0,
+      adminUrl: "https://site/admin/orders/o1",
+    });
+    expect(mail.html).not.toContain("<script>");
+  });
 });
