@@ -127,9 +127,9 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "baniervlag",
     name: "Baniervlag",
     category: "vlag",
-    tagline: "Valt op. Valt daarna volledig uiteen. Zonder één stukje plastic.",
+    tagline: "Valt op. En laat na afdanking veel minder achter.",
     description:
-      "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek dat na afdanking in 2 tot 3 jaar biologisch afbreekt. Geen microplastics. Geen compromis.",
+      "Onze bestseller. De verticale banier die je merk laat knallen bij de ingang, op beurzen en langs de weg. Gedrukt op Flag-CiCLO® doek: in zeewater brak 94,2% daarvan af in ruim drie en een half jaar, tegen 3,8% voor gewoon polyester in dezelfde test.",
     // priceFrom = goedkoopste maat (100×250 = €32,50) uit de configurator.
     priceFrom: 32.5,
     badge: "Populair",
@@ -185,20 +185,52 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "mastvlag",
     name: "Mastvlag",
     category: "vlag",
-    tagline: "De klassieker aan je mast. Nu zonder plastic nalatenschap.",
+    tagline: "De klassieker aan je mast. Met een kortere nalatenschap.",
     description:
-      "Hijs 'm aan je mast, staand of liggend. Gedrukt op biologisch afbreekbaar doek, afgewerkt met een stevige band en koord die jaren meegaan. En als het einde komt, blijft er niets achter. Geen microplastic, geen rommel in de natuur.",
+      "Hijs 'm aan je mast, staand of liggend. Gedrukt op biologisch afbreekbaar doek, afgewerkt met een stevige band en koord die jaren meegaan. Wat er na afdanking van het doek achterblijft, breekt af: in bodem 91,1% in ruim drie jaar, volgens ASTM D5988.",
     // priceFrom = kleinste maat uit het lokale retailmodel (150×100).
-    // Herprijsd op € 15,20/m² (2026-07-15); zie lib/pricing/local-catalog.
-    priceFrom: 23,
+    // Herprijsd op € 18,50/m² (2026-07-20, stap 2); zie MASTVLAG_PRIJS_PER_M2
+    // in lib/pricing/local-catalog. Was € 23,00.
+    priceFrom: 27.5,
     sizes: [
       // Mastvlag = hijsvlag (liggend). Labels zijn breedte × hoogte; het
       // mastadvies per maat komt 1-op-1 van de oude site.
-      { label: "150 × 100 cm", widthCm: 150, heightCm: 100, mastAdvies: "mast 2/3 m", mastCm: 300 },
-      { label: "180 × 120 cm", widthCm: 180, heightCm: 120, mastAdvies: "vlaggenstok 4/5 m", mastCm: 450 },
-      { label: "225 × 150 cm", widthCm: 225, heightCm: 150, mastAdvies: "mast 6/7 m", mastCm: 650, popular: true },
-      { label: "300 × 200 cm", widthCm: 300, heightCm: 200, mastAdvies: "mast 8/9 m", mastCm: 850 },
-      { label: "350 × 225 cm", widthCm: 350, heightCm: 225, mastAdvies: "mast 10 m", mastCm: 1000 },
+      {
+        label: "150 × 100 cm",
+        widthCm: 150,
+        heightCm: 100,
+        mastAdvies: "mast 2/3 m",
+        mastCm: 300,
+      },
+      {
+        label: "180 × 120 cm",
+        widthCm: 180,
+        heightCm: 120,
+        mastAdvies: "vlaggenstok 4/5 m",
+        mastCm: 450,
+      },
+      {
+        label: "225 × 150 cm",
+        widthCm: 225,
+        heightCm: 150,
+        mastAdvies: "mast 6/7 m",
+        mastCm: 650,
+        popular: true,
+      },
+      {
+        label: "300 × 200 cm",
+        widthCm: 300,
+        heightCm: 200,
+        mastAdvies: "mast 8/9 m",
+        mastCm: 850,
+      },
+      {
+        label: "350 × 225 cm",
+        widthCm: 350,
+        heightCm: 225,
+        mastAdvies: "mast 10 m",
+        mastCm: 1000,
+      },
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
@@ -233,12 +265,13 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "beachvlag",
     name: "Beachvlag",
     category: "vlag",
-    tagline: "Overal opgezet. Nergens plastic achtergelaten.",
+    tagline: "Overal opgezet. Laat overal minder achter.",
     description:
-      "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. De doekprint breekt netjes af in plaats van als microplastic in de natuur te belanden.",
-    // priceFrom = goedkoopste maat (Straight S, 80×220 = €35) met de standaard-
+      "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. Het doek is Flag-CiCLO®: vezels die loslaten breken af in plaats van als microplastic te blijven liggen. In zeewater 94,2% in ruim drie en een half jaar.",
+    // priceFrom = goedkoopste maat (Straight S, 80×220 = €40) met de standaard-
     // samenstelling "Alleen vlag" (€0) — de openingsprijs van de configurator.
-    priceFrom: 35,
+    // +15% per 2026-07-20 (was € 35,00); zie lib/pricing/local-catalog.
+    priceFrom: 40,
     // The model (Straight/Square) is encoded in the size: each size belongs to
     // exactly one Probo product (`beachflag-straight` / `beachflag-square`).
     // Sizes are Probo's own presets for the Flag-CiCLO® material, verified live.
@@ -247,7 +280,12 @@ export const PRODUCTS: CatalogProduct[] = [
       // bestellen bij Probo gaat toch handmatig, dus een onbevestigde preset is
       // geen reden meer voor "op aanvraag" (de oude quoteOnly-vlaggen zijn weg).
       { label: "Straight Small — 80 × 220 cm", widthCm: 80, heightCm: 220 },
-      { label: "Straight Medium S — 65 × 315 cm", widthCm: 65, heightCm: 315, popular: true },
+      {
+        label: "Straight Medium S — 65 × 315 cm",
+        widthCm: 65,
+        heightCm: 315,
+        popular: true,
+      },
       { label: "Straight Medium L — 80 × 315 cm", widthCm: 80, heightCm: 315 },
       { label: "Straight Large — 90 × 430 cm", widthCm: 90, heightCm: 430 },
       // Square = Probo's geverifieerde square-presets (alle online bestelbaar).
@@ -327,11 +365,12 @@ export const PRODUCTS: CatalogProduct[] = [
     slug: "gevelvlag",
     name: "Gevelvlag",
     category: "vlag",
-    tagline: "Je merk aan de straat. Zonder een spoor na te laten.",
+    tagline: "Je merk aan de straat. Met een kleiner spoor.",
     description:
-      "Hangt aan een uithouder aan je gevel en pakt elke voorbijganger. Afgewerkt met band, koord en lus, gedrukt op biologisch afbreekbaar doek. Zichtbaar duurzaam. Precies wat een organisatie die CSRD serieus neemt wil uitstralen.",
-    // priceFrom = echte retailprijs kleinste maat (100×70 = €17,50, ref).
-    priceFrom: 17.5,
+      "Hangt aan een uithouder aan je gevel en pakt elke voorbijganger. Afgewerkt met band, koord en lus, gedrukt op biologisch afbreekbaar doek. Bij elke bestelling krijg je het inkoopdossier met de testresultaten en de herkomst van het doek, klaar voor een aanbesteding.",
+    // priceFrom = echte retailprijs kleinste maat (100×70 = €20,00).
+    // +15% per 2026-07-20 (was € 17,50, ref); zie lib/pricing/local-catalog.
+    priceFrom: 20,
     // Sizes are Probo's own facade-flag presets for Flag-CiCLO®, verified live.
     sizes: [
       { label: "100 × 70 cm", widthCm: 100, heightCm: 70 },
