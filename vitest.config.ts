@@ -18,5 +18,8 @@ export default defineConfig({
     // Load .env.local so e2e tests can reach the live TEST APIs.
     setupFiles: ["./test/setup.ts"],
     // Unit runs exclude e2e; `npm run test:e2e` targets them explicitly.
+    // Agent-worktrees onder .claude/ bevatten een volledige repokopie; zonder
+    // exclude telt de suite elke test dubbel.
+    exclude: ["**/node_modules/**", "**/.next/**", "**/.claude/**"],
   },
 });

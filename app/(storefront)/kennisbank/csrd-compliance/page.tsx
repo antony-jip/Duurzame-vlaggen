@@ -25,9 +25,9 @@ const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
 const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
 
 const PAD = "/kennisbank/csrd-compliance";
-const TITEL = "CSRD: geldt de rapportageplicht voor jouw bedrijf?";
+const TITEL = "CSRD: geldt het voor jouw bedrijf?";
 const OMSCHRIJVING =
-  "Sinds het Omnibus-pakket geldt de CSRD alleen vanaf 1.000 medewerkers en 450 miljoen euro omzet. Lees of je eronder valt, en wat grote opdrachtgevers alsnog vragen over duurzame inkoop.";
+  "Sinds het Omnibus-pakket geldt de CSRD pas vanaf 1.000 medewerkers en 450 miljoen euro omzet. Lees of je eronder valt en wat opdrachtgevers alsnog vragen.";
 
 export const metadata: Metadata = {
   alternates: { canonical: PAD },

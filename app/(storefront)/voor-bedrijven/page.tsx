@@ -31,7 +31,7 @@ const REFERENTIE_PCT =
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-bedrijven" },
-  title: "Voor bedrijven. Duurzame, biologisch afbreekbare bedrijfsvlaggen",
+  title: "Biologisch afbreekbare bedrijfsvlaggen",
   description:
     "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Inkoopdossier inbegrepen, levering in circa 3 werkdagen.",
 };

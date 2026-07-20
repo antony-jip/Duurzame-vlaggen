@@ -59,8 +59,8 @@ export function ProcesStappen({
 }: {
   /**
    * Maten-overzicht van het product (product.sizesImage) als fotoband boven
-   * de footer. Zonder beeld toont de band de blauwe waterstrook met
-   * microplastic-deeltjes.
+   * de footer. Zonder beeld komt er geen band: de sectie eindigt dan gewoon in
+   * de forest-footer.
    */
   bandImage?: { src: string; alt: string };
 }) {
@@ -156,50 +156,7 @@ export function ProcesStappen({
             />
           </svg>
         </figure>
-      ) : (
-        /* Onder de golvende groene hem stroomt water met microplastic-deeltjes —
-           precies wat wij níét achterlaten. Groen staat vóór, water erachter. */
-        <div className={styles.water} aria-hidden="true">
-          {/* Eén SVG → gegarandeerde schildervolgorde: blauw water achter,
-              groene golven eroverheen (boven én onder), naadloos in de
-              forest-footer. */}
-          <svg
-            className={styles.waterSvg}
-            viewBox="0 0 1440 160"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="dv-water" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7fb0c2" />
-                <stop offset="100%" stopColor="#548397" />
-              </linearGradient>
-            </defs>
-            {/* Blauw water (basis, achter alles). */}
-            <rect x="0" y="0" width="1440" height="160" fill="url(#dv-water)" />
-            {/* Golvende groene bodem → naadloos verder in de forest-footer. */}
-            <path
-              d="M0,108 C240,88 480,128 720,108 C960,88 1200,128 1440,108 L1440,160 L0,160 Z"
-              fill="#2c5f4f"
-            />
-            {/* Golvende groene hem — de sectie, vóór (over) het water. */}
-            <path
-              d="M0,0 L1440,0 L1440,44 C1200,64 960,26 720,46 C480,66 240,28 0,44 Z"
-              fill="#2c5f4f"
-            />
-          </svg>
-          {/* Microplastic-deeltjes die in de blauwe strook dobberen. */}
-          <span className={`${styles.speck} ${styles.speck1}`} />
-          <span className={`${styles.speck} ${styles.speck2}`} />
-          <span className={`${styles.speck} ${styles.speck3}`} />
-          <span className={`${styles.speck} ${styles.speck4}`} />
-          <span className={`${styles.speck} ${styles.speck5}`} />
-          <span className={`${styles.speck} ${styles.speck6}`} />
-          <span className={`${styles.speck} ${styles.speck7}`} />
-          <span className={`${styles.speck} ${styles.speck8}`} />
-          <span className={`${styles.speck} ${styles.speck9}`} />
-          <span className={`${styles.speck} ${styles.speck10}`} />
-        </div>
-      )}
+      ) : null}
     </section>
   );
 }

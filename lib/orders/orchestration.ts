@@ -6,6 +6,7 @@ import type { Json, OrderRow } from "@/lib/db/types";
 
 import type { ProboAddress, ProboOptionInput } from "@/lib/catalog/probo-mapping";
 import { createPayment, getPayment } from "@/lib/mollie/payments";
+import { createPaymentLink } from "@/lib/mollie/payment-links";
 import { computeVat } from "@/lib/vat";
 import { computeOrderTotals } from "@/lib/pricing";
 import { getProduct } from "@/lib/catalog/products";
@@ -28,7 +29,12 @@ import {
   recordEventOnce,
 } from "@/lib/orders/repository";
 import { sendMateriaalpaspoortEmail, sendMailInhoud } from "@/lib/email/send";
-import { ontwerpenAanleveren } from "@/lib/email/templates";
+import { factuurMail } from "@/lib/email/templates";
+import {
+  ontwerpenAanleveren,
+  nieuweBestellingNotificatie,
+} from "@/lib/email/templates";
+import { generateFactuur } from "@/lib/factuur/generate";
 
 /**
  * Order orchestration — de ruggengraat die Mollie, btw en prijzen aan het
@@ -36,9 +42,12 @@ import { ontwerpenAanleveren } from "@/lib/email/templates";
  *
  * Flow:
  *   buildLocalQuote      regelprijzen uit het lokale prijsmodel, btw + totalen
- *   placeOrder           order wegschrijven, Mollie-payment → checkout-URL
+ *   placeOrder           order wegschrijven, Mollie-payment → checkout-URL;
+ *                        of, op rekening: Mollie-betaallink + factuurmail →
+ *                        orderbevestiging (betalen kan daarna via de link)
  *   handleMolliePayment  (webhook) betaald → order op `paid` voor handmatige
  *                        afhandeling in de admin; mislukt → als failed markeren
+ *                        (behalve bij een betaallink: die blijft geldig)
  *
  * Bestellen bij Probo gebeurt met de hand via hun portaal. De API-koppeling is
  * verwijderd (2026-07-15); wat een bestelling nodig heeft staat op
@@ -123,6 +132,15 @@ export interface CheckoutInput {
   /** Ship-to address — drives Probo delivery pricing and the VAT country. */
   shippingAddress: ProboAddress;
   items: OrderItemDraft[];
+  /**
+   * "op_rekening": betalen op rekening (alleen met ingevulde bedrijfsnaam; de
+   * action valideert dat). De order krijgt een Mollie-betaallink en wij mailen
+   * direct de factuur (PDF + betaallink); de webhook zet de order op betaald
+   * zodra het geld binnen is. Tot die tijd blijft hij op `awaiting_payment`
+   * staan: productie start pas ná betaling, net als bij een gewone betaling.
+   * Afwezig = gewone Mollie-checkout (iDEAL enz.).
+   */
+  paymentMethod?: "op_rekening";
 }
 
 // ---------------------------------------------------------------------------
@@ -281,8 +299,9 @@ export interface PlaceOrderResult {
 }
 
 /**
- * Persist a new order + items (status `cart`), create a Mollie payment, and move
- * the order to `awaiting_payment`. Returns the checkout URL for redirect.
+ * Persist a new order + items (status `cart`), create a Mollie payment (of, op
+ * rekening: een Mollie-betaallink plus directe factuurmail), and move the
+ * order to `awaiting_payment`. Returns the checkout URL for redirect.
  */
 export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult> {
   const quote = await buildLocalQuote(input);
@@ -363,6 +382,44 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   // handmatig gereconcilieerd ("Ververs betaling" in de admin); in productie
   // draait de webhook gewoon.
   const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(appUrl);
+
+  // Op rekening: geen gewone betaling maar een Mollie-betaallink (Payment
+  // Links API) — geen korte vervaltijd, en de klant kiest op de Mollie-pagina
+  // zelf de methode (iDEAL, kaart, overboeking). De Payment Links API kent
+  // geen `metadata`, dus het order-id reist mee als queryparameter op de
+  // webhook-URL; handleMolliePayment verifieert die hint (link-order + exact
+  // bedrag) voordat hij hem vertrouwt. De order blijft op `awaiting_payment`
+  // staan tot de webhook de betaling meldt: productie start pas ná betaling.
+  if (input.paymentMethod === "op_rekening") {
+    const link = await createPaymentLink({
+      amount: quote.totals.total,
+      currency: quote.currency,
+      description: `Duurzame-Vlaggen ${order.order_number}`,
+      redirectUrl: `${appUrl}/order/${order.id}`,
+      ...(isLocalhost
+        ? {}
+        : { webhookUrl: `${appUrl}/api/webhooks/mollie?order=${order.id}` }),
+    });
+
+    const updated = await advanceOrderStatus(order.id, "awaiting_payment", {
+      mollie_payment_link_id: link.id,
+      mollie_payment_link_url: link.url,
+    });
+
+    await recordEventOnce({
+      orderId: order.id,
+      source: "mollie",
+      eventType: "payment_link.created",
+      externalId: link.id,
+      data: { url: link.url },
+    });
+
+    await sendFactuurOnce(updated, quote, link.url);
+
+    // De klant landt op de orderbevestiging; de betaallink zit in de factuur.
+    return { order: updated, quote, checkoutUrl: `${appUrl}/order/${order.id}` };
+  }
+
   const payment = await createPayment({
     amount: quote.totals.total,
     currency: quote.currency,
@@ -388,6 +445,86 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   return { order: updated, quote, checkoutUrl: payment.checkoutUrl };
 }
 
+/**
+ * Mail de factuur voor een op-rekening-order: de factuur-PDF (lib/factuur) als
+ * bijlage, met de betaallink in de mail. Exact één keer per order (idempotent
+ * via `recordEventOnce`) en volledig best-effort — een mailstoring mag de
+ * bestelling nooit blokkeren; de admin ziet de order gewoon op
+ * `awaiting_payment` staan.
+ */
+async function sendFactuurOnce(
+  order: OrderRow,
+  quote: Quote,
+  betaallink: string | null,
+): Promise<void> {
+  try {
+    const event = await recordEventOnce({
+      orderId: order.id,
+      source: "system",
+      eventType: "factuur.sent",
+      externalId: `factuur-${order.id}`,
+      data: { betaallink },
+    });
+    if (!event.inserted) return;
+
+    const regels = [
+      ...quote.lines.map((l) => ({
+        omschrijving: `${l.draft.amount}× ${
+          l.draft.productName ?? l.draft.productType
+        }${l.draft.sizeLabel ? ` (${l.draft.sizeLabel})` : ""}`,
+        bedragExVat: l.linePrice,
+      })),
+      ...(quote.designService > 0
+        ? [{ omschrijving: "Ontwerpservice", bedragExVat: quote.designService }]
+        : []),
+    ];
+    const mail = factuurMail({
+      order,
+      regels,
+      betaallink,
+      vervaldatum: betaaltermijnVervaldatum(order),
+    });
+
+    // De factuur-PDF uit lib/factuur als bijlage: hetzelfde document dat de
+    // klant later in /account kan downloaden, met "te voldoen"-instructie
+    // zolang er niet betaald is.
+    let bijlagen: Array<{ filename: string; content: Buffer }> | undefined;
+    try {
+      const items = await getOrderItems(order.id);
+      const pdf = await generateFactuur(order, items);
+      bijlagen = [
+        { filename: `factuur-${order.order_number}.pdf`, content: Buffer.from(pdf) },
+      ];
+    } catch (err) {
+      // Zonder PDF is de mail nog steeds een geldige factuur (alle wettelijke
+      // velden staan in de tekst); log en verstuur zonder bijlage.
+      console.error(
+        `[checkout] factuur-PDF voor ${order.order_number} mislukt:`,
+        err,
+      );
+    }
+
+    await sendMailInhoud(order.email, mail, undefined, bijlagen);
+  } catch (err) {
+    console.error(
+      `[checkout] factuurmail voor ${order.order_number} mislukt: ${
+        err instanceof Error ? err.message : String(err)
+      }`,
+    );
+  }
+}
+
+/** Betaaltermijn op rekening: 14 dagen na plaatsing, als NL-datumtekst. */
+export const BETAALTERMIJN_DAGEN = 14;
+
+export function betaaltermijnVervaldatum(order: OrderRow): string {
+  const basis = Date.parse(order.created_at) || Date.now();
+  return new Date(basis + BETAALTERMIJN_DAGEN * 24 * 60 * 60 * 1000).toLocaleDateString(
+    "nl-NL",
+    { day: "numeric", month: "long", year: "numeric" },
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Mollie webhook → payment status
 // ---------------------------------------------------------------------------
@@ -398,10 +535,35 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
  *
  * paid → mark order paid, then submit the Probo order.
  * failed/canceled/expired → mark payment_failed.
+ *
+ * `orderIdHint`: bij op-rekening-orders bestaat de betaling (`tr_…`) pas op
+ * het moment dat de klant de betaallink gebruikt, dus staat er nog geen
+ * `mollie_payment_id` op de order en mist de directe lookup. De Payment Links
+ * API kent geen metadata; daarom hangt `placeOrder` het order-id als
+ * queryparameter aan de webhook-URL. Die hint wordt hier NIET blind vertrouwd:
+ * hij telt alleen voor een order mét betaallink en alleen als het betaalde
+ * bedrag exact het ordertotaal is.
  */
-export async function handleMolliePayment(paymentId: string): Promise<void> {
+export async function handleMolliePayment(
+  paymentId: string,
+  orderIdHint?: string | null,
+): Promise<void> {
   const payment = await getPayment(paymentId);
-  const order = await getOrderByMolliePaymentId(paymentId);
+  let order = await getOrderByMolliePaymentId(paymentId);
+  let viaBetaallink = false;
+
+  if (!order && orderIdHint) {
+    const kandidaat = await getOrderById(orderIdHint);
+    if (
+      kandidaat?.mollie_payment_link_id &&
+      payment.currency === kandidaat.currency &&
+      payment.amountValue === (kandidaat.total ?? 0).toFixed(2)
+    ) {
+      order = kandidaat;
+      viaBetaallink = true;
+    }
+  }
+
   if (!order) {
     // Unknown payment — log-and-ignore (could be a stale/foreign webhook).
     return;
@@ -419,7 +581,12 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
 
   if (payment.status === "paid") {
     if (order.status === "awaiting_payment") {
-      await advanceOrderStatus(order.id, "paid", { mollie_status: payment.status });
+      await advanceOrderStatus(order.id, "paid", {
+        mollie_status: payment.status,
+        // Op rekening: de order kende tot nu alleen de betaallink; leg de
+        // betaling die hem voldeed alsnog vast.
+        ...(viaBetaallink ? { mollie_payment_id: payment.id } : {}),
+      });
     }
 
     // "Later aanleveren": mist er nog een ontwerp, dan parkeert de order op
@@ -439,13 +606,20 @@ export async function handleMolliePayment(paymentId: string): Promise<void> {
     // aparte e-mail. Best-effort en idempotent — faalt stil met log, en mag de
     // betaalflow nooit blokkeren.
     await sendMateriaalpaspoortOnce(order.id);
+    // En intern: zonder deze melding blijft een betaalde order onopgemerkt tot
+    // de klant een ontwerp aanlevert of je zelf in de admin kijkt.
+    await sendNieuweBestellingNotificatieOnce(order.id, pending);
     // Verder blijft de order staan (paid of awaiting_files): inkoop en
     // verzending gaan met de hand, vanuit de admin.
     return;
   }
 
   if (["failed", "canceled", "expired"].includes(payment.status)) {
-    if (order.status === "awaiting_payment") {
+    // Op rekening: een mislukte of afgebroken poging op de betaallink is
+    // normaal (de link blijft geldig, de klant probeert het later gewoon
+    // opnieuw). De order blijft dan op `awaiting_payment` wachten; alleen een
+    // gewone checkout-betaling markeert de order als payment_failed.
+    if (!viaBetaallink && order.status === "awaiting_payment") {
       await advanceOrderStatus(order.id, "payment_failed", { mollie_status: payment.status });
     }
   }
@@ -515,6 +689,53 @@ export async function sendOntwerpenAanleverenOnce(
     await sendMailInhoud(order.email, mail);
   } catch (err) {
     console.error(`[portal] aanlevermail mislukt voor order ${orderId}:`, err);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Interne notificatie bij een nieuwe bestelling (best-effort, idempotent)
+// ---------------------------------------------------------------------------
+
+/**
+ * Meld ons intern dat een bestelling betaald is, exact één keer per order.
+ * Idempotent via `recordEventOnce`, zodat een Mollie-webhook-retry niet twee
+ * meldingen geeft; best-effort zoals de andere mails — een mailstoring mag de
+ * betaalflow nooit blokkeren. Gaat naar `orderNotifyEmail` (valt terug op het
+ * eerste adres uit ADMIN_EMAILS); is dat leeg, dan gebeurt er niets.
+ */
+async function sendNieuweBestellingNotificatieOnce(
+  orderId: string,
+  pending: number,
+): Promise<void> {
+  const notifyTo = serverEnv.orderNotifyEmail;
+  if (!notifyTo) return;
+
+  try {
+    const event = await recordEventOnce({
+      orderId,
+      source: "system",
+      eventType: "order.notified",
+    });
+    if (!event.inserted) return;
+
+    const order = await getOrderById(orderId);
+    if (!order) return;
+    const items = await getOrderItems(orderId);
+
+    await sendMailInhoud(
+      notifyTo,
+      nieuweBestellingNotificatie({
+        order,
+        items,
+        pending,
+        adminUrl: `${publicEnv.appUrl}/admin/orders/${order.id}`,
+      }),
+    );
+  } catch (err) {
+    console.error(
+      `[order] interne notificatie mislukt voor order ${orderId}:`,
+      err,
+    );
   }
 }
 

@@ -31,9 +31,9 @@ const REFERENTIE_PCT =
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-gemeenten" },
-  title: "Voor gemeenten. Duurzame, biologisch afbreekbare gemeentevlaggen",
+  title: "Duurzame, biologisch afbreekbare gemeentevlaggen",
   description:
-    "Biologisch afbreekbare gemeentevlaggen die minder microplastic achterlaten. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Meetbaar voor MVI-rapportages en geschikt voor aanbestedingen.",
+    "Gemeentevlaggen die minder microplastic achterlaten. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Klaar voor MVI en aanbestedingen.",
 };
 
 const WAVE_PATH =

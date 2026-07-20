@@ -26,9 +26,9 @@ const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
 const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
 
 const PAD = "/kennisbank/vlaggen-kiezen";
-const TITEL = "De juiste duurzame vlag kiezen: formaten en masthoogtes";
+const TITEL = "Duurzame vlag kiezen: maten en masthoogtes";
 const OMSCHRIJVING =
-  "Welk vlagtype en welk formaat past bij jouw situatie? Praktische keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, op biologisch afbreekbaar doek.";
+  "Welk vlagtype en formaat past bij jouw situatie? Keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, op biologisch afbreekbaar doek.";
 
 export const metadata: Metadata = {
   alternates: { canonical: PAD },

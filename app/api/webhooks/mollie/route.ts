@@ -33,8 +33,22 @@ export async function POST(request: Request): Promise<Response> {
     return new Response(null, { status: 400 });
   }
 
+  // Betaallink-object-id in plaats van een betaling: volgens de Mollie-docs
+  // stuurt de payment-link-webhook het id van de ONDERLIGGENDE betaling
+  // (`tr_…`), maar mocht er toch ooit een `pl_…` binnenkomen, dan is dat geen
+  // betaling om op te vragen. 200 teruggeven, anders blijft Mollie herhalen.
+  if (id.startsWith("pl_")) {
+    console.info(`[mollie-webhook] payment-link-id ${id} genegeerd (geen betaling).`);
+    return new Response(null, { status: 200 });
+  }
+
+  // Op-rekening-orders: de betaallink-webhook draagt het order-id als
+  // queryparameter (de Payment Links API kent geen metadata). De hint wordt in
+  // handleMolliePayment geverifieerd, nooit blind vertrouwd.
+  const orderIdHint = new URL(request.url).searchParams.get("order");
+
   try {
-    await handleMolliePayment(id);
+    await handleMolliePayment(id, orderIdHint);
   } catch (err) {
     // Transient failure (DB/Mollie down): 500 makes Mollie re-deliver.
     console.error("[mollie-webhook]", err);

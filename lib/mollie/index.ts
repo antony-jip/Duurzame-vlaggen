@@ -14,9 +14,17 @@ export {
   type GetPaymentResult,
 } from "./payments";
 export {
+  createPaymentLink,
+  getPaymentLink,
+  type CreatePaymentLinkInput,
+  type PaymentLinkResult,
+} from "./payment-links";
+export {
   molliePaymentSchema,
   mollieAmountSchema,
   mollieWebhookSchema,
+  molliePaymentLinkSchema,
+  type MolliePaymentLink,
   type MolliePayment,
   type MollieAmountShape,
   type MollieWebhookPayload,

@@ -26,7 +26,7 @@ const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank" },
-  title: "Kennisbank: alles over duurzame, biologisch afbreekbare vlaggen",
+  title: "Kennisbank over duurzame vlaggen",
   description:
     "Van Flag-CiCLO®-technologie en de CSRD tot microplastics en de juiste vlag kiezen: verdiep je in duurzame, biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
 };

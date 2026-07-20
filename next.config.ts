@@ -21,6 +21,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        // De huidige live flag-ciclo.nl stuurt al zijn bestel-CTA's naar
+        // /bestel; die route bestaat hier niet. Zonder redirect breekt de
+        // funnel vanaf het kennisdomein op dag één van de livegang.
+        source: "/bestel",
+        destination: "/collectie",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

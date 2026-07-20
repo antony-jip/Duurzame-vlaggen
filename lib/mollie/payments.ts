@@ -16,7 +16,6 @@ export interface CreatePaymentInput {
   redirectUrl: string;
   webhookUrl?: string;
   metadata?: Record<string, unknown>;
-  method?: string;
 }
 
 /** Normalised result of {@link createPayment}. */
@@ -51,7 +50,6 @@ export async function createPayment(
     redirectUrl: input.redirectUrl,
     ...(input.webhookUrl ? { webhookUrl: input.webhookUrl } : {}),
     ...(input.metadata ? { metadata: input.metadata } : {}),
-    ...(input.method ? { method: input.method } : {}),
   };
 
   const raw = await mollieRequest("/payments", { method: "POST", json: body });

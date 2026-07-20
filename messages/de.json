@@ -124,7 +124,8 @@
       "phoneInvalid": "Bitte geben Sie eine gültige Telefonnummer ein.",
       "postalCodeInvalid": "Bitte geben Sie eine gültige Postleitzahl ein.",
       "vatNumberInvalid": "Bitte geben Sie eine gültige USt-IdNr. ein.",
-      "vatNumberNotVerified": "Diese USt-IdNr. konnte nicht verifiziert werden."
+      "vatNumberNotVerified": "Diese USt-IdNr. konnte nicht verifiziert werden.",
+      "opRekeningBedrijfsnaam": "Geben Sie Ihren Firmennamen ein, um auf Rechnung zu bestellen."
     }
   },
   "order": {
@@ -138,7 +139,12 @@
       "problemTitle": "Die Zahlung hat nicht geklappt",
       "problemSubtitle": "Keine Sorge, Ihre Bestellung wartet weiterhin auf Sie. Versuchen Sie die Zahlung erneut, dann legen wir doch noch los.",
       "trackPromise": "Sobald wir Ihre Bestellung bearbeitet haben, erhalten Sie einen Track-und-Trace-Link per E-Mail. Damit verfolgen Sie Ihre Fahnen bis vor die Tür.",
-      "retryCta": "Zahlung erneut versuchen"
+      "retryCta": "Zahlung erneut versuchen",
+      "payCta": "Rechnung bezahlen",
+      "invoiceTitle": "Rechnung",
+      "invoiceView": "Rechnung ansehen (PDF)",
+      "invoiceDownload": "Rechnung herunterladen",
+      "contactPrompt": "Fragen zur Bestellung? Telefon {phone} oder E-Mail {email}."
     },
     "steps": {
       "heading": "Wie es jetzt weitergeht",
@@ -161,6 +167,8 @@
     "tracking": "Sendung verfolgen",
     "trackingNumber": "Sendungsnummer",
     "estimatedDelivery": "Voraussichtliche Lieferung",
+    "statusLabel": "Status",
+    "orderedOn": "Bestelldatum",
     "portal": {
       "pending": "Für deine Bestellung fehlen noch {count} Design(s). Reiche sie ein, wann es dir passt.",
       "cta": "Designs hochladen"

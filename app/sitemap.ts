@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { getAllProducts } from "@/lib/catalog/products";
 import { STATIC_ROUTES, KENNISBANK_SLUGS } from "@/lib/routes";
+import { alleLandenMetSlug, POPULAIRE_LAND_CODES } from "@/lib/landen/landen";
 
 /**
  * XML-sitemap (Next 16 metadata-route). Bevat alle publieke, indexeerbare
@@ -14,18 +15,16 @@ import { STATIC_ROUTES, KENNISBANK_SLUGS } from "@/lib/routes";
  */
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
+  // Bewust géén lastModified: "altijd nu" (elke build een nieuwe datum) is
+  // ruis voor crawlers; liever geen datum dan een verzonnen datum.
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
     url: `${SITE_URL}${r.path}`,
-    lastModified: now,
     changeFrequency: "monthly",
     priority: r.priority,
   }));
 
   const productEntries: MetadataRoute.Sitemap = getAllProducts().map((p) => ({
     url: `${SITE_URL}/collectie/${p.slug}`,
-    lastModified: now,
     changeFrequency: "monthly",
     priority: 0.8,
   }));
@@ -33,11 +32,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const kennisbankEntries: MetadataRoute.Sitemap = KENNISBANK_SLUGS.map(
     (slug) => ({
       url: `${SITE_URL}/kennisbank/${slug}`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }),
   );
 
-  return [...staticEntries, ...productEntries, ...kennisbankEntries];
+  // Per-land-landingspagina's (/landenvlaggen/{slug}). De hub zelf staat als
+  // STATIC_ROUTE op 0.8; de landpagina's op 0.6, de populaire landen op 0.7.
+  const populair = new Set(POPULAIRE_LAND_CODES);
+  const landEntries: MetadataRoute.Sitemap = alleLandenMetSlug().map((l) => ({
+    url: `${SITE_URL}/landenvlaggen/${l.slug}`,
+    changeFrequency: "monthly",
+    priority: populair.has(l.code) ? 0.7 : 0.6,
+  }));
+
+  return [
+    ...staticEntries,
+    ...productEntries,
+    ...kennisbankEntries,
+    ...landEntries,
+  ];
 }

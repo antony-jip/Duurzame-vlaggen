@@ -135,7 +135,9 @@ export function CartPaneel() {
           {verzending > 0 ? (
             <div className={styles.nudge}>
               <span>
-                Nog <Price amount={tekort} /> en je verzending is gratis
+                Nog <Price amount={tekort} />
+                {" tot gratis verzending (vanaf "}
+                &euro;&nbsp;100 incl. btw)
               </span>
               <span
                 className={styles.balk}

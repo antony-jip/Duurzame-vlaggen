@@ -6,7 +6,7 @@ vi.mock("@/lib/vat/vies", () => ({
 }));
 
 import { computeVat } from "@/lib/vat";
-import { marketToCountry, standardRateForCountry } from "@/lib/vat/rates";
+import { displayRateForMarket, marketToCountry, standardRateForCountry } from "@/lib/vat/rates";
 import { validateVatNumber } from "@/lib/vat/vies";
 
 const mockedValidate = vi.mocked(validateVatNumber);
@@ -124,5 +124,28 @@ describe("computeVat", () => {
     });
 
     expect(result).toEqual({ rate: 20, reverseCharge: false, vatNumberValid: null });
+  });
+});
+
+describe("displayRateForMarket", () => {
+  it("shows each market its own standard rate", () => {
+    expect(displayRateForMarket("nl-NL")).toBe(21);
+    expect(displayRateForMarket("nl-BE")).toBe(21);
+    expect(displayRateForMarket("de-DE")).toBe(19);
+    expect(displayRateForMarket("fr-FR")).toBe(20);
+  });
+
+  it("falls back to the seller country for the country-indeterminate en/.com market", () => {
+    expect(displayRateForMarket("en")).toBe(21);
+  });
+
+  // De reden dat deze helper bestaat: het tarief op de pagina moet gelijk zijn
+  // aan wat de checkout een gewone B2C-bezoeker rekent. Liep dit uiteen, dan zag
+  // een Duitse bezoeker 21% en betaalde hij 19%.
+  it("matches what computeVat charges a plain B2C visitor on the same market", async () => {
+    for (const market of ["nl-NL", "nl-BE", "de-DE", "fr-FR", "en"] as const) {
+      const charged = await computeVat({ isBusiness: false, market });
+      expect(displayRateForMarket(market)).toBe(charged.rate);
+    }
   });
 });

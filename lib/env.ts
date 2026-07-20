@@ -77,6 +77,19 @@ export const serverEnv = {
   get orderNotifyEmail(): string | null {
     return process.env.ORDER_NOTIFY_EMAIL?.trim() || this.adminEmails[0] || null;
   },
+  // Inbox voor het contactformulier. De site voert geen mailadres meer naar
+  // buiten (het is een webshop; alles loopt via het formulier), dus dit is het
+  // ENIGE kanaal waarlangs een bezoeker ons bereikt. Daarom een harde bodem in
+  // plaats van null: een lead mag nooit nergens heen kunnen omdat een env-var
+  // niet gezet is.
+  get contactInbox(): string {
+    return (
+      process.env.CONTACT_NOTIFY_EMAIL?.trim() ||
+      process.env.ORDER_NOTIFY_EMAIL?.trim() ||
+      this.adminEmails[0] ||
+      "antony@signcompany.nl"
+    );
+  },
   // HMAC-secret voor ondertekende e-maillinks (uitschrijven). Een eigen secret
   // zodat roteren alleen e-maillinks ongeldig maakt, niets anders.
   get emailLinkSecret() {

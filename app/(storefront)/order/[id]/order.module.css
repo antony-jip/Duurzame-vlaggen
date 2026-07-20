@@ -1,7 +1,8 @@
 /* ==========================================================================
-   Orderbevestiging — kleurblok met check-chip, daaronder de stappen en de
-   besteldetails. De hero kleurt mee met de toon: forest bij een geslaagde
-   bestelling, ingetogen bij wachten, en zonder feest bij een probleem.
+   Orderbevestiging — dashboard-lay-out. Bovenin een compacte hero die meekleurt
+   met de toon (forest bij geslaagd, sage-blue bij wachten, charcoal bij een
+   probleem), daaronder een statusbalk met de kerncijfers, en dan een grid:
+   links de voortgang + contact, rechts de factuurpreview met de actieknoppen.
 
    Alle animaties zijn entrances (één keer, geen loop). De globale
    prefers-reduced-motion-regel in globals.css zet ze op 0.001ms; omdat elke
@@ -10,18 +11,17 @@
 
 .page {
   padding-block: var(--space-2xl) var(--space-4xl);
-  max-width: 760px;
+  max-width: 1120px;
 }
 
-/* ── Hero ──────────────────────────────────────────────────────────────── */
+/* ── Hero — compact: chip links, tekst rechts ────────────────────────────── */
 
 .hero {
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-md);
-  padding: clamp(32px, 5vw, 56px);
+  gap: var(--space-lg);
+  padding: clamp(24px, 3.5vw, 40px);
   margin-bottom: var(--space-lg);
   border-radius: var(--radius-2xl);
   background: var(--color-forest);
@@ -73,12 +73,21 @@
   }
 }
 
+.heroBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
 /* Gekantelde witte check-chip — het speelse merkmotief, feestelijk. */
 .checkChip {
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 58px;
+  height: 58px;
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.28);
@@ -103,7 +112,7 @@
 .bang {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
 }
 
@@ -111,7 +120,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -126,20 +135,21 @@
 .heroTitle {
   color: #fff;
   font-weight: 800;
-  font-size: clamp(32px, 4.5vw, 52px);
+  font-size: clamp(28px, 3.6vw, 42px);
   letter-spacing: -0.03em;
-  line-height: 1.04;
+  line-height: 1.05;
   text-wrap: balance;
   animation: order-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) 280ms both;
 }
 .heroSub {
   color: rgba(255, 255, 255, 0.85);
-  font-size: clamp(16px, 1.8vw, 19px);
-  line-height: 1.6;
-  max-width: 52ch;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.55;
+  max-width: 60ch;
   animation: order-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) 360ms both;
 }
 .heroCta {
+  margin-top: var(--space-xs);
   animation: order-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) 440ms both;
 }
 
@@ -154,23 +164,122 @@
   }
 }
 
-/* ── Stappen ───────────────────────────────────────────────────────────── */
+/* ── Statusbalk — de kerncijfers in één rij ──────────────────────────────── */
 
-.stepsCard {
-  padding: var(--space-xl);
+.statusBar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  background: #fff;
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  animation: order-rise 620ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
+}
+.statusCell {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  animation: order-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) 440ms both;
+  gap: 6px;
+  min-width: 0;
+}
+/* Verticale scheiding tussen de cellen, subtiel. */
+.statusCell:not(:first-child) {
+  padding-left: var(--space-lg);
+  border-left: 1px solid var(--forest-6);
 }
 
-.stepsHeading {
+.cellLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+.cellValue {
   font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.total .cellValue {
+  color: var(--color-forest);
   font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.02em;
 }
+
+@media (max-width: 760px) {
+  .statusBar {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md) var(--space-lg);
+  }
+  .statusCell:nth-child(odd) {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+@media (max-width: 420px) {
+  .statusBar {
+    grid-template-columns: 1fr;
+  }
+  .statusCell {
+    padding-left: 0 !important;
+    border-left: none !important;
+  }
+}
+
+/* ── Dashboard-grid ──────────────────────────────────────────────────────── */
+
+.dash {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+  gap: var(--space-lg);
+  align-items: start;
+}
+.dashSingle {
+  display: block;
+}
+.dashMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.dashSide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* De kolommen zakken op smallere schermen onder elkaar: eerst de voortgang,
+   dan de factuur. */
+@media (max-width: 900px) {
+  .dash {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panelen (voortgang, details, portaal) ───────────────────────────────── */
+
+.panel {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  animation: order-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) 460ms both;
+}
+
+.panelHeading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+/* ── Stappen ─────────────────────────────────────────────────────────────── */
 
 .steps {
   display: flex;
@@ -279,53 +388,7 @@
   line-height: 1.6;
 }
 
-/* ── Details ───────────────────────────────────────────────────────────── */
-
-.card {
-  padding: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  animation: order-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) 540ms both;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md);
-}
-
-.cell {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.cellLabel {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-stone);
-}
-.cellValue {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-}
-
-.total .cellValue {
-  color: var(--color-forest);
-  font-weight: 800;
-  font-size: 26px;
-  letter-spacing: -0.02em;
-}
-
-.divider {
-  border: none;
-  border-top: 1px solid var(--forest-6);
-}
+/* ── Details (adres + e-mail) ────────────────────────────────────────────── */
 
 .addressBlock {
   font-size: 15px;
@@ -337,14 +400,110 @@
 }
 
 .actions {
-  margin-top: var(--space-md);
   display: flex;
   gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
-@media (max-width: 520px) {
-  .grid {
-    grid-template-columns: 1fr;
+/* ── Factuurpreview ──────────────────────────────────────────────────────── */
+
+.invoiceCard {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: order-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) 540ms both;
+}
+.invoiceHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.invoiceActies {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* De preview zelf op A4-verhouding, binnen een nette kaart. */
+.invoiceFrame {
+  position: relative;
+  aspect-ratio: 1 / 1.414;
+  width: 100%;
+  border: 1px solid var(--forest-6);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-off-white);
+}
+.invoiceObject {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+/* Fallback binnenín de object: alleen zichtbaar als de browser de PDF niet kan
+   tonen. Gecentreerd, met factuur-icoon en een knop naar de volledige PDF. */
+.invoiceFallback,
+.invoiceMobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  height: 100%;
+  padding: var(--space-xl);
+  text-align: center;
+}
+.invoiceIcon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  background: var(--forest-3);
+  border: 1px solid var(--forest-6);
+  color: var(--color-forest);
+}
+
+/* Mobiel is PDF-embedden onbetrouwbaar: daar vervangt de kaart de object. */
+.invoiceMobile {
+  display: none;
+}
+@media (max-width: 768px) {
+  .invoiceFrame {
+    aspect-ratio: auto;
   }
+  .invoiceObject {
+    display: none;
+  }
+  .invoiceMobile {
+    display: flex;
+    min-height: 220px;
+  }
+}
+
+/* ── Klantcontact ────────────────────────────────────────────────────────── */
+
+/* Klantcontact in de persoonlijke kleur (sage-purple, styleguide §2). Donkerder
+   paars voor de tekst zodat het contrast op wit ruim voldoende blijft. */
+.contactBlok {
+  padding: 12px 16px;
+  background: var(--sage-purple-3);
+  border-left: 3px solid var(--color-sage-purple);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5f5280;
+}
+.contactBlok a {
+  color: #5f5280;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.contactBlok a:hover {
+  color: var(--color-sage-purple);
 }

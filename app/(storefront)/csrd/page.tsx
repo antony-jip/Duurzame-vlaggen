@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/csrd" },
-  title: "CSRD en je vlaggen. Wanneer geldt het en wat vraagt je opdrachtgever",
+  title: "CSRD en je vlaggen: geldt het voor jou?",
   description:
     "Sinds het Omnibus-pakket geldt de CSRD alleen boven 1.000 medewerkers én 450 miljoen euro omzet. Lees wanneer het voor jou geldt, en waarom grote opdrachtgevers toch naar je duurzame vlaggen vragen.",
 };

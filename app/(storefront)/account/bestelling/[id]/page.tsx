@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Badge, Container } from "@/components/ui";
 import { requireCustomer } from "../../auth";
 import { getCustomerOrder } from "@/lib/orders/customer";
+import { orderIsBetaald } from "@/lib/orders/klant-documenten";
 import { getOrderDesigns, getOrderItems } from "@/lib/orders/repository";
 import { getProduct } from "@/lib/catalog/products";
 import { orderItemToCartLine, orderItemsToCartLines } from "@/lib/orders/reorder";
@@ -223,6 +224,41 @@ export default async function AccountOrderDetailPage({
             </p>
           )}
         </div>
+
+        {/* Documenten — pas ná betaling: daarvoor bestaat er geen factuur en
+            geen paspoort. Zelfde voorwaarde als de routes erachter, via
+            orderIsBetaald, zodat de kaart nooit een knop toont die een 409
+            teruggeeft. */}
+        {orderIsBetaald(order) && (
+          <div className={styles.card}>
+            <h2>Documenten</h2>
+            <p className={styles.muted}>
+              Je factuur en het materiaalpaspoort van deze bestelling. Het
+              paspoort bevat de CO2- en materiaalcijfers voor je
+              duurzaamheidsverslag.
+            </p>
+            <p style={{ marginTop: "var(--space-sm)" }}>
+              <a
+                href={`/api/account/factuur/${order.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.lineDesignLink}
+              >
+                Factuur (PDF)
+              </a>
+            </p>
+            <p style={{ marginTop: "var(--space-xs)" }}>
+              <a
+                href={`/api/account/materiaalpaspoort/${order.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.lineDesignLink}
+              >
+                Materiaalpaspoort (PDF)
+              </a>
+            </p>
+          </div>
+        )}
 
         {/* Tijdlijn */}
         <div className={styles.card}>

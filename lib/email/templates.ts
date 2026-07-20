@@ -1,5 +1,5 @@
 import "server-only";
-import type { OrderRow } from "@/lib/db/types";
+import type { OrderRow, OrderItemRow } from "@/lib/db/types";
 import { mailLayout, alinea, fijn, blok, platteTekst } from "./layout";
 import {
   HOOFDTEST,
@@ -7,8 +7,7 @@ import {
   pctNl,
 } from "@/lib/claims/afbreekbaarheid";
 import { SITE_URL } from "@/lib/seo";
-
-/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
+import { BEDRIJF, bedrijfsAdresRegels, factuurVoetRegels } from "@/lib/bedrijf";
 
 /**
  * De onderbouwde afbraakregel, in één zin. Een percentage mag nooit los in de
@@ -141,6 +140,159 @@ function vraag(order: OrderRow, bericht: string): MailInhoud {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Factuur (op rekening)
+// ---------------------------------------------------------------------------
+
+function eur(bedrag: number): string {
+  return `€ ${bedrag.toFixed(2).replace(".", ",")}`;
+}
+
+/**
+ * De factuur voor "op rekening": automatisch verstuurd zodra de order
+ * geplaatst is, met de factuur-PDF als bijlage. Factuurnummer = ordernummer,
+ * betaaltermijn 14 dagen; de betaallink is een Mollie-betaallink waar de klant
+ * zelf kiest (iDEAL, creditcard of overboeking). Productie start pas na
+ * betaling en dat zegt de mail ook.
+ *
+ * Wettelijke velden: volledige naam + adres + KvK/btw van de verkoper
+ * (factuurVoetRegels), factuurdatum, factuurnummer, bedragen ex btw, het
+ * btw-bedrag en -tarief (of de vermelding "btw verlegd").
+ */
+export function factuurMail(input: {
+  order: OrderRow;
+  regels: Array<{ omschrijving: string; bedragExVat: number }>;
+  betaallink: string | null;
+  vervaldatum: string;
+}): MailInhoud {
+  const { order, regels, betaallink, vervaldatum } = input;
+  const factuurdatum = new Date().toLocaleDateString("nl-NL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const regelHtml = regels
+    .map(
+      (r) =>
+        `${escapeHtmlText(r.omschrijving)} · ${eur(r.bedragExVat)} excl. btw`,
+    )
+    .join("<br/>");
+  const btwRegel = order.reverse_charge
+    ? "Btw verlegd"
+    : `Btw (${order.vat_rate ?? 21}%): ${eur(order.vat_amount ?? 0)}`;
+
+  return {
+    onderwerp: `Factuur ${order.order_number} · betaal binnen 14 dagen`,
+    html: mailLayout({
+      titel: "Je factuur",
+      ondertitel: `${order.order_number} · ${factuurdatum}`,
+      inhoud:
+        alinea(aanhef(order)) +
+        alinea(
+          "Bedankt voor je bestelling. Je koos voor betalen op rekening; hierbij je factuur, ook als PDF in de bijlage. " +
+            `Betaal binnen 14 dagen (uiterlijk ${vervaldatum}). Zodra je betaling binnen is, starten we de productie van je vlaggen.`,
+        ) +
+        blok(
+          `<strong>Factuurnummer</strong><br/>${order.order_number}<br/><br/>` +
+            `<strong>Bestelling</strong><br/>${regelHtml}<br/><br/>` +
+            `<strong>Verzendkosten</strong><br/>${
+              (order.shipping_cost ?? 0) > 0 ? `${eur(order.shipping_cost ?? 0)} excl. btw` : "Gratis"
+            }<br/><br/>` +
+            `<strong>${btwRegel.split(":")[0]}</strong><br/>${
+              order.reverse_charge ? "Van toepassing" : eur(order.vat_amount ?? 0)
+            }<br/><br/>` +
+            `<strong>Te betalen</strong><br/>${eur(order.total ?? 0)}`,
+        ) +
+        alinea(
+          betaallink
+            ? "Betalen kan direct via de knop hieronder. Je kiest daar zelf hoe: iDEAL, creditcard of overboeking."
+            : `Betalen kan per overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, onder vermelding van ${order.order_number}.`,
+        ) +
+        fijn(
+          [
+            ...factuurVoetRegels().slice(0, 1),
+            bedrijfsAdresRegels().join(", "),
+            `Vragen over deze factuur? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
+          ].join("<br/>"),
+        ),
+      knop: betaallink
+        ? { label: "Betaal je factuur", url: betaallink }
+        : undefined,
+    }),
+    tekst: platteTekst([
+      aanhef(order),
+      "",
+      `Factuur ${order.order_number} (${factuurdatum}). Betaal binnen 14 dagen, uiterlijk ${vervaldatum}.`,
+      "Zodra je betaling binnen is, starten we de productie van je vlaggen.",
+      "",
+      ...regels.map((r) => `${r.omschrijving}: ${eur(r.bedragExVat)} excl. btw`),
+      `Verzendkosten: ${(order.shipping_cost ?? 0) > 0 ? `${eur(order.shipping_cost ?? 0)} excl. btw` : "Gratis"}`,
+      btwRegel,
+      `Te betalen: ${eur(order.total ?? 0)}`,
+      "",
+      betaallink
+        ? `Betalen: ${betaallink}`
+        : `Betalen: overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, o.v.v. ${order.order_number}`,
+      "",
+      ...factuurVoetRegels(),
+    ]),
+  };
+}
+
+/**
+ * Eenmalige betaalherinnering voor een op-rekening-order die na 7 dagen nog
+ * niet betaald is. Vriendelijk en actief: de klant weet wat hij kan doen, en
+ * dat de productie start zodra de betaling binnen is. Verstuurd door de cron
+ * /api/cron/betaalherinnering; de eenmaligheid bewaakt
+ * orders.payment_reminder_sent_at.
+ */
+export function betaalherinneringMail(input: {
+  order: OrderRow;
+  betaallink: string | null;
+  vervaldatum: string;
+}): MailInhoud {
+  const { order, betaallink, vervaldatum } = input;
+  return {
+    onderwerp: `Herinnering · factuur ${order.order_number} staat nog open`,
+    html: mailLayout({
+      titel: "Je factuur staat nog open",
+      ondertitel: order.order_number,
+      inhoud:
+        alinea(aanhef(order)) +
+        alinea(
+          `Een week geleden plaatste je bestelling ${order.order_number} op rekening. We hebben je betaling nog niet gezien, dus een vriendelijke herinnering: het openstaande bedrag is ${eur(order.total ?? 0)}, te betalen uiterlijk ${vervaldatum}.`,
+        ) +
+        alinea(
+          "We maken en versturen je vlaggen zodra je betaling binnen is. Betaal je vandaag, dan gaan we direct voor je aan de slag.",
+        ) +
+        alinea(
+          betaallink
+            ? "Betalen doe je via de knop hieronder: iDEAL, creditcard of overboeking, wat jou het beste uitkomt."
+            : `Betalen kan per overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, onder vermelding van ${order.order_number}.`,
+        ) +
+        fijn(
+          `Al betaald? Dan kruisen dit bericht en je betaling elkaar en hoef je niets te doen. Vragen? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
+        ),
+      knop: betaallink ? { label: "Betaal je factuur", url: betaallink } : undefined,
+    }),
+    tekst: platteTekst([
+      aanhef(order),
+      "",
+      `Een week geleden plaatste je bestelling ${order.order_number} op rekening. We hebben je betaling nog niet gezien.`,
+      `Openstaand bedrag: ${eur(order.total ?? 0)}, te betalen uiterlijk ${vervaldatum}.`,
+      "",
+      "We maken en versturen je vlaggen zodra je betaling binnen is. Betaal je vandaag, dan gaan we direct voor je aan de slag.",
+      "",
+      betaallink
+        ? `Betalen: ${betaallink}`
+        : `Betalen: overboeking op ${BEDRIJF.iban} t.n.v. ${BEDRIJF.rechtspersoon}, o.v.v. ${order.order_number}`,
+      "",
+      `Al betaald? Dan kruisen dit bericht en je betaling elkaar en hoef je niets te doen. Vragen? Mail ${BEDRIJF.email} of bel ${BEDRIJF.telefoon}.`,
+    ]),
+  };
+}
+
 /**
  * Bouw een mail. `bericht` is alleen voor `vraag`; de andere twee schrijven
  * zichzelf uit de order.
@@ -265,6 +417,56 @@ export function portaalNotificatie(input: {
       `Klant ${input.order.email} heeft een ontwerp ${actie} voor ${input.itemLabel} (order ${input.order.order_number}).`,
       `Bestand: ${input.fileName}`,
       status,
+      input.adminUrl,
+    ]),
+  };
+}
+
+/**
+ * Interne notificatie: er is zojuist een bestelling betaald. Dit is de enige
+ * mail die ons bij een nieuwe order bereikt; zonder deze mail zie je een
+ * bestelling pas als de klant een ontwerp aanlevert (portaalNotificatie) of
+ * als je zelf in de admin kijkt.
+ */
+export function nieuweBestellingNotificatie(input: {
+  order: OrderRow;
+  items: OrderItemRow[];
+  pending: number;
+  adminUrl: string;
+}): MailInhoud {
+  const { order, items, pending } = input;
+  const regels = items.map(
+    (item) =>
+      `${item.amount}× ${item.product_name ?? item.probo_product_code}`,
+  );
+  const vervolg =
+    pending === 0
+      ? "Alle ontwerpen zitten al bij de bestelling. De order kan bij Probo besteld worden (Markeer besteld in de admin)."
+      : pending === 1
+        ? "De klant moet nog 1 ontwerp aanleveren. Je krijgt bericht zodra het binnen is."
+        : `De klant moet nog ${pending} ontwerpen aanleveren. Je krijgt bericht zodra alles binnen is.`;
+
+  return {
+    onderwerp: `Nieuwe bestelling · ${order.order_number} · ${eur(order.total ?? 0)}`,
+    html: mailLayout({
+      titel: "Nieuwe bestelling",
+      ondertitel: order.order_number,
+      inhoud:
+        alinea(
+          `<strong>${escapeHtmlText(order.email)}</strong> heeft zojuist betaald.`,
+        ) +
+        blok(
+          `<strong>Bedrag</strong><br/>${eur(order.total ?? 0)}<br/><br/>` +
+            `<strong>Bestelling</strong><br/>${regels.map(escapeHtmlText).join("<br/>")}<br/><br/>` +
+            `<strong>Vervolg</strong><br/>${vervolg}`,
+        ),
+      knop: { label: "Bekijk de order in de admin", url: input.adminUrl },
+    }),
+    tekst: platteTekst([
+      `${order.email} heeft zojuist betaald (order ${order.order_number}).`,
+      `Bedrag: ${eur(order.total ?? 0)}`,
+      ...regels,
+      vervolg,
       input.adminUrl,
     ]),
   };

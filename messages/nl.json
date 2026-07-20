@@ -124,7 +124,8 @@
       "phoneInvalid": "Vul een geldig telefoonnummer in.",
       "postalCodeInvalid": "Vul een geldige postcode in.",
       "vatNumberInvalid": "Vul een geldig btw-nummer in.",
-      "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd."
+      "vatNumberNotVerified": "Dit btw-nummer kon niet worden geverifieerd.",
+      "opRekeningBedrijfsnaam": "Vul je bedrijfsnaam in om op rekening te kunnen bestellen."
     }
   },
   "order": {
@@ -138,7 +139,12 @@
       "problemTitle": "De betaling is niet gelukt",
       "problemSubtitle": "Geen zorgen, je bestelling staat nog voor je klaar. Probeer de betaling opnieuw, dan gaan we alsnog aan de slag.",
       "trackPromise": "Zodra we je bestelling hebben verwerkt, ontvang je een track & trace-link per e-mail. Daarmee volg je je vlaggen tot aan de deur.",
-      "retryCta": "Betaling opnieuw proberen"
+      "retryCta": "Betaling opnieuw proberen",
+      "payCta": "Betaal je factuur",
+      "invoiceTitle": "Factuur",
+      "invoiceView": "Bekijk factuur (pdf)",
+      "invoiceDownload": "Factuur downloaden",
+      "contactPrompt": "Vragen over je bestelling? Bel {phone} of mail {email}."
     },
     "steps": {
       "heading": "Wat er nu gebeurt",
@@ -161,6 +167,8 @@
     "tracking": "Volg je zending",
     "trackingNumber": "Trackingnummer",
     "estimatedDelivery": "Verwachte levering",
+    "statusLabel": "Status",
+    "orderedOn": "Besteldatum",
     "portal": {
       "pending": "We missen nog {count} ontwerp(en) voor je bestelling. Lever ze aan wanneer het jou uitkomt.",
       "cta": "Ontwerpen aanleveren"
@@ -188,11 +196,11 @@
     "copyright": "Alle rechten voorbehouden."
   },
   "errors": {
-    "generic": "Er is iets misgegaan. Probeer het later opnieuw.",
+    "generic": "Er is iets misgegaan. Probeer het opnieuw, of bel ons op 085 060 8963. Dan maken we het samen in orde.",
     "notFound": "Pagina niet gevonden",
     "notFoundBody": "De pagina die je zoekt bestaat niet of is verplaatst.",
     "backHome": "Terug naar de startpagina",
-    "paymentFailed": "De betaling is mislukt. Probeer het opnieuw.",
+    "paymentFailed": "De betaling is mislukt. Probeer het opnieuw, of bel ons op 085 060 8963. Je winkelmand blijft gewoon staan.",
     "cartEmpty": "Je winkelmand is leeg.",
     "designsIncomplete": "Nog niet elke vlag heeft een ontwerp. Wijs eerst alle ontwerpen toe of kies “later aanleveren”."
   }

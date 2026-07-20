@@ -29,10 +29,9 @@ const REFERENTIE_PCT =
   HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
 
 const PAD = "/kennisbank/microplastics";
-const TITEL =
-  "Microplastics uit vlaggen: wat een duurzame vlag wel en niet oplost";
+const TITEL = "Microplastics uit vlaggen: wat helpt echt?";
 const OMSCHRIJVING =
-  "Wat zijn microplastics, waar komen ze vandaan en waarom zijn polyester vlaggen een bron? En eerlijk: een biologisch afbreekbare vlag geeft nog steeds vezels af, maar die vezels breken wel af.";
+  "Waarom polyester vlaggen een bron van microplastics zijn. En eerlijk: ook een biologisch afbreekbare vlag geeft vezels af, maar die vezels breken wel af.";
 
 export const metadata: Metadata = {
   alternates: { canonical: PAD },

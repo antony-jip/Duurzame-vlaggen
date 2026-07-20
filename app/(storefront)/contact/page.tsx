@@ -1,30 +1,32 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import styles from "./page.module.css";
 import { Badge, Container } from "@/components/ui";
+import { BEDRIJF } from "@/lib/bedrijf";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
   title: "Contact, offerte en advies",
   description:
-    "Neem contact op met Duurzame Vlaggen in Enkhuizen. Bel 085 060 8963, mail info@duurzame-vlaggen.nl of vraag direct een offerte aan voor duurzame vlaggen.",
+    "Neem contact op met Duurzame Vlaggen in Enkhuizen. Stel je vraag via het formulier of bel 085 060 8963. Je hebt binnen 24 uur antwoord.",
 };
 
-// Contact channels — kept as data so the markup stays tidy.
+// Contactkanalen. GEEN mailadres: dit is een webshop en alles loopt via het
+// formulier hiernaast, zodat aanvragen gestructureerd binnenkomen in plaats van
+// als losse mail. De telefoon blijft: dat is de terugvaloptie als het formulier
+// het niet doet, en die staat ook in de foutmelding van /api/contact.
 const CHANNELS = [
   {
-    label: "E-mail",
-    value: "info@duurzame-vlaggen.nl",
-    href: "mailto:info@duurzame-vlaggen.nl",
-  },
-  {
     label: "Telefoon",
-    value: "085 060 8963",
+    value: BEDRIJF.telefoon,
     href: "tel:+31850608963",
   },
   {
     label: "Vestiging",
-    value: "Enkhuizen, Nederland",
+    // Uit BEDRIJF, niet overgetikt: het adres staat al in de algemene
+    // voorwaarden en op de factuur, en die drie mogen nooit uiteenlopen.
+    value: `${BEDRIJF.adres.straat}, ${BEDRIJF.adres.postcode} ${BEDRIJF.adres.plaats}`,
     href: undefined,
   },
 ];
@@ -47,20 +49,36 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
 
   return (
     <>
-      {/* HERO — egaal forest vlak dat uit de header loopt, golf naar off-white. */}
+      {/* HERO — forest vlak dat uit de header loopt, golf naar off-white. Erachter
+          de distributiekaart: vanuit Enkhuizen door heel Nederland. Zelfde
+          behandeling als de zee in de footer — een gradient dooft hem weg zodat
+          het sfeer is en geen foto in een kader. Decoratief, dus aria-hidden:
+          de kop vertelt het verhaal al. */}
       <section className={styles.hero} aria-labelledby="contact-title">
+        <div className={styles.heroKaartWrap} aria-hidden="true">
+          <Image
+            src="/contact/kaart-nederland.webp"
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className={styles.heroKaart}
+          />
+        </div>
         <Container className={styles.heroInner}>
-          <Badge variant="eyebrow" className={styles.heroEyebrow}>
-            Contact
-          </Badge>
-          <h1 id="contact-title" className={styles.heroTitle}>
-            Tijd om te{" "}
-            <span className={styles.heroAccent}>wapperen</span>.
-          </h1>
-          <p className={styles.heroSub}>
-            Vraag een offerte aan of stel je vraag over CSRD en compliance. We
-            reageren binnen 24 uur. Meestal sneller.
-          </p>
+          <div className={styles.heroTekst}>
+            <Badge variant="eyebrow" className={styles.heroEyebrow}>
+              Contact
+            </Badge>
+            <h1 id="contact-title" className={styles.heroTitle}>
+              Tijd om te{" "}
+              <span className={styles.heroAccent}>wapperen</span>.
+            </h1>
+            <p className={styles.heroSub}>
+              Stel je vraag via het formulier hieronder. Je hebt binnen 24 uur
+              antwoord, meestal sneller.
+            </p>
+          </div>
         </Container>
         <svg
           className={styles.heroWave}
@@ -118,6 +136,25 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <ContactForm defaultProduct={product} />
             </div>
           </div>
+        </Container>
+      </section>
+
+      {/* LEVENSCYCLUS — waar het uiteindelijk om gaat: de vlag lost op en komt
+          terug als aarde. Eén beeld, geen extra kop: de tijdlijn benoemt zijn
+          eigen stappen, dus een kop erboven zou hetzelfde twee keer zeggen.
+          `unoptimized` want de image-optimizer weigert SVG zolang
+          dangerouslyAllowSVG uit staat — en een vector heeft hem toch niet
+          nodig. */}
+      <section className={styles.levenscyclus}>
+        <Container>
+          <Image
+            src="/levenscyclus/levenscyclus-tijdlijn.svg"
+            alt="De levenscyclus van een vlag in vier jaar: jouw vlag lost op, wordt aarde en gaat terug naar de natuur."
+            width={4558}
+            height={1833}
+            unoptimized
+            className={styles.levenscyclusBeeld}
+          />
         </Container>
       </section>
     </>

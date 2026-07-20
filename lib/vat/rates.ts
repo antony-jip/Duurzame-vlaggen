@@ -65,3 +65,22 @@ export function marketToCountry(market: Market): string | null {
 export function standardRateForCountry(country: string): number | null {
   return VAT_RATES[country] ?? null;
 }
+
+/**
+ * Standard rate to SHOW on a market's shop pages (percent).
+ *
+ * Display-only: this is the B2C case a browsing visitor sees before we know
+ * anything about them. The rate actually charged is decided at checkout by
+ * `computeVat`, which additionally handles reverse charge, non-EU export and
+ * the ship-to country. Keep the fallback here identical to `computeVat`'s
+ * (seller country when the market pins down no country, i.e. `en`/.com) so the
+ * price on the page matches the price in the basket.
+ */
+export function displayRateForMarket(market: Market): number {
+  const country = marketToCountry(market);
+  return (
+    (country !== null ? standardRateForCountry(country) : null) ??
+    standardRateForCountry(SELLER_COUNTRY) ??
+    0
+  );
+}

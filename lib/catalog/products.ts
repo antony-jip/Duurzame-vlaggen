@@ -164,6 +164,20 @@ export const PRODUCTS: CatalogProduct[] = [
       // 772-baniervlaggen is dezelfde opname als de hero (762) — eruit gehaald
       // zodat de galerij geen dubbele foto toont.
       BRAND_IMAGES.banieren,
+      // Eigen praktijkfoto's van geleverd klantwerk (lokaal in
+      // public/baniervlag, bijgesneden en verkleind uit de originelen).
+      {
+        src: "/baniervlag/banieren-straatbeeld.webp",
+        alt: "Twee baniervlaggen in eigen huisstijl in een dorpsstraat",
+      },
+      {
+        src: "/baniervlag/banieren-velddag.webp",
+        alt: "Drie doorgedrukte baniervlaggen met bladmotief op een velddag",
+      },
+      {
+        src: "/baniervlag/banieren-oranje-rij.webp",
+        alt: "Drie oranje baniervlaggen op rij langs de weg",
+      },
       img(
         "1018-baniervlaggen-maten-overzichten.webp",
         "Overzicht van beschikbare baniervlag-maten",
@@ -268,8 +282,9 @@ export const PRODUCTS: CatalogProduct[] = [
     tagline: "Overal opgezet. Laat overal minder achter.",
     description:
       "Licht, draagbaar, overal inzetbaar. Op evenementen, in de winkel, langs het sportveld. Kies straightflag of squareflag, geleverd met stok en draagtas. Het doek is Flag-CiCLO®: vezels die loslaten breken af in plaats van als microplastic te blijven liggen. In zeewater 94,2% in ruim drie en een half jaar.",
-    // priceFrom = goedkoopste maat (Straight S, 80×220 = €40) met de standaard-
-    // samenstelling "Alleen vlag" (€0) — de openingsprijs van de configurator.
+    // priceFrom = goedkoopste maat (Straight S, 80×220 = €40) met samenstelling
+    // "Alleen vlag" (€0). De configurator opent op "Vlag + stok" (+€15), dus de
+    // openingsprijs ligt hoger dan deze vanafprijs.
     // +15% per 2026-07-20 (was € 35,00); zie lib/pricing/local-catalog.
     priceFrom: 40,
     // The model (Straight/Square) is encoded in the size: each size belongs to
@@ -311,11 +326,13 @@ export const PRODUCTS: CatalogProduct[] = [
       // Wat zit erbij: alleen het doek, met stok, of compleet met stok + draagtas.
       // "Vlag + stok + tas" is de geverifieerde standaard-samenstelling (flag-stick-
       // bag-deluxe). Zie probo-mapping voor de open Probo-/prijs-verificatie.
-      // Standaard "Alleen vlag" (kale doek, €0); stok +€15, stok + tas +€22,50
-      // (zie OPTION_SURCHARGES). De eerste keuze is de default in de configurator.
+      // Default = "Vlag + stok" (eerste keuze): een nieuwe koper heeft nog geen
+      // frame en mag geen los doek als voorselectie krijgen. "Alleen vlag" (€0)
+      // blijft kiesbaar voor wie al een stok heeft; stok +€15, stok + tas +€22,50
+      // (zie OPTION_SURCHARGES).
       {
         label: "Samenstelling",
-        choices: ["Alleen vlag", "Vlag + stok", "Vlag + stok + tas"],
+        choices: ["Vlag + stok", "Vlag + stok + tas", "Alleen vlag"],
       },
       // Volledige accessoire-assortiment van de oude site (namen + prijzen ECHT).
       // Optionele keuze: in de configurator kun je hem ook weer uitzetten.
@@ -343,6 +360,13 @@ export const PRODUCTS: CatalogProduct[] = [
       alt: "Duurzame straightflag beachvlag op het strand",
     },
     gallery: [
+      // Vier straightflags naast elkaar: laat in één beeld zien wat de maten in
+      // het echt schelen. Staat vooraan in de galerij, want "hoe groot is dat
+      // dan?" is de eerste vraag bij een preset-maat.
+      {
+        src: "/beachvlag/straightflag-maten.webp",
+        alt: "De vier straightflag-maten naast elkaar op het strand, van Small tot Large",
+      },
       {
         src: "/beachvlag/squareflag-strand.webp",
         alt: "Duurzame squareflag beachvlag op het strand",
@@ -351,6 +375,11 @@ export const PRODUCTS: CatalogProduct[] = [
         "1400-duurzame-square-beachvlaggen.webp",
         "Duurzame square beachvlaggen buiten opgesteld",
       ),
+      // Eigen praktijkfoto van geleverd klantwerk (lokaal in public/beachvlag).
+      {
+        src: "/beachvlag/beachvlag-straatbeeld.webp",
+        alt: "Paarse beachvlag met eigen ontwerp langs de straat",
+      },
     ],
     accent: "terracotta",
     // ORDERABLE (2026-07-13, owner-confirmed). Default code `beachflag-straight`;
@@ -404,12 +433,9 @@ export const PRODUCTS: CatalogProduct[] = [
       "763-duurzame-gevelvlag.webp",
       "Duurzame gevelvlag aan een uithouder",
     ),
-    gallery: [
-      img(
-        "771-gevelvlaggen-duurzame-vlaggen.webp",
-        "Gevelvlaggen aan een bedrijfspand",
-      ),
-    ],
+    // 771-gevelvlaggen is dezelfde opname als de hero (763) — eruit gehaald
+    // zodat de galerij geen dubbele foto toont.
+    gallery: [],
     accent: "sage-purple",
     // ORDERABLE (2026-07-13, owner-confirmed). Chain: amount → flag-ciclo → size
     // preset → flag-pole-side → landscape-strap-cord-loop (fixed finishing), see

@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import styles from "./afrekenen.module.css";
 import {
@@ -24,6 +30,7 @@ import {
   ontwerpserviceVoorOrder,
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/pricing/local-catalog";
+import { formatCurrency } from "@/lib/i18n/formatting";
 import { checkoutAction } from "./actions";
 import { useAdresZoeker, useAdresZoekerBijTypen } from "./useAdresZoeker";
 import { initialCheckoutState } from "./checkout-state";
@@ -34,6 +41,30 @@ const COUNTRIES = [
   { code: "DE", label: "Duitsland" },
   { code: "FR", label: "Frankrijk" },
 ];
+
+/**
+ * Ingevulde velden overleven een navigatie ("Verder winkelen" staat naast dit
+ * formulier): elke wijziging bewaart de tekstvelden in sessionStorage, en bij
+ * terugkomst vullen ze de defaults weer. Sessie-gebonden, dus een gesloten tab
+ * vergeet alles vanzelf.
+ */
+const FORM_STORAGE_KEY = "dv-checkout-form-v1";
+/** Checkboxen expliciet meeschrijven: afwezig in FormData = uitgevinkt. */
+const FORM_CHECKBOXES = ["isBusiness", "noMarketing", "sameAsBilling"] as const;
+
+function leesBewaardFormulier(): Record<string, string> | undefined {
+  try {
+    const raw = sessionStorage.getItem(FORM_STORAGE_KEY);
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as Record<string, string>;
+    }
+  } catch {
+    // Storage geblokkeerd of corrupt: dan gewoon een leeg formulier.
+  }
+  return undefined;
+}
 
 /** A reusable Probo-shape address block. */
 /**
@@ -256,13 +287,55 @@ function AddressFields({
 }
 
 export default function AfrekenenPage() {
-  const { items, subtotal, hydrated, inclVat, clear } = useCart();
+  const { items, subtotal, hydrated, inclVat, vatRate, catalog, clear } = useCart();
   const [state, formAction, isPending] = useActionState(
     checkoutAction,
     initialCheckoutState,
   );
-  const [isBusiness, setIsBusiness] = useState(false);
-  const [sameAsBilling, setSameAsBilling] = useState(true);
+  // Bewaarde formulierwaarden lazy inlezen: de velden zijn uncontrolled, dus
+  // de defaults moeten er bij de eerste form-render al staan. Op de server is
+  // er geen storage; het formulier rendert pas ná de hydratie-gate, dus dit
+  // verschil geeft geen hydration-mismatch.
+  const [savedValues] = useState<Record<string, string> | undefined>(() =>
+    typeof window === "undefined" ? undefined : leesBewaardFormulier(),
+  );
+  const [isBusiness, setIsBusiness] = useState(
+    () => savedValues?.isBusiness === "on",
+  );
+  const [sameAsBilling, setSameAsBilling] = useState(() =>
+    savedValues ? savedValues.sameAsBilling !== "" : true,
+  );
+  // Op rekening verschijnt pas zodra er een bedrijfsnaam staat (de server
+  // valideert dat opnieuw); de gekozen betaalwijze stuurt de knoptekst.
+  const [heeftBedrijfsnaam, setHeeftBedrijfsnaam] = useState(
+    () => (savedValues?.shipping_company_name ?? "").trim() !== "",
+  );
+  const [opRekening, setOpRekening] = useState(
+    () => savedValues?.paymentMethod === "op_rekening",
+  );
+
+  // Elke wijziging bewaren. `items` is een verborgen serialisatie van de mand
+  // en hoort niet in de opslag.
+  const persistForm = (e: FormEvent<HTMLFormElement>) => {
+    try {
+      const fd = new FormData(e.currentTarget);
+      const entries: Record<string, string> = {};
+      for (const [k, v] of fd.entries()) {
+        if (typeof v === "string" && k !== "items") entries[k] = v;
+      }
+      for (const k of FORM_CHECKBOXES) {
+        entries[k] = fd.has(k) ? "on" : "";
+      }
+      setHeeftBedrijfsnaam((entries.shipping_company_name ?? "").trim() !== "");
+      setOpRekening(entries.paymentMethod === "op_rekening");
+      sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(entries));
+    } catch {
+      // Storage vol of geblokkeerd: het formulier werkt gewoon door.
+    }
+  };
+
+  // Server-echo (na een validatiefout) wint van de opgeslagen kopie.
+  const formValues = state.values ?? savedValues;
 
   // A submitted quote request has been received server-side — empty the cart so
   // the customer does not resubmit the same lines.
@@ -308,10 +381,7 @@ export default function AfrekenenPage() {
   // belooft dan er wordt afgerekend. Alles ex btw; Price zet het om.
   const verzending = localShipping(subtotal);
   const tekortVoorGratis = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const gratisVoortgang = Math.min(
-    100,
-    (subtotal / FREE_SHIPPING_THRESHOLD) * 100,
-  );
+  const gratisVoortgang = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
   // Eenmalige ontwerpservice, met dezelfde regel als buildLocalQuote. Móet hier
   // staan: hij wordt nu wél gefactureerd, en een klant mag nooit €85 afrekenen
@@ -356,6 +426,12 @@ export default function AfrekenenPage() {
     items,
     (slug) => getProduct(slug)?.category === "hardware",
   );
+  // Op rekening rekent niet direct af; de knop moet dat niet beloven.
+  const submitLabel = hasQuoteOnly
+    ? "Offerte aanvragen"
+    : opRekening
+      ? "Bestelling plaatsen"
+      : "Nu betalen";
 
   return (
     <Container
@@ -373,144 +449,188 @@ export default function AfrekenenPage() {
         </ol>
         <p className={styles.headSub}>
           <ShieldCheck size={15} aria-hidden="true" />
-          Veilig betalen via iDEAL. Binnen 5 werkdagen geleverd.
+          Veilig betalen via iDEAL of zakelijk op rekening. Binnen 5 werkdagen
+          geleverd.
         </p>
       </div>
 
       <div className={styles.layout}>
         <div className={styles.hoofdkolom}>
-          <form
-            id="checkout-form"
-            action={formAction}
-            className={styles.form}
-            noValidate
-          >
-            {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
+        <form
+          id="checkout-form"
+          action={formAction}
+          className={styles.form}
+          noValidate
+          onChange={persistForm}
+        >
+          {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
               inclusief previewUrl: een base64-PNG tot 3MB die de server nooit
               las. Next kapt action-bodies af op 1MB, dus een foto-zware PDF gaf
               een harde 500 op de betaalknop. */}
-            <input
-              type="hidden"
-              name="items"
-              value={JSON.stringify(toCheckoutLines(items))}
+          <input
+            type="hidden"
+            name="items"
+            value={JSON.stringify(toCheckoutLines(items))}
+          />
+
+          {state.status === "error" && state.message && (
+            <p
+              className={`${styles.banner} ${styles.bannerError}`}
+              role="alert"
+            >
+              {state.message}
+            </p>
+          )}
+
+          {/* Contact */}
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Contactgegevens</legend>
+            <Field
+              id="email"
+              name="email"
+              defaultValue={formValues?.email}
+              type="email"
+              label="E-mailadres"
+              autoComplete="email"
+              placeholder="naam@bedrijf.nl"
+              helperText="Hierop ontvang je je orderbevestiging en drukproef."
+              required
+              errorText={state.fieldErrors?.email}
             />
-
-            {state.status === "error" && state.message && (
-              <p
-                className={`${styles.banner} ${styles.bannerError}`}
-                role="alert"
-              >
-                {state.message}
-              </p>
-            )}
-
-            {/* Contact */}
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Contactgegevens</legend>
-              <Field
-                id="email"
-                name="email"
-                defaultValue={state.values?.email}
-                type="email"
-                label="E-mailadres"
-                autoComplete="email"
-                placeholder="naam@bedrijf.nl"
-                helperText="Hierop ontvang je je orderbevestiging en drukproef."
-                required
-                errorText={state.fieldErrors?.email}
-              />
-              <Field
-                id="phone"
-                name="phone"
-                defaultValue={state.values?.phone}
-                type="tel"
-                label="Telefoonnummer"
-                autoComplete="tel"
-                helperText="Optioneel, voor vragen over je bestelling."
-                errorText={state.fieldErrors?.phone}
-              />
-              {/* Naam en bedrijfsnaam horen bij wie je bent, niet bij waar het
+            <Field
+              id="phone"
+              name="phone"
+              defaultValue={formValues?.phone}
+              type="tel"
+              label="Telefoonnummer"
+              autoComplete="tel"
+              helperText="Optioneel, voor vragen over je bestelling."
+              errorText={state.fieldErrors?.phone}
+            />
+            {/* Naam en bedrijfsnaam horen bij wie je bent, niet bij waar het
                 pakket heen moet. De veldnamen blijven `shipping_*`, zodat de
                 server-action en het datamodel ongemoeid blijven. */}
-              <NaamVelden
-                prefix="shipping_"
+            <NaamVelden
+              prefix="shipping_"
+              errors={state.fieldErrors}
+              requireCompany={isBusiness}
+              values={formValues}
+            />
+            <label className={styles.toggle}>
+              <input
+                type="checkbox"
+                name="isBusiness"
+                checked={isBusiness}
+                onChange={(e) => setIsBusiness(e.target.checked)}
+              />
+              <span className={styles.toggleLabel}>Ik bestel zakelijk</span>
+            </label>
+            {isBusiness && (
+              <Field
+                id="vatNumber"
+                name="vatNumber"
+                defaultValue={formValues?.vatNumber}
+                label="Btw-nummer"
+                placeholder="NL123456789B01"
+                required
+                errorText={state.fieldErrors?.vatNumber}
+              />
+            )}
+            <label className={styles.toggle}>
+              <input
+                type="checkbox"
+                name="noMarketing"
+                defaultChecked={!!formValues?.noMarketing}
+              />
+              <span className={styles.toggleLabel}>
+                Ik wil geen vervangingsherinnering per e-mail ontvangen
+              </span>
+            </label>
+            <p className={styles.adresHulp}>
+              Zonder vinkje sturen we je na 4 en 8 maanden een herinnering om je
+              vlag duurzaam te vervangen. Uitschrijven kan in elke mail met één
+              klik.
+            </p>
+          </fieldset>
+
+          {/* Shipping address */}
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Verzendadres</legend>
+            <AddressFields
+              prefix="shipping_"
+              errors={state.fieldErrors}
+              requireCompany={isBusiness}
+              values={formValues}
+              zonderNaam
+            />
+          </fieldset>
+
+          {/* Billing address */}
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.legend}>Factuuradres</legend>
+            <label className={styles.toggle}>
+              <input
+                type="checkbox"
+                name="sameAsBilling"
+                checked={sameAsBilling}
+                onChange={(e) => setSameAsBilling(e.target.checked)}
+              />
+              <span className={styles.toggleLabel}>
+                Factuuradres is gelijk aan verzendadres
+              </span>
+            </label>
+            {!sameAsBilling && (
+              <AddressFields
+                prefix="billing_"
                 errors={state.fieldErrors}
                 requireCompany={isBusiness}
-                values={state.values}
+                values={formValues}
               />
+            )}
+          </fieldset>
+
+          {/* Betaalwijze — naast direct betalen ook op rekening, zodra er een
+              bedrijfsnaam is ingevuld (de server-action valideert dat
+              opnieuw). De factuur gaat direct per mail de deur uit, met een
+              Mollie-betaallink; productie start pas na betaling. */}
+          {heeftBedrijfsnaam && (
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Betaling</legend>
               <label className={styles.toggle}>
                 <input
-                  type="checkbox"
-                  name="isBusiness"
-                  checked={isBusiness}
-                  onChange={(e) => setIsBusiness(e.target.checked)}
-                />
-                <span className={styles.toggleLabel}>Ik bestel zakelijk</span>
-              </label>
-              {isBusiness && (
-                <Field
-                  id="vatNumber"
-                  name="vatNumber"
-                  defaultValue={state.values?.vatNumber}
-                  label="Btw-nummer"
-                  placeholder="NL123456789B01"
-                  required
-                  errorText={state.fieldErrors?.vatNumber}
-                />
-              )}
-              <label className={styles.toggle}>
-                <input
-                  type="checkbox"
-                  name="noMarketing"
-                  defaultChecked={state.values?.noMarketing != null}
+                  type="radio"
+                  name="paymentMethod"
+                  value="direct"
+                  defaultChecked={formValues?.paymentMethod !== "op_rekening"}
                 />
                 <span className={styles.toggleLabel}>
-                  Ik wil geen vervangingsherinnering per e-mail ontvangen
+                  Direct betalen (iDEAL, creditcard)
+                </span>
+              </label>
+              <label className={styles.toggle}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="op_rekening"
+                  defaultChecked={formValues?.paymentMethod === "op_rekening"}
+                />
+                <span className={styles.toggleLabel}>
+                  Op rekening (factuur per e-mail, 14 dagen)
                 </span>
               </label>
               <p className={styles.adresHulp}>
-                Zonder vinkje sturen we je na 4 en 8 maanden een herinnering dat
-                je vlag aan vervanging toe is. Uitschrijven kan in elke mail met
-                één klik.
+                Je ontvangt de factuur direct per e-mail, met een betaallink:
+                iDEAL, creditcard of overboeken, binnen 14 dagen. We starten de
+                productie zodra je betaling binnen is.
               </p>
-            </fieldset>
-
-            {/* Shipping address */}
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Verzendadres</legend>
-              <AddressFields
-                prefix="shipping_"
-                errors={state.fieldErrors}
-                requireCompany={isBusiness}
-                values={state.values}
-                zonderNaam
-              />
-            </fieldset>
-
-            {/* Billing address */}
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Factuuradres</legend>
-              <label className={styles.toggle}>
-                <input
-                  type="checkbox"
-                  name="sameAsBilling"
-                  checked={sameAsBilling}
-                  onChange={(e) => setSameAsBilling(e.target.checked)}
-                />
-                <span className={styles.toggleLabel}>
-                  Factuuradres is gelijk aan verzendadres
-                </span>
-              </label>
-              {!sameAsBilling && (
-                <AddressFields
-                  prefix="billing_"
-                  errors={state.fieldErrors}
-                  requireCompany={isBusiness}
-                  values={state.values}
-                />
+              {state.fieldErrors?.paymentMethod && (
+                <p className={styles.veldFout} role="alert">
+                  {state.fieldErrors.paymentMethod}
+                </p>
               )}
             </fieldset>
-          </form>
+          )}
+        </form>
         </div>
 
         {/* Zijkolom: eerst het geld en de betaalknop (de beslissing), daarna
@@ -554,8 +674,22 @@ export default function AfrekenenPage() {
               <Price amount={teBetalen} />
             </strong>
           </div>
-          <p className={styles.summaryNote}>
-            Prijzen zijn {inclVat ? "inclusief" : "exclusief"} btw.
+          {/* Geen twijfel over btw op het beslismoment: één strakke subregel
+              onder het totaal die zegt wat dit bedrag is (ex of incl) en wat
+              de andere kant is. Volgt de globale ex/incl-toggle. */}
+          <p className={styles.totaalSub}>
+            {inclVat ? (
+              <>
+                incl. {Math.round(vatRate * 100)}% btw ·{" "}
+                {formatCurrency(teBetalen, catalog)} excl. btw
+              </>
+            ) : (
+              <>
+                excl. btw ·{" "}
+                {formatCurrency(Math.round(teBetalen * (1 + vatRate) * 100) / 100, catalog)}{" "}
+                incl. {Math.round(vatRate * 100)}% btw
+              </>
+            )}
           </p>
 
           {/* Gratis-verzending-drempel: zonder dit merkt de klant pas op de
@@ -563,8 +697,9 @@ export default function AfrekenenPage() {
           {verzending > 0 ? (
             <div className={styles.gratisNudge}>
               <span>
-                Nog <Price amount={tekortVoorGratis} /> en je verzending is
-                gratis
+                Nog <Price amount={tekortVoorGratis} />
+                {" tot gratis verzending (vanaf "}
+                &euro;&nbsp;100 incl. btw)
               </span>
               <span
                 className={styles.balk}
@@ -596,10 +731,7 @@ export default function AfrekenenPage() {
           )}
 
           {!hasQuoteOnly && !designsComplete && (
-            <p
-              className={`${styles.banner} ${styles.bannerQuote}`}
-              role="status"
-            >
+            <p className={`${styles.banner} ${styles.bannerQuote}`} role="status">
               Nog niet elke vlag heeft een ontwerp. Wijs hieronder bij elke
               regel je ontwerpen toe, of kies &ldquo;later aanleveren&rdquo;.
             </p>
@@ -615,16 +747,16 @@ export default function AfrekenenPage() {
             icon={<ArrowRight />}
             className={styles.submit}
           >
-            {hasQuoteOnly ? "Offerte aanvragen" : "Nu betalen"}
+            {submitLabel}
           </Button>
           <ul className={styles.trust}>
             <li>
-              <ShieldCheck size={16} aria-hidden="true" /> Veilig betalen via
-              iDEAL &amp; Mollie
+              <ShieldCheck size={16} aria-hidden="true" /> iDEAL, creditcard of
+              zakelijk op rekening
             </li>
             <li>
-              <Leaf size={16} aria-hidden="true" /> Materiaalpaspoort bij elke
-              order
+              <Leaf size={16} aria-hidden="true" /> Materiaalpaspoort bij
+              elke order
             </li>
             <li>
               <Truck size={16} aria-hidden="true" /> Binnen 5 werkdagen geleverd
@@ -659,7 +791,7 @@ export default function AfrekenenPage() {
           loading={isPending}
           icon={<ArrowRight />}
         >
-          {hasQuoteOnly ? "Offerte aanvragen" : "Nu betalen"}
+          {submitLabel}
         </Button>
       </div>
     </Container>

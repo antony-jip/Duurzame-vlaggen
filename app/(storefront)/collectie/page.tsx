@@ -24,7 +24,8 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/collectie" },
-  title: "Collectie",
+  // Zoekterm + belofte in de SERP: "Collectie" zegt Google en de zoeker niets.
+  title: "Vlaggen bedrukken op afbreekbaar doek",
   description:
     "Bekijk onze duurzame, biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. Met materiaalpaspoort, geleverd in 5 werkdagen.",
 };

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   // Title template lives here only, so per-page titles read "<Page> | Duurzame
   // Vlaggen". The homepage sets an absolute title to avoid a doubled suffix.
   title: {
-    default: "Duurzame Vlaggen — biologisch afbreekbaar",
+    default: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     template: "%s | Duurzame Vlaggen",
   },
   // De zoektermen blijven staan; de claim eromheen is onderbouwd. Kale
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "nl_NL",
     url: SITE_URL,
-    title: "Duurzame Vlaggen — biologisch afbreekbaar",
+    title: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     description:
       "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
     images: [
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Duurzame Vlaggen — biologisch afbreekbaar",
+    title: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     description:
       "Biologisch afbreekbare vlaggen voor bedrijven. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
     images: [OG_IMAGE],

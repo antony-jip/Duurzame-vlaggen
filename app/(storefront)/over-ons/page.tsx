@@ -31,9 +31,9 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/over-ons" },
-  title: "Ons verhaal. Duurzame Vlaggen",
+  title: "Ons verhaal",
   description:
-    "De vlaggenbranche concurreert op de laagste prijs, en het doek is het kind van de rekening. Flag-CiCLO® is wél ander doek: biologisch afbreekbaar, gemeten volgens ASTM. Voor bedrijven die op een duurzame manier willen opvallen.",
+    "De vlaggenbranche concurreert op de laagste prijs en het doek is het kind van de rekening. Flag-CiCLO® is ander doek: biologisch afbreekbaar, gemeten volgens ASTM.",
 };
 
 /* Wat de klant eraan heeft, niet waar wij voor staan. Drie bezwaren, in de

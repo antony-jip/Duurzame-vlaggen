@@ -10,10 +10,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // `/account`, `/aanleveren`, `/opnieuw` en `/uitschrijven` stonden hier
-      // niet in terwijl ze wél transactioneel zijn. De laatste drie zijn
-      // bovendien tokenroutes: die horen om meer dan indexeringsredenen niet in
-      // een zoekmachine.
+      // `/account`, `/aanleveren`, `/opnieuw` en `/uitschrijven` horen hier
+      // ook in: ze zijn transactioneel, en de laatste drie zijn tokenroutes die
+      // om meer dan indexeringsredenen niet in een zoekmachine thuishoren.
       disallow: [
         "/admin",
         "/api",

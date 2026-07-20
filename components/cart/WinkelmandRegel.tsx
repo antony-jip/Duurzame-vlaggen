@@ -13,7 +13,12 @@ import {
   staffelDiscount,
   volgendeStaffel,
 } from "@/lib/pricing/local-catalog";
-import { normalizeCartItem, primaryDesign, type CartItem } from "./types";
+import {
+  heeftOntwerpserviceOptie,
+  normalizeCartItem,
+  primaryDesign,
+  type CartItem,
+} from "./types";
 import type { ProofFinish, ProofShape } from "./ArtworkProof";
 import { sjabloonUrl } from "@/lib/catalog/sjablonen";
 
@@ -195,8 +200,17 @@ export function WinkelmandRegel({
           </span>
         )}
         {/* Hardware (vlaggenmast) heeft geen drukbestand; alleen drukwerk
-            krijgt de ontwerp-toewijzingen. */}
-        {product?.category !== "hardware" && (
+            krijgt de ontwerp-toewijzingen. Regels met ontwerpservice hebben
+            geen upload nodig: wij maken het ontwerp. */}
+        {product?.category !== "hardware" &&
+          heeftOntwerpserviceOptie(item.options) && (
+            <span className={styles.ontwerpserviceNote}>
+              Wij maken je ontwerp. We vragen je logo en wensen per mail op en
+              je krijgt eerst een digitale drukproef.
+            </span>
+          )}
+        {product?.category !== "hardware" &&
+          !heeftOntwerpserviceOptie(item.options) && (
           <ArtworkUpload
             itemId={item.id}
             amount={item.amount}

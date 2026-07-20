@@ -28,10 +28,9 @@ const REFERENTIE_PCT =
   HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
 
 const PAD = "/kennisbank/flag-ciclo-technologie";
-const TITEL =
-  "Flag-CiCLO® technologie: zo wordt een vlag biologisch afbreekbaar";
+const TITEL = "Flag-CiCLO®: biologisch afbreekbaar doek";
 const OMSCHRIJVING =
-  "Geen magie, wel wetenschap: CiCLO® maakt polyester biologisch afbreekbaar. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691-17). De levenscyclus stap voor stap.";
+  "Geen magie, wel wetenschap: CiCLO® maakt polyester biologisch afbreekbaar. In zeewater brak 94,2% af in ruim drie en een half jaar (ASTM D6691).";
 
 export const metadata: Metadata = {
   alternates: { canonical: PAD },
@@ -260,6 +259,12 @@ export default function FlagCicloTechnologiePage() {
               Bekijk alle certificeringen en testresultaten{" "}
               <ArrowRight size={16} />
             </Link>
+            <p className={styles.verdieping}>
+              Nog dieper de stof in? Op{" "}
+              <a href="https://flag-ciclo.nl">flag-ciclo.nl</a>, ons
+              kennisdomein over het doek, vind je de werking in animatie en de
+              vergelijking met gerecycled rPET.
+            </p>
           </div>
         </Container>
       </section>

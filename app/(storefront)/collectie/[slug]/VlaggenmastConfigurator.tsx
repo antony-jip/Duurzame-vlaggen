@@ -24,7 +24,7 @@ import Link from "next/link";
 import styles from "./vlaggenmast.module.css";
 import pstyles from "./product.module.css";
 import { Badge, Button, Check, ArrowRight, Leaf, ShieldCheck, Truck, User } from "@/components/ui";
-import { useCart, VAT_RATE } from "@/components/cart/CartProvider";
+import { useCart } from "@/components/cart/CartProvider";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
 import type { CatalogProduct } from "@/lib/catalog/products";
@@ -70,7 +70,7 @@ export function VlaggenmastConfigurator({
   product: CatalogProduct;
   catalog: UiCatalog;
 }) {
-  const { addItem, inclVat } = useCart();
+  const { addItem, inclVat, vatRate } = useCart();
 
   const colorChoices = product.options[0]?.choices ?? ["Wit", "Aluminium", "Zwart", "Antraciet"];
 
@@ -98,7 +98,7 @@ export function VlaggenmastConfigurator({
   const totalEx = round2(hardwareSubtotal - mastDiscount + serviceCost);
 
   /** Toon een ex-btw bedrag volgens de globale btw-voorkeur. */
-  const show = (amount: number) => (inclVat ? amount * (1 + VAT_RATE) : amount);
+  const show = (amount: number) => (inclVat ? amount * (1 + vatRate) : amount);
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
   const btwLabel = inclVat ? "incl. btw" : "excl. btw";
 

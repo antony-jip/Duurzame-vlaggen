@@ -154,16 +154,35 @@ export function primaryDesign(item: CartItem): CartDesign | undefined {
 }
 
 /**
+ * Koos de klant de ontwerpservice op deze regel? Spiegel van
+ * `heeftOntwerpservice` in lib/pricing/local-catalog (dat op selections werkt).
+ * Wij maken dan het ontwerp, dus de regel vereist geen eigen bestand of
+ * "later aanleveren"-toewijzing van de klant.
+ */
+export function heeftOntwerpserviceOptie(options: CartOption[]): boolean {
+  return options.some(
+    (o) =>
+      o.code === "Ontwerpservice" && /^ja\b/i.test(String(o.value ?? "").trim()),
+  );
+}
+
+/**
  * True wanneer elke bestelbare drukwerk-regel complete toewijzingen heeft.
- * Offerte-only regels en hardware (vlaggenmast, geen drukbestand) tellen niet
- * mee; de server-action hanteert dezelfde uitzonderingen.
+ * Offerte-only regels, hardware (vlaggenmast, geen drukbestand) en regels met
+ * ontwerpservice (wij maken het ontwerp) tellen niet mee; de server-action
+ * hanteert dezelfde uitzonderingen.
  */
 export function cartDesignsComplete(
   items: CartItem[],
   isHardware: (slug: string) => boolean = () => false,
 ): boolean {
   return items
-    .filter((it) => it.proboProductCode !== null && !isHardware(it.slug))
+    .filter(
+      (it) =>
+        it.proboProductCode !== null &&
+        !isHardware(it.slug) &&
+        !heeftOntwerpserviceOptie(it.options),
+    )
     .every((it) => designStatus(normalizeCartItem(it)).complete);
 }
 

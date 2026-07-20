@@ -36,7 +36,7 @@ const BODEMTEST =
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-verenigingen" },
-  title: "Voor verenigingen. Duurzame clubvlaggen in jullie kleuren",
+  title: "Clubvlaggen in jullie kleuren. Duurzaam.",
   description:
     "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en doek dat minder microplastic achterlaat op het sportpark.",
 };

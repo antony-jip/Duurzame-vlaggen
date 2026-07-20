@@ -124,7 +124,8 @@
       "phoneInvalid": "Veuillez saisir un numéro de téléphone valide.",
       "postalCodeInvalid": "Veuillez saisir un code postal valide.",
       "vatNumberInvalid": "Veuillez saisir un numéro de TVA valide.",
-      "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié."
+      "vatNumberNotVerified": "Ce numéro de TVA n'a pas pu être vérifié.",
+      "opRekeningBedrijfsnaam": "Indiquez le nom de votre entreprise pour commander sur facture."
     }
   },
   "order": {
@@ -138,7 +139,12 @@
       "problemTitle": "Le paiement n’a pas abouti",
       "problemSubtitle": "Pas d’inquiétude, votre commande vous attend toujours. Réessayez le paiement et nous nous mettons au travail.",
       "trackPromise": "Dès que nous aurons traité votre commande, vous recevrez un lien de suivi par e-mail. Il vous permet de suivre vos drapeaux jusqu’à votre porte.",
-      "retryCta": "Réessayer le paiement"
+      "retryCta": "Réessayer le paiement",
+      "payCta": "Payer votre facture",
+      "invoiceTitle": "Facture",
+      "invoiceView": "Voir la facture (PDF)",
+      "invoiceDownload": "Télécharger la facture",
+      "contactPrompt": "Des questions sur votre commande ? Appelez le {phone} ou écrivez à {email}."
     },
     "steps": {
       "heading": "Les prochaines étapes",
@@ -161,6 +167,8 @@
     "tracking": "Suivre votre colis",
     "trackingNumber": "Numéro de suivi",
     "estimatedDelivery": "Livraison prévue",
+    "statusLabel": "Statut",
+    "orderedOn": "Date de commande",
     "portal": {
       "pending": "Il manque encore {count} design(s) pour ta commande. Envoie-les quand cela t'arrange.",
       "cta": "Fournir mes designs"

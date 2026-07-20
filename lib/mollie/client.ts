@@ -9,7 +9,13 @@ import { requestJson, type RequestOptions } from "@/lib/http";
  * validate the shape with the zod schemas in `./schemas`.
  */
 
-const MOLLIE_BASE_URL = "https://api.mollie.com/v2";
+/**
+ * Test-seam: de flow-e2e-test (lib/orders/flow.e2e.test.ts) wijst dit naar een
+ * lokale mock-Mollie die onze payloads valideert. Zonder override praat alles
+ * gewoon met het echte Mollie.
+ */
+const MOLLIE_BASE_URL =
+  process.env.MOLLIE_BASE_URL ?? "https://api.mollie.com/v2";
 
 /**
  * A Mollie amount object. Mollie ALWAYS represents money as a decimal string

@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     absolute: "Duurzame Vlaggen. Biologisch afbreekbaar.",
   },
   description:
-    "Biologisch afbreekbare baniervlaggen, mastvlaggen, gevelvlaggen en beachflags. Van ons doek brak 94,2% af in zeewater, in ruim drie en een half jaar, tegen 3,8% voor gewoon polyester. Binnen 5 werkdagen geleverd.",
+    "Biologisch afbreekbare banier-, mast-, gevel- en beachvlaggen. Van ons doek brak 94,2% af in zeewater in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
 };
 
 /* De vier geruststellingen, als strip onder de vlaggen in plaats van als eigen
@@ -128,7 +128,7 @@ export default async function Home() {
   // € 11,50 die bij geen enkel product hoorde; na de herprijzing van
   // 2026-07-20 was het goedkoopste product € 20,00. Een "vanaf"-prijs die je
   // niet voert is niet alleen slordig, het is een misleidende prijsvermelding.
-  const vanafPrijs = Math.min(...products.map((p) => p.priceFrom));
+  const laagstePrijs = Math.min(...products.map((p) => p.priceFrom));
 
   return (
     <>
@@ -170,7 +170,7 @@ export default async function Home() {
                 Bestel direct
               </Button>
               <span className={styles.heroFrom}>
-                vanaf <Price amount={vanafPrijs} suffix />
+                vanaf <Price amount={laagstePrijs} suffix />
               </span>
             </div>
           </div>

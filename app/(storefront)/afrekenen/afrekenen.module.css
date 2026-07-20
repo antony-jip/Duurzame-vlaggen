@@ -187,6 +187,12 @@
   font-size: 13px;
   color: var(--color-stone);
 }
+/* Foutmelding bij een keuzegroep zonder eigen Field (bv. betaalwijze). */
+.veldFout {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #ef4444;
+}
 
 @media (max-width: 520px) {
   .rowAdres {
@@ -477,4 +483,14 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-stone);
+}
+
+/* Btw-subregel direct onder het totaal: klein, rechts, geen zin maar een feit. */
+.totaalSub {
+  text-align: right;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-stone);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
