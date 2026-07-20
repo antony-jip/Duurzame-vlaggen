@@ -23,7 +23,7 @@ import { getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/over-ons" },
-  title: "Ons verhaal. Duurzame Vlaggen",
+  title: "Ons verhaal",
   description:
     "De vlaggenbranche concurreert op prijs, het doek is het kind van de rekening. Flag-CiCLO® breekt volledig af. Voor bedrijven die duurzaam willen opvallen.",
 };

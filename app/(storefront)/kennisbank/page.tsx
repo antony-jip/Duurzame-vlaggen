@@ -15,7 +15,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank" },
-  title: "Kennisbank: alles over biologisch afbreekbare vlaggen",
+  title: "Kennisbank over duurzame vlaggen",
   description:
     "Van Flag-CiCLO®-technologie en CSRD-compliance tot microplastics en de juiste vlag kiezen: verdiep je in biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
 };

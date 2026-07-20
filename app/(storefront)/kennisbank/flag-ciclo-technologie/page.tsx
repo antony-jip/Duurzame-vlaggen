@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/flag-ciclo-technologie" },
-  title: "Flag-CiCLO® technologie: hoe een vlag kan verdwijnen",
+  title: "Flag-CiCLO®: hoe een vlag verdwijnt",
   description:
     "Geen magie, wel wetenschap: zo zorgt CiCLO®-technologie dat onze vlaggen volledig oplossen zonder sporen achter te laten. De levenscyclus stap voor stap uitgelegd.",
 };

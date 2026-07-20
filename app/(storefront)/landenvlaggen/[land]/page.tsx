@@ -45,8 +45,10 @@ export async function generateMetadata({
 
   return {
     // Vast patroon dat voor álle 249 landen klopt: geen bijvoeglijke vormen
-    // ("Duitse vlag") die je niet betrouwbaar kunt genereren.
-    title: `Vlag van ${land.naam} kopen. Biologisch afbreekbaar.`,
+    // ("Duitse vlag") die je niet betrouwbaar kunt genereren. Kaal gehouden,
+    // want de landnaam varieert van "Chili" tot "Verenigde Arabische Emiraten"
+    // — met een payoff erachter kapte Google de merknaam eraf.
+    title: `Vlag van ${land.naam} kopen`,
     description,
     alternates: { canonical },
     openGraph: {

@@ -12,7 +12,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/materiaal" },
-  title: "Materiaal. Biologisch afbreekbaar vlaggendoek",
+  title: "Biologisch afbreekbaar vlaggendoek",
   description:
     "Flag-CiCLO® vlaggendoek lost volledig op in 2 tot 3 jaar: geen microplastics, alleen CO₂, water en biomassa. Zelfde kwaliteit als polyester, wél CSRD-proof.",
 };

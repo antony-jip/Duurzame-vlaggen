@@ -14,7 +14,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank/microplastics" },
-  title: "Microplastics: de stille vervuiler in je vlaggen",
+  title: "Microplastics in vlaggen",
   description:
     "Wat zijn microplastics, waar komen ze vandaan en waarom zijn polyester vlaggen een bron? De feiten, de gezondheidsrisico's en wat jouw organisatie eraan kan doen.",
 };

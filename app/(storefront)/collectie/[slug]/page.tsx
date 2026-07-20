@@ -48,7 +48,7 @@ const SEO_TITLES: Record<string, string> = {
   baniervlag: "Baniervlag bedrukken. 0% microplastic.",
   mastvlag: "Mastvlag bedrukken. Breekt af, valt op.",
   beachvlag: "Beachvlag met je logo. Nergens plastic.",
-  gevelvlag: "Gevelvlag bedrukken. Je merk aan de straat.",
+  gevelvlag: "Gevelvlag bedrukken. Aan de straat.",
   vlaggenmast: "Vlaggenmast kopen. Aluminium Easylift.",
 };
 
