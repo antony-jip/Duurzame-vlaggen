@@ -39,7 +39,7 @@ const STAPPEN: Stap[] = [
     },
     title: "Wij printen & naaien",
     body: "We drukken je ontwerp op Flag-CiCLO®-doek en werken elke vlag met de hand af in Nederland.",
-    badge: "Circulair geproduceerd",
+    badge: "Gemaakt in Nederland",
   },
   {
     n: 3,
@@ -49,7 +49,7 @@ const STAPPEN: Stap[] = [
       alt: "Ingepakte bestelling wordt overhandigd aan de bezorger",
     },
     title: "Levering aan de deur",
-    body: "Binnen ± 5 werkdagen bezorgd, inclusief het CSRD-materiaalpaspoort bij je bestelling.",
+    body: "Binnen ± 5 werkdagen bezorgd, inclusief het materiaalpaspoort bij je bestelling.",
     badge: "± 5 werkdagen",
   },
 ];
@@ -89,7 +89,7 @@ export function ProcesStappen({
           </h2>
           <p className={styles.sub}>
             Configureer je vlag, reken direct online af en wij regelen de rest.
-            Snel. Simpel. Volledig duurzaam.
+            Op duurzaam doek, met het materiaalpaspoort erbij.
           </p>
         </div>
 

@@ -11,12 +11,33 @@ import {
   ShieldCheck,
   Truck,
 } from "@/components/ui";
+import {
+  AFBRAAK_TESTS,
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, jsonLd } from "@/lib/seo";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
+
+const PAD = "/kennisbank/microplastics";
+const TITEL =
+  "Microplastics uit vlaggen: wat een duurzame vlag wel en niet oplost";
+const OMSCHRIJVING =
+  "Wat zijn microplastics, waar komen ze vandaan en waarom zijn polyester vlaggen een bron? En eerlijk: een biologisch afbreekbare vlag geeft nog steeds vezels af, maar die vezels breken wel af.";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/kennisbank/microplastics" },
-  title: "Microplastics: de stille vervuiler in je vlaggen",
-  description:
-    "Wat zijn microplastics, waar komen ze vandaan en waarom zijn polyester vlaggen een bron? De feiten, de gezondheidsrisico's en wat jouw organisatie eraan kan doen.",
+  alternates: { canonical: PAD },
+  title: TITEL,
+  description: OMSCHRIJVING,
 };
 
 const WAVE_PATH =
@@ -60,30 +81,33 @@ const IMPACT = [
   },
   {
     icon: <Recycle size={24} />,
-    title: "Regelgeving komt eraan",
-    body: "De EU neemt actie: grote bedrijven moeten hun microplastic-uitstoot rapporteren onder de CSRD. Voorbereiden is nu essentieel.",
+    title: "De vraag komt uit je keten",
+    body: "De grootste bedrijven rapporteren onder de CSRD over microplastics in hun keten. Ben je hun leverancier, dan komt die vraag bij jou terecht.",
   },
 ];
 
-// Vier stappen naar een microplastic-vrije organisatie.
+// Vier stappen om grip te krijgen op de microplastics uit je eigen materialen.
 const STEPS = [
   {
     title: "Inventariseer je bronnen",
-    body: "Breng in kaart welke materialen in je organisatie microplastics kunnen afgeven, van vlaggen tot werkkleding.",
+    body: "Breng in kaart welke materialen in je organisatie vezels kunnen afgeven, van vlaggen tot werkkleding.",
   },
   {
-    title: "Kies alternatieven",
-    body: "Vervang polyester vlaggen door Flag-CiCLO®: 96% biologisch afbreekbaar, 0% microplastics.",
+    title: "Verleng de levensduur",
+    body: "Een vlag die langer heel blijft, slijt minder en geeft dus minder vezels af. Kies de juiste maat en haal hem binnen bij storm.",
   },
   {
-    title: "Meet je impact",
-    body: "Kwantificeer je reductie met de meegeleverde productdata en testresultaten.",
+    title: "Kies doek dat afbreekt",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het Flag-CiCLO®-doek af in ${HOOFDTEST.duur} (${HOOFDTEST.code}).`,
   },
   {
-    title: "Rapporteer resultaten",
-    body: "Documenteer je vooruitgang voor de CSRD en communiceer het naar je stakeholders.",
+    title: "Leg het vast",
+    body: "Bewaar de testresultaten en certificaten in je inkoopdossier, zodat je ze paraat hebt als een opdrachtgever ernaar vraagt.",
   },
 ];
+
+// De vier ASTM-uitkomsten, in de omgevingen waar afgegeven vezels terechtkomen.
+const TESTS = AFBRAAK_TESTS;
 
 const FAQ = [
   {
@@ -99,18 +123,56 @@ const FAQ = [
     a: "Microplastics zijn aangetroffen in menselijk bloed, longen en placenta's. Ze kunnen ontstekingen veroorzaken en schadelijke stoffen transporteren. De WHO en de EU beschouwen ze als opkomende zorg voor de volksgezondheid.",
   },
   {
-    q: "Wat is het verschil met Flag-CiCLO®-vlaggen?",
-    a: "Flag-CiCLO®-vlaggen breken voor 96% biologisch af in 2 tot 3 jaar en laten geen microplastics achter. Gewone polyester vlaggen blijven honderden jaren in het milieu en geven continu vezels af.",
+    q: "Geeft een Flag-CiCLO®-vlag minder vezels af dan een gewone vlag?",
+    a: "Nee. Het doek is polyester en slijt net zo hard als ander polyester. CiCLO® verandert niets aan hoeveel vezels er tijdens gebruik loslaten. Het verandert wat er daarna met die vezels gebeurt.",
+  },
+  {
+    q: "Wat is het verschil met Flag-CiCLO®-vlaggen dan wel?",
+    a: `Vezels die loslaten breken af in plaats van te blijven liggen. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}. Onbehandeld polyester kwam in diezelfde test niet verder dan ${REFERENTIE_PCT}%.`,
+  },
+  {
+    q: "Waarom claimen jullie geen nul microplastics?",
+    a: "Omdat dat niet klopt. Een vlag van biologisch afbreekbaar polyester laat nog steeds vezels los in wind en regen. Wie iets anders beweert, verkoopt je een verhaal dat de test niet ondersteunt. Wij houden het bij wat er is gemeten.",
   },
   {
     q: "Moet ik microplastics rapporteren onder de CSRD?",
-    a: "Ja. Grote bedrijven moeten onder ESRS E2-5 rapporteren over hun microplastic-uitstoot. Met Flag-CiCLO®-vlaggen voldoe je aan die eis met meetbare resultaten en certificaten voor je duurzaamheidsverslag.",
+    a: "Alleen als je onder de CSRD valt, en sinds het Omnibus-pakket van december 2025 is dat pas vanaf 1.000 medewerkers én meer dan 450 miljoen euro omzet. Val je daar niet onder, dan geldt er geen rapportageplicht voor jou. Lever je aan een bedrijf dat er wel onder valt, dan krijg je de vraag alsnog. Met de testresultaten en certificaten heb je dan een antwoord.",
   },
 ];
+
+// Gestructureerde data: artikel, kruimelpad en de FAQ. De vragen komen uit
+// dezelfde `FAQ`-array als het zichtbare blok hieronder, zodat er nooit een
+// antwoord in de structured data staat dat niet op de pagina staat. Bewust geen
+// aggregateRating of review: die zijn er niet.
+const ARTICLE_JSON_LD = jsonLd(
+  articleJsonLd({ titel: TITEL, omschrijving: OMSCHRIJVING, pad: PAD }),
+);
+
+const BREADCRUMB_JSON_LD = jsonLd(
+  breadcrumbJsonLd([
+    { naam: "Home", pad: "/" },
+    { naam: "Kennisbank", pad: "/kennisbank" },
+    { naam: "Het microplastics-probleem", pad: PAD },
+  ]),
+);
+
+const FAQ_JSON_LD = jsonLd(faqJsonLd(FAQ));
 
 export default function MicroplasticsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ARTICLE_JSON_LD }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
@@ -124,8 +186,9 @@ export default function MicroplasticsPage() {
             </h1>
             <p className={styles.heroSub}>
               Elke dag komen miljoenen onzichtbare plastic deeltjes vrij in ons
-              milieu. Ook uit vlaggen. Wat zijn microplastics, waarom vormen
-              ze een probleem en wat kun jij eraan doen?
+              milieu. Ook uit vlaggen, ook uit de onze. Wat zijn microplastics,
+              waarom vormen ze een probleem en wat lost een biologisch
+              afbreekbare vlag nu echt op?
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -149,8 +212,10 @@ export default function MicroplasticsPage() {
               <span className={styles.heroStatLabel}>Jaar in het milieu</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Flag-CiCLO®-residu</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFD_OMGEVING}
+              </span>
             </div>
           </div>
         </Container>
@@ -172,14 +237,14 @@ export default function MicroplasticsPage() {
             <h2 id="what-title">Onzichtbaar, maar overal aanwezig.</h2>
             <p className="lead">
               Microplastics zijn plastic deeltjes kleiner dan 5 millimeter. Ze
-              ontstaan wanneer grotere plastic voorwerpen afbreken, of komen
-              als vezels vrij bij slijtage van synthetisch materiaal zoals
+              ontstaan wanneer grotere plastic voorwerpen afbreken, of komen als
+              vezels vrij bij slijtage van synthetisch materiaal zoals
               polyester.
             </p>
             <p className="lead">
               Het probleem: eenmaal in het milieu verdwijnen ze niet.
               Microplastics zijn inmiddels aangetroffen in oceanen, drinkwater,
-              voedsel, lucht, en zelfs in menselijk bloed en placenta's. Ze
+              voedsel, lucht, en zelfs in menselijk bloed en placenta&apos;s. Ze
               stapelen zich op in de voedselketen en vormen een groeiend
               gezondheidsrisico.
             </p>
@@ -230,14 +295,113 @@ export default function MicroplasticsPage() {
         </Container>
       </section>
 
+      {/* WAT CiCLO WEL EN NIET DOET — het eerlijke onderscheid. */}
+      <section className={styles.section} aria-labelledby="honest-title">
+        <Container>
+          <div className={styles.sectionHead}>
+            <Badge variant="primary">Eerlijk verhaal</Badge>
+            <h2 id="honest-title">Wat een duurzame vlag wel en niet oplost.</h2>
+            <p className="lead">
+              Hier gaat het in de vlaggenbranche vaak mis. Een vlag van
+              biologisch afbreekbaar polyester geeft nog steeds vezels af. Wind,
+              zon en regen slijten het doek, en dat gaat door zolang de vlag
+              hangt. CiCLO® verandert daar niets aan.
+            </p>
+            <p className="lead">
+              Wat CiCLO® wel doet, zit in de vezel zelf. Het additief maakt de
+              polyestervezel herkenbaar als voedsel voor bacteriën en schimmels.
+              Vezels die tijdens gebruik loslaten breken daardoor af in plaats
+              van te blijven liggen. Het verschil zit dus niet in de afgifte,
+              maar in wat er daarna gebeurt.
+            </p>
+          </div>
+          <div className={styles.compare}>
+            <div className={`${styles.compareCard} ${styles.compareBad}`}>
+              <span className={styles.compareTag}>Wat niet verandert</span>
+              <h3>De afgifte tijdens gebruik</h3>
+              <ul className={styles.compareList}>
+                <li>Het doek is en blijft polyester</li>
+                <li>Het slijt net zo hard als ander polyester</li>
+                <li>Er laten vezels los in wind en regen</li>
+                <li>Wij claimen daarom geen nul microplastics</li>
+              </ul>
+            </div>
+            <div className={`${styles.compareCard} ${styles.compareGood}`}>
+              <span className={styles.compareTag}>Wat wel verandert</span>
+              <h3>De afbraak van die vezels</h3>
+              <ul className={styles.compareList}>
+                <li>Micro-organismen herkennen de vezel als voedsel</li>
+                <li>
+                  In {HOOFD_OMGEVING} brak {HOOFD_PCT}% van het doek af in{" "}
+                  {HOOFDTEST.duur} ({HOOFDTEST.norm})
+                </li>
+                <li>
+                  Onbehandeld polyester bleef in dezelfde test op{" "}
+                  {REFERENTIE_PCT}% steken
+                </li>
+                <li>Wat overblijft is CO₂, water en biomassa</li>
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* DE METINGEN — vier omgevingen waar afgegeven vezels terechtkomen. */}
+      <section
+        className={`${styles.section} ${styles.band}`}
+        aria-labelledby="tests-title"
+      >
+        <Container>
+          <div className={styles.sectionHead}>
+            <Badge variant="personal">De metingen</Badge>
+            <h2 id="tests-title">Vier omgevingen, vier uitkomsten.</h2>
+            <p className="lead">
+              Afgegeven vezels komen in de bodem, in het water of op de
+              stortplaats terecht. Het doek is in al die omgevingen getest
+              volgens internationale ASTM-normen.
+            </p>
+          </div>
+          <div className={`${styles.cardGrid} ${styles.cardGrid4}`}>
+            {TESTS.map((test) => (
+              <div key={test.norm} className={styles.card}>
+                <span className={styles.cardKicker}>{test.norm}</span>
+                <span className={styles.cardValue}>
+                  {pctNl(test.afbraakPct)}%
+                </span>
+                <h3>{test.omgeving}</h3>
+                <p>
+                  {test.toelichting} Afgebroken in {test.duur}.{" "}
+                  {test.referentiePct === null
+                    ? "Onbehandeld polyester brak in deze test niet af."
+                    : `Onbehandeld polyester kwam niet verder dan ${pctNl(test.referentiePct)}%.`}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className={styles.note}>
+            <span className={styles.noteIcon} aria-hidden="true">
+              <ShieldCheck size={20} />
+            </span>
+            <div>
+              <h3>Over deze cijfers</h3>
+              <p>{CICLO_DISCLAIMER}</p>
+              <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+                {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </Container>
+      </section>
+
       {/* WAT KUN JE DOEN — vier stappen. */}
       <section className={styles.section} aria-labelledby="steps-title">
         <Container>
           <div className={styles.sectionHead}>
-            <Badge variant="personal">Oplossing</Badge>
+            <Badge variant="personal">Wat je kunt doen</Badge>
             <h2 id="steps-title">Wat kun jij doen?</h2>
             <p className="lead">
-              Vier praktische stappen naar een microplastic-vrije organisatie.
+              Vier praktische stappen om de microplastics uit je eigen
+              materialen terug te dringen.
             </p>
           </div>
           <div className={styles.steps}>
@@ -283,12 +447,13 @@ export default function MicroplasticsPage() {
           <div className={styles.ctaBand}>
             <div className={styles.ctaInner}>
               <h2 id="cta-title" className={styles.ctaTitle}>
-                Klaar om microplastics te stoppen?
+                Kies een vlag die minder microplastic achterlaat.
               </h2>
               <p className={styles.ctaSub}>
-                Flag-CiCLO®-vlaggen zijn 96% biologisch afbreekbaar en laten
-                0% microplastics achter. Inclusief certificaten voor je
-                CSRD-rapportage.
+                Vezels die tijdens gebruik loslaten breken af in plaats van te
+                blijven liggen. In {HOOFD_OMGEVING} brak {HOOFD_PCT}% van het
+                doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm}). De
+                testresultaten en certificaten krijg je bij je bestelling.
               </p>
               <div className={styles.ctaActions}>
                 <Button

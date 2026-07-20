@@ -12,12 +12,28 @@ import {
   FlagGevel,
   FlagMast,
 } from "@/components/ui";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, jsonLd } from "@/lib/seo";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
+
+const PAD = "/kennisbank/vlaggen-kiezen";
+const TITEL = "De juiste duurzame vlag kiezen: formaten en masthoogtes";
+const OMSCHRIJVING =
+  "Welk vlagtype en welk formaat past bij jouw situatie? Praktische keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, op biologisch afbreekbaar doek.";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/kennisbank/vlaggen-kiezen" },
-  title: "De juiste vlag kiezen: formaten en masthoogtes",
-  description:
-    "Welk vlagtype en welk formaat past bij jouw situatie? Praktische keuzegids met standaardmaten voor mast- en baniervlaggen per masthoogte, plus gratis advies.",
+  alternates: { canonical: PAD },
+  title: TITEL,
+  description: OMSCHRIJVING,
 };
 
 const WAVE_PATH =
@@ -80,7 +96,7 @@ const FAQ = [
   },
   {
     q: "Hoelang gaat zo'n vlag mee?",
-    a: "Bij normaal buitengebruik zo'n 3 tot 4 maanden; de kleuren blijven tot 2 jaar UV-bestendig. En het mooie: onze vlaggen zijn 96% biologisch afbreekbaar, dus geen microplastics die in de natuur achterblijven.",
+    a: `Bij normaal buitengebruik zo'n 3 tot 4 maanden; de kleuren blijven tot 2 jaar UV-bestendig. Daarna telt wat er met het doek gebeurt: onze vlaggen zijn biologisch afbreekbaar. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}.`,
   },
   {
     q: "Kan ik ook een afwijkend formaat bestellen?",
@@ -92,9 +108,39 @@ const FAQ = [
   },
 ];
 
+// Gestructureerde data: artikel, kruimelpad en de FAQ. De vragen komen uit
+// dezelfde `FAQ`-array als het zichtbare blok hieronder, zodat er nooit een
+// antwoord in de structured data staat dat niet op de pagina staat. Bewust geen
+// aggregateRating of review: die zijn er niet.
+const ARTICLE_JSON_LD = jsonLd(
+  articleJsonLd({ titel: TITEL, omschrijving: OMSCHRIJVING, pad: PAD }),
+);
+
+const BREADCRUMB_JSON_LD = jsonLd(
+  breadcrumbJsonLd([
+    { naam: "Home", pad: "/" },
+    { naam: "Kennisbank", pad: "/kennisbank" },
+    { naam: "De juiste vlag kiezen", pad: PAD },
+  ]),
+);
+
+const FAQ_JSON_LD = jsonLd(faqJsonLd(FAQ));
+
 export default function VlaggenKiezenPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ARTICLE_JSON_LD }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
@@ -103,8 +149,8 @@ export default function VlaggenKiezenPage() {
               Kennisbank · Keuzegids
             </Link>
             <h1 id="hero-title" className={styles.heroTitle}>
-              Welke vlag past{" "}
-              <span className={styles.heroAccent}>bij jou</span>?
+              Welke vlag past <span className={styles.heroAccent}>bij jou</span>
+              ?
             </h1>
             <p className={styles.heroSub}>
               Van vlagtype tot formaat: met deze gids kies je in een paar
@@ -262,6 +308,23 @@ export default function VlaggenKiezenPage() {
                 </div>
               </details>
             ))}
+          </div>
+          <div className={styles.note}>
+            <span className={styles.noteIcon} aria-hidden="true">
+              <ShieldCheck size={20} />
+            </span>
+            <div>
+              <h3>Waar het doek van gemaakt is</h3>
+              <p>
+                Elk formaat drukken we op Flag-CiCLO®-doek. In {HOOFD_OMGEVING}{" "}
+                brak {HOOFD_PCT}% van dat doek af in {HOOFDTEST.duur} (
+                {HOOFDTEST.norm}). Onbehandeld polyester kwam in dezelfde test
+                niet verder dan {pctNl(HOOFDTEST.referentiePct ?? 0)}%.
+              </p>
+              <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+                {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
         </Container>
       </section>

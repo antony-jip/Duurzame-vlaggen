@@ -45,7 +45,7 @@ const NAV_LINKS = [
 const TOPBAR_USPS = [
   "Direct online bestellen",
   "Levertijd 5 werkdagen (NL)",
-  "Biologisch afbreekbaar doek",
+  "Biologisch afbreekbaar doek, ASTM-getest",
 ] as const;
 
 /* Productcategorieën als directe shop-navigatie (afgeleid van de catalogus). */
@@ -60,9 +60,15 @@ function CartLink() {
   const { count, hydrated } = useCart();
   const show = hydrated && count > 0;
   return (
-    <Link href="/winkelwagen" className={styles.cart} aria-label={
-      show ? `Winkelmand, ${count} artikel${count === 1 ? "" : "en"}` : "Winkelmand"
-    }>
+    <Link
+      href="/winkelwagen"
+      className={styles.cart}
+      aria-label={
+        show
+          ? `Winkelmand, ${count} artikel${count === 1 ? "" : "en"}`
+          : "Winkelmand"
+      }
+    >
       <Bag size={20} />
       <span className={styles.cartWord}>Winkelmand</span>
       {show && (
@@ -137,7 +143,11 @@ export function Header() {
       </div>
 
       <Container className={styles.inner} as="div">
-        <Link href="/" className={styles.brand} aria-label="Duurzame Vlaggen — home">
+        <Link
+          href="/"
+          className={styles.brand}
+          aria-label="Duurzame Vlaggen — home"
+        >
           {/* White full-logo asset — made for the forest bar. */}
           <Image
             className={styles.logo}
@@ -196,7 +206,11 @@ export function Header() {
       <nav className={styles.subnav} aria-label="Producten">
         <Container className={styles.subnavInner} as="div">
           {PRODUCT_LINKS.map((item) => (
-            <Link key={item.href} href={item.href} className={styles.subnavLink}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={styles.subnavLink}
+            >
               {item.label}
             </Link>
           ))}
@@ -307,8 +321,8 @@ export function Header() {
                 Offerte aanvragen <ArrowRight size={18} />
               </Link>
               <p className={styles.overlayNote}>
-                Duurzame Vlaggen — biologisch afbreekbare vlaggen, CSRD-proof
-                geleverd binnen 5 werkdagen.
+                Duurzame Vlaggen. Biologisch afbreekbare vlaggen met
+                materiaalpaspoort, geleverd binnen 5 werkdagen.
               </p>
             </div>
           </Container>

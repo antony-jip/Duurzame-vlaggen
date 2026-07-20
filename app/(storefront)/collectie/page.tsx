@@ -13,29 +13,37 @@ import {
 } from "@/components/ui";
 import { getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
 
 export const metadata: Metadata = {
   alternates: { canonical: "/collectie" },
   title: "Collectie",
   description:
-    "Bekijk onze biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. CSRD-proof, zonder microplastics, geleverd in 5 werkdagen.",
+    "Bekijk onze duurzame, biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. Met materiaalpaspoort, geleverd in 5 werkdagen.",
 };
 
 const TRUST = [
   {
     icon: <Leaf size={24} />,
-    title: "100% biologisch afbreekbaar",
-    body: "Geweven van biologisch afbreekbare vezels. Geen microplastics. Geen restafval.",
+    title: "Biologisch afbreekbaar doek",
+    body: `In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}). Onbehandeld polyester kwam in dezelfde test op 3,8%.`,
   },
   {
     icon: <Recycle size={24} />,
-    title: "Circulair geproduceerd in NL",
-    body: "Bedrukt met inkt op waterbasis, op groene stroom in ons eigen atelier.",
+    title: "Laat minder microplastic achter",
+    body: "Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen.",
   },
   {
     icon: <Truck size={24} />,
     title: "Binnen 5 werkdagen geleverd",
-    body: "Inclusief kosteloze digitale drukproef en CSRD-materiaalpaspoort.",
+    body: "Inclusief kosteloze digitale drukproef en het materiaalpaspoort bij je bestelling.",
   },
 ];
 
@@ -44,14 +52,22 @@ export default async function CollectiePage() {
   const products = getAllProducts();
 
   return (
-    <Container as="section" className={styles.page} aria-labelledby="collectie-title">
+    <Container
+      as="section"
+      className={styles.page}
+      aria-labelledby="collectie-title"
+    >
       <div className={styles.head}>
         <Badge variant="success">{dict.nav.collection}</Badge>
         <h1 id="collectie-title">Kies je vlag.</h1>
         <p className="lead">
-          Elke gewone vlag wappert zichzelf kapot tot microplastic. De onze niet.
-          Geprint op biologisch afbreekbaar doek, op maat gemaakt. Kies je model,
-          stel het samen en reken direct online af.
+          Elke vlag laat vezels los in wind en regen. Bij ons breken die vezels
+          af in plaats van te blijven liggen. Geprint op biologisch afbreekbaar
+          doek, op maat gemaakt. Kies je model, stel het samen en reken direct
+          online af.
+        </p>
+        <p className="lead">
+          <Link href={ONDERBOUWING_PAD}>{ONDERBOUWING_LINK_TEKST}</Link>
         </p>
       </div>
 

@@ -2,14 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./product.module.css";
-import {
-  Badge,
-  Container,
-  Leaf,
-  Recycle,
-  Truck,
-  Price,
-} from "@/components/ui";
+import { Badge, Container, Leaf, Recycle, Truck, Price } from "@/components/ui";
 import {
   getAllProducts,
   getProduct,
@@ -19,6 +12,14 @@ import {
 import { getMessages } from "@/lib/i18n";
 import { SITE_URL, SITE_NAME, jsonLd } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
 import { ProcesStappen } from "@/components/ui";
 import { ProductConfigurator } from "./ProductConfigurator";
 import { ProductGallery } from "./ProductGallery";
@@ -117,122 +118,132 @@ export default async function ProductPage({
 
   return (
     <>
-    <Container as="section" className={styles.page}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: productJsonLd }}
-      />
-      <nav className={styles.breadcrumb} aria-label="Kruimelpad">
-        <Link href="/collectie">{dict.nav.collection}</Link>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">{product.name}</span>
-      </nav>
+      <Container as="section" className={styles.page}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: productJsonLd }}
+        />
+        <nav className={styles.breadcrumb} aria-label="Kruimelpad">
+          <Link href="/collectie">{dict.nav.collection}</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{product.name}</span>
+        </nav>
 
-      <div className={styles.layout}>
-        {/* Media — hero + thumbnails met lightbox */}
-        <div className={styles.media}>
-          <ProductGallery
-            heroImage={product.heroImage}
-            thumbs={gallery}
-            slug={product.slug}
-            accent={product.accent}
-            accentClass={accentClass[product.accent]}
-          />
-          <ul className={styles.trustRow}>
-            <li>
-              <Leaf size={16} aria-hidden="true" />
-              Breekt volledig af
-            </li>
-            <li>
-              <Recycle size={16} aria-hidden="true" />
-              Gedrukt in Nederland
-            </li>
-            <li>
-              <Truck size={16} aria-hidden="true" />
-              Binnen 5 werkdagen op je mast
-            </li>
-          </ul>
-        </div>
-
-        {/* Info + configurator */}
-        <div className={styles.info}>
-          <div className={styles.eyebrowRow}>
-            {product.badge && <Badge variant="primary">{product.badge}</Badge>}
-            <Badge variant="outline">
-              {product.category === "hardware" ? "Hardware" : "Vlag"}
-            </Badge>
+        <div className={styles.layout}>
+          {/* Media — hero + thumbnails met lightbox */}
+          <div className={styles.media}>
+            <ProductGallery
+              heroImage={product.heroImage}
+              thumbs={gallery}
+              slug={product.slug}
+              accent={product.accent}
+              accentClass={accentClass[product.accent]}
+            />
+            <ul className={styles.trustRow}>
+              <li>
+                <Leaf size={16} aria-hidden="true" />
+                {pctNl(HOOFDTEST.afbraakPct)}% afgebroken in zeewater
+              </li>
+              <li>
+                <Recycle size={16} aria-hidden="true" />
+                Gedrukt in Nederland
+              </li>
+              <li>
+                <Truck size={16} aria-hidden="true" />
+                Binnen 5 werkdagen op je mast
+              </li>
+            </ul>
           </div>
 
-          <h1 className={styles.title}>{product.name}</h1>
-          <p className={`lead ${styles.description}`}>{product.description}</p>
+          {/* Info + configurator */}
+          <div className={styles.info}>
+            <div className={styles.eyebrowRow}>
+              {product.badge && (
+                <Badge variant="primary">{product.badge}</Badge>
+              )}
+              <Badge variant="outline">
+                {product.category === "hardware" ? "Hardware" : "Vlag"}
+              </Badge>
+            </div>
 
-          <dl className={styles.specs}>
-            <div className={styles.specRow}>
-              <dt>{dict.product.priceFrom}</dt>
-              <dd>
-                <Price amount={product.priceFrom} suffix />
-              </dd>
-            </div>
-            <div className={styles.specRow}>
-              <dt>{dict.product.deliveryTime}</dt>
-              <dd>5 werkdagen (buitenland: 1,5 week)</dd>
-            </div>
-            <div className={styles.specRow}>
-              <dt>{dict.product.material}</dt>
-              <dd>Biologisch afbreekbaar doek</dd>
-            </div>
-          </dl>
+            <h1 className={styles.title}>{product.name}</h1>
+            <p className={`lead ${styles.description}`}>
+              {product.description}
+            </p>
 
-          {product.category === "hardware" ? (
-            <VlaggenmastConfigurator product={product} catalog={catalog} />
-          ) : (
-          <ProductConfigurator
-            product={product}
-            orderable={orderable}
-            catalog={catalog}
-            labels={{
-              size: dict.product.dimensions,
-              quantity: dict.product.quantity,
-              priceLabel: dict.product.price,
-              priceNote: orderable
-                ? "indicatie"
-                : "indicatie — definitieve prijs in de offerte",
-              priceLoading: "Prijs berekenen…",
-              exclVat: dict.product.exclVat,
-              addToCart: dict.common.cta.addToCart,
-              requestQuote: dict.common.cta.requestQuote,
-              added: "Toegevoegd aan winkelmand",
-              viewCart: dict.nav.cart,
-              noticeQuoteOnly:
-                "Online bestellen kan binnenkort. Voeg toe aan je winkelmand en vraag nu vrijblijvend een offerte aan.",
-            }}
-          />
-          )}
-        </div>
-      </div>
-      {/* Verdieping (werking, materiaal, garantie) — alleen voor producten met
-          details in de catalogus, zoals de Easylift-vlaggenmast. */}
-      {product.details && product.details.length > 0 && (
-        <section className={styles.details} aria-labelledby="details-title">
-          <h2 id="details-title" className={styles.detailsTitle}>
-            Goed om te weten
-          </h2>
-          <dl className={styles.detailsGrid}>
-            {product.details.map((d) => (
-              <div key={d.title} className={styles.detailsItem}>
-                <dt>{d.title}</dt>
-                <dd>{d.body}</dd>
+            <dl className={styles.specs}>
+              <div className={styles.specRow}>
+                <dt>{dict.product.priceFrom}</dt>
+                <dd>
+                  <Price amount={product.priceFrom} suffix />
+                </dd>
               </div>
-            ))}
-          </dl>
-        </section>
-      )}
-    </Container>
+              <div className={styles.specRow}>
+                <dt>{dict.product.deliveryTime}</dt>
+                <dd>5 werkdagen (buitenland: 1,5 week)</dd>
+              </div>
+              <div className={styles.specRow}>
+                <dt>{dict.product.material}</dt>
+                <dd>
+                  Biologisch afbreekbaar doek. In zeewater brak{" "}
+                  {pctNl(HOOFDTEST.afbraakPct)}% af in {HOOFDTEST.duur} (
+                  {HOOFDTEST.norm}
+                  ).{" "}
+                  <Link href={ONDERBOUWING_PAD}>{ONDERBOUWING_LINK_TEKST}</Link>
+                </dd>
+              </div>
+            </dl>
 
-    {/* Vertrouwensblok — zelfde flow op elke productpagina, volle breedte.
+            {product.category === "hardware" ? (
+              <VlaggenmastConfigurator product={product} catalog={catalog} />
+            ) : (
+              <ProductConfigurator
+                product={product}
+                orderable={orderable}
+                catalog={catalog}
+                labels={{
+                  size: dict.product.dimensions,
+                  quantity: dict.product.quantity,
+                  priceLabel: dict.product.price,
+                  priceNote: orderable
+                    ? "indicatie"
+                    : "indicatie — definitieve prijs in de offerte",
+                  priceLoading: "Prijs berekenen…",
+                  exclVat: dict.product.exclVat,
+                  addToCart: dict.common.cta.addToCart,
+                  requestQuote: dict.common.cta.requestQuote,
+                  added: "Toegevoegd aan winkelmand",
+                  viewCart: dict.nav.cart,
+                  noticeQuoteOnly:
+                    "Online bestellen kan binnenkort. Voeg toe aan je winkelmand en vraag nu vrijblijvend een offerte aan.",
+                }}
+              />
+            )}
+          </div>
+        </div>
+        {/* Verdieping (werking, materiaal, garantie) — alleen voor producten met
+          details in de catalogus, zoals de Easylift-vlaggenmast. */}
+        {product.details && product.details.length > 0 && (
+          <section className={styles.details} aria-labelledby="details-title">
+            <h2 id="details-title" className={styles.detailsTitle}>
+              Goed om te weten
+            </h2>
+            <dl className={styles.detailsGrid}>
+              {product.details.map((d) => (
+                <div key={d.title} className={styles.detailsItem}>
+                  <dt>{d.title}</dt>
+                  <dd>{d.body}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+      </Container>
+
+      {/* Vertrouwensblok — zelfde flow op elke productpagina, volle breedte.
         Producten met een maten-overzicht tonen dat als fotoband boven de
         footer; de rest houdt de waterstrook. */}
-    <ProcesStappen bandImage={product.sizesImage} />
+      <ProcesStappen bandImage={product.sizesImage} />
     </>
   );
 }

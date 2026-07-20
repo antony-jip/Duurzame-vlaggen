@@ -1,11 +1,22 @@
+import Link from "next/link";
 import { Container } from "./Container";
 import styles from "./VergelijkVlaggen.module.css";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
 
 /**
- * "Traditioneel vs. Duurzaam" — het kernverhaal in beeld: een polyester vlag die
- * uiteenvalt in microplastics tegenover een Flag-CiCLO®-vlag die volledig
- * biologisch afbreekt. De twee illustraties zijn SVG's uit de merkbibliotheek
- * (public/illustraties). Herbruikbaar op de segment-/infopagina's.
+ * "Traditioneel vs. Duurzaam" — het kernverhaal in beeld, met de échte
+ * vergelijking eronder: in de zeewatertest volgens ASTM D6691 brak het
+ * Flag-CiCLO®-doek voor 94,2% af, onbehandeld polyester voor 3,8%. Beide
+ * getallen komen uit dezelfde test, dus ze staan naast elkaar met dezelfde
+ * norm en dezelfde termijn erbij. De twee illustraties zijn SVG's uit de
+ * merkbibliotheek (public/illustraties).
  */
 export function VergelijkVlaggen({
   title = "Traditioneel",
@@ -37,19 +48,24 @@ export function VergelijkVlaggen({
               />
             </div>
             <div className={styles.body}>
-              <h3 className={styles.cardTitle}>Laat microplastics achter</h3>
+              <h3 className={styles.cardTitle}>Vezels blijven liggen</h3>
               <p className={styles.cardText}>
-                Breekt nooit af. Honderden jaren plastic vervuiling in water en
-                bodem.
+                Vezels die tijdens gebruik loslaten breken nauwelijks af. In de
+                zeewatertest volgens {HOOFDTEST.norm} kwam onbehandeld polyester
+                niet verder dan {pctNl(HOOFDTEST.referentiePct ?? 0)}%.
               </p>
               <div className={styles.stats}>
                 <div className={styles.stat}>
-                  <span className={styles.statValue}>200+ jaar</span>
-                  <span className={styles.statLabel}>Afbraaktijd</span>
+                  <span className={styles.statValue}>
+                    {pctNl(HOOFDTEST.referentiePct ?? 0)}%
+                  </span>
+                  <span className={styles.statLabel}>
+                    Afgebroken in zeewater
+                  </span>
                 </div>
                 <div className={styles.stat}>
-                  <span className={styles.statValue}>&infin;</span>
-                  <span className={styles.statLabel}>Microplastics</span>
+                  <span className={styles.statValue}>{HOOFDTEST.duur}</span>
+                  <span className={styles.statLabel}>Testduur</span>
                 </div>
               </div>
             </div>
@@ -64,36 +80,49 @@ export function VergelijkVlaggen({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/illustraties/duurzaam-flag-ciclo.svg"
-                alt="Flag-CiCLO-vlag die volledig afbreekt tot voedingsbodem waar planten uit groeien"
+                alt="Flag-CiCLO-vlag die afbreekt tot voedingsbodem waar planten uit groeien"
                 className={styles.illu}
                 loading="lazy"
               />
             </div>
             <div className={styles.body}>
               <h3 className={`${styles.cardTitle} ${styles.cardTitleCiclo}`}>
-                Lost volledig op
+                Laat minder microplastic achter
               </h3>
               <p className={styles.cardText}>
-                96% breekt af in 2 tot 3 jaar. Geen sporen, geen microplastics.
-                Klaar.
+                Vezels die tijdens gebruik loslaten breken af in plaats van te
+                blijven liggen. In dezelfde zeewatertest brak{" "}
+                {pctNl(HOOFDTEST.afbraakPct)}% van het doek af.
               </p>
               <div className={styles.stats}>
                 <div className={styles.stat}>
-                  <span className={`${styles.statValue} ${styles.statValueCiclo}`}>
-                    2 tot 3 jaar
+                  <span
+                    className={`${styles.statValue} ${styles.statValueCiclo}`}
+                  >
+                    {pctNl(HOOFDTEST.afbraakPct)}%
                   </span>
-                  <span className={styles.statLabel}>Afbraaktijd</span>
+                  <span className={styles.statLabel}>
+                    Afgebroken in zeewater
+                  </span>
                 </div>
                 <div className={styles.stat}>
-                  <span className={`${styles.statValue} ${styles.statValueCiclo}`}>
-                    0%
+                  <span
+                    className={`${styles.statValue} ${styles.statValueCiclo}`}
+                  >
+                    {HOOFDTEST.duur}
                   </span>
-                  <span className={styles.statLabel}>Microplastics</span>
+                  <span className={styles.statLabel}>Testduur</span>
                 </div>
               </div>
             </div>
           </article>
         </div>
+
+        <p className={styles.cardText}>
+          Beide getallen komen uit dezelfde test: {HOOFDTEST.norm}, met echte
+          mariene micro-organismen.{" "}
+          <Link href={ONDERBOUWING_PAD}>{ONDERBOUWING_LINK_TEKST}</Link>
+        </p>
       </Container>
     </section>
   );

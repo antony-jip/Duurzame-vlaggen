@@ -15,12 +15,25 @@ import {
   FlagBanier,
   VergelijkVlaggen,
 } from "@/components/ui";
+import {
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-bedrijven" },
-  title: "Voor bedrijven. CSRD-proof bedrijfsvlaggen",
+  title: "Voor bedrijven. Duurzame, biologisch afbreekbare bedrijfsvlaggen",
   description:
-    "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. 0% microplastics, CSRD/ESRS E2-5-documentatie inbegrepen en levering in circa 3 werkdagen.",
+    "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Inkoopdossier inbegrepen, levering in circa 3 werkdagen.",
 };
 
 const WAVE_PATH =
@@ -30,13 +43,13 @@ const WAVE_PATH =
 const REASONS = [
   {
     icon: <ShieldCheck size={24} />,
-    title: "CSRD-compliant",
-    body: "Voldoet aan de ESRS E2-5-rapportage-eisen voor microplastics. Geen uitstoot, dus niets te verantwoorden.",
+    title: "Laat minder microplastic achter",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In ${HOOFDTEST.omgeving.toLowerCase()} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}).`,
   },
   {
     icon: <Check size={24} />,
-    title: "Certificaten inbegrepen",
-    body: "Bij elke bestelling ontvang je de documentatie voor je duurzaamheidsverslag. Direct bruikbaar voor je accountant.",
+    title: "Inkoopdossier inbegrepen",
+    body: "Bij elke bestelling zit een inkoopdossier met testresultaten, herkomst en certificaten. Direct bruikbaar voor je inkoop en je accountant.",
   },
   {
     icon: <Recycle size={24} />,
@@ -56,7 +69,7 @@ const PRODUCTS = [
     icon: <FlagGevel size={24} />,
     kicker: "Aan je pand",
     title: "Gevelvlag",
-    body: "Je logo in full-color aan de gevel. Op doek dat na gebruik volledig afbreekt. Geen plastic dat je pand overleeft.",
+    body: `Je logo in full-color aan de gevel, op biologisch afbreekbaar doek. In ${HOOFDTEST.omgeving.toLowerCase()} brak ${HOOFD_PCT}% van dat doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}).`,
     href: "/collectie/gevelvlag",
     label: "Bekijk gevelvlaggen",
   },
@@ -64,7 +77,7 @@ const PRODUCTS = [
     icon: <FlagMast size={24} />,
     kicker: "Klassiek display",
     title: "Mastvlag",
-    body: "De vertrouwde mastvlag. Nul microplastics. Zelfde levensduur en kwaliteit, na afdanking opgelost in 2 tot 3 jaar.",
+    body: "De vertrouwde mastvlag, met dezelfde levensduur en kwaliteit als gewoon polyester. Laat minder microplastic achter, want vezels die loslaten breken af in plaats van te blijven liggen.",
     href: "/collectie/mastvlag",
     label: "Bekijk mastvlaggen",
   },
@@ -72,7 +85,7 @@ const PRODUCTS = [
     icon: <FlagBanier size={24} />,
     kicker: "Representatief",
     title: "Baniervlag",
-    body: "Strak en representatief bij entrees en beurzen. Campagne voorbij? Geen plastic dat achterblijft in de natuur.",
+    body: "Strak en representatief bij entrees en beurzen. Na de campagne breekt het doek af in plaats van als plastic achter te blijven.",
     href: "/collectie/baniervlag",
     label: "Bekijk baniervlaggen",
   },
@@ -97,10 +110,13 @@ export default function VoorBedrijvenPage() {
               <span className={styles.heroAccent}>verdwijnen</span>.
             </h1>
             <p className={styles.heroSub}>
-              Elke gewone vlag wappert zichzelf kapot tot microplastic. De onze
-              niet. Zelfde kwaliteit en kleurvastheid als je huidige polyester,
-              maar 96% lost volledig op in 2 tot 3 jaar na afdanking. Geen
-              microplastics. Geen CSRD-hoofdpijn.
+              Elke gewone vlag wappert zichzelf kapot tot microplastic. Onze
+              biologisch afbreekbare bedrijfsvlaggen hebben dezelfde kwaliteit
+              en kleurvastheid als je huidige polyester, maar het doek breekt
+              af. In {HOOFDTEST.omgeving.toLowerCase()} brak {HOOFD_PCT}% van
+              het doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm}). Vezels die
+              tijdens gebruik loslaten breken af in plaats van te blijven
+              liggen.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -115,17 +131,26 @@ export default function VoorBedrijvenPage() {
               <Link href="/contact" className={styles.heroLink}>
                 Vraag offerte aan
               </Link>
+              <Link href={ONDERBOUWING_PAD} className={styles.heroLink}>
+                {ONDERBOUWING_LINK_TEKST}
+              </Link>
             </div>
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFDTEST.omgeving.toLowerCase()}
+              </span>
             </div>
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
-            </div>
+            {REFERENTIE_PCT !== null && (
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue}>{REFERENTIE_PCT}%</span>
+                <span className={styles.heroStatLabel}>
+                  Gewoon polyester, zelfde test
+                </span>
+              </div>
+            )}
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>~3 dagen</span>
               <span className={styles.heroStatLabel}>Levertijd</span>
@@ -150,7 +175,7 @@ export default function VoorBedrijvenPage() {
             <h2 id="why-title">Duurzaam zonder concessies.</h2>
             <p className="lead">
               Bedrijven kiezen voor Flag-CiCLO® omdat het niets kost aan
-              kwaliteit en veel oplevert aan rapportagegemak.
+              kwaliteit en omdat de onderbouwing meekomt. {CICLO_DISCLAIMER}
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>
@@ -178,8 +203,8 @@ export default function VoorBedrijvenPage() {
             <h2 id="products-title">Welke vlag past bij je pand?</h2>
             <p className="lead">
               Van gevel tot entree: elke vlag drukken we in full-color op
-              Flag-CiCLO®-doek. Speciale wensen of grotere aantallen? Wij
-              denken graag mee.
+              Flag-CiCLO®-doek. Speciale wensen of grotere aantallen? Wij denken
+              graag mee.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -204,20 +229,22 @@ export default function VoorBedrijvenPage() {
       <section className={styles.section} aria-labelledby="csrd-title">
         <Container>
           <div className={styles.sectionHead}>
-            <Badge variant="primary">CSRD 2025</Badge>
+            <Badge variant="primary">CSRD en je keten</Badge>
             <h2 id="csrd-title">
-              Die vlaggen aan je gevel? Die staan straks in je rapport.
+              Die vlaggen aan je gevel? Daar krijg je vragen over.
             </h2>
             <p className="lead">
-              Grote bedrijven moeten onder de CSRD rapporteren over
-              microplastics. En textiel telt mee. Elke polyester vlag die slijt,
-              laat duizenden plastic vezels achter in bodem en water. Geen detail
-              meer. Een regel in je verslag.
+              Sinds het Omnibus-pakket van december 2025 geldt de CSRD alleen
+              voor bedrijven met meer dan 1.000 medewerkers én meer dan 450
+              miljoen euro omzet. Val je daar niet onder, dan geldt er voor jou
+              geen CSRD-plicht. De vraag krijg je wel, namelijk van grote
+              opdrachtgevers in je keten die hun eigen rapportage moeten vullen.
             </p>
             <p className="lead">
-              Onze vlaggen lossen op. Geen microplastics om te verantwoorden,
-              geen lastige vragen van accountants of stakeholders. Je kunt
-              wachten tot iemand ernaar vraagt. Of je regelt het nu.
+              Bij elke bestelling zit daarom een inkoopdossier met
+              testresultaten, herkomst en certificaten. Daarmee kun je laten
+              zien wat je hebt ingekocht en hoe dat is gemeten, in plaats van te
+              verwijzen naar een belofte van je leverancier.
             </p>
             <Link href="/csrd" className={styles.arrowLink}>
               Alles over CSRD en je vlaggen <ArrowRight size={16} />
@@ -237,8 +264,8 @@ export default function VoorBedrijvenPage() {
                 Maatwerk voor jouw bedrijf?
               </h2>
               <p className={styles.ctaSub}>
-                Speciale wensen, grotere aantallen of CSRD-documentatie nodig?
-                Vertel ons je situatie en we maken een voorstel op maat.
+                Speciale wensen, grotere aantallen of het inkoopdossier vooraf
+                inzien? Vertel ons je situatie en we maken een voorstel op maat.
               </p>
               <div className={styles.ctaActions}>
                 <Button

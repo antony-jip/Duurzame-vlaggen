@@ -9,12 +9,18 @@ import {
   Leaf,
   ShieldCheck,
 } from "@/components/ui";
+import {
+  AFBRAAK_TESTS,
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/materiaal" },
   title: "Materiaal. Biologisch afbreekbaar vlaggendoek",
-  description:
-    "Flag-CiCLO® vlaggendoek lost volledig op in 2 tot 3 jaar: geen microplastics, alleen CO₂, water en biomassa. Dezelfde kwaliteit als traditioneel polyester, wel klaar voor de CSRD.",
+  description: `Duurzaam Flag-CiCLO® vlaggendoek is biologisch afbreekbaar polyester. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}). Dezelfde kwaliteit als traditioneel polyester.`,
 };
 
 const WAVE_PATH =
@@ -30,17 +36,17 @@ const PHASES = [
   {
     meta: "Na afdanking",
     title: "Start afbraak",
-    body: "In grond, compost, zee of op de stortplaats komen micro-organismen in contact met de vezels.",
+    body: "In de bodem, in zeewater, in rioolslib of op de stortplaats komen micro-organismen in contact met de vezels.",
   },
   {
-    meta: "1 tot 2 jaar",
+    meta: "Ruim tweeënhalf tot ruim drie en een half jaar",
     title: "Actieve afbraak",
-    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen. Vergelijkbaar met wol.",
+    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen. Hoe snel dat gaat verschilt per omgeving: in rioolslib duurde de test ruim tweeënhalf jaar, in zeewater ruim drie en een half jaar.",
   },
   {
-    meta: "2 tot 3 jaar totaal",
-    title: "Verdwenen",
-    body: "96% is opgelost. Alleen CO₂, water en biomassa blijven over. Geen microplastics.",
+    meta: `${pctNl(HOOFDTEST.afbraakPct)}% in zeewater`,
+    title: "Grotendeels afgebroken",
+    body: `In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}. Wat overblijft is CO₂, water en biomassa.`,
   },
 ];
 
@@ -63,10 +69,12 @@ export default function MateriaalPage() {
               <span className={styles.heroAccent}>vlaggendoek</span>.
             </h1>
             <p className={styles.heroSub}>
-              Ons Flag-CiCLO® materiaal lost volledig op in 2 tot 3 jaar. Geen
-              microplastics, geen schadelijke resten. Alleen CO₂, water en
-              biomassa. Dezelfde kwaliteit als traditioneel polyester, maar dan
-              klaar voor de CSRD.
+              Ons Flag-CiCLO® materiaal is biologisch afbreekbaar polyester. In
+              zeewater brak {pctNl(HOOFDTEST.afbraakPct)}% van het doek af in{" "}
+              {HOOFDTEST.duur}, gemeten volgens {HOOFDTEST.norm}. Wat overblijft
+              is CO₂, water en biomassa. Dezelfde kwaliteit als traditioneel
+              polyester, en bij elke bestelling zit een inkoopdossier met
+              testresultaten, herkomst en certificaten.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -85,16 +93,24 @@ export default function MateriaalPage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
+              <span className={styles.heroStatValue}>
+                {pctNl(HOOFDTEST.afbraakPct)}%
+              </span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in zeewater
+              </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>2 tot 3 jaar</span>
-              <span className={styles.heroStatLabel}>Tot volledige afbraak</span>
+              <span className={styles.heroStatValue}>91,1%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in de bodem
+              </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
+              <span className={styles.heroStatValue}>
+                Ruim drie en een half jaar
+              </span>
+              <span className={styles.heroStatLabel}>Testduur in zeewater</span>
             </div>
           </div>
         </Container>
@@ -117,8 +133,13 @@ export default function MateriaalPage() {
             <p className="lead">
               Flag-CiCLO® is polyester met een ingebouwde voedingsbron voor
               micro-organismen. Tijdens gebruik presteert het doek als een
-              gewone vlag. Pas na afdanking start het afbraakproces.
+              gewone vlag. Pas na afdanking start het afbraakproces. Vezels die
+              tijdens gebruik loslaten breken af in plaats van te blijven
+              liggen.
             </p>
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              Zo is dat gemeten <ArrowRight size={16} />
+            </Link>
           </div>
           <div className={styles.steps}>
             {PHASES.map((phase, i) => (
@@ -140,10 +161,10 @@ export default function MateriaalPage() {
               <h3>Goed om te weten</h3>
               <p>
                 De vlag breekt niet af terwijl hij aan de mast hangt of in de
-                kast ligt. Het proces start pas wanneer het doek in contact
-                komt met micro-organismen in grond, compost, zeewater of
-                rioolwaterzuivering. Tijdens normaal gebruik blijft de vlag
-                volledig intact.
+                kast ligt. Het proces start pas wanneer het doek in contact komt
+                met micro-organismen in de bodem, in zeewater, in rioolslib of
+                op de stortplaats. Tijdens normaal gebruik blijft de vlag
+                intact. {CICLO_DISCLAIMER}
               </p>
             </div>
           </div>
@@ -160,28 +181,46 @@ export default function MateriaalPage() {
             <Badge variant="personal">Direct vergelijken</Badge>
             <h2 id="compare-title">Plastic vs. duurzaam.</h2>
             <p className="lead">
-              Het verschil zit niet in de kwaliteit tijdens gebruik, maar in
-              wat er overblijft als de vlag versleten is.
+              Het verschil zit niet in de kwaliteit tijdens gebruik, maar in wat
+              er overblijft als de vlag versleten is.
             </p>
           </div>
           <div className={styles.compare}>
             <div className={`${styles.compareCard} ${styles.compareBad}`}>
               <span className={styles.compareTag}>Traditioneel polyester</span>
-              <h3>Blijft eeuwen bestaan</h3>
+              <h3>Breekt nauwelijks af</h3>
               <ul className={styles.compareList}>
-                <li>Blijft 200+ jaar in de natuur als plastic afval</li>
-                <li>Laat deeltjes microplastic achter bij slijtage</li>
-                <li>Moet als bron van microplastics gerapporteerd worden (CSRD)</li>
-                <li>Mogelijk toekomstige beperkingen vanuit de EU door wetgeving</li>
+                <li>
+                  In dezelfde zeewatertest brak onbehandeld polyester voor{" "}
+                  {pctNl(HOOFDTEST.referentiePct ?? 0)}% af in {HOOFDTEST.duur}{" "}
+                  ({HOOFDTEST.norm})
+                </li>
+                <li>In de bodem en in rioolslib trad geen afbraak op</li>
+                <li>
+                  Vezels die bij slijtage loslaten blijven als microplastic
+                  liggen
+                </li>
+                <li>
+                  Mogelijk toekomstige beperkingen vanuit de EU door wetgeving
+                </li>
               </ul>
             </div>
             <div className={`${styles.compareCard} ${styles.compareGood}`}>
               <span className={styles.compareTag}>Flag-CiCLO®</span>
-              <h3>Lost volledig op</h3>
+              <h3>Laat minder microplastic achter</h3>
               <ul className={styles.compareList}>
-                <li>96% verdwenen in 2 tot 3 jaar na afdanking, zonder resten</li>
-                <li>0% microplastics, beschermt bodem en water</li>
-                <li>Rapporteerbaar voor CSRD: certificaten inbegrepen</li>
+                <li>
+                  In zeewater brak {pctNl(HOOFDTEST.afbraakPct)}% van het doek
+                  af in {HOOFDTEST.duur} ({HOOFDTEST.norm})
+                </li>
+                <li>
+                  Vezels die tijdens gebruik loslaten breken af in plaats van te
+                  blijven liggen
+                </li>
+                <li>
+                  Bij elke bestelling zit een inkoopdossier met testresultaten,
+                  herkomst en certificaten
+                </li>
                 <li>Zelfde kwaliteit, print en levensduur als polyester</li>
               </ul>
             </div>
@@ -198,8 +237,12 @@ export default function MateriaalPage() {
                 Klaar voor vlaggen die verdwijnen?
               </h2>
               <p className={styles.ctaSub}>
-                Dezelfde kwaliteit als traditioneel, maar volledig afbreekbaar.
-                Vragen over het materiaal? We helpen je graag met advies.
+                Dezelfde kwaliteit als traditioneel polyester, en getest in vier
+                omgevingen:{" "}
+                {AFBRAAK_TESTS.map(
+                  (test) => `${test.omgeving.toLowerCase()} (${test.norm})`,
+                ).join(", ")}
+                . Vragen over het materiaal? We helpen je graag met advies.
               </p>
               <div className={styles.ctaActions}>
                 <Button

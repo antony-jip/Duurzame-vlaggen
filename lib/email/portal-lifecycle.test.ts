@@ -8,7 +8,7 @@ import {
 
 /**
  * Copy-guardrails voor de portaal- en lifecycle-mails: factsheet-claims kloppen
- * (96%, nooit 100%), de kritieke links staan erin, en klantinvoer wordt
+ * (94,2% in zeewater, nooit 100%), de kritieke links staan erin, en klantinvoer wordt
  * geëscaped. De 100%-check draait op de platte-tekstvariant — de HTML bevat
  * CSS als width:100%, en dat is geen claim.
  */
@@ -55,7 +55,12 @@ function order(overrides: Partial<OrderRow> = {}): OrderRow {
 
 describe("ontwerpenAanleveren", () => {
   it("bevat de portaallink, het aantal en de geldigheid", () => {
-    const mail = ontwerpenAanleveren(order(), 2, "https://site/aanleveren/tok", 90);
+    const mail = ontwerpenAanleveren(
+      order(),
+      2,
+      "https://site/aanleveren/tok",
+      90,
+    );
     expect(mail.onderwerp).toContain("2 ontwerpen");
     expect(mail.html).toContain("https://site/aanleveren/tok");
     expect(mail.html).toContain("90 dagen geldig");
@@ -117,10 +122,15 @@ describe("lifecycleMail", () => {
         reorderUrl: "https://site/opnieuw/rtok",
         unsubscribeUrl: "https://site/uitschrijven/utok",
       });
-      // Nooit "100%" in de copy; wél de 96%-claim.
+      // Nooit "100%" in de copy; wél de gemeten 94,2%-uitkomst, en die staat
+      // niet los: omgeving, termijn en norm horen in dezelfde zin.
       expect(mail.tekst).not.toMatch(/100\s?%/);
-      expect(mail.tekst).toContain("96%");
-      expect(mail.html).toContain("96%");
+      expect(mail.tekst).toContain("94,2%");
+      expect(mail.html).toContain("94,2%");
+      expect(mail.tekst).toContain("zeewater");
+      expect(mail.tekst).toContain("ASTM D6691");
+      // De oude, onjuiste microplastic-claim mag nergens terugkomen.
+      expect(mail.tekst).not.toMatch(/geen microplastics/i);
       expect(mail.html).toContain("https://site/opnieuw/rtok");
       expect(mail.html).toContain("https://site/uitschrijven/utok");
       expect(mail.tekst).toContain("https://site/uitschrijven/utok");

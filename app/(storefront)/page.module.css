@@ -113,7 +113,7 @@
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: clamp(56px, 7.5vw, 116px);
-  line-height: 1.0;
+  line-height: 1;
   letter-spacing: -0.04em;
   animation: fade-in-up var(--duration-slow) var(--ease-out) both;
 }
@@ -166,7 +166,9 @@
         blob-drift 14s var(--ease-in-out) infinite alternate,
         blob-parallax linear both;
       animation-timeline: auto, view();
-      animation-range: normal, exit 0% exit 100%;
+      animation-range:
+        normal,
+        exit 0% exit 100%;
     }
   }
 }
@@ -1063,6 +1065,23 @@
     grid-template-columns: 1fr;
     align-items: start;
   }
+}
+
+/* Bronverwijzing onder de vergelijking. Klein en terzijde: het is geen
+   verkoopargument maar de onderbouwing die bij het cijfer hoort. */
+.doekBron {
+  margin-top: var(--space-md);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-stone);
+}
+.doekBronLink {
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.doekBronLink:hover {
+  color: var(--color-terracotta);
 }
 
 /* ==========================================================================

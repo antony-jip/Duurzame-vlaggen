@@ -308,7 +308,10 @@ export default function AfrekenenPage() {
   // belooft dan er wordt afgerekend. Alles ex btw; Price zet het om.
   const verzending = localShipping(subtotal);
   const tekortVoorGratis = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const gratisVoortgang = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const gratisVoortgang = Math.min(
+    100,
+    (subtotal / FREE_SHIPPING_THRESHOLD) * 100,
+  );
 
   // Eenmalige ontwerpservice, met dezelfde regel als buildLocalQuote. Móet hier
   // staan: hij wordt nu wél gefactureerd, en een klant mag nooit €85 afrekenen
@@ -376,138 +379,138 @@ export default function AfrekenenPage() {
 
       <div className={styles.layout}>
         <div className={styles.hoofdkolom}>
-        <form
-          id="checkout-form"
-          action={formAction}
-          className={styles.form}
-          noValidate
-        >
-          {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
+          <form
+            id="checkout-form"
+            action={formAction}
+            className={styles.form}
+            noValidate
+          >
+            {/* Alleen wat de action uitleest. Hier stond JSON.stringify(items),
               inclusief previewUrl: een base64-PNG tot 3MB die de server nooit
               las. Next kapt action-bodies af op 1MB, dus een foto-zware PDF gaf
               een harde 500 op de betaalknop. */}
-          <input
-            type="hidden"
-            name="items"
-            value={JSON.stringify(toCheckoutLines(items))}
-          />
-
-          {state.status === "error" && state.message && (
-            <p
-              className={`${styles.banner} ${styles.bannerError}`}
-              role="alert"
-            >
-              {state.message}
-            </p>
-          )}
-
-          {/* Contact */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>Contactgegevens</legend>
-            <Field
-              id="email"
-              name="email"
-              defaultValue={state.values?.email}
-              type="email"
-              label="E-mailadres"
-              autoComplete="email"
-              placeholder="naam@bedrijf.nl"
-              helperText="Hierop ontvang je je orderbevestiging en drukproef."
-              required
-              errorText={state.fieldErrors?.email}
+            <input
+              type="hidden"
+              name="items"
+              value={JSON.stringify(toCheckoutLines(items))}
             />
-            <Field
-              id="phone"
-              name="phone"
-              defaultValue={state.values?.phone}
-              type="tel"
-              label="Telefoonnummer"
-              autoComplete="tel"
-              helperText="Optioneel, voor vragen over je bestelling."
-              errorText={state.fieldErrors?.phone}
-            />
-            {/* Naam en bedrijfsnaam horen bij wie je bent, niet bij waar het
+
+            {state.status === "error" && state.message && (
+              <p
+                className={`${styles.banner} ${styles.bannerError}`}
+                role="alert"
+              >
+                {state.message}
+              </p>
+            )}
+
+            {/* Contact */}
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Contactgegevens</legend>
+              <Field
+                id="email"
+                name="email"
+                defaultValue={state.values?.email}
+                type="email"
+                label="E-mailadres"
+                autoComplete="email"
+                placeholder="naam@bedrijf.nl"
+                helperText="Hierop ontvang je je orderbevestiging en drukproef."
+                required
+                errorText={state.fieldErrors?.email}
+              />
+              <Field
+                id="phone"
+                name="phone"
+                defaultValue={state.values?.phone}
+                type="tel"
+                label="Telefoonnummer"
+                autoComplete="tel"
+                helperText="Optioneel, voor vragen over je bestelling."
+                errorText={state.fieldErrors?.phone}
+              />
+              {/* Naam en bedrijfsnaam horen bij wie je bent, niet bij waar het
                 pakket heen moet. De veldnamen blijven `shipping_*`, zodat de
                 server-action en het datamodel ongemoeid blijven. */}
-            <NaamVelden
-              prefix="shipping_"
-              errors={state.fieldErrors}
-              requireCompany={isBusiness}
-              values={state.values}
-            />
-            <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="isBusiness"
-                checked={isBusiness}
-                onChange={(e) => setIsBusiness(e.target.checked)}
-              />
-              <span className={styles.toggleLabel}>Ik bestel zakelijk</span>
-            </label>
-            {isBusiness && (
-              <Field
-                id="vatNumber"
-                name="vatNumber"
-                defaultValue={state.values?.vatNumber}
-                label="Btw-nummer"
-                placeholder="NL123456789B01"
-                required
-                errorText={state.fieldErrors?.vatNumber}
-              />
-            )}
-            <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="noMarketing"
-                defaultChecked={state.values?.noMarketing != null}
-              />
-              <span className={styles.toggleLabel}>
-                Ik wil geen vervangingsherinnering per e-mail ontvangen
-              </span>
-            </label>
-            <p className={styles.adresHulp}>
-              Zonder vinkje sturen we je na 4 en 8 maanden een herinnering om je
-              vlag duurzaam te vervangen. Uitschrijven kan in elke mail met één
-              klik.
-            </p>
-          </fieldset>
-
-          {/* Shipping address */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>Verzendadres</legend>
-            <AddressFields
-              prefix="shipping_"
-              errors={state.fieldErrors}
-              requireCompany={isBusiness}
-              values={state.values}
-              zonderNaam
-            />
-          </fieldset>
-
-          {/* Billing address */}
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>Factuuradres</legend>
-            <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="sameAsBilling"
-                checked={sameAsBilling}
-                onChange={(e) => setSameAsBilling(e.target.checked)}
-              />
-              <span className={styles.toggleLabel}>
-                Factuuradres is gelijk aan verzendadres
-              </span>
-            </label>
-            {!sameAsBilling && (
-              <AddressFields
-                prefix="billing_"
+              <NaamVelden
+                prefix="shipping_"
                 errors={state.fieldErrors}
                 requireCompany={isBusiness}
                 values={state.values}
               />
-            )}
-          </fieldset>
-        </form>
+              <label className={styles.toggle}>
+                <input
+                  type="checkbox"
+                  name="isBusiness"
+                  checked={isBusiness}
+                  onChange={(e) => setIsBusiness(e.target.checked)}
+                />
+                <span className={styles.toggleLabel}>Ik bestel zakelijk</span>
+              </label>
+              {isBusiness && (
+                <Field
+                  id="vatNumber"
+                  name="vatNumber"
+                  defaultValue={state.values?.vatNumber}
+                  label="Btw-nummer"
+                  placeholder="NL123456789B01"
+                  required
+                  errorText={state.fieldErrors?.vatNumber}
+                />
+              )}
+              <label className={styles.toggle}>
+                <input
+                  type="checkbox"
+                  name="noMarketing"
+                  defaultChecked={state.values?.noMarketing != null}
+                />
+                <span className={styles.toggleLabel}>
+                  Ik wil geen vervangingsherinnering per e-mail ontvangen
+                </span>
+              </label>
+              <p className={styles.adresHulp}>
+                Zonder vinkje sturen we je na 4 en 8 maanden een herinnering dat
+                je vlag aan vervanging toe is. Uitschrijven kan in elke mail met
+                één klik.
+              </p>
+            </fieldset>
+
+            {/* Shipping address */}
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Verzendadres</legend>
+              <AddressFields
+                prefix="shipping_"
+                errors={state.fieldErrors}
+                requireCompany={isBusiness}
+                values={state.values}
+                zonderNaam
+              />
+            </fieldset>
+
+            {/* Billing address */}
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Factuuradres</legend>
+              <label className={styles.toggle}>
+                <input
+                  type="checkbox"
+                  name="sameAsBilling"
+                  checked={sameAsBilling}
+                  onChange={(e) => setSameAsBilling(e.target.checked)}
+                />
+                <span className={styles.toggleLabel}>
+                  Factuuradres is gelijk aan verzendadres
+                </span>
+              </label>
+              {!sameAsBilling && (
+                <AddressFields
+                  prefix="billing_"
+                  errors={state.fieldErrors}
+                  requireCompany={isBusiness}
+                  values={state.values}
+                />
+              )}
+            </fieldset>
+          </form>
         </div>
 
         {/* Zijkolom: eerst het geld en de betaalknop (de beslissing), daarna
@@ -560,7 +563,8 @@ export default function AfrekenenPage() {
           {verzending > 0 ? (
             <div className={styles.gratisNudge}>
               <span>
-                Nog <Price amount={tekortVoorGratis} /> en je verzending is gratis
+                Nog <Price amount={tekortVoorGratis} /> en je verzending is
+                gratis
               </span>
               <span
                 className={styles.balk}
@@ -592,7 +596,10 @@ export default function AfrekenenPage() {
           )}
 
           {!hasQuoteOnly && !designsComplete && (
-            <p className={`${styles.banner} ${styles.bannerQuote}`} role="status">
+            <p
+              className={`${styles.banner} ${styles.bannerQuote}`}
+              role="status"
+            >
               Nog niet elke vlag heeft een ontwerp. Wijs hieronder bij elke
               regel je ontwerpen toe, of kies &ldquo;later aanleveren&rdquo;.
             </p>
@@ -616,8 +623,8 @@ export default function AfrekenenPage() {
               iDEAL &amp; Mollie
             </li>
             <li>
-              <Leaf size={16} aria-hidden="true" /> CSRD-materiaalpaspoort bij
-              elke order
+              <Leaf size={16} aria-hidden="true" /> Materiaalpaspoort bij elke
+              order
             </li>
             <li>
               <Truck size={16} aria-hidden="true" /> Binnen 5 werkdagen geleverd

@@ -12,12 +12,23 @@ import {
   ShieldCheck,
   FlagMast,
 } from "@/components/ui";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
 
 export const metadata: Metadata = {
   alternates: { canonical: "/kennisbank" },
-  title: "Kennisbank: alles over biologisch afbreekbare vlaggen",
+  title: "Kennisbank: alles over duurzame, biologisch afbreekbare vlaggen",
   description:
-    "Van Flag-CiCLO®-technologie en CSRD-compliance tot microplastics en de juiste vlag kiezen: verdiep je in biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
+    "Van Flag-CiCLO®-technologie en de CSRD tot microplastics en de juiste vlag kiezen: verdiep je in duurzame, biologisch afbreekbare vlaggen met onze kennisbankartikelen.",
 };
 
 const WAVE_PATH =
@@ -36,14 +47,14 @@ const ARTICLES = [
     icon: <ShieldCheck size={24} />,
     kicker: "CSRD",
     title: "CSRD-compliance",
-    body: "Nieuwe EU-regels verplichten rapportage over microplastics. Ook die uit je vlaggen. Check of het voor jou geldt en hoe je het regelt.",
+    body: "Sinds het Omnibus-pakket geldt de CSRD alleen voor de grootste bedrijven. Lees of je eronder valt en wat grote opdrachtgevers alsnog van je vragen.",
     href: "/kennisbank/csrd-compliance",
   },
   {
     icon: <Leaf size={24} />,
     kicker: "Impact",
     title: "Het microplastics-probleem",
-    body: "Wat zijn microplastics, waar komen ze vandaan en waarom zijn juist vlaggen een bron? De feiten op een rij.",
+    body: "Wat zijn microplastics, waar komen ze vandaan en wat doet CiCLO® er wel en niet aan? De feiten op een rij.",
     href: "/kennisbank/microplastics",
   },
   {
@@ -61,7 +72,7 @@ const MORE = [
     icon: <Leaf size={24} />,
     kicker: "Materiaal",
     title: "Biologisch afbreekbaar doek",
-    body: "De levenscyclus van Flag-CiCLO®-doek: van wapperen tot volledig verdwenen.",
+    body: "De levenscyclus van Flag-CiCLO®-doek, van wapperen tot afgebroken, met de gemeten uitkomsten erbij.",
     href: "/materiaal",
   },
   {
@@ -99,9 +110,9 @@ export default function KennisbankPage() {
               <span className={styles.heroAccent}>verdwijnen</span>.
             </h1>
             <p className={styles.heroSub}>
-              Van CSRD tot microplastics. Ontdek hoe
-              Flag-CiCLO®-technologie jouw organisatie laat verduurzamen met
-              meetbare resultaten. Eerlijke uitleg. Geen jargon.
+              Van de CSRD tot microplastics. Wat Flag-CiCLO®-doek doet, wat het
+              niet doet, en wat er precies is gemeten. Eerlijke uitleg, zonder
+              jargon.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -120,12 +131,14 @@ export default function KennisbankPage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFD_OMGEVING}
+              </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
+              <span className={styles.heroStatValue}>{HOOFDTEST.code}</span>
+              <span className={styles.heroStatLabel}>ASTM-testnorm</span>
             </div>
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>~3</span>
@@ -150,9 +163,15 @@ export default function KennisbankPage() {
             <Badge variant="primary">Artikelen</Badge>
             <h2 id="articles-title">Verdiep je in duurzame vlaggen.</h2>
             <p className="lead">
-              Kies een onderwerp en ontdek alles wat je moet weten over
-              biologisch afbreekbare vlaggen.
+              Kies een onderwerp en lees wat je moet weten over biologisch
+              afbreekbare vlaggen. In {HOOFD_OMGEVING} brak {HOOFD_PCT}% van ons
+              doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm}). Onbehandeld
+              polyester kwam in dezelfde test niet verder dan{" "}
+              {pctNl(HOOFDTEST.referentiePct ?? 0)}%.
             </p>
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+            </Link>
           </div>
           <div className={`${styles.cardGrid} ${styles.cardGrid4}`}>
             {ARTICLES.map((article) => (

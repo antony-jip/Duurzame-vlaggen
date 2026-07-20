@@ -27,9 +27,9 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "100% biodegradable",
-      "title": "Flags that don't cost the earth",
-      "lead": "From mast flags to beach flags: printed on recycled and biodegradable materials, produced in Europe with green energy.",
+      "eyebrow": "Biodegradable fabric",
+      "title": "Flags that cost the earth less",
+      "lead": "From mast flags to beach flags, all on Flag-CiCLO. In seawater, 94.2% of that fabric broke down in just over three and a half years.",
       "primaryCta": "View the collection",
       "secondaryCta": "Our sustainability"
     },
@@ -38,11 +38,11 @@
       "items": {
         "biodegradable": {
           "title": "Biodegradable",
-          "body": "Biodegradable fabrics without microplastics."
+          "body": "94.2% broke down in seawater, in just over three and a half years."
         },
         "european": {
           "title": "European production",
-          "body": "Short transport routes, produced with green energy."
+          "body": "Fabric woven in Germany, printed and finished in the Netherlands."
         },
         "quality": {
           "title": "Sharp quality",

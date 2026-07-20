@@ -1,6 +1,9 @@
 import "server-only";
 import { SITE_URL } from "@/lib/seo";
 import { BEDRIJF } from "@/lib/bedrijf";
+import { HOOFDTEST, pctNl } from "@/lib/claims/afbreekbaarheid";
+
+/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
 
 /**
  * Huisstijl-layout voor transactionele e-mail.
@@ -69,7 +72,12 @@ export function blok(html: string): string {
  * accentlijn, en een voet met de bedrijfsgegevens. Spiegelt bewust de PDF-
  * factuur, zodat mail en document herkenbaar één merk zijn.
  */
-export function mailLayout({ titel, ondertitel, inhoud, knop }: LayoutOpties): string {
+export function mailLayout({
+  titel,
+  ondertitel,
+  inhoud,
+  knop,
+}: LayoutOpties): string {
   // Het volledige woordmerk in de LICHTE variant: gemaakt voor donkere vlakken,
   // en de kopband is forest. Bewust het statische bestand en niet Next's
   // /_next/image: die URL bevat een deployment-id en is bij de volgende deploy
@@ -84,7 +92,10 @@ export function mailLayout({ titel, ondertitel, inhoud, knop }: LayoutOpties): s
        </table>`
     : "";
 
-  const adres = [BEDRIJF.adres.straat, `${BEDRIJF.adres.postcode ?? ""} ${BEDRIJF.adres.plaats}`.trim()]
+  const adres = [
+    BEDRIJF.adres.straat,
+    `${BEDRIJF.adres.postcode ?? ""} ${BEDRIJF.adres.plaats}`.trim(),
+  ]
     .filter(Boolean)
     .join(" · ");
 
@@ -126,7 +137,7 @@ export function mailLayout({ titel, ondertitel, inhoud, knop }: LayoutOpties): s
       </table>
 
       <div style="font-family:${FONT};font-size:11px;color:${STONE};margin-top:14px;">
-        Vlaggen die verdwijnen. Zero plastic.
+        Biologisch afbreekbare vlaggen. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}.
       </div>
     </td></tr>
   </table>
