@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
+import { getProduct } from "@/lib/catalog/products";
 import {
   Badge,
   Button,
@@ -28,16 +29,16 @@ const WAVE_PATH =
 const TYPES = [
   {
     icon: <FlagMast size={24} />,
-    kicker: "6 tot 12 m masten",
+    kicker: "2 tot 10 m masten",
     title: "Mastvlag",
-    body: "De klassieke keuze voor vlaggenmasten bij je pand of entree. Standaardmaten: 100×150, 150×225 en 200×300 cm.",
+    body: "De klassieke keuze voor vlaggenmasten bij je pand of entree. Vijf standaardmaten, van 150 × 100 cm bij een mast van 2 tot 3 meter tot 350 × 225 cm bij 10 meter.",
     href: "/collectie/mastvlag",
   },
   {
     icon: <FlagBanier size={24} />,
-    kicker: "3 tot 8 m baniermasten",
+    kicker: "5 tot 11 m baniermasten",
     title: "Baniervlag",
-    body: "Verticaal en representatief, ideaal bij entrees. Standaardmaten: 80×300, 100×400 en 120×500 cm.",
+    body: "Verticaal en representatief, ideaal bij entrees. Elf standaardmaten, van 100 × 250 cm bij een mast van 5 meter tot 150 × 600 cm bij 11 meter.",
     href: "/collectie/baniervlag",
   },
   {
@@ -56,28 +57,35 @@ const TYPES = [
   },
 ];
 
-// Welk baniervlag-formaat bij welke masthoogte.
-const BANIER_SIZES = [
-  { size: "80×300 cm", mast: "4 meter mast" },
-  { size: "100×400 cm", mast: "6 meter mast" },
-  { size: "120×500 cm", mast: "8 meter mast" },
-];
+/**
+ * Maten uit de catalogus, niet overgetikt.
+ *
+ * Deze twee lijsten stonden hier hardcoded en waren uit de pas gaan lopen: er
+ * stonden baniermaten (80×300, 120×500) die niet te bestellen zijn, en de
+ * mastvlagmaten stonden in de oude hoogte × breedte-volgorde. Een keuzegids die
+ * maten noemt die de configurator niet kent, levert een verkeerde bestelling op.
+ * Daarom nu afgeleid van `lib/catalog/products.ts`, de bron die ook de
+ * configurator vult.
+ */
+function matenVan(slug: string): Array<{ size: string; mast: string }> {
+  const product = getProduct(slug);
+  if (!product) return [];
+  return product.sizes
+    .filter((maat) => maat.mastAdvies)
+    .map((maat) => ({ size: maat.label, mast: maat.mastAdvies as string }));
+}
 
-// Welk mastvlag-formaat bij welke masthoogte.
-const MAST_SIZES = [
-  { size: "100×150 cm", mast: "6 meter mast" },
-  { size: "150×225 cm", mast: "7 tot 8 meter mast" },
-  { size: "200×300 cm", mast: "10 tot 12 meter mast" },
-];
+const BANIER_SIZES = matenVan("baniervlag");
+const MAST_SIZES = matenVan("mastvlag");
 
 const FAQ = [
   {
     q: "Welke baniervlag-formaten zijn er?",
-    a: "Er zijn drie standaardformaten: 80×300 cm voor een 4 meter mast, 100×400 cm voor een 6 meter mast en 120×500 cm voor een 8 meter mast. Zo weet je direct welk formaat bij jouw mast past.",
+    a: "Er zijn elf standaardformaten, altijd breedte × hoogte. Ze lopen van 100 × 250 cm bij een mast van 5 meter tot 150 × 600 cm bij 11 meter. Het meest gekozen is 100 × 300 cm, passend bij een mast van 6 meter.",
   },
   {
     q: "Welke maat past bij een 6 meter baniermast?",
-    a: "Bij een 6 meter baniermast past een baniervlag van 100×400 cm het beste. Dat formaat geeft optimale zichtbaarheid en staat mooi in verhouding tot de mast.",
+    a: "Bij een 6 meter baniermast past een baniervlag van 100 × 300 cm het beste; dat is ook onze meest gekozen maat. Wil je 'm wat breder, dan is 120 × 300 cm bij dezelfde masthoogte een optie.",
   },
   {
     q: "Hoelang gaat zo'n vlag mee?",
@@ -96,7 +104,7 @@ const FAQ = [
 /** Het directe antwoord bovenaan; zie het gelijknamige blok in microplastics. */
 const KORT_ANTWOORD = [
   "Kies eerst het vlagtype op basis van waar de vlag komt: een mastvlag voor een staande mast, een baniervlag voor een baniermast, een gevelvlag aan een uithouder tegen de muur en een beachvlag voor evenementen.",
-  "Het formaat volgt uit de masthoogte. Voor baniervlaggen zijn er drie standaardmaten: 80×300 cm bij een mast van 4 meter, 100×400 cm bij 6 meter en 120×500 cm bij 8 meter. Maten staan altijd als breedte × hoogte. Een vlag gaat bij normaal buitengebruik 3 tot 4 maanden mee en de kleuren blijven tot 2 jaar UV-bestendig.",
+  "Het formaat volgt uit de masthoogte, en maten staan altijd als breedte × hoogte. Een baniervlag loopt van 100 × 250 cm bij een mast van 5 meter tot 150 × 600 cm bij 11 meter; een mastvlag van 150 × 100 cm bij 2 tot 3 meter tot 350 × 225 cm bij 10 meter. Een vlag gaat bij normaal buitengebruik 3 tot 4 maanden mee en de kleuren blijven tot 2 jaar UV-bestendig.",
 ];
 
 const FAQ_JSON_LD = faqJsonLd(FAQ);

@@ -155,17 +155,17 @@ export const PRODUCTS: CatalogProduct[] = [
       // elke maat kan. Prijzen: 100/120-breed uit de configurator; de grote maten
       // (120×400, 150×450, 150×500) door Antony bevestigd; 150×550/600 area-
       // geschaald op €13/m². Mastadvies in de comment.
-      { label: "100 × 250 cm", widthCm: 100, heightCm: 250 }, // 5 m mast
-      { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true }, // 6 m mast
-      { label: "100 × 350 cm", widthCm: 100, heightCm: 350 }, // 7 m mast
-      { label: "100 × 400 cm", widthCm: 100, heightCm: 400 }, // 8 m mast
-      { label: "120 × 300 cm", widthCm: 120, heightCm: 300 }, // 6 m mast
-      { label: "120 × 350 cm", widthCm: 120, heightCm: 350 }, // 7 m mast
-      { label: "120 × 400 cm", widthCm: 120, heightCm: 400 }, // 8 m mast
-      { label: "150 × 450 cm", widthCm: 150, heightCm: 450 }, // 8-9 m mast
-      { label: "150 × 500 cm", widthCm: 150, heightCm: 500 }, // 9 m mast
-      { label: "150 × 550 cm", widthCm: 150, heightCm: 550 }, // 10 m mast
-      { label: "150 × 600 cm", widthCm: 150, heightCm: 600 }, // 11 m mast
+      { label: "100 × 250 cm", widthCm: 100, heightCm: 250, mastAdvies: "mast 5 m", mastCm: 500 }, // 5 m mast
+      { label: "100 × 300 cm", widthCm: 100, heightCm: 300, popular: true, mastAdvies: "mast 6 m", mastCm: 600 }, // 6 m mast
+      { label: "100 × 350 cm", widthCm: 100, heightCm: 350, mastAdvies: "mast 7 m", mastCm: 700 }, // 7 m mast
+      { label: "100 × 400 cm", widthCm: 100, heightCm: 400, mastAdvies: "mast 8 m", mastCm: 800 }, // 8 m mast
+      { label: "120 × 300 cm", widthCm: 120, heightCm: 300, mastAdvies: "mast 6 m", mastCm: 600 }, // 6 m mast
+      { label: "120 × 350 cm", widthCm: 120, heightCm: 350, mastAdvies: "mast 7 m", mastCm: 700 }, // 7 m mast
+      { label: "120 × 400 cm", widthCm: 120, heightCm: 400, mastAdvies: "mast 8 m", mastCm: 800 }, // 8 m mast
+      { label: "150 × 450 cm", widthCm: 150, heightCm: 450, mastAdvies: "mast 8/9 m", mastCm: 900 }, // 8-9 m mast
+      { label: "150 × 500 cm", widthCm: 150, heightCm: 500, mastAdvies: "mast 9 m", mastCm: 900 }, // 9 m mast
+      { label: "150 × 550 cm", widthCm: 150, heightCm: 550, mastAdvies: "mast 10 m", mastCm: 1000 }, // 10 m mast
+      { label: "150 × 600 cm", widthCm: 150, heightCm: 600, mastAdvies: "mast 11 m", mastCm: 1100 }, // 11 m mast
     ],
     options: [
       { label: "Mastzijde", choices: ["Links", "Rechts"] },
