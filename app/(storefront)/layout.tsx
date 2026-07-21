@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Header, Footer } from "@/components/ui";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartPaneel } from "@/components/cart/CartPaneel";
@@ -87,6 +89,16 @@ export default async function StorefrontLayout({
         {/* Het winkelmand-paneel schuift open zodra er iets in de mand gaat, dus
             het moet op elke storefront-pagina bestaan. */}
         <CartPaneel />
+        {/* Vercel Web Analytics. Staat bewust in de storefront-shell en niet in
+            de root-layout: zo telt /admin niet mee in je eigen bezoekcijfers.
+            Cookieloos, dus er is geen toestemmingsbanner voor nodig. */}
+        <Analytics />
+        {/* Core Web Vitals van échte bezoekers, per route. Google's velddata
+            (CrUX) heeft meer verkeer nodig dan deze site voorlopig haalt, dus
+            dit is de enige bron die vanaf de eerste bezoeker iets zegt. LCP,
+            INP en CLS wegen mee in de ranking, vandaar dat het hier hoort en
+            niet in de categorie "leuk om te hebben". */}
+        <SpeedInsights />
       </CartProvider>
     </DictProvider>
   );
