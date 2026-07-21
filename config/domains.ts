@@ -45,9 +45,13 @@ export const MARKET_DOMAINS: Record<string, MarketConfig> = {
  */
 export const REDIRECT_DOMAINS: Record<string, { toHost: string; toPath: string }> = {
   "biologisch-afbreekbare-vlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/" },
-  "duurzame-mastvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/mastvlaggen" },
-  "duurzame-baniervlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/baniervlaggen" },
-  "duurzame-beachvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/beachvlaggen" },
+  // De paden stonden op /mastvlaggen, /baniervlaggen en /beachvlaggen. Die
+  // routes bestaan niet: de echte slug is /collectie/<enkelvoud>. Elk van deze
+  // domeinen leverde dus een 301 naar een 404, wat de linkwaarde van het
+  // doorverwijzende domein weggooit. Gecontroleerd tegen lib/catalog/products.ts.
+  "duurzame-mastvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/mastvlag" },
+  "duurzame-baniervlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/baniervlag" },
+  "duurzame-beachvlaggen.nl": { toHost: "duurzame-vlaggen.nl", toPath: "/collectie/beachvlag" },
   // Open decision (spec §3): .com → en/x-default OR 301 → .nl.
   // Default to 301 → .nl until Antony decides. Remove this line to make it a market site.
   "duurzame-vlaggen.com": { toHost: "duurzame-vlaggen.nl", toPath: "/" },

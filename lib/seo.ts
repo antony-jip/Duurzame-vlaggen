@@ -56,6 +56,32 @@ export function jsonLd(data: Record<string, unknown>): string {
  * Alleen gebruiken op pagina's die écht een vraag-antwoordblok tonen. Schema
  * dat niet overeenkomt met zichtbare inhoud is misleidend en levert niets op.
  */
+/**
+ * BreadcrumbList uit een pad van kruimels, ondiepste eerst.
+ *
+ * Anders dan FAQPage heeft dit wél een zichtbaar effect: Google toont het pad
+ * ("duurzame-vlaggen.nl › Kennisbank › Microplastics") in plaats van een kale
+ * URL. Zelfde patroon als landenvlaggen en collectie al gebruiken, nu als
+ * gedeelde functie zodat er niet drie varianten naast elkaar ontstaan.
+ *
+ * `pad` is site-relatief en begint met een slash; deze functie maakt er een
+ * absolute URL van.
+ */
+export function breadcrumbJsonLd(
+  kruimels: ReadonlyArray<{ naam: string; pad: string }>,
+): string {
+  return jsonLd({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: kruimels.map((kruimel, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: kruimel.naam,
+      item: `${SITE_URL}${kruimel.pad}`,
+    })),
+  });
+}
+
 export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>): string {
   return jsonLd({
     "@context": "https://schema.org",

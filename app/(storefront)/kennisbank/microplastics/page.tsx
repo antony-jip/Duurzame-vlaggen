@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
-import { faqJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -124,9 +124,18 @@ const KORT_ANTWOORD = [
 
 const FAQ_JSON_LD = faqJsonLd(FAQ);
 
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
+  { naam: "Kennisbank", pad: "/kennisbank" },
+  { naam: "Microplastics in vlaggen", pad: "/kennisbank/microplastics" },
+]);
+
 export default function MicroplasticsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}

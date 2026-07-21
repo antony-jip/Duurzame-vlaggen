@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
+import { breadcrumbJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -74,9 +75,18 @@ const KORT_ANTWOORD = [
   "CiCLO®-technologie voegt tijdens het spinnen van de vezel biologisch afbreekbare plekken toe aan het polyester. Micro-organismen in grond, water en rioolzuivering kunnen daar houvast op krijgen, waardoor de vezel wordt afgebroken zoals wol dat doet. Het resultaat: 96% biologische afbraak in 2 tot 3 jaar, zonder microplastics als restant. Zolang de vlag hangt merk je er niets van, want kwaliteit, kleur en UV-bestendigheid blijven gelijk.",
 ];
 
+const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
+  { naam: "Kennisbank", pad: "/kennisbank" },
+  { naam: "Flag-CiCLO®: hoe een vlag verdwijnt", pad: "/kennisbank/flag-ciclo-technologie" },
+]);
+
 export default function FlagCicloTechnologiePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
+      />
       {/* HERO — artikel-insteek met kruimelpad. */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
