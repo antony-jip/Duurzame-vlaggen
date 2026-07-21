@@ -249,7 +249,7 @@ export default async function AnalyticsPage({
 
           <div className={styles.balk}>
             <PromptKnop
-              prompt={bouwWerklijstPrompt(zichtbareDoelen)}
+              prompt={bouwWerklijstPrompt(zichtbareDoelen, meter)}
               label={`Kopieer werklijst (${zichtbareDoelen.length})`}
             />
             <Link
@@ -320,7 +320,7 @@ export default async function AnalyticsPage({
                     </td>
                     <td>
                       <div className={styles.acties}>
-                        <PromptKnop prompt={bouwDoelPrompt(doel)} />
+                        <PromptKnop prompt={bouwDoelPrompt(doel, meter)} />
                         <BenutToggle
                           sleutel={doel.woord}
                           bron="doel"
