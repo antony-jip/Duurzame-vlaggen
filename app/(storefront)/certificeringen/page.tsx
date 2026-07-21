@@ -16,46 +16,60 @@ export const metadata: Metadata = {
   alternates: { canonical: "/certificeringen" },
   title: "Certificeringen. Onafhankelijk getest",
   description:
-    "Geen marketingclaims maar labresultaten: ASTM afbraaktests in grond, water en op stortplaatsen, plus OEKO-TEX ECO PASSPORT en EU REACH. Bekijk alle certificeringen.",
+    "Geen marketingclaims maar labresultaten: 91% afbraak in grond en 94% in zeewater volgens ASTM, tegenover 0% en 5% voor gewoon polyester. Plus OEKO-TEX en EU REACH.",
 };
 
 const WAVE_PATH =
   "M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z";
 
-// Afbraaktests per omgeving, volgens internationale ASTM-normen.
+/**
+ * Afbraaktests, één op één uit de labrapporten.
+ *
+ * Bron: Georg+Otto Friedrich, "Going Green by Friedrich · Level 3 · CiCLO®",
+ * EN 01/2025, met testdata van onafhankelijke laboratoria volgens ASTM-methodes.
+ *
+ * Hier stonden eerder vier omgevingen, waaronder ASTM D5511 (stortplaats, 91%)
+ * en ASTM D5210 (rioolzuivering, 90%). Die twee staan niet in de documentatie
+ * die wij van de leverancier hebben, dus kunnen we ze niet onderbouwen en horen
+ * ze hier niet. Twee tests die je kunt laten zien zijn meer waard dan vier die
+ * je moet uitleggen.
+ *
+ * De vergelijking met onbehandeld polyester staat er nu bij. Dat contrast (0%
+ * en 5%) is het eigenlijke argument: het gaat er niet om dat ons doek afbreekt,
+ * maar dat gewoon polyester dat niet doet.
+ */
 const TESTS = [
   {
     kicker: "ASTM D5988",
     title: "In de grond",
-    body: "Begraven in vruchtbare aarde, onder gecontroleerde labcondities.",
-    value: "91% afbraak",
+    body: "Begraven in vruchtbare aarde met actief bodemleven, gemengd met compost. Gemeten over 1.171 dagen.",
+    value: "91% afgebroken",
+    vergelijking: "Onbehandeld polyester: 0%",
   },
   {
-    kicker: "ASTM D5511",
-    title: "Op stortplaatsen",
-    body: "Zonder zuurstof, zoals echt afval op een stortlocatie.",
-    value: "91% afbraak",
-  },
-  {
-    kicker: "ASTM D5210",
-    title: "In rioolwaterzuivering",
-    body: "De omgeving waar waswater uiteindelijk terechtkomt.",
-    value: "90% afbraak",
-  },
-  {
-    kicker: "ASTM D6691",
+    kicker: "ASTM D6691-17",
     title: "In zeewater",
-    body: "Getest met echte mariene micro-organismen.",
-    value: "Versnelde afbraak",
+    body: "Getest met de micro-organismen die van nature in zeewater voorkomen. Gemeten over 1.362 dagen.",
+    value: "94% afgebroken",
+    vergelijking: "Onbehandeld polyester: 5%",
   },
 ];
 
 // Veiligheids- en milieucertificaten.
 const CERTS = [
+  // Twee OEKO-TEX-certificaten op twee niveaus, en die hebben we hier eerder
+  // door elkaar gehaald: ECO PASSPORT geldt voor de CiCLO®-grondstof, het
+  // geweven doek zelf draagt STANDARD 100. Ze allebei "ECO PASSPORT" noemen is
+  // onnauwkeurig richting precies het publiek dat dit nakijkt.
   {
     icon: <ShieldCheck size={24} />,
     title: "OEKO-TEX® ECO PASSPORT",
-    body: "Onafhankelijk bewijs dat elke grondstof en elk chemisch bestanddeel veilig is voor mens en milieu. Getest op ruim 100 schadelijke stoffen.",
+    body: "Geldt voor de CiCLO®-grondstof in de vezel: onafhankelijk bewijs dat de gebruikte chemie veilig is voor mens en milieu.",
+  },
+  {
+    icon: <ShieldCheck size={24} />,
+    title: "STANDARD 100 by OEKO-TEX®",
+    body: "Geldt voor het geweven vlaggendoek, in productklasse 2 (direct huidcontact). Getest op een lange lijst schadelijke stoffen.",
   },
   {
     icon: <Check size={24} />,
@@ -89,10 +103,10 @@ export default function CertificeringenPage() {
             </h1>
             <p className={styles.heroSub}>
               Gewone vlaggen zijn van plastic en laten bij slijtage duizenden
-              deeltjes achter. Onze vlaggen breken volledig af. Net als een
-              blad op de bosbodem. Geen mooie marketingpraatjes: erkende
-              laboratoria hebben het materiaal meer dan drie jaar getest in
-              grond, water en compost.
+              deeltjes achter. Onze vlaggen breken af. Geen mooie
+              marketingpraatjes: erkende laboratoria hebben het materiaal ruim
+              drie jaar lang gemeten in grond en in zeewater, naast een monster
+              gewoon polyester ter vergelijking.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -111,16 +125,18 @@ export default function CertificeringenPage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Volledig afgebroken</span>
+              <span className={styles.heroStatValue}>91%</span>
+              <span className={styles.heroStatLabel}>Afgebroken in grond</span>
+            </div>
+            <div className={styles.heroStat}>
+              <span className={styles.heroStatValue}>94%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in zeewater
+              </span>
             </div>
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>3+ jaar</span>
-              <span className={styles.heroStatLabel}>Getest</span>
-            </div>
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>4</span>
-              <span className={styles.heroStatLabel}>Testomgevingen</span>
+              <span className={styles.heroStatLabel}>Onafgebroken gemeten</span>
             </div>
           </div>
         </Container>
@@ -134,25 +150,29 @@ export default function CertificeringenPage() {
         </svg>
       </section>
 
-      {/* AFBRAAKTESTS — vier omgevingen met labresultaat. */}
+      {/* AFBRAAKTESTS — de twee omgevingen waar we het rapport van hebben. */}
       <section className={styles.section} aria-labelledby="tests-title">
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="primary">Afbraaktests</Badge>
             <h2 id="tests-title">Getest volgens internationale normen.</h2>
             <p className="lead">
-              Onafhankelijke laboratoria testten het materiaal in vier
-              omgevingen, volgens genormeerde ASTM methodes. Overal dezelfde
-              conclusie: het breekt echt af.
+              Onafhankelijke laboratoria testten het materiaal jarenlang
+              volgens genormeerde ASTM-methodes, naast een monster gewoon
+              polyester. Dat tweede cijfer is de kern: ons doek breekt af, het
+              vergelijkingsmateriaal blijft vrijwel onaangetast liggen.
             </p>
           </div>
-          <div className={`${styles.cardGrid} ${styles.cardGrid4}`}>
+          <div className={styles.cardGrid}>
             {TESTS.map((test) => (
               <div key={test.title} className={styles.card}>
                 <span className={styles.cardKicker}>{test.kicker}</span>
                 <h3>{test.title}</h3>
                 <p>{test.body}</p>
                 <span className={styles.cardValue}>{test.value}</span>
+                <span className={styles.cardVergelijking}>
+                  {test.vergelijking}
+                </span>
               </div>
             ))}
           </div>
@@ -163,10 +183,12 @@ export default function CertificeringenPage() {
             <div>
               <h3>Wat betekent 90%+ afbraak?</h3>
               <p>
-                Het materiaal is letterlijk opgegeten door micro-organismen. De
-                resterende paar procent is omgezet in biomassa (nieuwe cellen).
-                Er blijft geen plastic over. Daarom claimen we 96%, en geen
-                100%. Wij beloven niets dat we niet kunnen bewijzen.
+                Het materiaal is letterlijk opgegeten door micro-organismen. In
+                dit type test (respirometrie) geldt 90% of meer als volledige
+                afbraak; de rest is omgezet in biomassa, oftewel nieuwe cellen.
+                Aanvullende analyse bevestigt dat er geen microplastics
+                achterblijven. Daarom noemen we de gemeten waarden en niet
+                honderd procent. Wij beloven niets dat we niet kunnen bewijzen.
               </p>
             </div>
           </div>

@@ -379,6 +379,16 @@
   letter-spacing: -0.03em;
   color: var(--color-forest);
 }
+/* De referentiewaarde eronder: wat gewoon polyester doet in dezelfde test.
+   Bewust klein en in stone: het cijfer erboven is de kop, dit is de context
+   die 'm betekenis geeft. */
+.cardVergelijking {
+  display: block;
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-stone);
+}
 @media (max-width: 1024px) {
   .cardGrid4 {
     grid-template-columns: repeat(2, 1fr);
