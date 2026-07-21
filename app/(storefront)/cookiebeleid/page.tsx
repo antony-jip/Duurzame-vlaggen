@@ -67,12 +67,15 @@ export default function CookiebeleidPage() {
               het bestellen. Zonder deze cookies kun je niet afrekenen. Voor
               functionele cookies is geen toestemming nodig.
             </p>
-            <h3>Analytische cookies</h3>
+            <h3>Bezoekersstatistieken (zonder cookies)</h3>
             <p>
-              Hiermee zien we hoe bezoekers de website gebruiken, zodat we de
-              site kunnen verbeteren. We hebben onze analytics
-              privacyvriendelijk ingesteld: IP-adressen worden geanonimiseerd
-              en er worden geen gegevens gedeeld voor advertentiedoeleinden.
+              We meten hoeveel mensen de site bezoeken en welke pagina&apos;s ze
+              bekijken, zodat we de site kunnen verbeteren. Daarvoor gebruiken we
+              Vercel Web Analytics. Dat plaatst géén cookies en bewaart geen
+              IP-adressen of andere gegevens waarmee we jou als persoon kunnen
+              herkennen. Er wordt niets gedeeld voor advertentiedoeleinden.
+              Omdat er geen persoonsgegevens en geen cookies aan te pas komen,
+              hoeven we hiervoor geen toestemming te vragen.
             </p>
             <h3>Marketing cookies</h3>
             <p>
