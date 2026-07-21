@@ -64,6 +64,16 @@ const HOW = [
   },
 ];
 
+/**
+ * Het directe antwoord bovenaan; zie het gelijknamige blok in microplastics.
+ * Deze pagina heeft geen vraag-antwoordblok, dus ook geen FAQPage-schema:
+ * markup zetten die niet met zichtbare inhoud overeenkomt levert niets op.
+ */
+const KORT_ANTWOORD = [
+  "Een gewone polyester vlag verdwijnt nooit. Polyester is plastic en blijft honderden jaren in het milieu, terwijl het ondertussen microplastics afgeeft.",
+  "CiCLO®-technologie voegt tijdens het spinnen van de vezel biologisch afbreekbare plekken toe aan het polyester. Micro-organismen in grond, water en rioolzuivering kunnen daar houvast op krijgen, waardoor de vezel wordt afgebroken zoals wol dat doet. Het resultaat: 96% biologische afbraak in 2 tot 3 jaar, zonder microplastics als restant. Zolang de vlag hangt merk je er niets van, want kwaliteit, kleur en UV-bestendigheid blijven gelijk.",
+];
+
 export default function FlagCicloTechnologiePage() {
   return (
     <>
@@ -118,6 +128,20 @@ export default function FlagCicloTechnologiePage() {
         >
           <path d={WAVE_PATH} fill="currentColor" />
         </svg>
+      </section>
+
+      {/* KORT ANTWOORD — direct onder de hero, vóór de verdieping. */}
+      <section className={styles.sectionTight} aria-labelledby="kort-antwoord">
+        <Container>
+          <div className={styles.kortAntwoord}>
+            <span id="kort-antwoord" className={styles.kortAntwoordLabel}>
+              Kort antwoord
+            </span>
+            {KORT_ANTWOORD.map((alinea) => (
+              <p key={alinea.slice(0, 40)}>{alinea}</p>
+            ))}
+          </div>
+        </Container>
       </section>
 
       {/* HOE HET WERKT — drie chips. */}

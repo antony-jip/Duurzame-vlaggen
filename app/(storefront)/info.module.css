@@ -938,3 +938,37 @@
 .verdieping a {
   font-weight: 700;
 }
+
+/* ==========================================================================
+   KORT ANTWOORD — het directe antwoord bovenaan een kennisbank-artikel.
+   Elk artikel opent met een vraag als H1; dit blok beantwoordt 'm meteen, in
+   ongeveer honderd woorden, zonder dat je hoeft te scrollen. Bedoeld om
+   letterlijk citeerbaar te zijn voor AI Overviews en featured snippets, en
+   omdat een lezer die het antwoord meteen krijgt eerder verder leest.
+   Sage-blue accent: dit is informatie, geen conversie-element.
+   ========================================================================== */
+.kortAntwoord {
+  max-width: 68ch;
+  padding: var(--space-lg);
+  border-left: 3px solid var(--color-sage-blue);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  background: var(--sage-blue-3);
+}
+.kortAntwoordLabel {
+  display: block;
+  font-family: var(--font-eyebrow);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-sage-blue);
+  margin-bottom: var(--space-sm);
+}
+.kortAntwoord p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--color-charcoal);
+}
+.kortAntwoord p + p {
+  margin-top: var(--space-sm);
+}

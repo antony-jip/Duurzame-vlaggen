@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
+import { faqJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -110,9 +111,21 @@ const FAQ = [
   },
 ];
 
+/** Het directe antwoord bovenaan; zie het gelijknamige blok in microplastics. */
+const KORT_ANTWOORD = [
+  "De CSRD verplicht grote bedrijven te rapporteren over hun milieu-impact, en onder ESRS E2-5 valt daar uitstoot van microplastics onder. Polyester vlaggen zijn daar een bron van, want ze laten door wind, zon en regen continu deeltjes los.",
+  "Val je er zelf niet direct onder, dan raakt het je alsnog via je klanten: die moeten óók over hun leveranciers rapporteren en vragen die data bij jou op. Een vlag van Flag-CiCLO® breekt in 2 tot 3 jaar voor 96% biologisch af en komt met OEKO-TEX ECO PASSPORT-certificering en ASTM-testresultaten die je direct in je verslag kunt gebruiken.",
+];
+
+const FAQ_JSON_LD = faqJsonLd(FAQ);
+
 export default function CsrdCompliancePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
@@ -168,6 +181,20 @@ export default function CsrdCompliancePage() {
         >
           <path d={WAVE_PATH} fill="currentColor" />
         </svg>
+      </section>
+
+      {/* KORT ANTWOORD — direct onder de hero, vóór de verdieping. */}
+      <section className={styles.sectionTight} aria-labelledby="kort-antwoord">
+        <Container>
+          <div className={styles.kortAntwoord}>
+            <span id="kort-antwoord" className={styles.kortAntwoordLabel}>
+              Kort antwoord
+            </span>
+            {KORT_ANTWOORD.map((alinea) => (
+              <p key={alinea.slice(0, 40)}>{alinea}</p>
+            ))}
+          </div>
+        </Container>
       </section>
 
       {/* GELDT DIT VOOR MIJ */}

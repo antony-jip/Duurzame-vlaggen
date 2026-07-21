@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
+import { faqJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -92,9 +93,21 @@ const FAQ = [
   },
 ];
 
+/** Het directe antwoord bovenaan; zie het gelijknamige blok in microplastics. */
+const KORT_ANTWOORD = [
+  "Kies eerst het vlagtype op basis van waar de vlag komt: een mastvlag voor een staande mast, een baniervlag voor een baniermast, een gevelvlag aan een uithouder tegen de muur en een beachvlag voor evenementen.",
+  "Het formaat volgt uit de masthoogte. Voor baniervlaggen zijn er drie standaardmaten: 80×300 cm bij een mast van 4 meter, 100×400 cm bij 6 meter en 120×500 cm bij 8 meter. Maten staan altijd als breedte × hoogte. Een vlag gaat bij normaal buitengebruik 3 tot 4 maanden mee en de kleuren blijven tot 2 jaar UV-bestendig.",
+];
+
+const FAQ_JSON_LD = faqJsonLd(FAQ);
+
 export default function VlaggenKiezenPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
@@ -149,6 +162,20 @@ export default function VlaggenKiezenPage() {
         >
           <path d={WAVE_PATH} fill="currentColor" />
         </svg>
+      </section>
+
+      {/* KORT ANTWOORD — direct onder de hero, vóór de verdieping. */}
+      <section className={styles.sectionTight} aria-labelledby="kort-antwoord">
+        <Container>
+          <div className={styles.kortAntwoord}>
+            <span id="kort-antwoord" className={styles.kortAntwoordLabel}>
+              Kort antwoord
+            </span>
+            {KORT_ANTWOORD.map((alinea) => (
+              <p key={alinea.slice(0, 40)}>{alinea}</p>
+            ))}
+          </div>
+        </Container>
       </section>
 
       {/* VLAGTYPES */}

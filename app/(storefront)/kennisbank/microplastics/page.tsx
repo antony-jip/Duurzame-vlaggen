@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
+import { faqJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -108,9 +109,28 @@ const FAQ = [
   },
 ];
 
+/**
+ * Het directe antwoord, bovenaan en in ongeveer honderd woorden.
+ *
+ * De H1 stelt een vraag en de hero-subtitel plaagt er omheen; wie het antwoord
+ * wil moest scrollen. Dit blok geeft het meteen, zelfstandig leesbaar en zonder
+ * verwijzingen naar "hierboven" of "hieronder", zodat een AI Overview of
+ * featured snippet 'm los kan citeren.
+ */
+const KORT_ANTWOORD = [
+  "Een polyester vlag is een doorlopende bron van microplastics: plastic deeltjes kleiner dan 5 millimeter. Wind, regen en UV-straling slijten het doek, waardoor er dag en nacht vezels vrijkomen zolang de vlag hangt.",
+  "Die deeltjes verdwijnen niet meer. Ze zijn aangetroffen in menselijk bloed, longen en placenta's, en grote bedrijven moeten er sinds de CSRD over rapporteren onder ESRS E2-5. Een vlag van Flag-CiCLO® breekt in 2 tot 3 jaar voor 96% biologisch af en laat geen microplastics achter.",
+];
+
+const FAQ_JSON_LD = faqJsonLd(FAQ);
+
 export default function MicroplasticsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+      />
       {/* HERO */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <Container className={styles.heroInner}>
@@ -164,6 +184,20 @@ export default function MicroplasticsPage() {
         </svg>
       </section>
 
+      {/* KORT ANTWOORD — direct onder de hero, vóór de verdieping. */}
+      <section className={styles.sectionTight} aria-labelledby="kort-antwoord">
+        <Container>
+          <div className={styles.kortAntwoord}>
+            <span id="kort-antwoord" className={styles.kortAntwoordLabel}>
+              Kort antwoord
+            </span>
+            {KORT_ANTWOORD.map((alinea) => (
+              <p key={alinea.slice(0, 40)}>{alinea}</p>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       {/* WAT ZIJN MICROPLASTICS */}
       <section className={styles.section} aria-labelledby="what-title">
         <Container>
@@ -179,7 +213,7 @@ export default function MicroplasticsPage() {
             <p className="lead">
               Het probleem: eenmaal in het milieu verdwijnen ze niet.
               Microplastics zijn inmiddels aangetroffen in oceanen, drinkwater,
-              voedsel, lucht, en zelfs in menselijk bloed en placenta's. Ze
+              voedsel, lucht, en zelfs in menselijk bloed en placenta&apos;s. Ze
               stapelen zich op in de voedselketen en vormen een groeiend
               gezondheidsrisico.
             </p>

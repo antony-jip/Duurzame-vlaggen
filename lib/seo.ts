@@ -41,3 +41,29 @@ export const LOGO_URL = `${SITE_URL}/logo-full-light.png`;
 export function jsonLd(data: Record<string, unknown>): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+/**
+ * FAQPage-structured data uit een vraag-antwoordlijst.
+ *
+ * Verwachting bijstellen: Google haalde op 7 mei 2026 de FAQ-rich-results uit
+ * Search, dus dit levert géén uitklapbare vragen meer op in de SERP. Het
+ * schematype zelf is niet afgeschaft en blijft gewoon uitgelezen. De reden om
+ * het toch te zetten is extractie: AI Overviews, Gemini, ChatGPT en Perplexity
+ * pakken ondubbelzinnig gemarkeerde Q&A makkelijker op. Google zegt er
+ * uitdrukkelijk bij dat structured data géén voorwaarde is voor AI Overviews,
+ * dus dit is goedkope hygiëne, geen hefboom.
+ *
+ * Alleen gebruiken op pagina's die écht een vraag-antwoordblok tonen. Schema
+ * dat niet overeenkomt met zichtbare inhoud is misleidend en levert niets op.
+ */
+export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>): string {
+  return jsonLd({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  });
+}
