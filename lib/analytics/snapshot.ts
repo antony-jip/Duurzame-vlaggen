@@ -33,11 +33,74 @@ export interface SnapshotResultaat {
   paginas: number;
 }
 
-export async function draaiSnapshot(): Promise<SnapshotResultaat> {
+/**
+ * Venster-override. De cron gebruikt 'm niet; een eenmalige backfill wel.
+ *
+ * GSC bewaart 16 maanden en levert die op verzoek gewoon uit. Zolang de tabel
+ * leeg is, is die historie dus nog op te halen. Daarna niet meer: wat uit het
+ * 16-maands-venster loopt, is echt weg. Vandaar dat dit dezelfde functie is en
+ * geen los script — een tweede implementatie zou stilletjes uiteen gaan lopen
+ * met de cron, en dan meet je twee verschillende dingen.
+ */
+export interface SnapshotVenster {
+  since: string;
+  totEnMet: string;
+}
+
+export interface SnapshotRij {
+  dag: string;
+  markt: string;
+  dimensie: GscDimensie;
+  sleutel: string;
+  clicks: number;
+  impressies: number;
+  ctr: number;
+  positie: number;
+}
+
+/**
+ * Rijen met dezelfde sleutel samenvoegen vóór de upsert.
+ *
+ * Postgres weigert een `ON CONFLICT DO UPDATE` waarin dezelfde rij twee keer
+ * voorkomt ("cannot affect row a second time") en laat dan het HELE blok vallen.
+ * GSC levert die duplicaten wel degelijk: `pad()` vouwt `www.duurzame-vlaggen.nl/`
+ * en `duurzame-vlaggen.nl/` allebei op `/`, en trailing slashes idem. Twee
+ * GSC-rijen worden dan één sleutel op dezelfde dag.
+ *
+ * Optellen is hier de juiste samenvoeging, want het zijn twee stukken van
+ * hetzelfde verkeer: clicks en vertoningen tellen op, de positie is het
+ * vertoning-gewogen gemiddelde (een gewoon gemiddelde laat één vertoning op
+ * positie 2 even zwaar wegen als vijfhonderd op positie 9) en de CTR volgt uit
+ * het totaal.
+ */
+export function verdichtRijen(rijen: SnapshotRij[]): SnapshotRij[] {
+  const perSleutel = new Map<string, SnapshotRij & { positieGewicht: number }>();
+
+  for (const r of rijen) {
+    const k = `${r.dag}|${r.markt}|${r.dimensie}|${r.sleutel}`;
+    const bestaand = perSleutel.get(k);
+    if (!bestaand) {
+      perSleutel.set(k, { ...r, positieGewicht: r.positie * r.impressies });
+      continue;
+    }
+    bestaand.clicks += r.clicks;
+    bestaand.impressies += r.impressies;
+    bestaand.positieGewicht += r.positie * r.impressies;
+  }
+
+  return [...perSleutel.values()].map(({ positieGewicht, ...r }) => ({
+    ...r,
+    // Zonder vertoningen valt er niets te wegen; dan blijft de eerste positie staan.
+    positie: r.impressies > 0 ? positieGewicht / r.impressies : r.positie,
+    ctr: r.impressies > 0 ? r.clicks / r.impressies : 0,
+  }));
+}
+
+export async function draaiSnapshot(venster?: SnapshotVenster): Promise<SnapshotResultaat> {
   const eind = new Date(Date.now() - LAG_DAGEN * DAG_MS);
   const start = new Date(eind.getTime() - (VENSTER_DAGEN - 1) * DAG_MS);
-  const since = isoDag(start);
-  const totEnMet = isoDag(eind);
+  const since = venster?.since ?? isoDag(start);
+  const totEnMet = venster?.totEnMet ?? isoDag(eind);
 
   // Per dag ophalen: zonder de date-dimensie krijgen we één geaggregeerde rij
   // over het hele venster en kunnen we geen dag-op-dag-tijdlijn opbouwen.
@@ -79,7 +142,9 @@ export async function draaiSnapshot(): Promise<SnapshotResultaat> {
     })),
   ];
 
-  if (rijen.length === 0) {
+  const verdicht = verdichtRijen(rijen);
+
+  if (verdicht.length === 0) {
     return { since, totEnMet, queries: 0, paginas: 0 };
   }
 
@@ -87,10 +152,10 @@ export async function draaiSnapshot(): Promise<SnapshotResultaat> {
 
   // In blokken: één upsert van 25k rijen loopt tegen payload-limieten aan.
   const BLOK = 500;
-  for (let i = 0; i < rijen.length; i += BLOK) {
+  for (let i = 0; i < verdicht.length; i += BLOK) {
     const { error } = await supabase
       .from("gsc_snapshots")
-      .upsert(rijen.slice(i, i + BLOK), { onConflict: "dag,markt,dimensie,sleutel" });
+      .upsert(verdicht.slice(i, i + BLOK), { onConflict: "dag,markt,dimensie,sleutel" });
     if (error) {
       throw new Error(`Snapshot-upsert mislukt op blok ${i / BLOK}: ${error.message}`);
     }
