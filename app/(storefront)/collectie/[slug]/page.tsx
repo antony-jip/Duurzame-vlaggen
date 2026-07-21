@@ -298,6 +298,19 @@ export default async function ProductPage({
           )}
         </div>
       </div>
+      {/* Kort antwoord — onder de configurator, zodat bestellen bovenaan blijft
+          maar de vraag "wat is dit en past het bij mij" wél op de pagina staat
+          beantwoord. Zelfstandig leesbaar, dus citeerbaar los van de rest. */}
+      {product.kortAntwoord && product.kortAntwoord.length > 0 && (
+        <section className={styles.kortAntwoord} aria-labelledby="kort-antwoord">
+          <h2 id="kort-antwoord" className={styles.kortAntwoordTitel}>
+            {product.name} in het kort
+          </h2>
+          {product.kortAntwoord.map((alinea) => (
+            <p key={alinea.slice(0, 40)}>{alinea}</p>
+          ))}
+        </section>
+      )}
       {/* Verdieping (werking, materiaal, garantie) — alleen voor producten met
           details in de catalogus, zoals de Easylift-vlaggenmast. */}
       {product.details && product.details.length > 0 && (

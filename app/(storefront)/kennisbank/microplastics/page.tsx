@@ -294,6 +294,19 @@ export default function MicroplasticsPage() {
               </div>
             ))}
           </div>
+          {/* Interne links met de producttermen als ankertekst. Wie hier landt
+              op een microplastics-vraag wil bij stap 2 ("kies alternatieven")
+              direct naar het juiste vlagtype kunnen. */}
+          <p className={styles.verdieping}>
+            Stap 2 begint bij het vlagtype dat je nu gebruikt: de{" "}
+            <Link href="/collectie/baniervlag">baniervlag</Link> aan een
+            baniermast, de <Link href="/collectie/mastvlag">mastvlag</Link> aan
+            een staande mast, de{" "}
+            <Link href="/collectie/gevelvlag">gevelvlag</Link> aan de muur of de{" "}
+            <Link href="/collectie/beachvlag">beachvlag</Link> voor evenementen.
+            Welk formaat je nodig hebt, staat in de{" "}
+            <Link href="/kennisbank/vlaggen-kiezen">keuzegids</Link>.
+          </p>
         </Container>
       </section>
 

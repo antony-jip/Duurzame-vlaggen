@@ -104,6 +104,23 @@ export interface CatalogProduct {
    */
   sizesImage?: ProductImage;
   /**
+   * Het korte antwoord op "wat is dit en past het bij mij", in twee alinea's.
+   *
+   * Staat onder de configurator, boven "Goed om te weten". Drie redenen: de
+   * koper krijgt zijn vraag beantwoord zonder de hele pagina te lezen, het is
+   * zelfstandig citeerbaar voor AI Overviews en featured snippets, en het geeft
+   * de pagina tekst waarin het producttype in enkelvoud en meervoud voorkomt.
+   * Dat laatste is geen keyword-stuffing maar een gevolg van normaal schrijven:
+   * dit zijn de woorden waarmee kopers zoeken.
+   *
+   * Maten hier komen uit de `sizes` van hetzelfde product, breedte x hoogte.
+   * Afbraakcijfers komen uit de ASTM-rapporten van Georg+Otto Friedrich
+   * (Level 3, EN 01/2025): 91% in grond na 1.171 dagen (ASTM D5988) en 94% in
+   * zeewater na 1.362 dagen (ASTM D6691-17), tegenover 0% en 5% voor
+   * vergelijkbaar onbehandeld polyester.
+   */
+  kortAntwoord?: string[];
+  /**
    * Verdiepende productinformatie (werking, materiaal, garantie) — getoond
    * als eigen sectie onder de configurator op de productpagina.
    */
@@ -187,6 +204,10 @@ export const PRODUCTS: CatalogProduct[] = [
       "baniervlaggen-maten-masthoogtes-hd.jpg",
       "Alle baniervlag-maten naast elkaar, van 100 × 300 cm (masthoogte 6 m) tot 150 × 500 cm (masthoogte 9 m)",
     ),
+    kortAntwoord: [
+      "Een baniervlag is de verticale vlag aan een baniermast: smal, staand en van veraf leesbaar. Je ziet ze bij entrees, langs de weg en op beurzen. Wij leveren elf standaardmaten, altijd breedte × hoogte, van 100 × 250 cm tot 150 × 600 cm. Het meest gekozen is 100 × 300 cm, passend bij een mast van 6 meter.",
+      "Baniervlaggen hangen vaak maandenlang buiten en vangen dus continu wind, regen en UV. Het doek is 100% polyester powered by CiCLO®. Onafhankelijke ASTM-tests laten 91% biologische afbraak in grond zien en 94% in zeewater, terwijl vergelijkbaar onbehandeld polyester op 0% en 5% blijft steken. Aan de mast merk je daar niets van: dezelfde kwaliteit en UV-bestendigheid als gewoon vlaggendoek.",
+    ],
     accent: "forest",
     // ORDERABLE (2026-07-13). Probo code `flag-ciclo`; option tree verified live.
     // The base below (finishing-all-sides) is always sent; the size + finishing
@@ -236,6 +257,10 @@ export const PRODUCTS: CatalogProduct[] = [
       "mastvlaggen-maten-masthoogtes-hd.jpg",
       "Alle mastvlag-maten naast elkaar, van 100 × 150 cm (mast 2/3 m) tot 225 × 350 cm (mast 10 m)",
     ),
+    kortAntwoord: [
+      "Een mastvlag is de klassieke vlag aan een staande vlaggenmast. Maten geven we als breedte × hoogte, en de masthoogte bepaalt welke past: 150 × 100 cm bij een mast van 2 tot 3 meter, 180 × 120 cm bij een vlaggenstok van 4 tot 5 meter, 225 × 150 cm bij 6 tot 7 meter, 300 × 200 cm bij 8 tot 9 meter en 350 × 225 cm bij 10 meter.",
+      "Mastvlaggen worden geleverd met een stevige band en koord. Het doek is 100% polyester powered by CiCLO®. Onafhankelijke ASTM-tests laten 91% biologische afbraak in grond zien en 94% in zeewater, terwijl vergelijkbaar onbehandeld polyester op 0% en 5% blijft steken.",
+    ],
     accent: "sage-blue",
     // ORDERABLE (2026-07-13). Same Flag-CiCLO® fabric as the baniervlag. Mast flags
     // finish with band-and-cord (colour + 200 cm cord), built per-selection in
@@ -343,6 +368,10 @@ export const PRODUCTS: CatalogProduct[] = [
         alt: "Paarse beachvlag met eigen ontwerp langs de straat",
       },
     ],
+    kortAntwoord: [
+      "Een beachvlag, ook wel beachflag genoemd, is een lichte vlag aan een flexibele stok die je zonder mast neerzet. Ideaal voor evenementen, beurzen, sportvelden en acties bij de winkel. Je kiest tussen het gebogen straightflag-silhouet (80 × 220 tot 90 × 430 cm) en de rechthoekige squareflag (75 × 200 tot 75 × 400 cm), inclusief stok en draagtas.",
+      "Beachvlaggen zet je vaak tijdelijk in, en juist dan telt wat er daarna mee gebeurt. Het doek is 100% polyester powered by CiCLO®. Onafhankelijke ASTM-tests laten 91% biologische afbraak in grond zien en 94% in zeewater, terwijl vergelijkbaar onbehandeld polyester op 0% en 5% blijft steken.",
+    ],
     accent: "terracotta",
     // ORDERABLE (2026-07-13, owner-confirmed). Default code `beachflag-straight`;
     // square sizes override to `beachflag-square` in lib/catalog/probo-mapping.ts.
@@ -397,6 +426,10 @@ export const PRODUCTS: CatalogProduct[] = [
     // 771-gevelvlaggen is dezelfde opname als de hero (763) — eruit gehaald
     // zodat de galerij geen dubbele foto toont.
     gallery: [],
+    kortAntwoord: [
+      "Een gevelvlag hangt aan een schuine uithouder aan de muur van je pand, zodat je merk op ooghoogte van de straat zichtbaar is. Er zijn drie maten, breedte × hoogte: 100 × 70 cm, 150 × 100 cm en 225 × 150 cm. Waar een mastvlag om ruimte vraagt, werkt een gevelvlag juist in een straat of winkelgebied.",
+      "Gevelvlaggen hangen doorgaans permanent, dus het doek staat jaar in jaar uit in het weer. Het doek is 100% polyester powered by CiCLO®. Onafhankelijke ASTM-tests laten 91% biologische afbraak in grond zien en 94% in zeewater, terwijl vergelijkbaar onbehandeld polyester op 0% en 5% blijft steken.",
+    ],
     accent: "sage-purple",
     // ORDERABLE (2026-07-13, owner-confirmed). Chain: amount → flag-ciclo → size
     // preset → flag-pole-side → landscape-strap-cord-loop (fixed finishing), see
@@ -465,6 +498,10 @@ export const PRODUCTS: CatalogProduct[] = [
         title: "Kies de juiste hoogte",
         body: "Vuistregel: kies de mast minstens één meter hoger dan je gebouw. Zo vangt de vlag vrije wind en komt hij het beste tot zijn recht.",
       },
+    ],
+    kortAntwoord: [
+      "Een vlaggenmast van aluminium is de basis onder je mastvlag. Wij leveren de Easylift in 6, 7 en 8 meter en in vier kleuren, inclusief montagebeugels en meer dan 10 jaar garantie. Hogere vlaggenmasten zijn op aanvraag mogelijk.",
+      "Wil je een vlaggenmast kopen, kies dan eerst de hoogte: die bepaalt welk vlagformaat erbij past. Bij 6 tot 7 meter hoort een mastvlag van 225 × 150 cm, bij 8 tot 9 meter 300 × 200 cm. Kom je er niet uit, stuur dan een foto van de plek en we adviseren vrijblijvend.",
     ],
     accent: "copper-rust",
     // NOT a Probo product — own hardware (Easylift). Prices from the live-config

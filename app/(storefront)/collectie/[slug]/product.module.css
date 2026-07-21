@@ -7,6 +7,32 @@
   padding-block: var(--space-2xl) var(--space-4xl);
 }
 
+/* ---- Kort antwoord: wat is dit en past het bij mij ----
+   Zelfde ritme als de verdieping eronder, maar met lopende tekst in plaats van
+   een grid. Staat onder de configurator zodat bestellen bovenaan blijft. */
+.kortAntwoord {
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--forest-6);
+}
+.kortAntwoordTitel {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 30px);
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-lg);
+}
+.kortAntwoord p {
+  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-charcoal);
+}
+.kortAntwoord p + p {
+  margin-top: var(--space-md);
+}
+
 /* ---- Verdieping: werking, materiaal en garantie onder de configurator ---- */
 .details {
   margin-top: var(--space-3xl);

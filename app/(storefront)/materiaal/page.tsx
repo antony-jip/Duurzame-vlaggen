@@ -195,6 +195,19 @@ export default function MateriaalPage() {
             <a href="https://flag-ciclo.nl">flag-ciclo.nl</a>, ons
             kennisdomein over Flag-CiCLO.
           </p>
+          {/* Interne links met de producttermen als ankertekst. Deze pagina gaat
+              over het doek en had geen enkele link naar de vlaggen die eruit
+              gemaakt worden; wie hier landt op een materiaalvraag moet in één
+              klik bij het juiste product kunnen komen. */}
+          <p className={styles.verdieping}>
+            Dit doek zit in elke vlag die we maken. Voor aan een baniermast is
+            dat de <Link href="/collectie/baniervlag">baniervlag</Link>, aan een
+            staande mast de <Link href="/collectie/mastvlag">mastvlag</Link>, aan
+            de muur de <Link href="/collectie/gevelvlag">gevelvlag</Link> en voor
+            evenementen de <Link href="/collectie/beachvlag">beachvlag</Link>.
+            Zoek je de mast erbij, kijk dan bij de aluminium{" "}
+            <Link href="/collectie/vlaggenmast">vlaggenmast</Link>.
+          </p>
         </Container>
       </section>
 
