@@ -135,7 +135,7 @@ export default async function LandvlagPage({
         <p className={styles.intro}>
           De vlag van {land.naam} als mastvlag van biologisch afbreekbaar doek.
           Kies je formaat, wij maken automatisch het drukbestand van de officiële
-          vlag. Niets aanleveren, geen microplastics.
+          vlag. Niets aanleveren, en het doek breekt af.
         </p>
         <TrustStrip />
       </header>

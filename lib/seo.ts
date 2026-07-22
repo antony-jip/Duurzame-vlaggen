@@ -43,53 +43,80 @@ export function jsonLd(data: Record<string, unknown>): string {
 }
 
 /**
- * FAQPage-structured data uit een vraag-antwoordlijst.
+ * Kruimelpad als `BreadcrumbList`.
  *
- * Verwachting bijstellen: Google haalde op 7 mei 2026 de FAQ-rich-results uit
- * Search, dus dit levert géén uitklapbare vragen meer op in de SERP. Het
- * schematype zelf is niet afgeschaft en blijft gewoon uitgelezen. De reden om
- * het toch te zetten is extractie: AI Overviews, Gemini, ChatGPT en Perplexity
- * pakken ondubbelzinnig gemarkeerde Q&A makkelijker op. Google zegt er
- * uitdrukkelijk bij dat structured data géén voorwaarde is voor AI Overviews,
- * dus dit is goedkope hygiëne, geen hefboom.
+ * Geen van de zes marktleiders (dvc.nl, fabervlaggen.nl, stuntvlaggen.nl,
+ * vlag-bedrukken.nl, printshopz.nl, expofit.nl) voert gestructureerde data op
+ * productniveau. Dit beïnvloedt de wéérgave in de resultaten en daarmee de
+ * doorklikratio, niet de positie zelf. Verkoop het intern niet als positiewinst.
  *
- * Alleen gebruiken op pagina's die écht een vraag-antwoordblok tonen. Schema
- * dat niet overeenkomt met zichtbare inhoud is misleidend en levert niets op.
- */
-/**
- * BreadcrumbList uit een pad van kruimels, ondiepste eerst.
- *
- * Anders dan FAQPage heeft dit wél een zichtbaar effect: Google toont het pad
- * ("duurzame-vlaggen.nl › Kennisbank › Microplastics") in plaats van een kale
- * URL. Zelfde patroon als landenvlaggen en collectie al gebruiken, nu als
- * gedeelde functie zodat er niet drie varianten naast elkaar ontstaan.
- *
- * `pad` is site-relatief en begint met een slash; deze functie maakt er een
- * absolute URL van.
+ * `items` gaat van algemeen naar specifiek; het pad is site-relatief.
  */
 export function breadcrumbJsonLd(
-  kruimels: ReadonlyArray<{ naam: string; pad: string }>,
-): string {
-  return jsonLd({
+  items: Array<{ naam: string; pad: string }>,
+): Record<string, unknown> {
+  return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: kruimels.map((kruimel, i) => ({
+    itemListElement: items.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: kruimel.naam,
-      item: `${SITE_URL}${kruimel.pad}`,
+      name: item.naam,
+      item: `${SITE_URL}${item.pad}`,
     })),
-  });
+  };
 }
 
-export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>): string {
-  return jsonLd({
+/**
+ * Veelgestelde vragen als `FAQPage`.
+ *
+ * Stond alleen op `/veelgestelde-vragen`, terwijl vier kennisbankpagina's ook
+ * echte FAQ-blokken hebben. Let op: wat hier in gaat is precies wat er op de
+ * pagina staat. Een antwoord dat je hier opvoert maar niet toont is tegen de
+ * richtlijnen van Google, en een claim die je hier opvoert reist mee naar de
+ * zoekresultaten.
+ */
+export function faqJsonLd(
+  vragen: ReadonlyArray<{ q: string; a: string }>,
+): Record<string, unknown> {
+  return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
+    mainEntity: vragen.map((v) => ({
       "@type": "Question",
-      name: item.q,
-      acceptedAnswer: { "@type": "Answer", text: item.a },
+      name: v.q,
+      acceptedAnswer: { "@type": "Answer", text: v.a },
     })),
-  });
+  };
+}
+
+/**
+ * Kennisbankartikel als `Article`.
+ *
+ * BEWUST GEEN `aggregateRating` of `review`, hier niet en nergens: we hebben
+ * geen echte reviews. Reviewmarkup zonder reviews is een handmatige maatregel
+ * waard en kost meer dan het oplevert.
+ */
+export function articleJsonLd(input: {
+  titel: string;
+  omschrijving: string;
+  pad: string;
+  gewijzigd?: string;
+}): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.titel,
+    description: input.omschrijving,
+    mainEntityOfPage: `${SITE_URL}${input.pad}`,
+    image: OG_IMAGE,
+    author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: LOGO_URL },
+    },
+    ...(input.gewijzigd ? { dateModified: input.gewijzigd } : {}),
+  };
 }

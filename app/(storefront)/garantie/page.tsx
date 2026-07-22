@@ -12,6 +12,10 @@ import {
   ShieldCheck,
   FlagPole,
 } from "@/components/ui";
+import {
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+} from "@/lib/claims/afbreekbaarheid";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/garantie" },
@@ -105,11 +109,11 @@ const COMPLAINT_STEPS = [
 const FAQ = [
   {
     q: "Waarom gaat mijn vlag maar 3 tot 4 maanden mee?",
-    a: "Dat is de standaard levensduur van alle buitenvlaggen, ook traditionele polyester. Wind, regen en UV-straling slijten het doek. Het verschil: onze vlaggen presteren identiek, maar lossen na afdanking volledig op zonder microplastics.",
+    a: "Dat is de standaard levensduur van alle buitenvlaggen, ook traditionele polyester. Wind, regen en UV-straling slijten het doek. Het verschil zit na afdanking: in zeewater brak 94,2% van ons doek af in ruim drie en een half jaar (ASTM D6691), tegen 3,8% voor onbehandeld polyester.",
   },
   {
     q: "Breekt de vlag af terwijl deze aan de mast hangt?",
-    a: "Nee. Het afbraakproces start alleen wanneer de vlag in contact komt met micro-organismen in grond, compost of water. Aan de mast blijft je vlag volledig intact en functioneel.",
+    a: "Nee. Het afbraakproces start alleen wanneer de vlag in contact komt met micro-organismen in bodem, zeewater, rioolslib of een stortplaats. Aan de mast blijft je vlag volledig intact en functioneel.",
   },
   {
     q: "Wat als mijn vlag sneller slijt dan verwacht?",
@@ -141,8 +145,8 @@ export default function GarantiePage() {
             <p className={styles.heroSub}>
               Onze biologisch afbreekbare vlaggen bieden dezelfde kwaliteit als
               traditioneel polyester. Geen compromissen op stevigheid,
-              kleurvastheid of levensduur. En transparante garantie op alles
-              wat we leveren.
+              kleurvastheid of levensduur. En transparante garantie op alles wat
+              we leveren.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -192,8 +196,8 @@ export default function GarantiePage() {
             <h2 id="quality-title">Geen compromissen, geen concessies.</h2>
             <p className="lead">
               Flag-CiCLO® combineert duurzaamheid met professionele kwaliteit.
-              Het enige verschil met traditioneel polyester? Wat er ná
-              afdanking gebeurt.
+              Het enige verschil met traditioneel polyester? Wat er ná afdanking
+              gebeurt.
             </p>
           </div>
           <div className={styles.chipGrid}>
@@ -220,8 +224,8 @@ export default function GarantiePage() {
             <Badge variant="personal">Garantievoorwaarden</Badge>
             <h2 id="terms-title">Precies weten waar je aan toe bent.</h2>
             <p className="lead">
-              Transparante garantie op al onze producten. Inclusief de
-              situaties waarin de garantie vervalt.
+              Transparante garantie op al onze producten. Inclusief de situaties
+              waarin de garantie vervalt.
             </p>
           </div>
           <div className={`${styles.cardGrid} ${styles.cardGrid4}`}>
@@ -277,6 +281,9 @@ export default function GarantiePage() {
           <div className={styles.sectionHead}>
             <Badge variant="personal">Veelgestelde vragen</Badge>
             <h2 id="faq-title">Vragen over garantie.</h2>
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+            </Link>
           </div>
           <div className={styles.faqGroup}>
             {FAQ.map((item) => (

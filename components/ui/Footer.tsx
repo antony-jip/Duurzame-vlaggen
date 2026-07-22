@@ -104,11 +104,11 @@ export function Footer() {
           </li>
           <li>
             <Leaf size={17} aria-hidden="true" />
-            100% biologisch afbreekbaar doek
+            Biologisch afbreekbaar doek, ASTM-getest
           </li>
           <li>
             <Recycle size={17} aria-hidden="true" />
-            CSRD-materiaalpaspoort bij elke order
+            Materiaalpaspoort bij elke order
           </li>
         </ul>
 

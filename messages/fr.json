@@ -27,9 +27,9 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "100% biodégradable",
-      "title": "Des drapeaux qui préservent la planète",
-      "lead": "Du drapeau de mât au beach flag : imprimés sur des matériaux recyclés et biodégradables, produits en Europe à l'énergie verte.",
+      "eyebrow": "Tissu biodégradable",
+      "title": "Des drapeaux qui pèsent moins sur la planète",
+      "lead": "Du drapeau de mât au beach flag, tous en Flag-CiCLO. En eau de mer, 94,2% de ce tissu s'est dégradé en un peu plus de trois ans et demi.",
       "primaryCta": "Voir la collection",
       "secondaryCta": "Notre démarche durable"
     },
@@ -38,11 +38,11 @@
       "items": {
         "biodegradable": {
           "title": "Biodégradable",
-          "body": "Tissus biodégradables sans microplastiques."
+          "body": "94,2% dégradé en eau de mer, en un peu plus de trois ans et demi."
         },
         "european": {
           "title": "Production européenne",
-          "body": "Circuits courts, produits à l'énergie verte."
+          "body": "Tissu tissé en Allemagne, imprimé et façonné aux Pays-Bas."
         },
         "quality": {
           "title": "Qualité soignée",

@@ -100,7 +100,11 @@ function paginaInstructie(doel: DoelStand): string | null {
 const HUISSTIJL = [
   "Schrijf Nederlands, in de toon van de bestaande pagina's: direct en stellig, geen marketing-superlatieven.",
   "Geen em-dashes. Gebruik punten of komma's; voor opsommingen een middelpunt (·).",
-  "Claims moeten kloppen met docs/STYLEGUIDE.md en de bestaande teksten: 96% afbreekbaar in 2-3 jaar, 0% microplastics, CSRD/ESRS E2-5. Verzin geen certificeringen of cijfers.",
+  'Milieuclaims komen uit lib/claims/afbreekbaarheid.ts en nergens anders vandaan. Een percentage staat nooit los: altijd met de omgeving, de termijn en de ASTM-norm erbij, plus een link naar /afbreekbaarheid met de linktekst "Zo is dat gemeten". De hoofdclaim is 94,2% afgebroken in zeewater in ruim drie en een half jaar (ASTM D6691), tegen 3,8% voor onbehandeld polyester in dezelfde test.',
+  'Schrijf NOOIT dat de vlag geen, nul of 0% microplastics achterlaat, en ook niet dat hij composteerbaar is. CiCLO versnelt de afbraak van vezels die zijn afgegeven; het vermindert de afgifte niet. De juiste formulering is "laat minder microplastic achter": vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen.',
+  'Noem het meegeleverde document "inkoopdossier" of "materiaalpaspoort", nooit "CSRD-proof", "CSRD-compliant" of "CSRD-materiaalpaspoort". Sinds het Omnibus-pakket (december 2025) geldt de CSRD alleen boven 1.000 medewerkers én 450 miljoen euro omzet; kleinere bedrijven krijgen de vraag via grote opdrachtgevers in hun keten.',
+  'Onderbouw of schrap: "recyclebaar", "PVC-vrij", "circulair geproduceerd", "CO₂-neutraal bezorgd" en "volledig duurzaam". Bij twijfel schrappen. Verzin geen certificeringen of cijfers.',
+  'De woorden "biologisch afbreekbaar" en "duurzaam/duurzame" moeten in titles, metadata-omschrijvingen, H1\'s en koppen blijven staan: daar rankt de site op. Verwijder ze nooit, voeg de onderbouwing eromheen toe.',
   "Dit is lead-gen en verkoop van vlaggen, geen algemene webshop-taal.",
   "Raak de prijslogica in lib/pricing/local-catalog.ts niet aan.",
 ].join("\n- ");

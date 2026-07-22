@@ -20,6 +20,19 @@ export const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: "/voor-verenigingen", priority: 0.8 },
   { path: "/duurzaamheid", priority: 0.7 },
   { path: "/materiaal", priority: 0.7 },
+  // De claimpagina: elke afbreekbaarheidsclaim op de site linkt hierheen. Hoge
+  // prioriteit omdat hij de onderbouwing draagt onder de zoektermen waarop we
+  // staan, en omdat elke productpagina er intern naar verwijst.
+  { path: "/afbreekbaarheid", priority: 0.8 },
+  // Het materiaaldossier: de achtergrondpagina waar andere sites naar kunnen
+  // linken. Verwijst zelf door naar /afbreekbaarheid voor de cijfers.
+  { path: "/materiaaldossier", priority: 0.7 },
+  // De bestektekst voor inkopers: er bestaat geen landelijk inkoopcriterium
+  // voor vlaggen, dus deze pagina levert de formulering aan.
+  { path: "/aanbesteding", priority: 0.7 },
+  // Landingspagina op een zoekterm die geen concurrent bedient, met een
+  // terugkerende aankoop erachter.
+  { path: "/beachflag-doek-vervangen", priority: 0.7 },
   { path: "/garantie", priority: 0.6 },
   { path: "/certificeringen", priority: 0.6 },
   { path: "/csrd", priority: 0.7 },
@@ -38,6 +51,7 @@ export const KENNISBANK_SLUGS = [
   "csrd-compliance",
   "microplastics",
   "vlaggen-kiezen",
+  "rpet-ciclo-polyester",
 ];
 
 /** Elk publiek pad van de nieuwe site, zonder trailing slash. */

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
-import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -12,12 +11,28 @@ import {
   ShieldCheck,
   Truck,
 } from "@/components/ui";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, jsonLd } from "@/lib/seo";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
+
+const PAD = "/kennisbank/csrd-compliance";
+const TITEL = "CSRD: geldt het voor jouw bedrijf?";
+const OMSCHRIJVING =
+  "Sinds het Omnibus-pakket geldt de CSRD pas vanaf 1.000 medewerkers en 450 miljoen euro omzet. Lees of je eronder valt en wat opdrachtgevers alsnog vragen.";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/kennisbank/csrd-compliance" },
-  title: "CSRD: geldt dit voor jouw bedrijf?",
-  description:
-    "Nieuwe EU-regels verplichten rapportage over microplastics, ook uit vlaggen. Check of de CSRD voor jouw bedrijf geldt en regel je compliance in vier simpele stappen.",
+  alternates: { canonical: PAD },
+  title: TITEL,
+  description: OMSCHRIJVING,
 };
 
 const WAVE_PATH =
@@ -27,44 +42,44 @@ const WAVE_PATH =
 const WHO = [
   {
     icon: <ShieldCheck size={24} />,
-    kicker: "Verplicht",
-    title: "Groot bedrijf (250+ medewerkers)",
-    body: "Je valt direct onder de CSRD en moet rapporteren over microplastics onder ESRS E2-5.",
+    kicker: "Rapportageplicht",
+    title: "Meer dan 1.000 medewerkers én 450 miljoen euro omzet",
+    body: "Je valt onder de CSRD en rapporteert onder de ESRS, waaronder over vervuiling en microplastics in je keten.",
   },
   {
     icon: <Check size={24} />,
-    kicker: "Mogelijk later",
-    title: "MKB (50 tot 250 medewerkers)",
-    body: "Beursgenoteerd? Dan volg je later. Niet beursgenoteerd? Je kunt alsnog geraakt worden via je klanten.",
+    kicker: "Geen plicht",
+    title: "Zit je daaronder?",
+    body: "Dan geldt er geen CSRD-rapportageplicht voor jou. Het Omnibus-pakket van december 2025 heeft het mkb en de meeste middelgrote bedrijven eruit gehaald.",
   },
   {
     icon: <Truck size={24} />,
-    kicker: "Indirect geraakt",
-    title: "Leverancier van grote bedrijven",
-    body: "Je grote klanten moeten over hun keten rapporteren. Ze gaan jou dus vragen stellen. Of een alternatief zoeken.",
+    kicker: "Wel de vraag",
+    title: "Leverancier van een groot bedrijf",
+    body: "Je opdrachtgever rapporteert over zijn keten en heeft daarvoor gegevens van jou nodig. Die vraag komt bij inkoop terecht, niet bij de wetgever.",
   },
 ];
 
-// Zo maakt Flag-CiCLO® het makkelijk.
+// Wat Flag-CiCLO® je in dat gesprek oplevert.
 const SOLUTIONS = [
   {
     icon: <Recycle size={24} />,
-    title: "Niets te rapporteren",
-    body: "Flag-CiCLO®-vlaggen laten na afbraak 0% microplastics achter. Probleem opgelost voordat het begint.",
+    title: "Laat minder microplastic achter",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.code}).`,
   },
   {
     icon: <Check size={24} />,
-    title: "Certificaten erbij",
-    body: "Bij elke bestelling ontvang je documentatie met exacte cijfers. Klaar om in je rapport op te nemen.",
+    title: "Inkoopdossier inbegrepen",
+    body: "Bij elke bestelling ontvang je de ASTM-testresultaten en de certificaten van het doek. Dat is wat een inkoper van je vraagt.",
   },
   {
     icon: <Truck size={24} />,
     title: "Snel geregeld",
-    body: "Levering in circa 3 werkdagen. Zelfde kwaliteit als gewone vlaggen, zonder het compliance-gedoe later.",
+    body: "Levering in circa 3 werkdagen. Zelfde kwaliteit als gewone vlaggen, met de onderbouwing er meteen bij.",
   },
 ];
 
-// Van bestelling naar compliance.
+// Van bestelling naar een dossier dat de vraag beantwoordt.
 const STEPS = [
   {
     title: "Bestel je vlaggen",
@@ -72,22 +87,26 @@ const STEPS = [
   },
   {
     title: "Ontvang documentatie",
-    body: "Certificaten en meetgegevens worden automatisch meegestuurd.",
+    body: "De certificaten en de ASTM-testresultaten worden automatisch meegestuurd.",
   },
   {
     title: "Onderbouw je cijfers",
-    body: "Met de productdata toon je aan: 0% microplastics uit je vlaggen.",
+    body: `Met de productdata laat je zien wat er is gemeten: ${HOOFD_PCT}% afgebroken in ${HOOFD_OMGEVING} in ${HOOFDTEST.duur}.`,
   },
   {
-    title: "Klaar voor je rapport",
-    body: "Neem de cijfers op in je CSRD-rapportage onder ESRS E2-5. Klaar.",
+    title: "Leg het in je dossier",
+    body: "Bewaar het bij je inkoopgegevens, zodat je het paraat hebt als een opdrachtgever of accountant ernaar vraagt.",
   },
 ];
 
 const FAQ = [
   {
-    q: "Ik heb maar 30 medewerkers. Waarom zou ik me hier druk om maken?",
-    a: "Direct onder de CSRD val je waarschijnlijk niet. Maar heb je grote bedrijven als klant? Die moeten wél rapporteren. Ook over hun leveranciers. Straks vragen ze jou om data, of ze kiezen een concurrent die wél voorbereid is.",
+    q: "Ik heb maar 30 medewerkers. Geldt de CSRD voor mij?",
+    a: "Nee. Sinds het Omnibus-pakket van december 2025 geldt de CSRD alleen voor bedrijven met meer dan 1.000 medewerkers én meer dan 450 miljoen euro omzet. Met 30 medewerkers val je daar niet onder en heb je geen rapportageplicht.",
+  },
+  {
+    q: "Waarom hoor ik dan toch over de CSRD van mijn klanten?",
+    a: "Omdat de bedrijven die er wel onder vallen over hun hele keten rapporteren. Voor hun cijfers hebben ze gegevens van hun leveranciers nodig. Die vraag komt via inkoop bij jou terecht, ook al geldt de wet niet voor jou. Een leverancier die de gegevens paraat heeft, is makkelijker zakendoen dan een die ze moet gaan uitzoeken.",
   },
   {
     q: "Wat zijn microplastics eigenlijk? En waarom vlaggen?",
@@ -95,15 +114,19 @@ const FAQ = [
   },
   {
     q: "Zijn jullie vlaggen net zo goed als gewone vlaggen?",
-    a: "Ja. Zelfde kwaliteit, kleuren, levensduur (3 tot 4 maanden bij normaal gebruik) en UV-bestendigheid. Het enige verschil zit in wat er ná gebruik gebeurt: onze vlaggen breken biologisch af zonder microplastics.",
+    a: `Ja. Zelfde kwaliteit, kleuren, levensduur (3 tot 4 maanden bij normaal gebruik) en UV-bestendigheid. Het verschil zit in wat er ná gebruik gebeurt: onze vlaggen zijn biologisch afbreekbaar. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}.`,
   },
   {
-    q: "Wat krijg ik precies als bewijs voor mijn rapportage?",
-    a: "Bij elke bestelling: OEKO-TEX ECO PASSPORT-certificering, ASTM-testresultaten (afbraak in grond, water en rioolzuivering) en een productspecificatie met alle relevante data. Direct bruikbaar onder ESRS E2-5. Accountants en auditors herkennen deze certificeringen.",
+    q: "Geven jullie vlaggen minder microplastics af dan gewone vlaggen?",
+    a: "Nee, en dat willen we eerlijk zeggen. Het doek is polyester en slijt net zo hard. Het CiCLO®-additief verandert niets aan hoeveel vezels er tijdens gebruik loslaten. Wat het wel verandert: die losgeraakte vezels breken af in plaats van te blijven liggen.",
+  },
+  {
+    q: "Wat krijg ik precies mee als onderbouwing?",
+    a: "Bij elke bestelling: OEKO-TEX ECO PASSPORT-certificering, de ASTM-testresultaten voor bodem, zeewater, rioolslib en stortplaats, en een productspecificatie met alle relevante gegevens. Accountants en inkopers herkennen deze certificeringen.",
   },
   {
     q: "Zijn jullie vlaggen veel duurder?",
-    a: "Slechts enkele euro's per stuk meer dan traditioneel polyester. Daar staat tegenover: geen compliance-zorgen later, geen risico op boetes, en je houdt klanten die om duurzame leveranciers vragen.",
+    a: "Slechts enkele euro's per stuk meer dan traditioneel polyester. Daar staat tegenover dat je de onderbouwing meteen op orde hebt, en dat je klanten houdt die om duurzame leveranciers vragen.",
   },
   {
     q: "Hoe snel kan ik mijn vlaggen krijgen?",
@@ -114,19 +137,34 @@ const FAQ = [
 /** Het directe antwoord bovenaan; zie het gelijknamige blok in microplastics. */
 const KORT_ANTWOORD = [
   "De CSRD verplicht grote bedrijven te rapporteren over hun milieu-impact, en onder ESRS E2-5 valt daar uitstoot van microplastics onder. Polyester vlaggen zijn daar een bron van, want ze laten door wind, zon en regen continu deeltjes los.",
-  "Val je er zelf niet direct onder, dan raakt het je alsnog via je klanten: die moeten óók over hun leveranciers rapporteren en vragen die data bij jou op. Een vlag van Flag-CiCLO® breekt in 2 tot 3 jaar voor 96% biologisch af en komt met OEKO-TEX ECO PASSPORT-certificering en ASTM-testresultaten die je direct in je verslag kunt gebruiken.",
+  `Val je er zelf niet direct onder, dan raakt het je alsnog via je klanten: die moeten óók over hun leveranciers rapporteren en vragen die data bij jou op. Een vlag van Flag-CiCLO® brak in ${HOOFD_OMGEVING} voor ${HOOFD_PCT}% af in ${HOOFDTEST.duur} en komt met OEKO-TEX ECO PASSPORT-certificering en ASTM-testresultaten die je direct in je verslag kunt gebruiken.`,
 ];
 
-const FAQ_JSON_LD = faqJsonLd(FAQ);
+// Gestructureerde data: artikel, kruimelpad en de FAQ. De vragen komen uit
+// dezelfde `FAQ`-array als het zichtbare blok hieronder, zodat er nooit een
+// antwoord in de structured data staat dat niet op de pagina staat. Bewust geen
+// aggregateRating of review: die zijn er niet.
+const ARTICLE_JSON_LD = jsonLd(
+  articleJsonLd({ titel: TITEL, omschrijving: OMSCHRIJVING, pad: PAD }),
+);
 
-const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
-  { naam: "Kennisbank", pad: "/kennisbank" },
-  { naam: "CSRD: geldt dit voor jouw bedrijf?", pad: "/kennisbank/csrd-compliance" },
-]);
+const BREADCRUMB_JSON_LD = jsonLd(
+  breadcrumbJsonLd([
+    { naam: "Home", pad: "/" },
+    { naam: "Kennisbank", pad: "/kennisbank" },
+    { naam: "CSRD", pad: PAD },
+  ]),
+);
+
+const FAQ_JSON_LD = jsonLd(faqJsonLd(FAQ));
 
 export default function CsrdCompliancePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ARTICLE_JSON_LD }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
@@ -143,14 +181,13 @@ export default function CsrdCompliancePage() {
               Kennisbank · CSRD
             </Link>
             <h1 id="hero-title" className={styles.heroTitle}>
-              Heb jij je vlaggen al{" "}
-              <span className={styles.heroAccent}>gecheckt</span>?
+              Geldt de CSRD <span className={styles.heroAccent}>voor jou</span>?
             </h1>
             <p className={styles.heroSub}>
-              Klinkt gek, maar het is waar: nieuwe EU-regels verplichten
-              bedrijven te rapporteren over microplastics. Ook die van je
-              vlaggen. We leggen uit wat dit voor jou betekent. Spoiler: het is
-              makkelijker op te lossen dan je denkt.
+              Waarschijnlijk niet. Sinds het Omnibus-pakket van december 2025
+              geldt de CSRD alleen boven 1.000 medewerkers en 450 miljoen euro
+              omzet. Maar lever je aan een bedrijf dat er wel onder valt, dan
+              krijg je de vraag over duurzame inkoop alsnog.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -169,16 +206,20 @@ export default function CsrdCompliancePage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
+              <span className={styles.heroStatValue}>1.000+</span>
+              <span className={styles.heroStatLabel}>
+                Medewerkers voor de plicht
+              </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
+              <span className={styles.heroStatValue}>450 mln</span>
+              <span className={styles.heroStatLabel}>Euro omzetgrens</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>✓</span>
-              <span className={styles.heroStatLabel}>Al opgelost</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFD_OMGEVING}
+              </span>
             </div>
           </div>
         </Container>
@@ -213,9 +254,9 @@ export default function CsrdCompliancePage() {
             <Badge variant="primary">De belangrijkste vraag</Badge>
             <h2 id="who-title">Geldt dit ook voor mijn bedrijf?</h2>
             <p className="lead">
-              Check welke groep bij jou past. Let op: ook als je niet direct
-              verplicht bent, kun je indirect geraakt worden. Beter nu
-              voorbereid dan straks verrast.
+              Zoek de groep waar je in valt. De rapportageplicht zelf raakt maar
+              een klein aantal bedrijven. De vraag die eruit voortkomt, reist
+              wel de hele keten door.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -241,33 +282,32 @@ export default function CsrdCompliancePage() {
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="personal">Eerlijk verhaal</Badge>
-            <h2 id="consequences-title">Wat zijn de gevolgen?</h2>
+            <h2 id="consequences-title">Wat betekent dit in de praktijk?</h2>
             <p className="lead">
-              Zowel als je niets doet, als wanneer je wél actie onderneemt. We
-              houden het eerlijk. Zonder paniekzaaierij.
+              Geen paniekverhaal over boetes die niet voor jou gelden. Wel het
+              verschil tussen een leverancier die de vraag kan beantwoorden en
+              een die dat niet kan.
             </p>
           </div>
           <div className={styles.compare}>
             <div className={`${styles.compareCard} ${styles.compareBad}`}>
-              <span className={styles.compareTag}>Als je niets doet</span>
-              <h3>Risico stapelt op</h3>
+              <span className={styles.compareTag}>Zonder dossier</span>
+              <h3>Je moet het gaan uitzoeken</h3>
               <ul className={styles.compareList}>
-                <li>Boetes bij overtreding</li>
-                <li>Grote klanten kiezen voor voorbereide concurrenten</li>
-                <li>Je mist aanbestedingen die compliance eisen</li>
-                <li>Reputatieschade bij steeds bewustere klanten</li>
-                <li>Later omschakelen kost meer tijd en geld</li>
+                <li>Je weet niet wat er in je vlaggen zit</li>
+                <li>De vraag van je opdrachtgever blijft liggen</li>
+                <li>Je mist aanbestedingen die om onderbouwing vragen</li>
+                <li>Je claims op je eigen site zijn niet te staven</li>
               </ul>
             </div>
             <div className={`${styles.compareCard} ${styles.compareGood}`}>
-              <span className={styles.compareTag}>Als je nu handelt</span>
-              <h3>Rust in je hoofd</h3>
+              <span className={styles.compareTag}>Met dossier</span>
+              <h3>Je hebt gewoon een antwoord</h3>
               <ul className={styles.compareList}>
-                <li>Compliant vóór de deadline</li>
-                <li>Je houdt klanten die straks om data vragen</li>
+                <li>Testresultaten en certificaten liggen klaar</li>
+                <li>Je houdt klanten die om gegevens vragen</li>
                 <li>Je kunt meedoen aan duurzame aanbestedingen</li>
-                <li>Je onderscheidt je van concurrenten die wachten</li>
-                <li>Eén keer goed regelen, jaren geen omkijken</li>
+                <li>Wat je zegt over je vlaggen is nagerekend</li>
               </ul>
             </div>
           </div>
@@ -281,7 +321,7 @@ export default function CsrdCompliancePage() {
             <Badge variant="primary">De oplossing</Badge>
             <h2 id="solution-title">Zo maakt Flag-CiCLO® het makkelijk.</h2>
             <p className="lead">
-              Drie redenen waarom ondernemers voor onze vlaggen kiezen.
+              Drie redenen waarom ondernemers voor onze duurzame vlaggen kiezen.
             </p>
           </div>
           <div className={styles.chipGrid}>
@@ -295,6 +335,24 @@ export default function CsrdCompliancePage() {
               </div>
             ))}
           </div>
+          <div className={styles.note}>
+            <span className={styles.noteIcon} aria-hidden="true">
+              <ShieldCheck size={20} />
+            </span>
+            <div>
+              <h3>Over dat percentage</h3>
+              <p>
+                Het doek is getest in vier omgevingen, volgens internationale
+                ASTM-normen. In {HOOFD_OMGEVING} brak {HOOFD_PCT}% van het doek
+                af in {HOOFDTEST.duur} ({HOOFDTEST.norm}). Onbehandeld polyester
+                kwam in dezelfde test niet verder dan{" "}
+                {pctNl(HOOFDTEST.referentiePct ?? 0)}%.
+              </p>
+              <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+                {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
         </Container>
       </section>
 
@@ -307,7 +365,7 @@ export default function CsrdCompliancePage() {
           <div className={styles.sectionHead}>
             <Badge variant="personal">Zo werkt het</Badge>
             <h2 id="steps-title">
-              Van bestelling naar compliance in vier stappen.
+              Van bestelling naar een compleet dossier in vier stappen.
             </h2>
             <p className="lead">
               Makkelijker dan je denkt. Je hoeft zelf niets uit te zoeken.
@@ -357,8 +415,9 @@ export default function CsrdCompliancePage() {
               </h2>
               <p className={styles.ctaSub}>
                 Geen gedoe, geen ingewikkelde procedures. Bestel
-                Flag-CiCLO®-vlaggen, ontvang je certificaten, en je bent klaar
-                voor de CSRD. Zo simpel is het.
+                Flag-CiCLO®-vlaggen en je ontvangt de certificaten en
+                testresultaten erbij. Dan heb je een antwoord klaarliggen als
+                een opdrachtgever ernaar vraagt.
               </p>
               <div className={styles.ctaActions}>
                 <Button

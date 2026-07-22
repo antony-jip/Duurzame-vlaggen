@@ -15,12 +15,30 @@ import {
   FlagBanier,
   VergelijkVlaggen,
 } from "@/components/ui";
+import {
+  AFBRAAK_TESTS,
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
+
+/** De bodemtest: het sportpark is aarde, geen zeewater. */
+const BODEMTEST =
+  AFBRAAK_TESTS.find((test) => test.omgeving === "Bodem") ?? HOOFDTEST;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-verenigingen" },
   title: "Clubvlaggen in jullie kleuren. Duurzaam.",
   description:
-    "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en geen microplastics op het sportpark.",
+    "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en doek dat minder microplastic achterlaat op het sportpark.",
 };
 
 const WAVE_PATH =
@@ -89,14 +107,14 @@ const SEASON = [
     body: "Na 3 tot 4 maanden intensief gebruik mogen de oude vlaggen weg. Geen gedoe, gewoon bij het afval.",
   },
   {
-    meta: "1 tot 2 jaar",
+    meta: "Daarna",
     title: "Natuurlijk proces",
-    body: "Micro-organismen breken de vezels af, net zoals bij natuurlijke materialen.",
+    body: "Micro-organismen herkennen de vezel als voedsel en breken hem af, net zoals bij natuurlijke materialen.",
   },
   {
-    meta: "2 tot 3 jaar",
-    title: "Geen sporen",
-    body: "96% volledig opgelost. Alleen CO₂, water en biomassa blijven over. Niets op het sportpark.",
+    meta: BODEMTEST.duur.charAt(0).toUpperCase() + BODEMTEST.duur.slice(1),
+    title: "Gemeten in de bodem",
+    body: `Begraven in vruchtbare aarde brak ${pctNl(BODEMTEST.afbraakPct)}% van het doek af in ${BODEMTEST.duur} (${BODEMTEST.norm}). Wat overblijft zijn CO₂, water en biomassa.`,
   },
 ];
 
@@ -116,12 +134,15 @@ export default function VoorVerenigingenPage() {
             </Badge>
             <h1 id="hero-title" className={styles.heroTitle}>
               Clubvlaggen in jullie kleuren.{" "}
-              <span className={styles.heroAccent}>Zonder plastic erfenis.</span>
+              <span className={styles.heroAccent}>Biologisch afbreekbaar.</span>
             </h1>
             <p className={styles.heroSub}>
-              Biologisch afbreekbare vlaggen voor jullie vereniging. Zelfde
-              kwaliteit en clubkleuren als traditioneel, maar na het seizoen
-              geen microplastics op het sportpark waar jullie jeugd speelt.
+              Duurzame, biologisch afbreekbare vlaggen voor jullie vereniging.
+              Zelfde kwaliteit en clubkleuren als traditioneel polyester, maar
+              het doek laat minder microplastic achter op het sportpark. Vezels
+              die tijdens gebruik loslaten breken af in plaats van te blijven
+              liggen. In {HOOFDTEST.omgeving.toLowerCase()} brak {HOOFD_PCT}%
+              van het doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm}).
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -136,12 +157,17 @@ export default function VoorVerenigingenPage() {
               <Link href="/contact" className={styles.heroLink}>
                 Vraag clubofferte aan
               </Link>
+              <Link href={ONDERBOUWING_PAD} className={styles.heroLink}>
+                {ONDERBOUWING_LINK_TEKST}
+              </Link>
             </div>
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFDTEST.omgeving.toLowerCase()}
+              </span>
             </div>
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>2 jaar</span>
@@ -168,10 +194,13 @@ export default function VoorVerenigingenPage() {
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="primary">Voor ambitieuze clubs</Badge>
-            <h2 id="why-title">Geen plastic. Wél clubtrots.</h2>
+            <h2 id="why-title">Clubtrots die niet blijft liggen.</h2>
             <p className="lead">
               Jullie verdienen vlaggen die net zo goed presteren als jullie
-              teams. Tegen verenigingsvriendelijke prijzen.
+              teams, tegen verenigingsvriendelijke prijzen. In{" "}
+              {HOOFDTEST.omgeving.toLowerCase()} brak {HOOFD_PCT}% van het doek
+              af in {HOOFDTEST.duur}, tegenover {REFERENTIE_PCT}% voor
+              onbehandeld polyester in dezelfde test ({HOOFDTEST.norm}).
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>
@@ -198,8 +227,8 @@ export default function VoorVerenigingenPage() {
             <Badge variant="personal">Klaar voor het nieuwe seizoen</Badge>
             <h2 id="products-title">Clubvlaggen in jullie kleuren.</h2>
             <p className="lead">
-              Van clubhuis tot wedstrijdveld: vlaggen die opvallen én na het
-              seizoen geen plastic sporen achterlaten.
+              Van clubhuis tot wedstrijdveld: vlaggen die opvallen en die na het
+              seizoen minder microplastic achterlaten.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -225,11 +254,12 @@ export default function VoorVerenigingenPage() {
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="primary">Duurzaam statement</Badge>
-            <h2 id="season-title">Wapperen, scoren, verdwijnen.</h2>
+            <h2 id="season-title">Wapperen, scoren, afbreken.</h2>
             <p className="lead">
-              Jullie clubvlaggen presteren een heel seizoen en laten daarna
-              geen plastic sporen achter op het veld of in de natuur. Een
-              statement naar leden en sponsors. En dat mag je best laten zien.
+              Jullie clubvlaggen presteren een heel seizoen en breken daarna af
+              in plaats van te blijven liggen op het veld of in de natuur. Een
+              statement naar leden en sponsors, en dat mag je best laten zien.{" "}
+              {CICLO_DISCLAIMER}
             </p>
           </div>
           <div className={styles.steps}>
@@ -258,8 +288,8 @@ export default function VoorVerenigingenPage() {
                 Klaar om jullie club te laten wapperen?
               </h2>
               <p className={styles.ctaSub}>
-                Vertel ons over jullie club en we maken een voorstel op maat
-                met clubkorting. Vrijblijvend advies, reactie binnen 24 uur.
+                Vertel ons over jullie club en we maken een voorstel op maat met
+                clubkorting. Vrijblijvend advies, reactie binnen 24 uur.
               </p>
               <div className={styles.ctaActions}>
                 <Button

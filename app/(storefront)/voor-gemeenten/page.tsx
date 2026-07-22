@@ -15,12 +15,25 @@ import {
   FlagBanier,
   VergelijkVlaggen,
 } from "@/components/ui";
+import {
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-gemeenten" },
-  title: "Gemeentevlaggen zonder microplastics",
+  title: "Duurzame, biologisch afbreekbare gemeentevlaggen",
   description:
-    "Biologisch afbreekbare gemeentevlaggen: geen microplastics in de openbare ruimte, meetbaar voor MVI-rapportages en aanbestedingen. Documentatie inbegrepen.",
+    "Gemeentevlaggen die minder microplastic achterlaten. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Klaar voor MVI en aanbestedingen.",
 };
 
 const WAVE_PATH =
@@ -29,18 +42,18 @@ const WAVE_PATH =
 const REASONS = [
   {
     icon: <Leaf size={24} />,
-    title: "Voorbeeldfunctie",
-    body: "Laat inwoners en raadsleden zien dat je gemeente echt actie onderneemt tegen plastic vervuiling. Zichtbaar aan het gemeentehuis.",
+    title: "Laat minder microplastic achter",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In ${HOOFDTEST.omgeving.toLowerCase()} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}).`,
   },
   {
     icon: <Check size={24} />,
-    title: "Meetbare impact",
-    body: "Concrete, onafhankelijk geteste cijfers voor raadsverslagen en communicatie naar burgers. Geen vage claims.",
+    title: "Meetbare cijfers",
+    body: "Testresultaten per omgeving, met norm, percentage en termijn. Bruikbaar in raadsverslagen en in communicatie naar inwoners.",
   },
   {
     icon: <ShieldCheck size={24} />,
     title: "MVI-geschikt",
-    body: "Past binnen Maatschappelijk Verantwoord Inkopen. Complete documentatie voor aanbestedingen leveren we mee.",
+    body: "Past binnen Maatschappelijk Verantwoord Inkopen. Bij elke bestelling zit een inkoopdossier met testresultaten, herkomst en certificaten, direct bruikbaar bij aanbestedingen.",
   },
   {
     icon: <Recycle size={24} />,
@@ -54,7 +67,7 @@ const PRODUCTS = [
     icon: <FlagGevel size={24} />,
     kicker: "Gemeentehuizen",
     title: "Gevelvlag",
-    body: "Het gemeentewapen of logo in full-color aan het gemeentehuis of openbare gebouwen. Zonder microplastics in de openbare ruimte.",
+    body: "Het gemeentewapen of logo in full-color aan het gemeentehuis of openbare gebouwen, op biologisch afbreekbaar doek dat minder microplastic achterlaat.",
     href: "/collectie/gevelvlag",
     label: "Bekijk gevelvlaggen",
   },
@@ -62,7 +75,7 @@ const PRODUCTS = [
     icon: <FlagMast size={24} />,
     kicker: "Openbare ruimte",
     title: "Mastvlag",
-    body: "Voor masten bij pleinen, parken en gemeentelijke locaties. Zelfde levensduur als traditioneel, na vervanging volledig opgelost.",
+    body: `Voor masten bij pleinen, parken en gemeentelijke locaties. Zelfde levensduur als traditioneel polyester, maar in ${HOOFDTEST.omgeving.toLowerCase()} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}).`,
     href: "/collectie/mastvlag",
     label: "Bekijk mastvlaggen",
   },
@@ -70,7 +83,7 @@ const PRODUCTS = [
     icon: <FlagBanier size={24} />,
     kicker: "Evenementen & feestdagen",
     title: "Baniervlag",
-    body: "Voor straatversiering, Koningsdag, Bevrijdingsdag of lokale evenementen. Na afloop geen plastic afval in de straten.",
+    body: "Voor straatversiering, Koningsdag, Bevrijdingsdag of lokale evenementen. Wat er na afloop achterblijft breekt af in plaats van als plastic te blijven liggen.",
     href: "/collectie/baniervlag",
     label: "Bekijk baniervlaggen",
   },
@@ -96,10 +109,12 @@ export default function VoorGemeentenPage() {
               iedereen.
             </h1>
             <p className={styles.heroSub}>
-              Vlaggen voor gemeenten, zonder microplastics in de openbare
-              ruimte. 96% lost volledig op in 2 tot 3 jaar na afdanking.
-              Transparant richting inwoners, meetbaar voor MVI-rapportages en
-              geschikt voor aanbestedingen.
+              Vlaggen voor gemeenten: duurzaam en biologisch afbreekbaar, en ze
+              laten minder microplastic achter in de openbare ruimte. Vezels
+              die tijdens gebruik loslaten breken af in plaats van te blijven
+              liggen. In {HOOFDTEST.omgeving.toLowerCase()} brak {HOOFD_PCT}%
+              van het doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm}). Meetbaar
+              voor MVI-rapportages en geschikt voor aanbestedingen.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -114,17 +129,26 @@ export default function VoorGemeentenPage() {
               <Link href="/certificeringen" className={styles.heroLink}>
                 Bekijk de certificeringen
               </Link>
+              <Link href={ONDERBOUWING_PAD} className={styles.heroLink}>
+                {ONDERBOUWING_LINK_TEKST}
+              </Link>
             </div>
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Afbreekbaar</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFDTEST.omgeving.toLowerCase()}
+              </span>
             </div>
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
-            </div>
+            {REFERENTIE_PCT !== null && (
+              <div className={styles.heroStat}>
+                <span className={styles.heroStatValue}>{REFERENTIE_PCT}%</span>
+                <span className={styles.heroStatLabel}>
+                  Gewoon polyester, zelfde test
+                </span>
+              </div>
+            )}
             <div className={styles.heroStat}>
               <span className={styles.heroStatValue}>MVI</span>
               <span className={styles.heroStatLabel}>Geschikt</span>
@@ -149,7 +173,8 @@ export default function VoorGemeentenPage() {
             <h2 id="why-title">Meetbare duurzaamheid, geen mooie woorden.</h2>
             <p className="lead">
               Elke gemeente praat over een schonere leefomgeving. Met
-              Flag-CiCLO®-vlaggen maak je het concreet. En je kunt het aantonen.
+              Flag-CiCLO®-vlaggen maak je het concreet, en je kunt het aantonen.{" "}
+              {CICLO_DISCLAIMER}
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>
@@ -176,9 +201,9 @@ export default function VoorGemeentenPage() {
             <Badge variant="personal">Toepassingen</Badge>
             <h2 id="products-title">Van gemeentehuis tot straatversiering.</h2>
             <p className="lead">
-              Dezelfde kwaliteit als traditionele vlaggen, maar zonder
-              microplastics in de openbare ruimte. Welke vlaggen heeft jouw
-              gemeente nodig?
+              Dezelfde kwaliteit als traditionele vlaggen, maar het doek laat
+              minder microplastic achter in de openbare ruimte. Welke vlaggen
+              heeft jouw gemeente nodig?
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -210,14 +235,17 @@ export default function VoorGemeentenPage() {
             <p className="lead">
               Klimaatdoelen, een schonere leefomgeving. Elke gemeente heeft
               ambities. Maar wat hangt er aan het eigen gemeentehuis? Polyester
-              vlaggen die bij elke windvlaag microplastics loslaten in de
-              openbare ruimte.
+              vlaggen die bij elke windvlaag vezels loslaten in de openbare
+              ruimte, en die vezels blijven daar liggen.
             </p>
             <p className="lead">
               Dat kan anders. Zelfde kwaliteit, zelfde kleuren, zelfde
-              levensduur. Maar met een verhaal dat je kunt vertellen. Aan de
-              raad, aan inwoners, aan de pers. Duurzaamheid begint bij de details
-              die iedereen kan zien.
+              levensduur, maar de vezels die loslaten breken af. In{" "}
+              {HOOFDTEST.omgeving.toLowerCase()} brak {HOOFD_PCT}% van het doek
+              af in {HOOFDTEST.duur} volgens {HOOFDTEST.norm}, tegenover{" "}
+              {REFERENTIE_PCT}% voor onbehandeld polyester in dezelfde test. Dat
+              is een cijfer dat je kunt uitleggen aan de raad, aan inwoners en
+              aan de pers.
             </p>
             <Link href="/duurzaamheid" className={styles.arrowLink}>
               Bekijk de technologie <ArrowRight size={16} />

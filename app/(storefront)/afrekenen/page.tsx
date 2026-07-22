@@ -755,7 +755,7 @@ export default function AfrekenenPage() {
               zakelijk op rekening
             </li>
             <li>
-              <Leaf size={16} aria-hidden="true" /> CSRD-materiaalpaspoort bij
+              <Leaf size={16} aria-hidden="true" /> Materiaalpaspoort bij
               elke order
             </li>
             <li>

@@ -1,7 +1,21 @@
 import "server-only";
 import type { OrderRow, OrderItemRow } from "@/lib/db/types";
 import { mailLayout, alinea, fijn, blok, platteTekst } from "./layout";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+import { SITE_URL } from "@/lib/seo";
 import { BEDRIJF, bedrijfsAdresRegels, factuurVoetRegels } from "@/lib/bedrijf";
+
+/**
+ * De onderbouwde afbraakregel, in één zin. Een percentage mag nooit los in de
+ * copy staan: altijd met omgeving, termijn en norm erbij, en met de link naar
+ * de claimpagina. Zie lib/claims/afbreekbaarheid.ts.
+ */
+const AFBRAAK_ZIN = `In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}.`;
+const AFBRAAK_URL = `${SITE_URL}${ONDERBOUWING_PAD}`;
 
 /**
  * Klantmails per fase. Spiegelt de snelknoppen op de order-detailpagina.
@@ -85,10 +99,12 @@ function verzonden(order: OrderRow): MailInhoud {
         ) +
         blok(
           `<strong>Ordernummer</strong><br/>${order.order_number}` +
-            (order.carrier ? `<br/><br/><strong>Vervoerder</strong><br/>${order.carrier}` : ""),
+            (order.carrier
+              ? `<br/><br/><strong>Vervoerder</strong><br/>${order.carrier}`
+              : ""),
         ) +
         fijn(
-          "Bij je bestelling zit een materiaalpaspoort met de duurzaamheidscijfers, bruikbaar voor je eigen rapportage.",
+          `Bij je bestelling zit een materiaalpaspoort: samenstelling, herkomst en de vier ASTM-testrapporten. ${AFBRAAK_ZIN}`,
         ),
       knop: heeftLink
         ? { label: "Volg je pakket", url: order.tracking_url! }
@@ -326,8 +342,7 @@ export function ontwerpenAanleveren(
   portalUrl: string,
   portalDays: number,
 ): MailInhoud {
-  const wat =
-    pending === 1 ? "1 ontwerp" : `${pending} ontwerpen`;
+  const wat = pending === 1 ? "1 ontwerp" : `${pending} ontwerpen`;
   return {
     onderwerp: `Nog ${wat} aan te leveren · ${order.order_number}`,
     html: mailLayout({
@@ -462,10 +477,12 @@ export function nieuweBestellingNotificatie(input: {
 // ---------------------------------------------------------------------------
 
 /**
- * Copy-regels (factsheet, docs/CONTENT-MAP.md): functionele levensduur 3 tot 4
- * maanden, tot 2 jaar UV-kleurvast, 96% biologisch afbreekbaar in 2 tot 3 jaar,
- * geen microplastics. NOOIT "100%", geen deeltjes-aantallen. Dit is
- * marketingmail, dus verplicht een uitschrijflink in de voet.
+ * Copy-regels: functionele levensduur 3 tot 4 maanden, tot 2 jaar UV-kleurvast,
+ * en de afbraak altijd als meting (percentage + omgeving + termijn + norm) uit
+ * lib/claims/afbreekbaarheid.ts, met de link naar /afbreekbaarheid erbij. NOOIT
+ * "100%", nooit een microplastic-claim: CiCLO versnelt de afbraak van vezels
+ * die zijn afgegeven, het vermindert de afgifte niet. Dit is marketingmail, dus
+ * verplicht een uitschrijflink in de voet.
  */
 export type LifecycleStageKey = "4m" | "8m";
 
@@ -488,7 +505,7 @@ export function lifecycleMail(input: {
       "Daarna wordt het doek moe. Kleuren vervagen, randen rafelen. En een vermoeide vlag hangt precies op de plek waar jij zichtbaar wilt zijn.",
     ) +
     alinea(
-      "Vervangen doe je hier met een gerust hart: je oude vlag breekt voor 96% biologisch af in 2 tot 3 jaar. Geen microplastics, geen restafval.",
+      `Vervangen doe je hier met een gerust hart: je oude vlag is biologisch afbreekbaar. ${AFBRAAK_ZIN} <a href="${AFBRAAK_URL}" style="color:#2C5F4F;">Zo is dat gemeten</a>.`,
     );
 
   const inhoud8m =
@@ -500,7 +517,7 @@ export function lifecycleMail(input: {
       "Het doek is tot 2 jaar UV-kleurvast, maar na acht maanden buiten vertelt je vlag een ander verhaal dan je merk.",
     ) +
     alinea(
-      "Een frisse vlag, zonder spijt: het oude doek breekt voor 96% biologisch af. Geen microplastics om je druk over te maken.",
+      `Een frisse vlag, zonder spijt: het oude doek is biologisch afbreekbaar. ${AFBRAAK_ZIN} <a href="${AFBRAAK_URL}" style="color:#2C5F4F;">Zo is dat gemeten</a>.`,
     );
 
   const onderwerp =
@@ -532,7 +549,8 @@ export function lifecycleMail(input: {
       input.stage === "4m"
         ? `Je vlaggen van bestelling ${input.order.order_number} wapperen nu zo'n vier maanden. Dat is de functionele levensduur van Flag-CiCLO® doek: 3 tot 4 maanden intensief buiten.`
         : `Je vlaggen van bestelling ${input.order.order_number} zijn nu acht maanden oud. Dat is ruim voorbij de functionele levensduur van 3 tot 4 maanden.`,
-      "Vervangen doe je met een gerust hart: het oude doek breekt voor 96% biologisch af in 2 tot 3 jaar. Geen microplastics.",
+      `Vervangen doe je met een gerust hart: het oude doek is biologisch afbreekbaar. ${AFBRAAK_ZIN}`,
+      `Zo is dat gemeten: ${AFBRAAK_URL}`,
       "",
       `Bestel dezelfde vlag opnieuw: ${input.reorderUrl}`,
       "Zelfde maat, zelfde ontwerp, twee klikken. Een nieuw ontwerp uploaden kan ook, gewoon in de winkelmand.",

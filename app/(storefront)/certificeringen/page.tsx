@@ -11,65 +11,38 @@ import {
   Recycle,
   ShieldCheck,
 } from "@/components/ui";
+import {
+  AFBRAAK_TESTS,
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/certificeringen" },
-  title: "Certificeringen. Onafhankelijk getest",
-  description:
-    "Geen marketingclaims maar labresultaten: 91% afbraak in grond en 94% in zeewater volgens ASTM, tegenover 0% en 5% voor gewoon polyester. Plus OEKO-TEX en EU REACH.",
+  title: "Certificeringen. Duurzame vlaggen onafhankelijk getest",
+  description: `Geen marketingclaims maar labresultaten voor biologisch afbreekbaar vlaggendoek: ${pctNl(HOOFDTEST.afbraakPct)}% afgebroken in zeewater in ${HOOFDTEST.duur} (${HOOFDTEST.norm}), plus OEKO-TEX ECO PASSPORT en EU REACH.`,
 };
 
 const WAVE_PATH =
   "M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z";
 
-/**
- * Afbraaktests, één op één uit de labrapporten.
- *
- * Bron: Georg+Otto Friedrich, "Going Green by Friedrich · Level 3 · CiCLO®",
- * EN 01/2025, met testdata van onafhankelijke laboratoria volgens ASTM-methodes.
- *
- * Hier stonden eerder vier omgevingen, waaronder ASTM D5511 (stortplaats, 91%)
- * en ASTM D5210 (rioolzuivering, 90%). Die twee staan niet in de documentatie
- * die wij van de leverancier hebben, dus kunnen we ze niet onderbouwen en horen
- * ze hier niet. Twee tests die je kunt laten zien zijn meer waard dan vier die
- * je moet uitleggen.
- *
- * De vergelijking met onbehandeld polyester staat er nu bij. Dat contrast (0%
- * en 5%) is het eigenlijke argument: het gaat er niet om dat ons doek afbreekt,
- * maar dat gewoon polyester dat niet doet.
- */
-const TESTS = [
-  {
-    kicker: "ASTM D5988",
-    title: "In de grond",
-    body: "Begraven in vruchtbare aarde met actief bodemleven, gemengd met compost. Gemeten over 1.171 dagen.",
-    value: "91% afgebroken",
-    vergelijking: "Onbehandeld polyester: 0%",
-  },
-  {
-    kicker: "ASTM D6691-17",
-    title: "In zeewater",
-    body: "Getest met de micro-organismen die van nature in zeewater voorkomen. Gemeten over 1.362 dagen.",
-    value: "94% afgebroken",
-    vergelijking: "Onbehandeld polyester: 5%",
-  },
-];
+/* Afbraaktests per omgeving, rechtstreeks uit de claimtabel. Elk percentage
+   staat hier met de norm, de omgeving en de termijn erbij. */
+const TESTS = AFBRAAK_TESTS.map((test) => ({
+  kicker: test.norm,
+  title: test.omgeving,
+  body: `${test.toelichting} Testduur: ${test.duur}.`,
+  value: `${pctNl(test.afbraakPct)}% afbraak`,
+}));
 
 // Veiligheids- en milieucertificaten.
 const CERTS = [
-  // Twee OEKO-TEX-certificaten op twee niveaus, en die hebben we hier eerder
-  // door elkaar gehaald: ECO PASSPORT geldt voor de CiCLO®-grondstof, het
-  // geweven doek zelf draagt STANDARD 100. Ze allebei "ECO PASSPORT" noemen is
-  // onnauwkeurig richting precies het publiek dat dit nakijkt.
   {
     icon: <ShieldCheck size={24} />,
     title: "OEKO-TEX® ECO PASSPORT",
-    body: "Geldt voor de CiCLO®-grondstof in de vezel: onafhankelijk bewijs dat de gebruikte chemie veilig is voor mens en milieu.",
-  },
-  {
-    icon: <ShieldCheck size={24} />,
-    title: "STANDARD 100 by OEKO-TEX®",
-    body: "Geldt voor het geweven vlaggendoek, in productklasse 2 (direct huidcontact). Getest op een lange lijst schadelijke stoffen.",
+    body: "Onafhankelijk bewijs dat elke grondstof en elk chemisch bestanddeel veilig is voor mens en milieu. Getest op ruim 100 schadelijke stoffen.",
   },
   {
     icon: <Check size={24} />,
@@ -98,15 +71,15 @@ export default function CertificeringenPage() {
               Onafhankelijk getest
             </Badge>
             <h1 id="hero-title" className={styles.heroTitle}>
-              Vlaggen die <span className={styles.heroAccent}>écht</span>{" "}
-              verdwijnen.
+              Duurzame vlaggen die{" "}
+              <span className={styles.heroAccent}>écht</span> afbreken.
             </h1>
             <p className={styles.heroSub}>
-              Gewone vlaggen zijn van plastic en laten bij slijtage duizenden
-              deeltjes achter. Onze vlaggen breken af. Geen mooie
-              marketingpraatjes: erkende laboratoria hebben het materiaal ruim
-              drie jaar lang gemeten in grond en in zeewater, naast een monster
-              gewoon polyester ter vergelijking.
+              Gewone vlaggen zijn van plastic en laten bij slijtage deeltjes
+              achter die blijven liggen. Ons doek is biologisch afbreekbaar:
+              vezels die loslaten breken af. Geen mooie marketingpraatjes:
+              erkende laboratoria hebben het materiaal meer dan drie jaar getest
+              in zeewater, bodem, rioolslib en op de stortplaats.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -125,18 +98,22 @@ export default function CertificeringenPage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>91%</span>
-              <span className={styles.heroStatLabel}>Afgebroken in grond</span>
-            </div>
-            <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>94%</span>
+              <span className={styles.heroStatValue}>
+                {pctNl(HOOFDTEST.afbraakPct)}%
+              </span>
               <span className={styles.heroStatLabel}>
                 Afgebroken in zeewater
               </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>3+ jaar</span>
-              <span className={styles.heroStatLabel}>Onafgebroken gemeten</span>
+              <span className={styles.heroStatValue}>
+                Ruim drie en een half jaar
+              </span>
+              <span className={styles.heroStatLabel}>Testduur in zeewater</span>
+            </div>
+            <div className={styles.heroStat}>
+              <span className={styles.heroStatValue}>4</span>
+              <span className={styles.heroStatLabel}>Testomgevingen</span>
             </div>
           </div>
         </Container>
@@ -150,29 +127,28 @@ export default function CertificeringenPage() {
         </svg>
       </section>
 
-      {/* AFBRAAKTESTS — de twee omgevingen waar we het rapport van hebben. */}
+      {/* AFBRAAKTESTS — vier omgevingen met labresultaat. */}
       <section className={styles.section} aria-labelledby="tests-title">
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="primary">Afbraaktests</Badge>
             <h2 id="tests-title">Getest volgens internationale normen.</h2>
             <p className="lead">
-              Onafhankelijke laboratoria testten het materiaal jarenlang
-              volgens genormeerde ASTM-methodes, naast een monster gewoon
-              polyester. Dat tweede cijfer is de kern: ons doek breekt af, het
-              vergelijkingsmateriaal blijft vrijwel onaangetast liggen.
+              Onafhankelijke laboratoria testten het materiaal in vier
+              omgevingen, volgens genormeerde ASTM methodes. Overal dezelfde
+              conclusie: het breekt echt af. {CICLO_DISCLAIMER}
             </p>
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              Zo is dat gemeten <ArrowRight size={16} />
+            </Link>
           </div>
-          <div className={styles.cardGrid}>
+          <div className={`${styles.cardGrid} ${styles.cardGrid4}`}>
             {TESTS.map((test) => (
               <div key={test.title} className={styles.card}>
                 <span className={styles.cardKicker}>{test.kicker}</span>
                 <h3>{test.title}</h3>
                 <p>{test.body}</p>
                 <span className={styles.cardValue}>{test.value}</span>
-                <span className={styles.cardVergelijking}>
-                  {test.vergelijking}
-                </span>
               </div>
             ))}
           </div>
@@ -183,12 +159,12 @@ export default function CertificeringenPage() {
             <div>
               <h3>Wat betekent 90%+ afbraak?</h3>
               <p>
-                Het materiaal is letterlijk opgegeten door micro-organismen. In
-                dit type test (respirometrie) geldt 90% of meer als volledige
-                afbraak; de rest is omgezet in biomassa, oftewel nieuwe cellen.
-                Aanvullende analyse bevestigt dat er geen microplastics
-                achterblijven. Daarom noemen we de gemeten waarden en niet
-                honderd procent. Wij beloven niets dat we niet kunnen bewijzen.
+                Het materiaal is letterlijk opgegeten door micro-organismen. Een
+                deel van wat verdwijnt is omgezet in biomassa, dus in nieuwe
+                cellen. Daarom noemen we {pctNl(HOOFDTEST.afbraakPct)}% in
+                zeewater na {HOOFDTEST.duur} en 90 tot 91,1% in de bodem, in
+                rioolslib en op de stortplaats, en geen 100%. Wij beloven niets
+                dat we niet kunnen bewijzen.
               </p>
             </div>
           </div>
@@ -206,8 +182,7 @@ export default function CertificeringenPage() {
             <h2 id="certs-title">Onafhankelijk gekeurd en goedgekeurd.</h2>
             <p className="lead">
               Het materiaal is getest op schadelijke stoffen en voldoet aan de
-              strengste internationale normen. Veilig voor mens, dier én
-              natuur.
+              strengste internationale normen. Veilig voor mens, dier én natuur.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -224,17 +199,20 @@ export default function CertificeringenPage() {
         </Container>
       </section>
 
-      {/* GEEN MICROPLASTICS — hoe dat werkt, kort. */}
+      {/* MICROPLASTIC — wat de technologie wel en niet doet. */}
       <section className={styles.section} aria-labelledby="how-title">
         <Container>
           <div className={styles.sectionHead}>
-            <Badge variant="primary">Geen microplastics</Badge>
+            <Badge variant="primary">Laat minder microplastic achter</Badge>
             <h2 id="how-title">Hoe het werkt, in drie zinnen.</h2>
             <p className="lead">
               CiCLO® technologie zit verwerkt in de vezels zelf.
-              Micro-organismen herkennen het materiaal daardoor als voedsel en
-              eten de vezels op, net als natuurlijk materiaal. Wat overblijft:
-              water, CO₂ en biomassa. Geen plastic.
+              Micro-organismen herkennen het materiaal daardoor als voedsel, en
+              vezels die tijdens gebruik loslaten breken af in plaats van te
+              blijven liggen. In zeewater brak {pctNl(HOOFDTEST.afbraakPct)}%
+              van het doek af in {HOOFDTEST.duur} ({HOOFDTEST.norm});
+              onbehandeld polyester kwam in dezelfde test niet verder dan{" "}
+              {pctNl(HOOFDTEST.referentiePct ?? 0)}%.
             </p>
             <Link
               href="/kennisbank/flag-ciclo-technologie"
@@ -255,8 +233,9 @@ export default function CertificeringenPage() {
                 Duurzaam wapperen, zwart op wit.
               </h2>
               <p className={styles.ctaSub}>
-                Vraag de certificaten en testrapporten op voor je
-                duurzaamheidsverslag of aanbesteding. We sturen ze dezelfde
+                Bij elke bestelling zit een inkoopdossier met testresultaten,
+                herkomst en certificaten. Wil je het vooraf inzien voor je
+                duurzaamheidsverslag of aanbesteding? We sturen het dezelfde
                 werkdag nog toe.
               </p>
               <div className={styles.ctaActions}>

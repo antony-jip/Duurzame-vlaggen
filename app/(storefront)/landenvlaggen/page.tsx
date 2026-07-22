@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/landenvlaggen" },
   title: "Landenvlag kopen. Biologisch afbreekbaar.",
   description:
-    "Bestel de vlag van elk land als mastvlag van biologisch afbreekbaar doek. Kies je land en formaat, wij maken het drukbestand. Zonder microplastics, binnen 5 werkdagen.",
+    "Bestel de vlag van elk land als mastvlag van biologisch afbreekbaar doek. Wij maken het drukbestand. In zeewater brak 94,2% van dat doek af (ASTM D6691).",
 };
 
 export default function LandenvlaggenPage() {
@@ -73,7 +73,7 @@ export default function LandenvlaggenPage() {
         <p className={styles.intro}>
           Kies je land en formaat, wij regelen de rest. Het drukbestand maken we
           automatisch van de officiële vlag, gedrukt op biologisch afbreekbaar
-          mastvlag-doek. Niets aanleveren, geen microplastics.
+          mastvlag-doek. Niets aanleveren, en het doek breekt af.
         </p>
         <TrustStrip />
       </header>

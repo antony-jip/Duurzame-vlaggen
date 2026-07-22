@@ -20,12 +20,20 @@ import {
 } from "@/components/ui";
 import { BRAND_IMAGES, getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+/** Percentage in Nederlandse notatie (94.2 → "94,2"). */
 
 export const metadata: Metadata = {
   alternates: { canonical: "/over-ons" },
   title: "Ons verhaal",
   description:
-    "De vlaggenbranche concurreert op prijs, het doek is het kind van de rekening. Flag-CiCLO® breekt volledig af. Voor bedrijven die duurzaam willen opvallen.",
+    "De vlaggenbranche concurreert op de laagste prijs en het doek is het kind van de rekening. Flag-CiCLO® is ander doek: biologisch afbreekbaar, gemeten volgens ASTM.",
 };
 
 /* Wat de klant eraan heeft, niet waar wij voor staan. Drie bezwaren, in de
@@ -39,13 +47,13 @@ const OPBRENGST = [
   },
   {
     icon: <Leaf size={26} />,
-    title: "Je laat niets achter",
-    body: "Het doek breekt voor 96% biologisch af in twee tot drie jaar. Wat overblijft is CO₂, water en biomassa. Geen microplastic met jouw naam erop.",
+    title: "Je laat minder microplastic achter",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.code}).`,
   },
   {
     icon: <ShieldCheck size={26} />,
     title: "Je kunt het hardmaken",
-    body: "Bij elke bestelling zit een materiaalpaspoort: onafhankelijke ASTM-labtests, OEKO-TEX en REACH. Genoeg voor je duurzaamheidsverslag, zonder dat iemand erover doorvraagt.",
+    body: "Bij elke bestelling zit een materiaalpaspoort: de vier ASTM-testrapporten, OEKO-TEX en REACH. Genoeg voor je duurzaamheidsverslag, zonder dat iemand erover doorvraagt.",
   },
 ];
 
@@ -83,7 +91,9 @@ export default async function OverOnsPage() {
             </Badge>
             <h1 id="hero-title" className={styles.heroTitle}>
               De vlaggenbranche racet naar de bodem.{" "}
-              <span className={styles.heroAccent}>Wij gaan de andere kant op.</span>
+              <span className={styles.heroAccent}>
+                Wij gaan de andere kant op.
+              </span>
             </h1>
             <p className={styles.heroSub}>
               Wij zijn er voor bedrijven die op een duurzame manier willen
@@ -133,7 +143,9 @@ export default async function OverOnsPage() {
           </p>
           <p className={styles.raceLine}>
             Vlaggen worden verkocht op{" "}
-            <span className={styles.raceAccent}>één ding: de laagste prijs.</span>
+            <span className={styles.raceAccent}>
+              één ding: de laagste prijs.
+            </span>
           </p>
           <p className={styles.raceBody}>
             Elke leverancier onderbiedt de vorige. Er gaat een cent van het doek
@@ -177,16 +189,16 @@ export default async function OverOnsPage() {
               Alles staat of valt bij het doek.
             </h2>
             <p className={styles.materiaalBody}>
-              Wat de branche duurzaam noemt, is meestal een petfles die tot draad
-              is getrokken. Recycled PET. Het klinkt goed, het kost niets extra,
-              en het is nog altijd polyester: het brokkelt net zo hard af tot
-              microplastic. Het label is duurzaam, het doek niet.
+              Wat de branche duurzaam noemt, is meestal een petfles die tot
+              draad is getrokken. Recycled PET. Het klinkt goed, het kost niets
+              extra, en het is nog altijd polyester: het brokkelt net zo hard af
+              tot microplastic. Het label is duurzaam, het doek niet.
             </p>
             <p className={styles.materiaalBody}>
               Flag-CiCLO® is wél ander doek. In de vezel zit een additief dat
               micro-organismen een ingang geeft, waardoor ze het polyester echt
-              kunnen verteren. Geen sticker op hetzelfde spul, maar een vezel die
-              zich anders gedraagt zodra hij is afgedankt.
+              kunnen verteren. Geen sticker op hetzelfde spul, maar een vezel
+              die zich anders gedraagt zodra hij is afgedankt.
             </p>
             <p className={styles.materiaalBody}>
               Daar wappert jouw merk straks op. Net zo fel, net zo lang, alleen
@@ -195,11 +207,15 @@ export default async function OverOnsPage() {
             {/* Subtiele uitstap naar alle vijf de vlaggen: wie hier al om is,
                 hoeft niet door te scrollen naar het blok onderaan. */}
             <p className={styles.doekLinks}>
-              <span className={styles.doekLinksLabel}>Bekijk het doek op je</span>
+              <span className={styles.doekLinksLabel}>
+                Bekijk het doek op je
+              </span>
               {products.map((product, i) => (
                 <span key={product.slug}>
                   {i > 0 && <span aria-hidden="true"> · </span>}
-                  <Link href={`/collectie/${product.slug}`}>{product.name}</Link>
+                  <Link href={`/collectie/${product.slug}`}>
+                    {product.name}
+                  </Link>
                 </span>
               ))}
             </p>
@@ -242,27 +258,36 @@ export default async function OverOnsPage() {
         <div className={styles.missionBlock}>
           <Container className={styles.missionInner}>
             <h2 id="proof-title" className={styles.missionTitle}>
-              Gemeten, niet <span className={styles.missionAccent}>beloofd</span>
-              .
+              Gemeten, niet{" "}
+              <span className={styles.missionAccent}>beloofd</span>.
             </h2>
             <div className={styles.missionStats} aria-label="Kerncijfers">
               <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>96%</span>
+                <span className={styles.missionStatValue}>
+                  {pctNl(HOOFDTEST.afbraakPct)}%
+                </span>
                 <span className={styles.missionStatLabel}>
-                  Biologisch afbreekbaar
+                  Biologisch afgebroken in zeewater
                 </span>
               </div>
               <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>0</span>
-                <span className={styles.missionStatLabel}>Microplastics</span>
+                <span className={styles.missionStatValue}>3,8%</span>
+                <span className={styles.missionStatLabel}>
+                  Onbehandeld polyester in dezelfde test
+                </span>
               </div>
               <div className={styles.missionStat}>
-                <span className={styles.missionStatValue}>2 tot 3 jaar</span>
+                <span className={styles.missionStatValue}>
+                  {HOOFDTEST.duur}
+                </span>
                 <span className={styles.missionStatLabel}>
-                  Tot volledig afgebroken
+                  Testduur volgens {HOOFDTEST.norm}
                 </span>
               </div>
             </div>
+            <p className={styles.missionStatLabel}>
+              <Link href={ONDERBOUWING_PAD}>{ONDERBOUWING_LINK_TEKST}</Link>
+            </p>
           </Container>
         </div>
         <svg

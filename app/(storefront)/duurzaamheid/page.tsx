@@ -3,12 +3,18 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Badge, Button, Container, ArrowRight, Recycle } from "@/components/ui";
 import { BRAND_IMAGES } from "@/lib/catalog/products";
+import {
+  AFBRAAK_TESTS,
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/duurzaamheid" },
   title: "Duurzaamheid. Flag-CiCLO® technologie",
-  description:
-    "Vlaggen die verdwijnen. Zero plastic. Onze Flag-CiCLO® vlaggen zijn 96% biologisch afbreekbaar in 2 tot 3 jaar, bevatten 0% microplastics en voldoen aan CSRD en ESRS E2-5.",
+  description: `Duurzame vlaggen van biologisch afbreekbaar Flag-CiCLO® doek. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur}, gemeten volgens ${HOOFDTEST.norm}. Bij elke bestelling zit het inkoopdossier met de testresultaten.`,
 };
 
 /* The four-phase breakdown of how a Flag-CiCLO® flag returns to nature.
@@ -30,25 +36,25 @@ const PHASES = [
   },
   {
     title: "Actieve afbraak",
-    body: "In de bodem of op de stortplaats breken bacteriën en schimmels de vezels in 1 tot 2 jaar verder af. Zonder één microplastische rest.",
+    body: "Bacteriën en schimmels breken de vezels verder af. In de bodem brak 91,1% van het doek af in ruim drie jaar, op de stortplaats 91,1% in drie en een half jaar.",
     src: "/levenscyclus/afbraak.webp",
     alt: "Een restje vlagdoek in het gras, het logo nog half leesbaar",
   },
   {
-    title: "Volledig opgelost",
-    body: "96% is verdwenen. Wat rest is CO₂, water en biomassa. Geen microplastics, geen restafval. Totale doorlooptijd: 2 tot 3 jaar.",
+    title: "Grotendeels afgebroken",
+    body: "In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Wat overblijft is CO₂, water en biomassa.",
     src: "/levenscyclus/verdwenen.webp",
     alt: "Alleen nog gras en klaver: van de vlag is niets meer terug te vinden",
   },
 ];
 
-// The brand's own data moment — measured, not promised.
-const STATS = [
-  { value: "96%", label: "Biologisch afbreekbaar" },
-  { value: "2 tot 3 jaar", label: "Tot volledig opgelost" },
-  { value: "0%", label: "Microplastics" },
-  { value: "3 tot 4 mnd", label: "Functionele levensduur" },
-];
+/* Het data-moment: precies de vier ASTM-uitkomsten uit de claimtabel, met de
+   omgeving erbij. Een percentage zonder omgeving en termijn is een claim, met
+   die twee erbij is het een meting. */
+const STATS = AFBRAAK_TESTS.map((test) => ({
+  value: `${pctNl(test.afbraakPct)}%`,
+  label: `Afgebroken in ${test.omgeving.toLowerCase()}`,
+}));
 
 const WAVE_PATH =
   "M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z";
@@ -69,14 +75,17 @@ export default function DuurzaamheidPage() {
               Flag-CiCLO® technologie
             </Badge>
             <h1 id="hero-title" className={styles.heroTitle}>
-              Vlaggen die <span className={styles.heroAccent}>verdwijnen</span>.
+              Duurzame vlaggen die{" "}
+              <span className={styles.heroAccent}>verdwijnen</span>.
               <br />
-              Zero plastic.
+              Biologisch afbreekbaar.
             </h1>
             <p className={styles.heroSub}>
-              Zelfde kwaliteit als je huidige vlag. Alleen lost deze op in de
-              natuur. 96% biologisch afbreekbaar in 2 tot 3 jaar, 0%
-              microplastics en klaar voor de CSRD.
+              Zelfde kwaliteit als je huidige vlag. Alleen breekt deze af in de
+              natuur. In zeewater brak {pctNl(HOOFDTEST.afbraakPct)}% van het
+              doek af in {HOOFDTEST.duur}, gemeten volgens {HOOFDTEST.norm}. Bij
+              elke bestelling zit een inkoopdossier met testresultaten, herkomst
+              en certificaten.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -124,8 +133,9 @@ export default function DuurzaamheidPage() {
             <p className="lead">
               Flag-CiCLO® is biologisch afbreekbaar polyester. De vezel
               presteert als een gewone vlag. Alleen bevat hij een ingrediënt dat
-              micro-organismen het materiaal volledig laat afbreken. In vier
-              fasen.
+              micro-organismen de vezel als voedsel laat herkennen. Vezels die
+              tijdens gebruik loslaten breken daardoor af in plaats van te
+              blijven liggen. In vier fasen.
             </p>
           </div>
           <div className={styles.phasesWrap}>
@@ -183,11 +193,15 @@ export default function DuurzaamheidPage() {
           <Container className={styles.dataInner}>
             <span className={styles.dataEyebrow}>De cijfers</span>
             <h2 id="numbers-title" className={styles.dataTitle}>
-              Onderbouwd. <span className={styles.dataAccent}>Niet beloofd.</span>
+              Onderbouwd.{" "}
+              <span className={styles.dataAccent}>Niet beloofd.</span>
             </h2>
             <p className={styles.dataBody}>
               Elk getal is gemeten volgens internationale ASTM normen in een
-              onafhankelijk laboratorium. Geen marketingclaim. Labresultaat.
+              onafhankelijk laboratorium. Geen marketingclaim. Labresultaat. Ter
+              vergelijking: onbehandeld polyester brak in dezelfde zeewatertest
+              voor {pctNl(HOOFDTEST.referentiePct ?? 0)}% af, en in de bodem
+              trad geen afbraak op.
             </p>
             <div className={styles.dataStats} aria-label="Kerncijfers">
               {STATS.map((stat) => (
@@ -198,8 +212,15 @@ export default function DuurzaamheidPage() {
               ))}
             </div>
             <p className={styles.dataFootnote}>
-              Afbreekbaarheid gemeten volgens ASTM D5988 (bodem) en ASTM D5511
-              (anaeroob). Doorlooptijd afhankelijk van omgevingscondities.
+              Gemeten volgens{" "}
+              {AFBRAAK_TESTS.map(
+                (test) =>
+                  `${test.norm} (${test.omgeving.toLowerCase()}, ${test.duur})`,
+              ).join(", ")}
+              . {CICLO_DISCLAIMER}{" "}
+              <a href={ONDERBOUWING_PAD} className={styles.ctaLink}>
+                Zo is dat gemeten
+              </a>
             </p>
           </Container>
         </div>
@@ -242,7 +263,7 @@ export default function DuurzaamheidPage() {
           </h2>
           <p className={styles.weefSub}>
             Zo wordt je vlag geweven: Flag-CiCLO® doek dat presteert als
-            polyester en er na afdanking niet meer is.
+            polyester en na afdanking grotendeels afbreekt.
           </p>
           <Button
             as="a"

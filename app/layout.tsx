@@ -37,13 +37,16 @@ export const metadata: Metadata = {
     default: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     template: "%s | Duurzame Vlaggen",
   },
+  // De zoektermen blijven staan; de claim eromheen is onderbouwd. Kale
+  // milieuclaims ("CSRD-proof", "circulair geproduceerd", "zonder
+  // microplastics") zijn eruit: die konden we niet hard maken en ze vallen
+  // onder EU 2024/825. Zie lib/claims/afbreekbaarheid.ts.
   description:
-    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd.",
+    "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
   keywords: [
     "duurzame vlaggen",
     "biologisch afbreekbare vlaggen",
-    "vlaggen zonder microplastics",
-    "CSRD vlaggen",
+    "vlaggen van biologisch afbreekbaar doek",
     "mastvlag",
     "baniervlag",
     "gevelvlag",
@@ -61,7 +64,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     description:
-      "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof, circulair geproduceerd en binnen 5 werkdagen geleverd.",
+      "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
     images: [
       {
         url: OG_IMAGE,
@@ -75,7 +78,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Duurzame Vlaggen. 100% vlag. 0% afval.",
     description:
-      "Biologisch afbreekbare vlaggen voor bedrijven: banier-, mast-, gevelvlaggen en beachflags. CSRD-proof en binnen 5 werkdagen geleverd.",
+      "Biologisch afbreekbare vlaggen voor bedrijven. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Binnen 5 werkdagen geleverd.",
     images: [OG_IMAGE],
   },
   robots: {

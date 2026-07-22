@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "../../info.module.css";
-import { breadcrumbJsonLd } from "@/lib/seo";
 import {
   Badge,
   Button,
@@ -12,13 +11,47 @@ import {
   Recycle,
   ShieldCheck,
 } from "@/components/ui";
+import {
+  CICLO_DISCLAIMER,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+import { articleJsonLd, breadcrumbJsonLd, jsonLd } from "@/lib/seo";
+
+/** Nederlandse schrijfwijze van een percentage: 94.2 wordt 94,2. */
+
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const HOOFD_OMGEVING = HOOFDTEST.omgeving.toLowerCase();
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
+
+const PAD = "/kennisbank/flag-ciclo-technologie";
+const TITEL = "Flag-CiCLO®: biologisch afbreekbaar doek";
+const OMSCHRIJVING =
+  "Geen magie, wel wetenschap: CiCLO® maakt polyester biologisch afbreekbaar. In zeewater brak 94,2% af in ruim drie en een half jaar (ASTM D6691).";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/kennisbank/flag-ciclo-technologie" },
-  title: "Flag-CiCLO®: hoe een vlag verdwijnt",
-  description:
-    "Geen magie, wel wetenschap: zo zorgt CiCLO®-technologie dat onze vlaggen volledig oplossen zonder sporen achter te laten. De levenscyclus stap voor stap uitgelegd.",
+  alternates: { canonical: PAD },
+  title: TITEL,
+  description: OMSCHRIJVING,
 };
+
+// Gestructureerde data: het artikel zelf plus het kruimelpad. Titel en
+// omschrijving komen uit dezelfde constanten als de metadata, zodat er maar
+// één waarheid is. Bewust geen aggregateRating of review: die zijn er niet.
+const ARTICLE_JSON_LD = jsonLd(
+  articleJsonLd({ titel: TITEL, omschrijving: OMSCHRIJVING, pad: PAD }),
+);
+
+const BREADCRUMB_JSON_LD = jsonLd(
+  breadcrumbJsonLd([
+    { naam: "Home", pad: "/" },
+    { naam: "Kennisbank", pad: "/kennisbank" },
+    { naam: "Flag-CiCLO® technologie", pad: PAD },
+  ]),
+);
 
 const WAVE_PATH =
   "M0,40 C240,72 480,4 720,28 C960,52 1200,12 1440,40 L1440,72 L0,72 Z";
@@ -32,17 +65,17 @@ const PHASES = [
   {
     meta: "Na afdanking",
     title: "Start afbraak",
-    body: "In grond, compost, zee of op de stortplaats komen micro-organismen in contact met de vezels.",
+    body: "In bodem, zeewater, rioolslib of op de stortplaats komen micro-organismen in contact met de vezels.",
   },
   {
-    meta: "1 tot 2 jaar",
+    meta: "Tijdens de test",
     title: "Afbraak",
-    body: "Micro-organismen breken de vezels af zoals natuurlijke materialen. Vergelijkbaar met wol.",
+    body: "Micro-organismen breken de vezels af zoals ze dat bij natuurlijke materialen doen. Vergelijkbaar met wol.",
   },
   {
-    meta: "2 tot 3 jaar totaal",
-    title: "Verdwenen",
-    body: "96% opgelost. Alleen CO₂, water en biomassa blijven over. Geen microplastics.",
+    meta: HOOFDTEST.duur,
+    title: "Afgebroken",
+    body: `In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}). Wat overblijft is CO₂, water en biomassa.`,
   },
 ];
 
@@ -60,8 +93,8 @@ const HOW = [
   },
   {
     icon: <Check size={24} />,
-    title: "Wat blijft er over?",
-    body: "Alleen water, CO₂ en biomassa. Geen plastic, geen microplastics, geen giftige resten.",
+    title: "Laat minder microplastic achter",
+    body: `Vezels die tijdens gebruik loslaten breken af in plaats van te blijven liggen. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.code}). Onbehandeld polyester kwam in dezelfde test niet verder dan ${REFERENTIE_PCT}%.`,
   },
 ];
 
@@ -72,17 +105,16 @@ const HOW = [
  */
 const KORT_ANTWOORD = [
   "Een gewone polyester vlag verdwijnt nooit. Polyester is plastic en blijft honderden jaren in het milieu, terwijl het ondertussen microplastics afgeeft.",
-  "CiCLO®-technologie voegt tijdens het spinnen van de vezel biologisch afbreekbare plekken toe aan het polyester. Micro-organismen in grond, water en rioolzuivering kunnen daar houvast op krijgen, waardoor de vezel wordt afgebroken zoals wol dat doet. Het resultaat: 96% biologische afbraak in 2 tot 3 jaar, zonder microplastics als restant. Zolang de vlag hangt merk je er niets van, want kwaliteit, kleur en UV-bestendigheid blijven gelijk.",
+  `CiCLO®-technologie voegt tijdens het spinnen van de vezel biologisch afbreekbare plekken toe aan het polyester. Micro-organismen in grond, water en rioolzuivering kunnen daar houvast op krijgen, waardoor de vezel wordt afgebroken zoals wol dat doet. In ${HOOFD_OMGEVING} brak ${HOOFD_PCT}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}). Zolang de vlag hangt merk je er niets van, want kwaliteit, kleur en UV-bestendigheid blijven gelijk.`,
 ];
-
-const BREADCRUMB_JSON_LD = breadcrumbJsonLd([
-  { naam: "Kennisbank", pad: "/kennisbank" },
-  { naam: "Flag-CiCLO®: hoe een vlag verdwijnt", pad: "/kennisbank/flag-ciclo-technologie" },
-]);
 
 export default function FlagCicloTechnologiePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ARTICLE_JSON_LD }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: BREADCRUMB_JSON_LD }}
@@ -95,13 +127,14 @@ export default function FlagCicloTechnologiePage() {
               Kennisbank · Technologie
             </Link>
             <h1 id="hero-title" className={styles.heroTitle}>
-              Hoe kan een vlag gewoon...{" "}
-              <span className={styles.heroAccent}>verdwijnen</span>?
+              Hoe wordt een vlag{" "}
+              <span className={styles.heroAccent}>biologisch afbreekbaar</span>?
             </h1>
             <p className={styles.heroSub}>
-              Geen magie, wel wetenschap. Ontdek hoe CiCLO®-technologie ervoor
-              zorgt dat onze vlaggen volledig oplossen. Zonder sporen achter
-              te laten.
+              Geen magie, wel wetenschap. CiCLO® maakt de polyestervezel
+              herkenbaar als voedsel voor micro-organismen. In {HOOFD_OMGEVING}{" "}
+              brak {HOOFD_PCT}% van het doek af in {HOOFDTEST.duur} (
+              {HOOFDTEST.norm}).
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -117,16 +150,18 @@ export default function FlagCicloTechnologiePage() {
           </div>
           <div className={styles.heroStats} aria-label="Kerncijfers">
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>96%</span>
-              <span className={styles.heroStatLabel}>Lost volledig op</span>
+              <span className={styles.heroStatValue}>{HOOFD_PCT}%</span>
+              <span className={styles.heroStatLabel}>
+                Afgebroken in {HOOFD_OMGEVING}
+              </span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>2 tot 3 jaar</span>
-              <span className={styles.heroStatLabel}>Afbraaktijd</span>
+              <span className={styles.heroStatValue}>{HOOFDTEST.duur}</span>
+              <span className={styles.heroStatLabel}>Testduur</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>0%</span>
-              <span className={styles.heroStatLabel}>Microplastics</span>
+              <span className={styles.heroStatValue}>{HOOFDTEST.code}</span>
+              <span className={styles.heroStatLabel}>ASTM-testnorm</span>
             </div>
           </div>
         </Container>
@@ -162,8 +197,9 @@ export default function FlagCicloTechnologiePage() {
             <h2 id="how-title">Zo werkt het, zonder jargon.</h2>
             <p className="lead">
               Gewone polyester vlaggen slijten en laten kleine plastic deeltjes
-              achter die honderden jaren in de natuur blijven. Onze vlaggen
-              zijn anders. Door één ingrediënt in de vezel.
+              achter die heel lang in de natuur blijven liggen. Ook ons doek
+              geeft vezels af, want CiCLO® verandert niets aan die afgifte. Het
+              verandert wel wat er daarna met die vezels gebeurt.
             </p>
           </div>
           <div className={styles.chipGrid}>
@@ -184,10 +220,10 @@ export default function FlagCicloTechnologiePage() {
             <div>
               <h3>Goed om te weten</h3>
               <p>
-                De vlag breekt niet af terwijl je hem gebruikt. Pas als het
-                doek na afdanking in contact komt met micro-organismen, in
-                grond, compost of water, start het proces. Aan de mast blijft
-                je vlag gewoon intact.
+                De vlag breekt niet af terwijl je hem gebruikt. Pas als het doek
+                na afdanking in contact komt met micro-organismen, in bodem,
+                zeewater of rioolslib, start het proces. Aan de mast blijft je
+                vlag gewoon intact.
               </p>
             </div>
           </div>
@@ -202,11 +238,13 @@ export default function FlagCicloTechnologiePage() {
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="personal">Levenscyclus</Badge>
-            <h2 id="cycle-title">Van wapperen tot volledig verdwijnen.</h2>
+            <h2 id="cycle-title">Van wapperen tot afgebroken.</h2>
             <p className="lead">
               Dezelfde kwaliteit en levensduur als traditionele polyester
-              vlaggen. Maar na afdanking lost 96% volledig op in 2 tot 3 jaar.
-              Zonder enige microplastics.
+              vlaggen. Het verschil zit in wat er na afdanking gebeurt: in{" "}
+              {HOOFD_OMGEVING} brak {HOOFD_PCT}% van het doek af in{" "}
+              {HOOFDTEST.duur} ({HOOFDTEST.norm}), tegenover {REFERENTIE_PCT}%
+              voor onbehandeld polyester.
             </p>
           </div>
           <div className={styles.steps}>
@@ -234,9 +272,13 @@ export default function FlagCicloTechnologiePage() {
               De CiCLO®-technologie is meer dan drie jaar getest door erkende
               laboratoria, in grond, zeewater, rioolwaterzuivering en op
               stortplaatsen. Volgens internationale ASTM-normen. Daarnaast is
-              het materiaal OEKO-TEX® ECO PASSPORT-gecertificeerd en voldoet
-              het aan REACH.
+              het materiaal OEKO-TEX® ECO PASSPORT-gecertificeerd en voldoet het
+              aan REACH.
             </p>
+            <p className="lead">{CICLO_DISCLAIMER}</p>
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
+            </Link>
             <Link href="/certificeringen" className={styles.arrowLink}>
               Bekijk alle certificeringen en testresultaten{" "}
               <ArrowRight size={16} />
@@ -257,11 +299,11 @@ export default function FlagCicloTechnologiePage() {
           <div className={styles.ctaBand}>
             <div className={styles.ctaInner}>
               <h2 id="cta-title" className={styles.ctaTitle}>
-                Klaar voor vlaggen die verdwijnen?
+                Klaar voor een duurzame vlag?
               </h2>
               <p className={styles.ctaSub}>
-                Dezelfde kwaliteit als traditioneel, maar CSRD-rapporteerbaar
-                en volledig afbreekbaar.
+                Dezelfde kwaliteit als traditioneel polyester, op biologisch
+                afbreekbaar doek met de testresultaten erbij.
               </p>
               <div className={styles.ctaActions}>
                 <Button

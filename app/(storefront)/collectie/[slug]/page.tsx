@@ -20,6 +20,12 @@ import {
 import { getMessages } from "@/lib/i18n";
 import { SHIPPING_FLAT } from "@/lib/pricing/local-catalog";
 import { SITE_URL, SITE_NAME, jsonLd } from "@/lib/seo";
+import {
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
 import { BEDRIJF } from "@/lib/bedrijf";
 import { ProcesStappen } from "@/components/ui";
 import { ProductConfigurator } from "./ProductConfigurator";
@@ -45,9 +51,9 @@ const accentClass: Record<CatalogProduct["accent"], string> = {
  * layout hangt er " | Duurzame Vlaggen" achter.
  */
 const SEO_TITLES: Record<string, string> = {
-  baniervlag: "Baniervlag bedrukken. 0% microplastic.",
+  baniervlag: "Baniervlag bedrukken op afbreekbaar doek",
   mastvlag: "Mastvlag bedrukken. Breekt af, valt op.",
-  beachvlag: "Beachvlag met je logo. Nergens plastic.",
+  beachvlag: "Beachvlag met je logo, afbreekbaar doek",
   gevelvlag: "Gevelvlag bedrukken. Aan de straat.",
   vlaggenmast: "Vlaggenmast kopen. Aluminium Easylift.",
 };
@@ -240,9 +246,19 @@ export default async function ProductPage({
             <div className={styles.specRow}>
               <dt>{dict.product.material}</dt>
               <dd>
-                {product.category === "hardware"
-                  ? "Hoogwaardig aluminium (Easylift)"
-                  : "Biologisch afbreekbaar doek"}
+                {product.category === "hardware" ? (
+                  "Hoogwaardig aluminium (Easylift)"
+                ) : (
+                  <>
+                    Biologisch afbreekbaar doek. In{" "}
+                    {HOOFDTEST.omgeving.toLowerCase()} brak{" "}
+                    {pctNl(HOOFDTEST.afbraakPct)}% af in {HOOFDTEST.duur} (
+                    {HOOFDTEST.norm}).{" "}
+                    <Link href={ONDERBOUWING_PAD}>
+                      {ONDERBOUWING_LINK_TEKST}
+                    </Link>
+                  </>
+                )}
               </dd>
             </div>
             {/* Verzendkosten hoorden pas in de winkelmand op te duiken; de

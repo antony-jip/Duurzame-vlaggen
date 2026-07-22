@@ -23,7 +23,7 @@ export function TrustStrip() {
       </li>
       <li>
         <Leaf size={16} aria-hidden="true" />
-        100% biologisch afbreekbaar doek
+        Biologisch afbreekbaar doek, ASTM-getest
       </li>
       <li>
         <Check size={16} aria-hidden="true" />
