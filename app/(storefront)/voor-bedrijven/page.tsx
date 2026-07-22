@@ -149,8 +149,9 @@ export default function VoorBedrijvenPage() {
             <Badge variant="primary">Waarom overstappen</Badge>
             <h2 id="why-title">Duurzaam zonder concessies.</h2>
             <p className="lead">
-              Bedrijven kiezen voor Flag-CiCLO® omdat het niets kost aan
-              kwaliteit en veel oplevert aan rapportagegemak.
+              Een bedrijfsvlag zegt in één oogopslag wie je bent. Bedrijven
+              kiezen voor Flag-CiCLO® omdat het niets kost aan kwaliteit en
+              veel oplevert aan rapportagegemak.
             </p>
           </div>
           <div className={`${styles.chipGrid} ${styles.chipGrid4}`}>

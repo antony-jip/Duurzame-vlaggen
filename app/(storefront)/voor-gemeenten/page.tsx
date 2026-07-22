@@ -96,10 +96,10 @@ export default function VoorGemeentenPage() {
               iedereen.
             </h1>
             <p className={styles.heroSub}>
-              Gemeentevlaggen zonder microplastics in de openbare ruimte. 96%
-              lost volledig op in 2 tot 3 jaar na afdanking. Transparant richting
-              inwoners, meetbaar voor MVI-rapportages en geschikt voor
-              aanbestedingen.
+              Vlaggen voor gemeenten, zonder microplastics in de openbare
+              ruimte. 96% lost volledig op in 2 tot 3 jaar na afdanking.
+              Transparant richting inwoners, meetbaar voor MVI-rapportages en
+              geschikt voor aanbestedingen.
             </p>
             <div className={styles.heroActions}>
               <Button

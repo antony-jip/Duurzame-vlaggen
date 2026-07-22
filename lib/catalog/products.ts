@@ -500,7 +500,7 @@ export const PRODUCTS: CatalogProduct[] = [
       },
     ],
     kortAntwoord: [
-      "Een vlaggenmast van aluminium is de basis onder je mastvlag. Wij leveren de Easylift in 6, 7 en 8 meter en in vier kleuren, inclusief montagebeugels en meer dan 10 jaar garantie. Hogere vlaggenmasten zijn op aanvraag mogelijk.",
+      "Een vlaggenmast van aluminium is de basis onder je mastvlag. Vlaggenmast, vlaggenstok en vlaggenpaal betekenen hetzelfde: de rechte paal waar je vlag aan hangt. Wij leveren de Easylift in 6, 7 en 8 meter en in vier kleuren, inclusief montagebeugels en meer dan 10 jaar garantie. Hogere vlaggenmasten zijn op aanvraag mogelijk.",
       "Wil je een vlaggenmast kopen, kies dan eerst de hoogte: die bepaalt welk vlagformaat erbij past. Bij 6 tot 7 meter hoort een mastvlag van 225 × 150 cm, bij 8 tot 9 meter 300 × 200 cm. Kom je er niet uit, stuur dan een foto van de plek en we adviseren vrijblijvend.",
     ],
     accent: "copper-rust",

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   // Zoekterm + belofte in de SERP: "Collectie" zegt Google en de zoeker niets.
   title: "Vlaggen bedrukken. 0% microplastic.",
   description:
-    "Bekijk onze biologisch afbreekbare vlaggen: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. CSRD-proof, zonder microplastics, geleverd in 5 werkdagen.",
+    "Duurzame vlaggen bedrukken en laten drukken: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. Biologisch afbreekbaar, CSRD-proof, geleverd in 5 werkdagen.",
 };
 
 const TRUST = [
@@ -115,6 +115,18 @@ export default async function CollectiePage() {
           </div>
         ))}
       </div>
+
+      {/* Interne links met de doelgroeptermen als ankertekst. Deze pagina had
+          geen enkele link naar de doelgroep- en materiaalpagina's; wie hier
+          landt met een specifieke behoefte moet in één klik verder kunnen. */}
+      <p className={`text-sm ${styles.doelgroepLinks}`}>
+        Meer weten over ons{" "}
+        <Link href="/materiaal">afbreekbaar polyester</Link>? Of vlaggen voor
+        een specifieke doelgroep? Bekijk onze{" "}
+        <Link href="/voor-bedrijven">bedrijfsvlaggen</Link>,{" "}
+        <Link href="/voor-gemeenten">vlaggen voor gemeenten</Link> of{" "}
+        <Link href="/voor-verenigingen">vlaggen voor je vereniging</Link>.
+      </p>
     </Container>
   );
 }

@@ -138,8 +138,9 @@ export default async function Home() {
             </h1>
             <p className={styles.heroSub}>
               Elke gewone vlag wappert zichzelf kapot tot duizenden stukjes
-              microplastic. De onze breekt volledig af. Gedrukt in Nederland.
-              Binnen 5 werkdagen op je mast.
+              microplastic. De onze breekt volledig af. Wij{" "}
+              <Link href="/collectie">bedrukken je vlaggen</Link> in Nederland
+              en leveren binnen 5 werkdagen op je mast.
             </p>
             <div className={styles.heroActions}>
               <Button

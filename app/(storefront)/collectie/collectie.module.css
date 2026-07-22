@@ -245,3 +245,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Doorverwijzing naar materiaal- en doelgroeppagina's, onder de trust-strip. */
+.doelgroepLinks {
+  margin-top: var(--space-lg);
+  text-align: center;
+}

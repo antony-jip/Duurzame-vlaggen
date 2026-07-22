@@ -63,10 +63,10 @@ export default function MateriaalPage() {
               <span className={styles.heroAccent}>vlaggendoek</span>.
             </h1>
             <p className={styles.heroSub}>
-              Ons Flag-CiCLO® materiaal lost volledig op in 2 tot 3 jaar. Geen
-              microplastics, geen schadelijke resten. Alleen CO₂, water en
-              biomassa. Dezelfde kwaliteit als traditioneel polyester, maar dan
-              klaar voor de CSRD.
+              Flag-CiCLO® is afbreekbaar polyester (PET) dat volledig oplost in
+              2 tot 3 jaar. Geen microplastics, geen schadelijke resten.
+              Alleen CO₂, water en biomassa. Dezelfde kwaliteit als
+              traditioneel polyester, maar dan klaar voor de CSRD.
             </p>
             <div className={styles.heroActions}>
               <Button
@@ -205,8 +205,8 @@ export default function MateriaalPage() {
             staande mast de <Link href="/collectie/mastvlag">mastvlag</Link>, aan
             de muur de <Link href="/collectie/gevelvlag">gevelvlag</Link> en voor
             evenementen de <Link href="/collectie/beachvlag">beachvlag</Link>.
-            Zoek je de mast erbij, kijk dan bij de aluminium{" "}
-            <Link href="/collectie/vlaggenmast">vlaggenmast</Link>.
+            Zoek je de mast erbij, kijk dan bij onze{" "}
+            <Link href="/collectie/vlaggenmast">duurzame vlaggenstokken</Link>.
           </p>
         </Container>
       </section>
