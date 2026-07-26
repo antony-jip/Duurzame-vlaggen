@@ -542,6 +542,28 @@
   }
 }
 
+/* ---- Doorverwijzingen onder de strip ----
+   Kleine regel, geen tweede navigatie: de vlaggen erboven blijven de hoofdzaak.
+   Alleen de links dragen gewicht, want dat zijn de zoekvragen waarmee mensen
+   hier binnenkomen. */
+.homeLinks {
+  margin: clamp(20px, 2.4vw, 28px) 0 0;
+  max-width: 78ch;
+  font-size: clamp(13px, 1.05vw, 15px);
+  line-height: 1.65;
+  color: var(--color-stone);
+}
+.homeLinks a {
+  font-weight: 700;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.homeLinks a:hover {
+  text-decoration-thickness: 2px;
+}
+
 /* ---- Achtergrond: het tech-grid uit de styleguide, langzaam drijvend ----
    Vijf verzadigde kaarten vragen om een rustige ondergrond, dus geen tweede
    effect dat om aandacht vecht: alleen het raster van de styleguide (60px,

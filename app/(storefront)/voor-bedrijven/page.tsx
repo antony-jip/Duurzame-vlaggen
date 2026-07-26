@@ -32,8 +32,11 @@ const REFERENTIE_PCT =
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-bedrijven" },
   title: "Biologisch afbreekbare bedrijfsvlaggen",
+  // De levertijd is 5 werkdagen vanaf de bestelling, overal op de site dezelfde.
+  // Hier stond "circa 3 werkdagen": dat was de productietijd ná goedkeuring van
+  // de drukproef, maar zo leest niemand een snippet.
   description:
-    "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Inkoopdossier inbegrepen, levering in circa 3 werkdagen.",
+    "Biologisch afbreekbare bedrijfsvlaggen met dezelfde kwaliteit als polyester. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Inkoopdossier inbegrepen, geleverd in 5 werkdagen.",
 };
 
 const WAVE_PATH =
@@ -152,7 +155,7 @@ export default function VoorBedrijvenPage() {
               </div>
             )}
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>~3 dagen</span>
+              <span className={styles.heroStatValue}>5 werkdagen</span>
               <span className={styles.heroStatLabel}>Levertijd</span>
             </div>
           </div>

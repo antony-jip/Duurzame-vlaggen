@@ -36,9 +36,11 @@ const BODEMTEST =
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-verenigingen" },
-  title: "Clubvlaggen in jullie kleuren. Duurzaam.",
+  // De pagina heette overal "clubvlaggen", maar er wordt gezocht op "vlaggen
+  // vereniging". Beide woorden staan er nu in; 40 tekens, dus binnen budget.
+  title: "Clubvlaggen voor verenigingen. Duurzaam.",
   description:
-    "Biologisch afbreekbare clubvlaggen voor sportverenigingen en clubs. Exacte clubkleuren, staffelkorting vanaf 10 stuks en doek dat minder microplastic achterlaat op het sportpark.",
+    "Duurzame vlaggen voor je vereniging: biologisch afbreekbare clubvlaggen in jullie exacte clubkleuren, met staffelkorting vanaf 10 stuks en doek dat minder microplastic achterlaat op het sportpark.",
 };
 
 const WAVE_PATH =
@@ -174,7 +176,7 @@ export default function VoorVerenigingenPage() {
               <span className={styles.heroStatLabel}>Kleurvast</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>~3 dagen</span>
+              <span className={styles.heroStatValue}>5 werkdagen</span>
               <span className={styles.heroStatLabel}>Levertijd</span>
             </div>
           </div>
@@ -225,7 +227,9 @@ export default function VoorVerenigingenPage() {
         <Container>
           <div className={styles.sectionHead}>
             <Badge variant="personal">Klaar voor het nieuwe seizoen</Badge>
-            <h2 id="products-title">Clubvlaggen in jullie kleuren.</h2>
+            {/* Was een letterlijke herhaling van de H1. Deze kop draagt nu de
+                term waarop verenigingen zoeken. */}
+            <h2 id="products-title">Vlaggen voor elke vereniging.</h2>
             <p className="lead">
               Van clubhuis tot wedstrijdveld: vlaggen die opvallen en die na het
               seizoen minder microplastic achterlaten.

@@ -11,6 +11,22 @@ import {
   Recycle,
   ShieldCheck,
 } from "@/components/ui";
+import {
+  AFBRAAK_TESTS,
+  HOOFDTEST,
+  ONDERBOUWING_LINK_TEKST,
+  ONDERBOUWING_PAD,
+  pctNl,
+} from "@/lib/claims/afbreekbaarheid";
+
+// De cijfers stonden hier hardgecodeerd ("3,8%", "94,2%", "ruim drie en een
+// half jaar"). Ze klopten, maar een tweede plek waar een claimcijfer staat is
+// precies hoe twee cijfers op den duur uiteenlopen. Zie AGENTS.md.
+const HOOFD_PCT = pctNl(HOOFDTEST.afbraakPct);
+const REFERENTIE_PCT =
+  HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
+const BODEMTEST = AFBRAAK_TESTS.find((t) => t.omgeving === "Bodem");
+const RIOOLTEST = AFBRAAK_TESTS.find((t) => t.omgeving === "Rioolslib");
 
 export const metadata: Metadata = {
   alternates: { canonical: "/csrd" },
@@ -257,7 +273,12 @@ export default function CsrdPage() {
               <h3>Vezels die blijven liggen</h3>
               <ul className={styles.compareList}>
                 <li>Gemaakt van plastic (polyester)</li>
-                <li>3,8% afgebroken in de zeewatertest (ASTM D6691)</li>
+                {REFERENTIE_PCT !== null && (
+                  <li>
+                    {REFERENTIE_PCT}% afgebroken in de zeewatertest (
+                    {HOOFDTEST.norm}), in {HOOFDTEST.duur}
+                  </li>
+                )}
                 <li>Geen afbraak gemeten in bodem en rioolslib</li>
                 <li>Geen testrapport of materiaalpaspoort</li>
                 <li>Herkomst van het doek meestal onbekend</li>
@@ -269,17 +290,24 @@ export default function CsrdPage() {
               </span>
               <h3>Vezels die afbreken</h3>
               <ul className={styles.compareList}>
-                <li>94,2% afgebroken in dezelfde zeewatertest</li>
-                <li>Testduur ruim drie en een half jaar (ASTM D6691)</li>
-                <li>Ook getest in bodem, stortplaats en rioolslib</li>
+                <li>{HOOFD_PCT}% afgebroken in dezelfde zeewatertest</li>
+                <li>
+                  Testduur {HOOFDTEST.duur} ({HOOFDTEST.norm})
+                </li>
+                <li>
+                  Ook getest in bodem, stortplaats en rioolslib
+                  {BODEMTEST && RIOOLTEST
+                    ? `: ${pctNl(BODEMTEST.afbraakPct)}% en ${pctNl(RIOOLTEST.afbraakPct)}%`
+                    : ""}
+                </li>
                 <li>Zelfde kwaliteit als traditioneel polyester</li>
                 <li>Materiaalpaspoort bij elke bestelling</li>
               </ul>
             </div>
           </div>
           <div className={styles.sectionHead}>
-            <Link href="/afbreekbaarheid" className={styles.arrowLink}>
-              Zo is dat gemeten <ArrowRight size={16} />
+            <Link href={ONDERBOUWING_PAD} className={styles.arrowLink}>
+              {ONDERBOUWING_LINK_TEKST} <ArrowRight size={16} />
             </Link>
           </div>
         </Container>

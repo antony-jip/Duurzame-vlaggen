@@ -199,9 +199,11 @@ const GROUPS: FaqGroup[] = [
         q: "Hoe snel heb ik mijn vlaggen?",
         a: (
           <p>
-            Standaard leveren we circa 3 werkdagen na goedkeuring van je
-            ontwerp. Bij complexe custom designs kan het iets langer duren.
-            Haast? Rush-orders zijn mogelijk. Neem even contact op.
+            Binnen 5 werkdagen na je bestelling, inclusief de kosteloze
+            digitale drukproef die je binnen één werkdag krijgt. Naar het
+            buitenland duurt het ongeveer anderhalve week. Bij complexe custom
+            designs kan het iets langer duren. Haast? Rush-orders zijn mogelijk.
+            Neem even contact op.
           </p>
         ),
       },

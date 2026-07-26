@@ -407,7 +407,7 @@ export const PRODUCTS: CatalogProduct[] = [
       },
     ],
     kortAntwoord: [
-      "Een beachvlag, ook wel beachflag genoemd, is een lichte vlag aan een flexibele stok die je zonder mast neerzet. Ideaal voor evenementen, beurzen, sportvelden en acties bij de winkel. Je kiest tussen het gebogen straightflag-silhouet (80 × 220 tot 90 × 430 cm) en de rechthoekige squareflag (75 × 200 tot 75 × 400 cm), inclusief stok en draagtas.",
+      "Een beachvlag, ook wel beachflag genoemd, is een lichte vlag aan een flexibele stok die je zonder mast neerzet. Beachvlaggen en beachflags zijn hetzelfde product: de eerste spelling is Nederlands, de tweede komt uit de branche. Ideaal voor evenementen, beurzen, sportvelden en acties bij de winkel. Je kiest tussen het gebogen straightflag-silhouet (80 × 220 tot 90 × 430 cm) en de rechthoekige squareflag (75 × 200 tot 75 × 400 cm), inclusief stok en draagtas.",
       "Beachvlaggen zet je vaak tijdelijk in, en juist dan telt wat er daarna mee gebeurt. Het doek is 100% polyester powered by CiCLO®. Onafhankelijke ASTM-tests laten 91% biologische afbraak in grond zien en 94% in zeewater, terwijl vergelijkbaar onbehandeld polyester op 0% en 5% blijft steken.",
     ],
     accent: "terracotta",
@@ -540,6 +540,7 @@ export const PRODUCTS: CatalogProduct[] = [
     ],
     kortAntwoord: [
       "Een vlaggenmast van aluminium is de basis onder je mastvlag. Vlaggenmast, vlaggenstok en vlaggenpaal betekenen hetzelfde: de rechte paal waar je vlag aan hangt. Wij leveren de Easylift in 6, 7 en 8 meter en in vier kleuren, inclusief montagebeugels en meer dan 10 jaar garantie. Hogere vlaggenmasten zijn op aanvraag mogelijk.",
+      "Zoek je duurzame vlaggenstokken, dan is dit wat wij daaronder verstaan: niet afbreekbaar zoals het doek, maar gebouwd om te blijven staan. Dikwandig aluminium, slijtvaste geleidingsringen, een hijslijn met stalen kern, drie jaar garantie op de bewegende delen en tien jaar op het mastprofiel. Een mast die je één keer plaatst, hoef je niet elke paar jaar te vervangen.",
       "Wil je een vlaggenmast kopen, kies dan eerst de hoogte: die bepaalt welk vlagformaat erbij past. Bij 6 tot 7 meter hoort een mastvlag van 225 × 150 cm, bij 8 tot 9 meter 300 × 200 cm. Kom je er niet uit, stuur dan een foto van de plek en we adviseren vrijblijvend.",
     ],
     accent: "copper-rust",

@@ -209,7 +209,10 @@ export default async function Home() {
         <Container className={styles.shopInner}>
           <div className={styles.sectionHead}>
             <Badge variant="success">Bestel direct online</Badge>
-            <h2 id="types-title">Kies je vlag.</h2>
+            {/* "Kies je vlag." stond hier én als H1 op /collectie. Twee pagina's
+                met dezelfde kop concurreren om dezelfde zoekvraag; deze kop
+                draagt nu de term waarop de homepage staat. */}
+            <h2 id="types-title">Kies je duurzame vlag.</h2>
             <p className="lead">
               Samenstellen, ontwerp uploaden, afrekenen. Binnen 5 werkdagen aan
               de mast.
@@ -267,6 +270,32 @@ export default async function Home() {
               </li>
             ))}
           </ul>
+
+          {/* De homepage rankt op termen die eigenlijk bij een dieper liggende
+              pagina horen ("duurzame vlaggen bedrukken", "bedrijfsvlag",
+              "pet vlaggen", "duurzame vlaggenstokken") en linkte nergens naar
+              die pagina's. Wie hier landt met zo'n vraag moest terug naar de
+              navigatie. Dit blok stuurt hem door, met de term als ankertekst.
+              De homepage zelf blijft ongemoeid: er gaat niets af, er komt
+              alleen een route bij. */}
+          <p className={styles.homeLinks}>
+            Zoek je iets specifieks?{" "}
+            <Link href="/collectie">Duurzame vlaggen bedrukken</Link> doen we
+            voor elke situatie:{" "}
+            <Link href="/voor-bedrijven">bedrijfsvlaggen</Link> aan het pand,{" "}
+            <Link href="/voor-gemeenten">vlaggen voor gemeenten</Link> in de
+            openbare ruimte en{" "}
+            <Link href="/voor-verenigingen">clubvlaggen voor verenigingen</Link>
+            . Hoort er een mast bij, kijk dan bij onze{" "}
+            <Link href="/collectie/vlaggenmast">duurzame vlaggenstokken</Link>.
+            Wil je eerst het doek doorgronden: zo werkt{" "}
+            <Link href="/materiaal">afbreekbaar polyester</Link>, en dit is wat
+            het doet tegen{" "}
+            <Link href="/kennisbank/microplastics">
+              microplastics uit vlaggen
+            </Link>
+            .
+          </p>
         </Container>
       </section>
 

@@ -196,7 +196,7 @@ export default function VlaggenKiezenPage() {
               <span className={styles.heroStatLabel}>Masthoogtes</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>~3 dagen</span>
+              <span className={styles.heroStatValue}>5 werkdagen</span>
               <span className={styles.heroStatLabel}>Levertijd</span>
             </div>
           </div>
@@ -366,7 +366,7 @@ export default function VlaggenKiezenPage() {
                 Je weet nu welk formaat bij je past.
               </h2>
               <p className={styles.ctaSub}>
-                Gevonden wat je zocht? We leveren binnen circa 3 dagen. Twijfel
+                Gevonden wat je zocht? We leveren binnen 5 werkdagen. Twijfel
                 je nog? Neem gerust contact op. We denken graag met je mee.
               </p>
               <div className={styles.ctaActions}>

@@ -141,8 +141,8 @@ export default function KennisbankPage() {
               <span className={styles.heroStatLabel}>ASTM-testnorm</span>
             </div>
             <div className={styles.heroStat}>
-              <span className={styles.heroStatValue}>~3</span>
-              <span className={styles.heroStatLabel}>Dagen levering</span>
+              <span className={styles.heroStatValue}>5</span>
+              <span className={styles.heroStatLabel}>Werkdagen levering</span>
             </div>
           </div>
         </Container>

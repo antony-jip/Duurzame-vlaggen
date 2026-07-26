@@ -29,7 +29,9 @@ const REFERENTIE_PCT =
   HOOFDTEST.referentiePct === null ? null : pctNl(HOOFDTEST.referentiePct);
 
 const PAD = "/kennisbank/microplastics";
-const TITEL = "Microplastics uit vlaggen: wat helpt echt?";
+// 37 tekens: met de suffix van de root-layout erachter past hij nog heel in de
+// resultaten. De vorige versie ("… wat helpt echt?") liep er net overheen.
+const TITEL = "Microplastics uit vlaggen: wat helpt?";
 const OMSCHRIJVING =
   "Waarom polyester vlaggen een bron van microplastics zijn. En eerlijk: ook een biologisch afbreekbare vlag geeft vezels af, maar die vezels breken wel af.";
 
@@ -192,8 +194,11 @@ export default function MicroplasticsPage() {
             <Link href="/kennisbank" className={styles.crumb}>
               Kennisbank · Impact
             </Link>
+            {/* De kop noemde vlaggen niet, terwijl dat precies de combinatie is
+                waarop deze pagina moet ranken ("vlaggen microplastics"). De
+                artikeltitel doet het wel, de H1 deed het niet. */}
             <h1 id="hero-title" className={styles.heroTitle}>
-              Microplastics. De{" "}
+              Microplastics uit vlaggen. De{" "}
               <span className={styles.heroAccent}>stille vervuiler</span>.
             </h1>
             <p className={styles.heroSub}>

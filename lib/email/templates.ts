@@ -60,7 +60,7 @@ function inProductie(order: OrderRow): MailInhoud {
         ) +
         blok(
           `<strong>Ordernummer</strong><br/>${order.order_number}<br/><br/>` +
-            `<strong>Levering</strong><br/>Doorgaans binnen 3 werkdagen na productie.`,
+            `<strong>Levering</strong><br/>Doorgaans binnen 5 werkdagen na je bestelling.`,
         ) +
         fijn(
           "Klopt er iets niet? Reageer op deze mail, dan kijken we er direct naar.",

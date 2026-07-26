@@ -25,9 +25,13 @@ import {
 export const metadata: Metadata = {
   alternates: { canonical: "/collectie" },
   // Zoekterm + belofte in de SERP: "Collectie" zegt Google en de zoeker niets.
-  title: "Vlaggen bedrukken op afbreekbaar doek",
+  // "Duurzame" stond wel in de omschrijving maar niet in de titel, terwijl dit
+  // de pagina is die "duurzame vlaggen (be)drukken" hoort te bedienen. Beide
+  // termen zitten er nu in, en "vlaggen bedrukken" staat er nog steeds letterlijk
+  // in. 34 tekens, dus binnen het budget dat de suffix overlaat.
+  title: "Duurzame vlaggen bedrukken op maat",
   description:
-    "Duurzame vlaggen bedrukken op biologisch afbreekbaar doek: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. Met materiaalpaspoort, geleverd in 5 werkdagen.",
+    "Duurzame vlaggen bedrukken of laten maken op biologisch afbreekbaar doek: baniervlag, mastvlag, beachvlag, gevelvlag en aluminium vlaggenmast. Met materiaalpaspoort, geleverd in 5 werkdagen.",
 };
 
 const TRUST = [
@@ -60,12 +64,20 @@ export default async function CollectiePage() {
     >
       <div className={styles.head}>
         <Badge variant="success">{dict.nav.collection}</Badge>
-        <h1 id="collectie-title">Kies je vlag.</h1>
+        {/* "Kies je vlag." stond hier als H1 en op de homepage als H2, en
+            benoemde niet waar deze pagina over gaat. Dit is de pagina waar je
+            vlaggen laat bedrukken, dus dat staat er nu. */}
+        <h1 id="collectie-title">Duurzame vlaggen bedrukken.</h1>
         <p className="lead">
           Elke vlag laat vezels los in wind en regen. Bij ons breken die vezels
-          af in plaats van te blijven liggen. Geprint op biologisch afbreekbaar
-          doek, op maat gemaakt. Kies je model, stel het samen en reken direct
-          online af.
+          af in plaats van te blijven liggen. Wij drukken je ontwerp op
+          biologisch afbreekbaar doek, op maat gemaakt. Kies je model, stel het
+          samen en reken direct online af.
+        </p>
+        <p className="lead">
+          Liever vlaggen laten maken zonder zelf te configureren? Stuur je logo
+          mee met een <Link href="/contact">offerteaanvraag</Link>, dan rekenen
+          wij het formaat en de afwerking voor je uit.
         </p>
         <p className="lead">
           <Link href={ONDERBOUWING_PAD}>{ONDERBOUWING_LINK_TEKST}</Link>

@@ -75,7 +75,7 @@ const SOLUTIONS = [
   {
     icon: <Truck size={24} />,
     title: "Snel geregeld",
-    body: "Levering in circa 3 werkdagen. Zelfde kwaliteit als gewone vlaggen, met de onderbouwing er meteen bij.",
+    body: "Levering binnen 5 werkdagen. Zelfde kwaliteit als gewone vlaggen, met de onderbouwing er meteen bij.",
   },
 ];
 
@@ -130,7 +130,7 @@ const FAQ = [
   },
   {
     q: "Hoe snel kan ik mijn vlaggen krijgen?",
-    a: "Standaard circa 3 werkdagen na goedkeuring van je ontwerp. Haast? Rush-orders zijn mogelijk, neem even contact op.",
+    a: "Binnen 5 werkdagen na je bestelling, inclusief de kosteloze digitale drukproef die je binnen één werkdag krijgt. Haast? Rush-orders zijn mogelijk, neem even contact op.",
   },
 ];
 

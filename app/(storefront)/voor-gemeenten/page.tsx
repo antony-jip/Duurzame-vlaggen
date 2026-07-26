@@ -31,9 +31,14 @@ const REFERENTIE_PCT =
 
 export const metadata: Metadata = {
   alternates: { canonical: "/voor-gemeenten" },
-  title: "Duurzame, biologisch afbreekbare gemeentevlaggen",
+  // Was "Duurzame, biologisch afbreekbare gemeentevlaggen": 48 tekens, en met
+  // de suffix van de root-layout erachter (19) werd dat in de resultaten
+  // afgekapt. Bovendien zoekt een gemeente op "vlaggen voor gemeenten", niet op
+  // "gemeentevlaggen" (dat is de vlag mét het gemeentewapen erop, een andere
+  // vraag). 31 tekens, met "duurzame" er nog steeds in.
+  title: "Duurzame vlaggen voor gemeenten",
   description:
-    "Gemeentevlaggen die minder microplastic achterlaten. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Klaar voor MVI en aanbestedingen.",
+    "Vlaggen voor gemeenten die minder microplastic achterlaten in de openbare ruimte. In zeewater brak 94,2% van het doek af in ruim drie en een half jaar (ASTM D6691). Klaar voor MVI en aanbestedingen.",
 };
 
 const WAVE_PATH =
@@ -58,7 +63,7 @@ const REASONS = [
   {
     icon: <Recycle size={24} />,
     title: "Vergelijkbare prijs",
-    body: "Slechts enkele euro's meer per vlag dan traditioneel polyester. Ook bij volume snel geleverd, in circa 3 werkdagen.",
+    body: "Slechts enkele euro's meer per vlag dan traditioneel polyester. Ook bij volume snel geleverd, binnen 5 werkdagen.",
   },
 ];
 
@@ -103,10 +108,12 @@ export default function VoorGemeentenPage() {
             >
               Voor gemeenten
             </Badge>
+            {/* De kop zei niet waar de pagina over ging: geen "vlaggen", geen
+                "gemeenten". Wie op "vlaggen voor gemeenten" binnenkomt, landde
+                op een regel die overal vandaan had kunnen komen. */}
             <h1 id="hero-title" className={styles.heroTitle}>
-              Geef het goede voorbeeld,{" "}
-              <span className={styles.heroAccent}>zichtbaar</span> voor
-              iedereen.
+              Vlaggen voor gemeenten die het goede voorbeeld{" "}
+              <span className={styles.heroAccent}>zichtbaar</span> maken.
             </h1>
             <p className={styles.heroSub}>
               Vlaggen voor gemeenten: duurzaam en biologisch afbreekbaar, en ze

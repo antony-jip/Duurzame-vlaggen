@@ -58,6 +58,33 @@ const SEO_TITLES: Record<string, string> = {
   vlaggenmast: "Vlaggenmast kopen. Aluminium Easylift.",
 };
 
+/**
+ * SERP-omschrijvingen per product.
+ *
+ * Hier stond `product.description.slice(0, 158)`. Die intro is geschreven als
+ * openingszin van de pagina, niet als snippet: hij begint met een sfeerregel
+ * ("Hijs 'm aan je mast"), noemt het producttype vaak niet één keer, en de
+ * afkapping op 158 tekens sneed midden in een woord of midden in een
+ * afbraakpercentage. Een half cijfer in een snippet is geen schoonheidsfoutje
+ * maar een kale milieuclaim.
+ *
+ * Deze regels zijn hele zinnen, noemen het product in enkelvoud én meervoud
+ * (dat zijn twee aparte zoekvragen) en geven de maten mee, want dat is waar de
+ * koper op klikt. Ontbreekt een slug, dan valt hij terug op de oude afkapping.
+ */
+const SEO_DESCRIPTIONS: Record<string, string> = {
+  baniervlag:
+    "Baniervlag bedrukken in elf maten, van 100 × 250 tot 150 × 600 cm. Baniervlaggen voor entree, beurs en langs de weg, op biologisch afbreekbaar doek.",
+  mastvlag:
+    "Mastvlag bedrukken in vijf maten, van 150 × 100 tot 350 × 225 cm. Mastvlaggen met band en koord, op biologisch afbreekbaar doek. Geleverd in 5 werkdagen.",
+  beachvlag:
+    "Beachvlag bedrukken met je logo, straight of square, inclusief stok en draagtas. Beachflags op biologisch afbreekbaar doek, geleverd in 5 werkdagen.",
+  gevelvlag:
+    "Gevelvlag bedrukken in drie maten: 100 × 70, 150 × 100 en 225 × 150 cm. Gevelvlaggen met band, koord en lus, op biologisch afbreekbaar doek.",
+  vlaggenmast:
+    "Vlaggenmast kopen: de aluminium Easylift in 6, 7 en 8 meter, in vier kleuren. Vlaggenmasten inclusief montagebeugels en 10 jaar garantie op het mastprofiel.",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -67,9 +94,8 @@ export async function generateMetadata({
   const product = getProduct(slug);
   if (!product) return { title: "Product niet gevonden" };
   const canonical = `/collectie/${product.slug}`;
-  // Beschrijving = productintro (150-160 tekens rijk aan kernwoorden) i.p.v. de
-  // korte tagline, zodat de snippet de vlag echt verkoopt.
-  const description = product.description.slice(0, 158);
+  const description =
+    SEO_DESCRIPTIONS[product.slug] ?? product.description.slice(0, 158);
   return {
     title: SEO_TITLES[product.slug] ?? product.name,
     description,
@@ -201,9 +227,14 @@ export default async function ProductPage({
             </ul>
           ) : (
             <ul className={styles.trustRow}>
+              {/* Stond hier als "Breekt volledig af". Dat is dezelfde claim als
+                  "100% biologisch afbreekbaar", alleen in woorden: de hoogste
+                  gemeten uitkomst is 94,2% in zeewater. De onderbouwing staat
+                  een paar regels lager bij het materiaal, met de link naar
+                  /afbreekbaarheid. */}
               <li>
                 <Leaf size={16} aria-hidden="true" />
-                Breekt volledig af
+                Biologisch afbreekbaar doek
               </li>
               <li>
                 <Recycle size={16} aria-hidden="true" />

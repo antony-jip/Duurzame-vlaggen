@@ -19,8 +19,11 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/materiaal" },
-  title: "Biologisch afbreekbaar vlaggendoek",
-  description: `Flag-CiCLO® is biologisch afbreekbaar polyester. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}). Dezelfde kwaliteit als gewoon polyester.`,
+  // "Vlaggendoek" zei niet waar het doek van gemaakt is, terwijl dit de pagina
+  // is die "afbreekbaar polyester" en "pet vlaggen" hoort te bedienen. Beide
+  // termen zitten nu in de titel; "biologisch afbreekbaar" blijft staan.
+  title: "Biologisch afbreekbaar polyester (PET)",
+  description: `Flag-CiCLO® is biologisch afbreekbaar polyester: PET met een additief dat de vezel voedsel maakt voor micro-organismen. In zeewater brak ${pctNl(HOOFDTEST.afbraakPct)}% van het doek af in ${HOOFDTEST.duur} (${HOOFDTEST.norm}).`,
 };
 
 const WAVE_PATH =
@@ -223,6 +226,37 @@ export default function MateriaalPage() {
                 </li>
                 <li>Zelfde kwaliteit, print en levensduur als polyester</li>
               </ul>
+            </div>
+          </div>
+          {/* PET met zoveel woorden benoemd. De pagina zei wel "afbreekbaar
+              polyester" maar legde nergens uit dat polyester en PET hetzelfde
+              zijn, terwijl inkopers in die term zoeken ("pet vlaggen",
+              "afbreekbaar polyester") en de vergelijking met gerecycled rPET de
+              vraag is die daarachter zit. */}
+          <div className={styles.note}>
+            <span className={styles.noteIcon} aria-hidden="true">
+              <Leaf size={20} />
+            </span>
+            <div>
+              <h3>PET, polyester, rPET: wat is het verschil?</h3>
+              <p>
+                Polyester en PET zijn hetzelfde materiaal, polyethyleentereftalaat,
+                en dus is elke polyester vlag een PET-vlag. Bij
+                gerecycled polyester (rPET) komt dat PET uit oude flessen. Dat
+                scheelt nieuwe grondstof, maar aan het einde van de rit is het
+                nog steeds PET dat blijft liggen: recyclen verandert niets aan
+                de afbreekbaarheid. Flag-CiCLO® pakt juist dat einde aan. Het is
+                gewoon PET, met een additief dat de vezel herkenbaar maakt als
+                voedsel voor micro-organismen, waardoor afgegeven vezels afbreken
+                in plaats van te blijven liggen.
+              </p>
+              <Link
+                href="/kennisbank/rpet-ciclo-polyester"
+                className={styles.arrowLink}
+              >
+                rPET, Flag-CiCLO of gewoon polyester vergeleken{" "}
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </div>
           {/* Verdieping op ons eigen kennisdomein: wie het naadje van de kous
