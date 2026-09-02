@@ -2,7 +2,8 @@
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 180px;
+  min-width: 150px;
+  max-width: 100%;
   padding: var(--space-md) var(--space-md);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
@@ -40,7 +41,9 @@
 .value {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 28px;
+  /* "5 werkdagen" liep uit de tegel: de waarde mag krimpen en afbreken. */
+  font-size: clamp(20px, 2vw, 28px);
+  overflow-wrap: anywhere;
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--color-forest);

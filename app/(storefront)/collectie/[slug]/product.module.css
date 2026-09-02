@@ -827,6 +827,29 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* Telefoon: één kolom voor de optielijst, en géén min-content dat de rij
+   breder duwt dan het scherm. De auto-fit-grid met full-span rijen rekende
+   op 390px een rij van 404px uit, en dan scrolt de hele pagina zijwaarts. */
+@media (max-width: 560px) {
+  .optionList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .optionList .optionRow,
+  .optionRow,
+  .optionGrid,
+  .mastToggle {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .optionGrid,
+  .optionGrid[data-cols="3"],
+  .optionGrid[data-dense="true"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .optionCard {
+    min-width: 0;
+  }
+}
 .optionCard {
   position: relative;
   display: flex;
@@ -1346,7 +1369,9 @@
   font-weight: 700;
   color: var(--color-stone);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  /* Geen nowrap: "+ € 40,00 per stuk" duwde op een telefoon de kaart (en
+     daarmee de hele pagina) breder dan het scherm. */
+  text-align: right;
 }
 
 /* ---- Stap 3: aantal + bulkkorting ---- */
@@ -2103,11 +2128,33 @@
 
 @media (max-width: 860px) {
   .layout {
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr) en niet 1fr: die laatste is minmax(auto, 1fr), en dan
+       duwt de min-content van de galerij (vier thumbnails naast elkaar) de
+       kolom breder dan het scherm. Op een telefoon van 390px werd de pagina
+       452px en scrolde hij zijwaarts. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-xl);
   }
   .media {
     position: static;
+    min-width: 0;
+  }
+  /* Kleiner hoofdbeeld en de thumbnails als strook: zo staan naam en prijs
+     binnen de eerste schermhoogte in plaats van pas na een vierkant beeld
+     én twee rijen thumbnails. */
+  .visual {
+    aspect-ratio: 4 / 3;
+  }
+  .thumbs {
+    display: flex;
+    gap: var(--space-xs);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .thumb {
+    flex: 0 0 64px;
+    width: 64px;
   }
   /* Pin de buy-bar onderaan de viewport op mobiel. */
   .buyBar {
@@ -2456,4 +2503,19 @@
 }
 .landenTip a:hover {
   color: var(--color-terracotta);
+}
+
+/* Specificaties op een telefoon: label boven waarde, links uitgelijnd. De
+   rechts uitgelijnde waarden braken op 390px in vier rafelige regels. */
+@media (max-width: 560px) {
+  .specRow {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .specRow dd {
+    text-align: left;
+  }
+  .specs {
+    gap: var(--space-sm);
+  }
 }

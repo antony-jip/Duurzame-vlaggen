@@ -233,15 +233,28 @@
   }
 }
 
+/* De afzender onder de knoppen: klein, gedempt, geen link. */
+.heroTrust {
+  margin-top: var(--space-sm);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.62);
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 260ms both;
+}
 @media (max-width: 900px) {
   .heroInner {
     grid-template-columns: 1fr;
     min-height: 0;
   }
+  /* Op een telefoon eerst de kop en de knop, dan pas de foto. Andersom
+     stond de foto schermvullend bovenaan en zat "Bestel direct" pas op
+     twee schermhoogtes. De foto blijft, maar kleiner en ónder de belofte. */
   .heroBlob {
-    order: -1;
     justify-self: center;
-    max-width: 480px;
+    max-width: 420px;
+    max-height: 360px;
+  }
+  .heroCopy {
+    gap: var(--space-sm);
   }
 }
 @media (max-width: 560px) {
@@ -630,6 +643,7 @@
 }
 
 .showcaseCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -719,76 +733,6 @@
   transform: scale(1.05) rotate(-1.5deg);
 }
 
-/* Merkeigen pictogram-tegels: groot vlagtype-icoon in de accentkleur op een
-   witte wapper-vorm; wappert bij hover. */
-.showcaseIconWrap {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  margin: 14px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.72);
-  border-radius: 52% 48% 56% 44% / 48% 52% 48% 52%;
-}
-.showcaseIconWrap svg {
-  stroke-width: 1.4;
-  transform-origin: 30% 85%;
-  transition: transform var(--duration-base) var(--ease-out);
-  /* De vlaggen wapperen zachtjes door — het merk leeft. */
-  animation: flag-sway 5.5s var(--ease-in-out) infinite;
-}
-.showcaseCard:nth-child(2) .showcaseIconWrap svg {
-  animation-delay: -1.1s;
-}
-.showcaseCard:nth-child(3) .showcaseIconWrap svg {
-  animation-delay: -2.2s;
-}
-.showcaseCard:nth-child(4) .showcaseIconWrap svg {
-  animation-delay: -3.3s;
-}
-.showcaseCard:nth-child(5) .showcaseIconWrap svg {
-  animation-delay: -4.4s;
-}
-@keyframes flag-sway {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(-2.5deg);
-  }
-}
-.showcaseCard[data-accent="forest"] .showcaseIconWrap svg {
-  color: var(--color-forest);
-}
-.showcaseCard[data-accent="sage-blue"] .showcaseIconWrap svg {
-  color: var(--color-sage-blue);
-}
-.showcaseCard[data-accent="terracotta"] .showcaseIconWrap svg {
-  color: var(--color-terracotta);
-}
-.showcaseCard[data-accent="sage-purple"] .showcaseIconWrap svg {
-  color: var(--color-sage-purple);
-}
-.showcaseCard[data-accent="copper-rust"] .showcaseIconWrap svg {
-  color: var(--color-copper-rust);
-}
-@keyframes flag-wiggle {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  30% {
-    transform: rotate(-4deg);
-  }
-  65% {
-    transform: rotate(2.5deg);
-  }
-}
-.showcaseCard:hover .showcaseIconWrap svg {
-  animation: flag-wiggle 0.9s var(--ease-in-out);
-}
-
 /* Volle merkkleur-vlakken per product — bold disruptor, geen fluistertint.
  *
  * De accenten zijn middentonen: witte tekst van 14px haalde er 2,9-3,3 contrast
@@ -847,10 +791,13 @@
   top: var(--space-sm);
   left: var(--space-sm);
 }
+/* Label linksboven op de kaart, buiten de wapper-vorm: binnen de vorm werd
+   "Populair" door de ronding afgesneden. */
 .showcaseTag {
   position: absolute;
-  top: var(--space-sm);
-  left: var(--space-sm);
+  top: 22px;
+  left: 22px;
+  z-index: 1;
   background: rgba(255, 255, 255, 0.92);
 }
 .showcaseBody {
@@ -967,7 +914,12 @@
 .doekBeeld img {
   display: block;
   width: 100%;
+  /* De weeffoto is 16:9; plafonneer de hoogte zodat hij op desktop een band
+     blijft en geen schermvullende plaat. Het beeld snijdt boven en onder af
+     (object-fit), de figure blijft even hoog als het beeld. */
   height: auto;
+  max-height: min(62vh, 640px);
+  object-fit: cover;
 }
 /* Kruis en vink, midden op de plaat, elk op zijn eigen vlag. Percentages omdat
    de plaat meeschaalt: de posities zijn afgelezen op de vlaggen zelf. */

@@ -15,15 +15,9 @@ import {
   NoEntry,
   Check,
   Close,
-  FlagBanier,
-  FlagMast,
-  FlagBeach,
-  FlagGevel,
-  FlagPole,
   Price,
 } from "@/components/ui";
-import type { ComponentType } from "react";
-import { WindSpecks, DecayCounter, WapperFilter } from "./home-fx";
+import { WapperFilter } from "./home-fx";
 import { BRAND_IMAGES, getAllProducts } from "@/lib/catalog/products";
 import { getMessages } from "@/lib/i18n";
 import {
@@ -57,16 +51,6 @@ const USPS = [
   { icon: <ShieldCheck size={20} />, title: "Inkoopdossier bij elke order" },
   { icon: <Truck size={20} />, title: "Binnen 5 werkdagen geleverd" },
 ];
-
-/* Vlagtype-pictogrammen voor de collectie-tegels — merkeigen, rustiger dan
-   vijf foto's naast elkaar. */
-const FLAG_ICONS: Record<string, ComponentType<{ size?: number }>> = {
-  baniervlag: FlagBanier,
-  mastvlag: FlagMast,
-  beachvlag: FlagBeach,
-  gevelvlag: FlagGevel,
-  vlaggenmast: FlagPole,
-};
 
 /* De levenscyclus, als beeld in plaats van als uitleg: dezelfde vlag, vier keer.
    Strak en nieuw, dan rafelig, dan een snipper in het gras, en dan alleen nog
@@ -137,11 +121,6 @@ export default async function Home() {
           wapper-vorm (ons water-druppel-moment: een vlag ís een golf). */}
       <section className={styles.hero} aria-labelledby="hero-title">
         <WapperFilter />
-        {/* Snippers die met je muis mee waaien — de wind op de pagina. */}
-        <WindSpecks
-          className={styles.heroParticles}
-          speckClassName={styles.speck}
-        />
         <Container className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <h1 id="hero-title" className={styles.heroTitle}>
@@ -176,6 +155,12 @@ export default async function Home() {
                 Of vraag een offerte aan
               </Link>
             </div>
+            {/* Wie erachter zit. Een jong merk zonder reviews leent hier het
+                vertrouwen van het familiebedrijf dat al sinds 1983 gevels en
+                wagens voorziet. */}
+            <p className={styles.heroTrust}>
+              Onderdeel van Sign Company, familiebedrijf in signing sinds 1983.
+            </p>
           </div>
 
           <div className={styles.heroBlob}>
@@ -223,11 +208,11 @@ export default async function Home() {
           </div>
 
           <div className={styles.showcase}>
-            {/* Alle vijf modellen als gelijke merk-tegels: pictogram in de
-                accentkleur op een wapper-vorm. */}
+            {/* Alle vijf modellen als gelijke tegels, met de echte productfoto
+                in de wapper-vorm. Hier stonden pictogrammen; een foto van de
+                vlag aan een echte gevel verkoopt beter dan een icoon. */}
             <div className={styles.showcaseGrid}>
               {products.map((product) => {
-                const FlagIcon = FLAG_ICONS[product.slug] ?? FlagMast;
                 return (
                   <Link
                     key={product.slug}
@@ -235,14 +220,20 @@ export default async function Home() {
                     className={styles.showcaseCard}
                     data-accent={product.accent}
                   >
-                    <div className={styles.showcaseIconWrap}>
-                      <FlagIcon size={116} aria-hidden="true" />
-                      {product.badge && (
-                        <Badge variant="outline" className={styles.showcaseTag}>
-                          {product.badge}
-                        </Badge>
-                      )}
+                    <div className={styles.showcaseMedia}>
+                      <Image
+                        src={product.heroImage.src}
+                        alt={product.heroImage.alt}
+                        fill
+                        sizes="(max-width: 480px) 90vw, (max-width: 760px) 45vw, (max-width: 1180px) 30vw, 18vw"
+                        className={styles.showcasePhoto}
+                      />
                     </div>
+                    {product.badge && (
+                      <Badge variant="outline" className={styles.showcaseTag}>
+                        {product.badge}
+                      </Badge>
+                    )}
                     <div className={styles.showcaseBody}>
                       <h3>{product.name}</h3>
                       <p>{product.tagline}</p>
@@ -319,10 +310,6 @@ export default async function Home() {
             fill="currentColor"
           />
         </svg>
-        <WindSpecks
-          className={styles.storyParticles}
-          speckClassName={styles.speck}
-        />
         <Container className={styles.storyInner}>
           <p className={styles.storyKicker} id="story-title">
             De vlag die er nu hangt
@@ -387,18 +374,11 @@ export default async function Home() {
             ))}
           </ol>
 
-          {/* Onderaan, als onderbouwing bij het beeld. De teller staat bewust
-              níét tussen de twee koppen: daar brak hij de dreun. Hier staat hij
-              naast zijn eigen voetnoot, waar de asterisk ook thuishoort. */}
-          <p className={styles.storyCounter}>
-            Sinds je deze pagina opende:{" "}
-            <DecayCounter className={styles.storyCounterNum} /> microplastic de
-            natuur in.<span className={styles.storyFootnote}>*</span>
-          </p>
-          <p className={styles.storyFootnoteText}>
-            * Illustratieve schatting voor polyester bedrijfsvlaggen in
-            Nederland samen.
-          </p>
+          {/* Hier stond een live teller ("sinds je deze pagina opende: 1,7 mg
+              microplastic") met een voetnoot dat het een illustratieve
+              schatting was. Een cijfer dat je zelf niet hard kunt maken hoort
+              niet naast een meting die je wél hard maakt; de vier foto's
+              zeggen het al. */}
         </Container>
         {/* Geen golf meer onderaan: hieronder komt geen licht blok maar direct
             de plaat. De golf die dit blok de plaat in laat lopen zit in de
@@ -417,14 +397,16 @@ export default async function Home() {
             direct onder het missieblok: geen kop, geen marge, geen kaartje.
             Daarna landt "Een petfles aan je mast" als onderschrift. */}
         <figure className={styles.doekBeeld}>
+          {/* Hier stond een gegenereerde illustratie (petfles, wolk, plantje
+              met pijlen). Die zag eruit als een illustratie, en dat ondermijnt
+              precies de sectie die over écht materiaal gaat. Nu: het garen op
+              de weefmachine, het doek waar het over gaat. */}
           <Image
-            src="/vergelijking/polyester-vs-duurzaam.webp"
-            alt="Links een vlag van gerecycled plastic die uiteenvalt in microplastics, die neerslaan in de bodem en het water. Rechts een Duurzame Vlaggen-vlag die overgaat in bladeren en terugkeert in de kringloop."
-            width={2534}
-            height={1075}
+            src="/vergelijking/doek-weven.webp"
+            alt="Garen van het doek op de weefmachine"
+            width={4403}
+            height={2458}
             sizes="100vw"
-            /* Geen priority: dit beeld staat twee schermen onder de vouw en
-               concurreerde met de hero-foto om de eerste bytes. */
           />
 
           {/* Het donkere verhaalblok golft hier de scène in. Deze golf ligt óver
@@ -442,22 +424,6 @@ export default async function Home() {
               fill="currentColor"
             />
           </svg>
-
-          {/* Kruis op de petflesvlag, vink op de onze, midden op de plaat zelf.
-              "Links" en "Rechts" waren woorden, en woorden worden niet gelezen:
-              zo hoef je alleen te kíjken. Dezelfde twee tekens staan hieronder
-              bij de tekst, dus de koppeling is visueel in plaats van talig.
-              Percentages, want de plaat schaalt mee. */}
-          <span
-            className={styles.doekMerk}
-            data-kant="slecht"
-            aria-hidden="true"
-          >
-            <Close size={26} />
-          </span>
-          <span className={styles.doekMerk} data-kant="goed" aria-hidden="true">
-            <Check size={26} />
-          </span>
 
           {/* Dezelfde golf als tussen de andere secties. Bovenaan loopt het
               missieblok in een golf de scène in; zonder deze golf eindigde de

@@ -62,3 +62,62 @@
   font-weight: 600;
   padding: 4px 10px;
 }
+
+/* Sectie-eyebrow. Een badge die direct vóór een kop staat is geen label maar
+   een kicker, en die hoort niet in een gekleurde pil: een pil boven elke kop
+   maakt van elke sectie een sjabloon. Hier wordt hij klein kapitaal met een
+   streepje ervoor, in de kleur die de pil had. De pillen zelf blijven bestaan
+   voor statussen en productlabels (Populair, Hardware, Offerte-aanvraag). */
+.badge:has(+ h1),
+.badge:has(+ h2),
+.badge:has(+ h3),
+.eyebrow:has(+ h1),
+.eyebrow:has(+ h2) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border: 0;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-forest);
+  white-space: normal;
+}
+.badge:has(+ h1)::before,
+.badge:has(+ h2)::before,
+.badge:has(+ h3)::before,
+.eyebrow:has(+ h1)::before,
+.eyebrow:has(+ h2)::before {
+  content: "";
+  flex: none;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.eyebrow:has(+ h1)::after,
+.eyebrow:has(+ h2)::after {
+  display: none;
+}
+.success:has(+ h1),
+.success:has(+ h2),
+.success:has(+ h3) {
+  color: var(--color-sage-blue);
+}
+.personal:has(+ h1),
+.personal:has(+ h2),
+.personal:has(+ h3),
+.detail:has(+ h1),
+.detail:has(+ h2),
+.detail:has(+ h3) {
+  color: var(--color-sage-purple);
+}
+/* Op forest (hero's) is de kicker licht terracotta, zoals het accent in de kop. */
+.eyebrow:has(+ h1),
+.eyebrow:has(+ h2) {
+  color: #eaa886;
+}

@@ -110,11 +110,12 @@
 /* Zwevende glass stat-chips — het merkeigen data-moment in de hero. */
 .heroStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  /* Drie gelijke tegels; breed genoeg voor "5 werkdagen" op één regel. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-sm);
   justify-self: end;
   width: 100%;
-  max-width: 480px;
+  max-width: 560px;
 }
 .heroStat {
   display: flex;
@@ -122,7 +123,8 @@
   align-items: center;
   text-align: center;
   gap: 4px;
-  padding: 20px 16px;
+  min-width: 0;
+  padding: 20px 12px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -139,9 +141,11 @@
 .heroStatValue {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(26px, 2.6vw, 34px);
+  /* Was 26-34px: "5 werkdagen" liep daarmee uit de tegel. */
+  font-size: clamp(20px, 1.7vw, 25px);
   letter-spacing: -0.03em;
   color: #fff;
+  max-width: 100%;
 }
 .heroStatLabel {
   font-family: var(--font-ui);

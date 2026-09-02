@@ -16,7 +16,9 @@
   /* Hoog genoeg om de hele kaart te dragen: het beeld is 16:9, dus zonder deze
      hoogte valt er altijd wat weg. Geplafonneerd zodat hij op grote schermen
      niet de halve pagina opeet. */
-  min-height: min(56vw, 740px);
+  /* Was 56vw/740px: dan stond het formulier op desktop een heel scherm
+     lager dan de kop "Stuur ons een bericht" belooft. */
+  min-height: min(40vw, 520px);
 }
 
 /* De kaart ligt als achtergrondlaag in de hero. De kop staat links (heroInner
