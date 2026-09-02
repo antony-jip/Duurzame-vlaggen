@@ -390,6 +390,22 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
   // webhook-URL; handleMolliePayment verifieert die hint (link-order + exact
   // bedrag) voordat hij hem vertrouwt. De order blijft op `awaiting_payment`
   // staan tot de webhook de betaling meldt: productie start pas ná betaling.
+  // Faalt Mollie ná de insert (geweigerde sleutel, storing, 422 op de
+  // webhook-URL), dan bleef de order op `cart` staan: een weesorder per
+  // poging, zoals op 2 sep 2026 bij een test met een verlopen testsleutel.
+  // De env-check hierboven vangt alleen een óntbrekende sleutel. Daarom:
+  // Mollie-fout → order op `cancelled`, en de fout gaat gewoon door naar de
+  // klant ("er is iets misgegaan"). Best-effort: lukt annuleren niet, dan
+  // wint de oorspronkelijke fout.
+  const annuleerBijMollieFout = async (err: unknown): Promise<never> => {
+    try {
+      await advanceOrderStatus(order.id, "cancelled");
+    } catch {
+      // De Mollie-fout is de fout die telt.
+    }
+    throw err;
+  };
+
   if (input.paymentMethod === "op_rekening") {
     const link = await createPaymentLink({
       amount: quote.totals.total,
@@ -399,7 +415,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
       ...(isLocalhost
         ? {}
         : { webhookUrl: `${appUrl}/api/webhooks/mollie?order=${order.id}` }),
-    });
+    }).catch(annuleerBijMollieFout);
 
     const updated = await advanceOrderStatus(order.id, "awaiting_payment", {
       mollie_payment_link_id: link.id,
@@ -427,7 +443,7 @@ export async function placeOrder(input: CheckoutInput): Promise<PlaceOrderResult
     redirectUrl: `${appUrl}/order/${order.id}`,
     ...(isLocalhost ? {} : { webhookUrl: `${appUrl}/api/webhooks/mollie` }),
     metadata: { orderId: order.id, orderNumber: order.order_number },
-  });
+  }).catch(annuleerBijMollieFout);
 
   const updated = await advanceOrderStatus(order.id, "awaiting_payment", {
     mollie_payment_id: payment.id,
