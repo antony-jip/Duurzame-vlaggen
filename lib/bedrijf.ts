@@ -9,10 +9,13 @@
  * Sign Company VOF. Op een factuur hoort de rechtspersoon te staan, met de
  * handelsnaam erbij — vandaar beide velden.
  *
- * De site voert het MERK, niet de holding: "Sign Company" staat alleen nog waar
- * het moet — de algemene voorwaarden en de privacyverklaring (contractpartij en
- * verwerkingsverantwoordelijke), de factuur, de copyright-regel en de
- * contactpagina. Overal elders is het Duurzame Vlaggen.
+ * De site voert het MERK; Sign Company is de afzender erachter. Sinds
+ * 2 september 2026 zegt de footer op elke pagina dat Duurzame Vlaggen onderdeel
+ * is van Sign Company (met de klantlogo-band van signcompany.nl): een jong merk
+ * leent zo het vertrouwen van een familiebedrijf uit 1983. Verder staat
+ * "Sign Company" alleen waar het moet: algemene voorwaarden, privacyverklaring,
+ * factuur, copyright-regel en contactpagina. In koppen en copy blijft het
+ * Duurzame Vlaggen.
  */
 
 export const BEDRIJF = {

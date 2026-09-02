@@ -1130,6 +1130,14 @@
   font-weight: 500;
   color: var(--color-stone);
 }
+/* "Gaat mee: 5× Kruisvoet": de accessoires die het aantal vlaggen volgen. */
+.rijAccNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
 .rijKeuzes {
   display: flex;
   align-items: center;

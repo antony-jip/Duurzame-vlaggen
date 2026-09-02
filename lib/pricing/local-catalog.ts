@@ -430,10 +430,12 @@ export function localCustomSizePrice(
 }
 
 /**
- * Optielabels die losse artikelen zijn (eigen aantal, los van het
- * vlaggenaantal) in plaats van een eigenschap van de vlag. Ze tellen NIET mee
- * in de stukprijs/staffel maar als vast bedrag op de regel — 2 vlaggen met
- * 1 kruisvoet = 1 kruisvoet, niet 2.
+ * Optielabels die losse artikelen zijn (eigen aantal in de waarde, "5×
+ * Kruisvoet") in plaats van een eigenschap van de vlag. Ze tellen NIET mee in
+ * de stukprijs/staffel maar als vast bedrag op de regel. Het aantal in de
+ * waarde is leidend: de configurator zet het standaard gelijk aan het aantal
+ * vlaggen en de klant kan het per artikel bijstellen, zie
+ * `volgAccessoiresMetAantal`.
  */
 const LOSSE_ARTIKEL_OPTIES = new Set(["Accessoires"]);
 
@@ -441,9 +443,50 @@ const LOSSE_ARTIKEL_OPTIES = new Set(["Accessoires"]);
  * Eén deelkeuze van een losse-artikelen-optie: optioneel aantal-prefix
  * ("2× Kruisvoet"), zonder prefix telt hij één keer.
  */
-function parseArtikelDeel(part: string): { qty: number; name: string } {
+export function parseArtikelDeel(part: string): { qty: number; name: string } {
   const m = /^(\d+)× (.+)$/.exec(part);
   return m ? { qty: Number(m[1]), name: m[2] } : { qty: 1, name: part };
+}
+
+/** Omgekeerde van `parseArtikelDeel`: "2× Kruisvoet", of kaal bij één. */
+export function formatArtikelDeel(qty: number, name: string): string {
+  return qty > 1 ? `${qty}× ${name}` : name;
+}
+
+/** Is dit optielabel een los artikel (accessoire) met een eigen aantal? */
+export function isLosseArtikelOptie(label: string): boolean {
+  return LOSSE_ARTIKEL_OPTIES.has(label);
+}
+
+/**
+ * Accessoires volgen het vlaggenaantal.
+ *
+ * Wie vijf beachvlaggen bestelt met een kruisvoet, wil vijf kruisvoeten: de
+ * configurator zet het aantal per accessoire daarom standaard gelijk aan het
+ * aantal vlaggen. Deze functie trekt dezelfde lijn door naar de winkelmand.
+ * Wijzigt het aantal vlaggen van `vorigAantal` naar `nieuwAantal`, dan
+ * schuiven de accessoires die dat aantal volgden mee. Een accessoire met een
+ * handmatig afwijkend aantal (2 waterzakken bij 5 vlaggen) blijft staan: dat
+ * was een bewuste keuze.
+ *
+ * Werkt op de optie-array van een mandregel en geeft een nieuwe array terug;
+ * regels zonder accessoires komen ongewijzigd terug.
+ */
+export function volgAccessoiresMetAantal<
+  T extends { code: string; value?: string | number | null },
+>(options: T[], vorigAantal: number, nieuwAantal: number): T[] {
+  if (vorigAantal === nieuwAantal) return options;
+  return options.map((opt) => {
+    if (!LOSSE_ARTIKEL_OPTIES.has(opt.code) || opt.value == null) return opt;
+    const value = String(opt.value)
+      .split(" · ")
+      .map((part) => {
+        const { qty, name } = parseArtikelDeel(part);
+        return formatArtikelDeel(qty === vorigAantal ? nieuwAantal : qty, name);
+      })
+      .join(" · ");
+    return { ...opt, value };
+  });
 }
 
 /**

@@ -4,6 +4,7 @@ import styles from "./Footer.module.css";
 import { Container } from "./Container";
 import { ArrowRight, Leaf, Recycle, ShieldCheck, Truck } from "./Icon";
 import { BEDRIJF, bedrijfsAdresRegels } from "@/lib/bedrijf";
+import { KlantLogos } from "./KlantLogos";
 import { getAllProducts } from "@/lib/catalog/products";
 
 // Derive from the catalogue so slugs never drift from the real product pages.
@@ -112,6 +113,32 @@ export function Footer() {
           </li>
         </ul>
 
+        {/* Het bedrijf achter het merk. Duurzame Vlaggen is jong; Sign Company
+            hangt sinds 1983 gevels en wagens vol en heeft de klantenlijst die
+            daarbij hoort. Die geschiedenis is hier het vertrouwen, dus staat
+            ze op elke pagina, vlak boven de linkkolommen. */}
+        <section className={styles.moeder} aria-labelledby="footer-signcompany">
+          <div className={styles.moederKop}>
+            <span className={styles.kicker} id="footer-signcompany">
+              Onderdeel van Sign Company
+            </span>
+            <p className={styles.moederTekst}>
+              Duurzame Vlaggen is onderdeel van{" "}
+              <a
+                href="https://signcompany.nl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Sign Company
+              </a>
+              , familiebedrijf in signing sinds 1983. Van WestCord Hotels tot
+              Syngenta: dit zijn de merken die hun uitstraling al aan ons
+              toevertrouwen.
+            </p>
+          </div>
+          <KlantLogos />
+        </section>
+
         <div className={styles.grid}>
           <div className={styles.brandCol}>
             <Image
@@ -192,8 +219,11 @@ export function Footer() {
 
         <div className={styles.bottom}>
           <span>
-            &copy; {year} <span>{BEDRIJF.rechtspersoon}</span> · Alle rechten
-            voorbehouden.
+            &copy; {year}{" "}
+            <a href="https://signcompany.nl" target="_blank" rel="noopener noreferrer">
+              {BEDRIJF.rechtspersoon}
+            </a>{" "}
+            · {BEDRIJF.handelsnaam} is een handelsnaam van {BEDRIJF.rechtspersoon}.
             <span className={styles.juridisch}>
               {[
                 BEDRIJF.kvkBevestigd ? `KvK ${BEDRIJF.kvkNummer}` : null,

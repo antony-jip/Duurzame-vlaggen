@@ -32,6 +32,7 @@ import {
   DESIGN_SERVICE_PRICE,
   localOptionsSurcharge,
   localAccessoiresTotal,
+  formatArtikelDeel,
   localUnitPriceWithOptions,
   localCartLineTotal,
   localCustomSizePrice,
@@ -85,7 +86,7 @@ const PRODUCT_OPTION_HINTS: Record<string, Record<string, string>> = {
     Samenstelling:
       "Wat je in huis krijgt. Nog geen beachvlag-frame? Kies minimaal Vlag + stok. Alleen vlag is het losse doek, voor wie al een stok heeft.",
     Accessoires:
-      "De voet die je vlag overeind houdt. Grondpen voor gras en zand, kruisvoet of voetplaat voor bestrating, parasolvoet voor binnen.",
+      "De voet die je vlag overeind houdt. Grondpen voor gras en zand, kruisvoet of voetplaat voor bestrating, parasolvoet voor binnen. Het aantal volgt je aantal vlaggen; per artikel pas je het aan.",
   },
   gevelvlag: {
     Mastzijde:
@@ -618,18 +619,22 @@ export function ProductConfigurator({
         : mastvlagMastInfo(size.widthCm ?? 0)
       : undefined;
 
+  // Aantal per accessoire: standaard gelijk aan het aantal vlaggen. Vijf
+  // beachvlaggen met een kruisvoet zijn vijf kruisvoeten, niet één; dat werd
+  // hier eerder als 1 gerekend én zo afgerekend. Wie het per artikel zelf
+  // aanpast (twee waterzakken bij vijf vlaggen), houdt zijn eigen aantal in
+  // `multiQty`. In de mand trekt `volgAccessoiresMetAantal` dezelfde lijn door.
+  const accQtyOf = (key: string) => multiQty[key] ?? quantity;
+
   // Alle keuzes samengevoegd: multi-opties als " · "-lijst (prijs-/orderconventie).
-  // Accessoires met een eigen aantal > 1 krijgen een "N× "-prefix in de waarde
-  // ("2× Kruisvoet · Waterzak Zwart") — leesbaar op de orderregel én parseerbaar
+  // Accessoires met een aantal > 1 krijgen een "N× "-prefix in de waarde
+  // ("5× Kruisvoet · Waterzak Zwart") — leesbaar op de orderregel én parseerbaar
   // door het prijsmodel (localAccessoiresTotal).
   const mergedSelections: Record<string, string> = { ...selectedOptions };
   for (const [label, values] of Object.entries(multiChoices)) {
     if (values.length > 0) {
       mergedSelections[label] = values
-        .map((v) => {
-          const n = multiQty[`${label}:${v}`] ?? 1;
-          return n > 1 ? `${n}× ${v}` : v;
-        })
+        .map((v) => formatArtikelDeel(accQtyOf(`${label}:${v}`), v))
         .join(" · ");
     }
   }
@@ -1053,13 +1058,17 @@ export function ProductConfigurator({
                           <span className={styles.optionCardFoot}>
                             <span className={styles.optionCardName}>{choice}</span>
                             {surcharge > 0 && (
-                              <span className={styles.optionCardSurcharge}>+{fmt(surcharge)}</span>
+                              <span className={styles.optionCardSurcharge}>
+                                +{fmt(surcharge)}
+                                {isMulti && " per stuk"}
+                              </span>
                             )}
                           </span>
-                          {/* Eigen aantal per aangevinkt accessoire: losse
-                              artikelen, dus niet gekoppeld aan het
-                              vlaggenaantal. preventDefault houdt de kaart
-                              aangevinkt terwijl je klikt. */}
+                          {/* Aantal per aangevinkt accessoire. Staat standaard
+                              op het aantal vlaggen en volgt dat ook; wie hier
+                              klikt, kiest een eigen aantal dat blijft staan.
+                              preventDefault houdt de kaart aangevinkt terwijl
+                              je klikt. */}
                           {isMulti && selected && (
                             <span
                               className={styles.accQty}
@@ -1070,14 +1079,14 @@ export function ProductConfigurator({
                               <button
                                 type="button"
                                 className={styles.accQtyBtn}
-                                disabled={(multiQty[qtyKey] ?? 1) <= 1}
+                                disabled={accQtyOf(qtyKey) <= 1}
                                 aria-label={`Minder ${choice}`}
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   setMultiQty((prev) => ({
                                     ...prev,
-                                    [qtyKey]: Math.max(1, (prev[qtyKey] ?? 1) - 1),
+                                    [qtyKey]: Math.max(1, (prev[qtyKey] ?? quantity) - 1),
                                   }));
                                   setAdded(false);
                                 }}
@@ -1085,7 +1094,7 @@ export function ProductConfigurator({
                                 −
                               </button>
                               <span className={styles.accQtyValue}>
-                                {multiQty[qtyKey] ?? 1}
+                                {accQtyOf(qtyKey)}
                               </span>
                               <button
                                 type="button"
@@ -1096,7 +1105,7 @@ export function ProductConfigurator({
                                   e.stopPropagation();
                                   setMultiQty((prev) => ({
                                     ...prev,
-                                    [qtyKey]: (prev[qtyKey] ?? 1) + 1,
+                                    [qtyKey]: (prev[qtyKey] ?? quantity) + 1,
                                   }));
                                   setAdded(false);
                                 }}
@@ -1641,6 +1650,16 @@ export function ProductConfigurator({
               )}
             </div>
 
+            {/* Wat er met de vlaggen meegaat. Het aantal accessoires volgt het
+                aantal vlaggen, en dat moet je hier zíen: anders lijkt de
+                prijssprong bij een extra vlag uit de lucht te komen. */}
+            {mergedSelections.Accessoires && (
+              <p className={styles.rijAccNote}>
+                Gaat mee: {mergedSelections.Accessoires}. Ander aantal? Pas het
+                aan bij Uitvoering.
+              </p>
+            )}
+
             <div className={styles.rijKeuzes}>
               {STAFFEL_TIERS.map((tier) => (
                 <button
@@ -1744,8 +1763,8 @@ export function ProductConfigurator({
                 ? `${quantity} ${quantity === 1 ? "stuk" : "stuks"} · ${
                     inclVat ? "incl. btw" : "excl. btw"
                   }${designService ? " · incl. ontwerpservice" : ""}${
-                    usingCustom ? " · eigen maat" : ""
-                  }`
+                    accessoiresExVat > 0 ? " · incl. accessoires" : ""
+                  }${usingCustom ? " · eigen maat" : ""}`
                 : "Vul eerst een geldige eigen afmeting in"}
           </span>
         </div>

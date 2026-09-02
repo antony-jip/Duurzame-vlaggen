@@ -214,6 +214,35 @@
   }
 }
 
+/* ---- Onderdeel van Sign Company: intro + logoband ---- */
+.moeder {
+  padding-block: clamp(28px, 4vw, 48px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+.moederKop {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+.moederTekst {
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+.moederTekst a {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-underline-offset: 3px;
+}
+.moederTekst a:hover {
+  color: #e6a488;
+  text-decoration-color: currentColor;
+}
+
 /* ---- Columns ---- */
 .grid {
   display: grid;

@@ -172,6 +172,9 @@ export default async function Home() {
               <span className={styles.heroFrom}>
                 vanaf <Price amount={laagstePrijs} suffix />
               </span>
+              <Link href="/contact" className={styles.heroQuote}>
+                Of vraag een offerte aan
+              </Link>
             </div>
           </div>
 
@@ -420,7 +423,8 @@ export default async function Home() {
             width={2534}
             height={1075}
             sizes="100vw"
-            priority
+            /* Geen priority: dit beeld staat twee schermen onder de vouw en
+               concurreerde met de hero-foto om de eerste bytes. */
           />
 
           {/* Het donkere verhaalblok golft hier de scène in. Deze golf ligt óver

@@ -31,3 +31,4 @@ export { ProcesStappen } from "./ProcesStappen";
 export { VatToggle } from "./VatToggle";
 
 export * from "./Icon";
+export { KlantLogos } from "./KlantLogos";

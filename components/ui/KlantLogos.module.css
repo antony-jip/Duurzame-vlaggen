@@ -1,0 +1,53 @@
+/* Logoband van Sign Company-klanten, op het forest van de footer. */
+.loop {
+  overflow: hidden;
+  /* Vervaagt de uiteinden, zodat de logo's het beeld in- en uitschuiven in
+     plaats van aan een harde rand te verschijnen. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.spoor {
+  display: flex;
+  width: max-content;
+  animation: logo-schuif 90s linear infinite;
+}
+.loop:hover .spoor {
+  animation-play-state: paused;
+}
+.set {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+  padding-right: clamp(28px, 4vw, 56px);
+}
+/* Elk logo op zijn eigen hoogte (--lh), wit op het forest en gedempt, zodat
+   de band een rustige laag blijft en niet om aandacht schreeuwt. */
+.logo {
+  height: calc(var(--lh, 40) * 1px);
+  width: auto;
+  flex: none;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+}
+@keyframes logo-schuif {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (max-width: 640px) {
+  .logo {
+    height: calc(var(--lh, 40) * 0.8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spoor {
+    animation: none;
+  }
+  .loop {
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}

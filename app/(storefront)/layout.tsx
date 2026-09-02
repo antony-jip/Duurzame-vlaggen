@@ -28,6 +28,14 @@ const ORG_JSON_LD = jsonLd({
   // Eigen kennisdomein over het doek; wederzijdse verwijzing (dat domein
   // noemt ons als publisher) helpt Google de twee sites als één entiteit zien.
   sameAs: ["https://flag-ciclo.nl"],
+  // Het bedrijf achter het merk, zoals de footer het ook zegt. Zo koppelt
+  // Google de jonge shop aan de entiteit die sinds 1983 bestaat.
+  parentOrganization: {
+    "@type": "Organization",
+    name: "Sign Company",
+    url: "https://signcompany.nl",
+    foundingDate: "1983",
+  },
   description:
     "Biologisch afbreekbare vlaggen voor bedrijven, gemeenten en verenigingen. Het doek is getest volgens vier ASTM-normen; in zeewater brak 94,2% af in ruim drie en een half jaar.",
   areaServed: "NL",

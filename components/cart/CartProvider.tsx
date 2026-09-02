@@ -20,7 +20,10 @@ import {
 } from "react";
 import type { UiCatalog } from "@/config/domains";
 import { normalizeCartItem, type CartDesign, type CartItem } from "./types";
-import { cartRegelTotaal } from "@/lib/pricing/local-catalog";
+import {
+  cartRegelTotaal,
+  volgAccessoiresMetAantal,
+} from "@/lib/pricing/local-catalog";
 
 const STORAGE_KEY = "dv-cart-v1";
 const VAT_STORAGE_KEY = "dv-vat-incl-v1";
@@ -193,7 +196,10 @@ export function CartProvider({
           designs.length === 1 && designs[0].quantity === it.amount
             ? [{ ...designs[0], quantity: next }]
             : designs;
-        return { ...it, amount: next, designs: syncedDesigns };
+        // Accessoires die het vlaggenaantal volgden (5 vlaggen, 5 kruisvoeten)
+        // schuiven mee; een handmatig afwijkend aantal blijft staan.
+        const options = volgAccessoiresMetAantal(it.options, it.amount, next);
+        return { ...it, amount: next, options, designs: syncedDesigns };
       }),
     );
   }, []);

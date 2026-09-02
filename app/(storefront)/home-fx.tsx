@@ -128,6 +128,37 @@ export function DecayCounter({ className }: { className?: string }) {
  * repeats visibly.
  */
 export function WapperFilter() {
+  // De displacement-filter op de hero-foto is het duurste wat deze pagina
+  // tekent: een geanimeerde feTurbulence over het LCP-beeld. Lighthouse mat
+  // 2,7 s "render delay" op een foto die na 0,45 s al binnen was. Daarom gaat
+  // de filter pas aan als de pagina geladen is en de main thread niets te
+  // doen heeft; tot die tijd staat de foto gewoon scherp en telt hij als LCP.
+  // De CSS (page.module.css, .heroPhoto) leest dit attribuut.
+  useEffect(() => {
+    const root = document.documentElement;
+    let idle: number | undefined;
+    const aan = () => root.setAttribute("data-wapper", "on");
+    const plan = () => {
+      idle =
+        typeof window.requestIdleCallback === "function"
+          ? window.requestIdleCallback(aan, { timeout: 2500 })
+          : window.setTimeout(aan, 800);
+    };
+    if (document.readyState === "complete") plan();
+    else window.addEventListener("load", plan, { once: true });
+    return () => {
+      window.removeEventListener("load", plan);
+      if (idle !== undefined) {
+        if (typeof window.cancelIdleCallback === "function") {
+          window.cancelIdleCallback(idle);
+        } else {
+          clearTimeout(idle);
+        }
+      }
+      root.removeAttribute("data-wapper");
+    };
+  }, []);
+
   return (
     <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
       <filter id="wapper" x="-5%" y="-5%" width="110%" height="110%">

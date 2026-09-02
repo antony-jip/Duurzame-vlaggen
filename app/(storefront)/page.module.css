@@ -131,10 +131,28 @@
 
 .heroActions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm) var(--space-md);
   margin-top: var(--space-sm);
   animation: fade-in-up var(--duration-slow) var(--ease-out) 200ms both;
+}
+/* Tweede route naast "Bestel direct": inkopers van gemeenten en bedrijven
+   bestellen zelden met iDEAL, die willen een offerte. Klein en onderstreept,
+   zodat de knop de hoofdroute blijft. */
+.heroQuote {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-underline-offset: 4px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.heroQuote:hover {
+  color: #fff;
+  text-decoration-color: currentColor;
 }
 .heroFrom {
   font-family: var(--font-ui);
@@ -192,12 +210,14 @@
 .heroPhoto {
   object-fit: cover;
   object-position: 62% 30%;
-  /* SVG-displacement: het doek in de foto golft echt (home-fx WapperFilter). */
-  filter: url(#wapper);
 }
-@media (prefers-reduced-motion: reduce) {
-  .heroPhoto {
-    filter: none;
+/* SVG-displacement: het doek in de foto golft echt (home-fx WapperFilter).
+   Pas ná load + idle (data-wapper) en alleen op desktop: op een telefoon kost
+   de geanimeerde filter seconden LCP en is het effect op 360px nauwelijks
+   te zien. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  :global([data-wapper="on"]) .heroPhoto {
+    filter: url(#wapper);
   }
 }
 
