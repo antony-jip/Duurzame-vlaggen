@@ -669,6 +669,34 @@ export function ProductConfigurator({
   const show = (amount: number) => (inclVat ? amount * (1 + vatRate) : amount);
   const fmt = (amount: number) => formatCurrency(show(amount), catalog);
 
+  /**
+   * Offerte voor precies deze samenstelling. Gemeenten en andere instellingen
+   * kopen zelden met iDEAL: die hebben een offerte nodig voor hun inkoop. De
+   * keuzes reizen mee naar het contactformulier, zodat niemand ze opnieuw hoeft
+   * te typen en wij direct de juiste prijs kunnen maken.
+   */
+  const ONTWERP_TEKST: Record<OntwerpKeuze, string> = {
+    upload: "eigen ontwerp",
+    later: "ontwerp lever ik later aan",
+    service: "graag jullie ontwerpservice",
+  };
+  const samenstelling = [
+    `Formaat: ${customMode && !customValid ? "eigen maat (nog niet ingevuld)" : size.label}`,
+    ...actieveOpties.flatMap((opt) => {
+      const value = mergedSelections[opt.label];
+      return value ? [`${opt.label}: ${value}`] : [];
+    }),
+    `Ontwerp: ${ONTWERP_TEKST[ontwerpKeuze]}`,
+    `Aantal: ${quantity}`,
+    ...(sizeQuoteOnly || !priceReady
+      ? []
+      : [`Prijs op de site: ${fmt(totalExVat)} ${inclVat ? "incl." : "excl."} btw`]),
+  ].join("\n");
+  const offerteHref = `/contact?${new URLSearchParams({
+    product: product.name,
+    samenstelling,
+  }).toString()}`;
+
   /** Best-effort opruimen van een niet meer gebruikt uploadbestand. */
   function ruimOntwerpOp(path: string) {
     void fetch("/api/artwork", {
@@ -1810,7 +1838,7 @@ export function ProductConfigurator({
           {sizeQuoteOnly ? (
             <Button
               as="a"
-              href={`/contact?product=${product.slug}&maat=${encodeURIComponent(presetSize.label)}`}
+              href={offerteHref}
               size="lg"
               icon={<ArrowRight />}
             >
@@ -1828,7 +1856,7 @@ export function ProductConfigurator({
             </Button>
           ) : (
             <>
-              <Button as="a" href={`/contact?product=${product.slug}`} size="lg" icon={<ArrowRight />}>
+              <Button as="a" href={offerteHref} size="lg" icon={<ArrowRight />}>
                 {labels.requestQuote}
               </Button>
               <Button variant="secondary" size="lg" onClick={handleAdd} disabled={!priceReady}>
@@ -1838,6 +1866,21 @@ export function ProductConfigurator({
           )}
         </div>
       </div>
+
+      {/* Offerte naast de mand: buiten de sticky balk, zodat die op mobiel
+          compact blijft. Niet bij op-aanvraag-maten of niet-bestelbare
+          producten, daar is de offerte al de hoofdknop. */}
+      {orderable && !sizeQuoteOnly && (
+        <div className={styles.offerteRij}>
+          <p className={styles.offerteTekst}>
+            Bestel je voor een gemeente of organisatie? Vraag een offerte aan
+            voor deze samenstelling.
+          </p>
+          <Button as="a" href={offerteHref} variant="secondary" size="md">
+            Offerte aanvragen
+          </Button>
+        </div>
+      )}
 
       {added && (
         <p className={styles.added} role="status">

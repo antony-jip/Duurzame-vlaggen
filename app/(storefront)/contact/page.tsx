@@ -46,6 +46,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     typeof rawProduct === "string" && rawProduct.trim().length > 0
       ? rawProduct.trim()
       : undefined;
+  // Samenstelling uit de configurator (offerte-knop): regels "Label: waarde".
+  const rawSamenstelling = params.samenstelling;
+  const samenstelling =
+    typeof rawSamenstelling === "string" && rawSamenstelling.trim().length > 0
+      ? rawSamenstelling.trim().slice(0, 2000)
+      : undefined;
 
   return (
     <>
@@ -129,11 +135,13 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <h2 className={styles.formTitle}>Stuur ons een bericht</h2>
               {product && (
                 <p className={styles.prefillNote}>
-                  Je vraag gaat over <strong>{product}</strong>. We hebben het
-                  onderwerp alvast ingevuld.
+                  Je vraag gaat over <strong>{product}</strong>.{" "}
+                  {samenstelling
+                    ? "Je samenstelling staat al in het bericht. Vul je gegevens aan, dan sturen we de offerte."
+                    : "We hebben het onderwerp alvast ingevuld."}
                 </p>
               )}
-              <ContactForm defaultProduct={product} />
+              <ContactForm defaultProduct={product} samenstelling={samenstelling} />
             </div>
           </div>
         </Container>

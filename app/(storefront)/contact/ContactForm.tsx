@@ -7,6 +7,8 @@ import styles from "./page.module.css";
 export interface ContactFormProps {
   /** Optional product name (from ?product=) used to pre-fill the subject. */
   defaultProduct?: string;
+  /** Gekozen samenstelling uit de configurator (?samenstelling=), één keuze per regel. */
+  samenstelling?: string;
 }
 
 const SUBJECTS = [
@@ -17,7 +19,7 @@ const SUBJECTS = [
   { value: "overig", label: "Overig" },
 ] as const;
 
-export function ContactForm({ defaultProduct }: ContactFormProps) {
+export function ContactForm({ defaultProduct, samenstelling }: ContactFormProps) {
   // Prefix each field id so multiple forms on a page stay unique/accessible.
   const uid = useId();
   const fid = (name: string) => `${uid}-${name}`;
@@ -26,9 +28,11 @@ export function ContactForm({ defaultProduct }: ContactFormProps) {
     defaultProduct ? "offerte" : "",
   );
   const [message, setMessage] = useState<string>(
-    defaultProduct
-      ? `Ik ontvang graag meer informatie over: ${defaultProduct}.\n\n`
-      : "",
+    defaultProduct && samenstelling
+      ? `Graag een offerte voor: ${defaultProduct}.\n\n${samenstelling}\n\nFactuuradres / inkoopnummer: \n`
+      : defaultProduct
+        ? `Ik ontvang graag meer informatie over: ${defaultProduct}.\n\n`
+        : "",
   );
 
   // "idle" → versturen → "ok" of een foutmelding. Stond hier eerder als
