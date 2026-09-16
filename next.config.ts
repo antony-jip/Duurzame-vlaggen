@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // De offerte-PDF leest het briefpapier van schijf (process.cwd()/public).
+  // Expliciet meenemen, zodat de serverless-functie op Vercel het bestand heeft.
+  outputFileTracingIncludes: {
+    "/api/offerte": ["./public/briefpapier/**/*"],
+  },
   images: {
     // Product/sfeer photography lives in Supabase Storage (migrated from WP).
     remotePatterns: [

@@ -494,3 +494,8 @@
   margin-top: 2px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Offerte in je mail, onder de betaalknop en de vertrouwensregels. */
+.offerteOptie {
+  margin-top: var(--space-sm);
+}

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
 import { WinkelmandRegel } from "@/components/cart/WinkelmandRegel";
+import { OfferteAanvraag } from "@/components/offerte/OfferteAanvraag";
 import { cartDesignsComplete, toCheckoutLines } from "@/components/cart/types";
 import { getProduct } from "@/lib/catalog/products";
 import {
@@ -762,6 +763,11 @@ export default function AfrekenenPage() {
               <Truck size={16} aria-hidden="true" /> Binnen 5 werkdagen geleverd
             </li>
           </ul>
+
+          <OfferteAanvraag
+            className={styles.offerteOptie}
+            regels={() => toCheckoutLines(items)}
+          />
 
           <h2 className={`${styles.zijKop} ${styles.zijKopRegels}`}>
             Je bestelling

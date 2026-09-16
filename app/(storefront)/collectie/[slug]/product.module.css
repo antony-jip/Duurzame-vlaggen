@@ -2520,28 +2520,8 @@
   }
 }
 
-/* ── Offerte naast de mand (gemeenten, organisaties met inkoop) ──────── */
+/* ── Offerte in je mail (onder de koopbalk) ─────────────────────────── */
 
-.offerteRij {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm) var(--space-md);
-  margin-top: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid rgba(44, 95, 79, 0.18);
-  border-radius: var(--radius-md);
-}
-.offerteTekst {
-  flex: 1 1 16rem;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--color-stone);
-}
-@media (max-width: 420px) {
-  .offerteRij :global(a) {
-    width: 100%;
-  }
+.offerteOptie {
+  margin-top: var(--space-sm);
 }

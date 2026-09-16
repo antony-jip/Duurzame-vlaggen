@@ -6,6 +6,8 @@ import styles from "./CartPaneel.module.css";
 import { Button, ArrowRight, Leaf, Price } from "@/components/ui";
 import { useCart } from "./CartProvider";
 import { WinkelmandRegel } from "./WinkelmandRegel";
+import { toCheckoutLines } from "./types";
+import { OfferteAanvraag } from "@/components/offerte/OfferteAanvraag";
 import {
   localShipping,
   ontwerpserviceVoorOrder,
@@ -166,6 +168,7 @@ export function CartPaneel() {
           >
             Ga naar de kassa
           </Button>
+          <OfferteAanvraag regels={() => toCheckoutLines(items)} />
           <Link
             href="/collectie"
             className={styles.verder}

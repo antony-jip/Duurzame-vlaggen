@@ -1,0 +1,157 @@
+/* Offerte in je mail: kleine uitklapoptie onder configurator, mand en kassa. */
+
+.wrap {
+  font-family: var(--font-ui);
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.trigger:hover {
+  color: var(--color-terracotta);
+}
+.trigger:disabled {
+  color: var(--color-stone);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px solid rgba(44, 95, 79, 0.18);
+  border-radius: var(--radius-md);
+  background: var(--color-white, #fff);
+}
+
+.formKop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.titel {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-forest);
+}
+
+.uitleg {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-stone);
+}
+
+.velden {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.veld {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+.veld em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--color-stone);
+}
+.veld input,
+.veld textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(58, 58, 58, 0.2);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-white, #fff);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-charcoal);
+  resize: vertical;
+}
+.veld input:focus,
+.veld textarea:focus {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.breed {
+  grid-column: 1 / -1;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.fout {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-terracotta);
+}
+
+.gelukt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--forest-3, rgba(44, 95, 79, 0.06));
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-forest);
+}
+.gelukt svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.tekstKnop {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--color-stone);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.tekstKnop:hover {
+  color: var(--color-forest);
+}
+
+@media (max-width: 480px) {
+  .velden {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

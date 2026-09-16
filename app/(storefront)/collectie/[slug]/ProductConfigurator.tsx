@@ -21,6 +21,7 @@ import styles from "./product.module.css";
 import { Badge, Button, Check, ArrowRight, Leaf, Truck, ShieldCheck } from "@/components/ui";
 import { useCart } from "@/components/cart/CartProvider";
 import { ArtworkUploadModal } from "@/components/cart/ArtworkUploadModal";
+import { OfferteAanvraag } from "@/components/offerte/OfferteAanvraag";
 import { clientId, type CartDesign } from "@/components/cart/types";
 import { formatCurrency } from "@/lib/i18n/formatting";
 import type { UiCatalog } from "@/config/domains";
@@ -757,8 +758,8 @@ export function ProductConfigurator({
     return ontwerp ? [{ ...ontwerp, id: clientId(), quantity }] : [];
   }
 
-  function handleAdd() {
-    if (!priceReady || sizeQuoteOnly) return;
+  /** Opties op de regel: dezelfde voor de winkelmand en de offerte. */
+  function regelOpties() {
     const baseOptions = [
       { code: "Formaat", value: size.label },
       // Niet-gekozen optionele opties (accessoires) blijven van de regel af, en
@@ -768,6 +769,13 @@ export function ProductConfigurator({
         return value ? [{ code: opt.label, value }] : [];
       }),
     ];
+    return designService
+      ? [...baseOptions, { code: "Ontwerpservice", value: `Ja (+${formatCurrency(DESIGN_SERVICE_PRICE, catalog)})` }]
+      : baseOptions;
+  }
+
+  function handleAdd() {
+    if (!priceReady || sizeQuoteOnly) return;
     addItem({
       slug: product.slug,
       name: product.name,
@@ -778,9 +786,7 @@ export function ProductConfigurator({
       // Ex-btw stukprijs incl. gekozen opties = de staffel-basis.
       unitPriceEstimate: unitBasis,
       amount: quantity,
-      options: designService
-        ? [...baseOptions, { code: "Ontwerpservice", value: `Ja (+${formatCurrency(DESIGN_SERVICE_PRICE, catalog)})` }]
-        : baseOptions,
+      options: regelOpties(),
       designs: ontwerpDesigns(),
     });
     // Het ontwerp is nu van de mandregel; niet nogmaals aan een volgende regel
@@ -1867,19 +1873,25 @@ export function ProductConfigurator({
         </div>
       </div>
 
-      {/* Offerte naast de mand: buiten de sticky balk, zodat die op mobiel
-          compact blijft. Niet bij op-aanvraag-maten of niet-bestelbare
-          producten, daar is de offerte al de hoofdknop. */}
+      {/* Offerte in de mail, buiten de sticky balk zodat die op mobiel compact
+          blijft. Neemt exact deze samenstelling mee; de server rekent het
+          bedrag opnieuw uit. Niet bij op-aanvraag-maten of niet-bestelbare
+          producten: daar is de offerte al de hoofdknop. */}
       {orderable && !sizeQuoteOnly && (
-        <div className={styles.offerteRij}>
-          <p className={styles.offerteTekst}>
-            Bestel je voor een gemeente of organisatie? Vraag een offerte aan
-            voor deze samenstelling.
-          </p>
-          <Button as="a" href={offerteHref} variant="secondary" size="md">
-            Offerte aanvragen
-          </Button>
-        </div>
+        <OfferteAanvraag
+          className={styles.offerteOptie}
+          disabled={!priceReady}
+          regels={() => [
+            {
+              slug: product.slug,
+              sizeLabel: size.label,
+              widthCm: size.widthCm,
+              heightCm: size.heightCm,
+              amount: quantity,
+              options: regelOpties(),
+            },
+          ]}
+        />
       )}
 
       {added && (
