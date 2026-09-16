@@ -117,6 +117,30 @@ describe("berekenOfferte", () => {
   });
 });
 
+describe("landenvlaggen", () => {
+  it("noemt hetzelfde bedrag als de landenvlaggen-winkel, per formaat", () => {
+    const mast = getProduct("mastvlag")!;
+    const standaard = Object.fromEntries(mast.options.map((o) => [o.label, o.choices[0]]));
+    const regels: OfferteInvoerRegel[] = mast.sizes.slice(0, 2).map((size, i) => ({
+      slug: "mastvlag",
+      sizeLabel: size.label,
+      widthCm: size.widthCm,
+      heightCm: size.heightCm,
+      amount: i === 0 ? 3 : 12,
+      options: [
+        { code: "Formaat", value: size.label },
+        { code: "Landenvlag", value: "Nederland" },
+        ...Object.entries(standaard).map(([code, value]) => ({ code, value })),
+      ],
+    }));
+    const r = berekenOfferte(regels);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.offerte.subtotaal + r.offerte.verzending).toBeCloseTo(mandTotaal(regels), 2);
+    expect(r.offerte.regels[0].detail).toContain("Landenvlag: Nederland");
+  });
+});
+
 describe("nieuwOffertenummer", () => {
   it("heeft de vorm OF-jjmmdd-XXXX", () => {
     expect(nieuwOffertenummer(new Date("2026-09-16T10:00:00Z"))).toMatch(/^OF-260916-[A-Z2-9]{4}$/);

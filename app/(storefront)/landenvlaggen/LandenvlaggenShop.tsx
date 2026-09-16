@@ -15,6 +15,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./landenvlaggen.module.css";
 import { Button, Check, Price } from "@/components/ui";
+import { OfferteAanvraag } from "@/components/offerte/OfferteAanvraag";
 import { useCart } from "@/components/cart/CartProvider";
 import { clientId } from "@/components/cart/types";
 import { uploadOne } from "@/lib/artwork/upload";
@@ -465,6 +466,32 @@ export function LandenvlaggenShop({
                   </div>
                 </div>
               )}
+
+              {/* Offerte in de mail: zelfde keuzes als de mandregels, de server
+                  rekent het bedrag opnieuw uit. */}
+              <OfferteAanvraag
+                className={styles.offerteOptie}
+                disabled={totaalVlaggen === 0}
+                regels={() =>
+                  regels
+                    .filter((r) => r.aantal > 0)
+                    .map(({ size, aantal }) => ({
+                      slug: product.slug,
+                      sizeLabel: size.label,
+                      widthCm: size.widthCm,
+                      heightCm: size.heightCm,
+                      amount: aantal,
+                      options: [
+                        { code: "Formaat", value: size.label },
+                        { code: "Landenvlag", value: land.naam },
+                        ...product.options.flatMap((opt) => {
+                          const value = defaultSelections[opt.label];
+                          return value ? [{ code: opt.label, value }] : [];
+                        }),
+                      ],
+                    }))
+                }
+              />
 
               <p className={styles.gerustNoot}>
                 Wij zetten de officiële vlag automatisch om naar een drukklaar

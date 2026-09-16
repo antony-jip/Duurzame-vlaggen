@@ -796,3 +796,8 @@
     height: 40px;
   }
 }
+
+/* Offerte in je mail, onder de winkelmandknop. */
+.offerteOptie {
+  margin-top: var(--space-sm);
+}
