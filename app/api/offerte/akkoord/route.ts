@@ -133,13 +133,13 @@ export async function POST(request: Request) {
   );
   const klantMail = betaalUrl
     ? {
-        onderwerp: `Betaallink voor offerte ${offerte.n}`,
+        onderwerp: `Akkoord en betaallink voor offerte ${offerte.n}`,
         html: mailLayout({
           titel: "Bedankt voor je akkoord",
           ondertitel: `Offerte ${offerte.n}`,
           inhoud: [
             alinea(`Beste ${voornaam},`),
-            alinea("Bedankt voor je akkoord. Met de knop hieronder betaal je de offerte via iDEAL, creditcard of overboeking."),
+            alinea("Bedankt voor je akkoord. Nog niet betaald, of betaling afgebroken? Met de knop hieronder betaal je de offerte alsnog via iDEAL, creditcard of overboeking."),
             samenvatting,
             fijn(`Na betaling gaan we voor je aan de slag. Vragen? Bel ${BEDRIJF.telefoon}.`),
           ].join(""),

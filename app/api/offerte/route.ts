@@ -242,7 +242,7 @@ export async function POST(request: Request) {
         : "",
       akkoordUrl
         ? alinea(
-            "Akkoord? Klik op de knop hieronder en bevestig je naam en e-mailadres. Je ontvangt dan direct een betaallink.",
+            "Akkoord? Klik op de knop hieronder, bevestig je naam en e-mailadres en betaal direct online.",
           )
         : alinea(`Akkoord? Bel ons op ${BEDRIJF.telefoon}, dan sturen we je de betaallink.`),
     ].join(""),

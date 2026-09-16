@@ -58,7 +58,9 @@ export default async function OfferteAkkoordPage({
     <Container as="section" className={styles.page}>
       <h1>Offerte accepteren</h1>
       <p className={styles.lead}>
-        Bevestig je naam en e-mailadres. Je krijgt direct een betaallink in je mail.
+        {offerte.h
+          ? "Bevestig je naam en e-mailadres. We sturen je daarna de betaallink."
+          : "Bevestig je naam en e-mailadres. Daarna betaal je direct online via iDEAL, creditcard of overboeking."}
       </p>
 
       <dl className={styles.samenvatting}>

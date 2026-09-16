@@ -20,7 +20,8 @@ export function AkkoordFormulier({
   const uid = useId();
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(null);
-  const [klaar, setKlaar] = useState<{ betaalUrl: string | null; email: string } | null>(null);
+  // Alleen voor akkoord zonder betaallink ("prijs volgt" of Mollie faalde).
+  const [klaar, setKlaar] = useState(false);
 
   async function versturen(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,12 +49,18 @@ export function AkkoordFormulier({
         | null;
       if (!res.ok || !json?.ok) {
         setFout(json?.error ?? "Versturen lukte niet. Probeer het zo nog eens.");
+        setBezig(false);
         return;
       }
-      setKlaar({ betaalUrl: json.betaalUrl ?? null, email: gegevens.email });
+      // Betaallink klaar: meteen door naar Mollie. De link staat ook in de mail,
+      // voor wie later wil betalen.
+      if (json.betaalUrl) {
+        window.location.assign(json.betaalUrl);
+        return;
+      }
+      setKlaar(true);
     } catch {
       setFout("We konden je akkoord niet versturen. Controleer je verbinding en probeer het nog eens.");
-    } finally {
       setBezig(false);
     }
   }
@@ -62,15 +69,8 @@ export function AkkoordFormulier({
     return (
       <div className={styles.gelukt} role="status">
         <p className={styles.lead}>
-          {klaar.betaalUrl
-            ? `Bedankt voor je akkoord. De betaallink staat in je mail (${klaar.email}). Je kunt ook meteen betalen.`
-            : "Bedankt voor je akkoord. We sturen je de betaallink binnen één werkdag."}
+          Bedankt voor je akkoord. We sturen je de betaallink binnen één werkdag.
         </p>
-        {klaar.betaalUrl && (
-          <Button as="a" href={klaar.betaalUrl} size="lg" icon={<ArrowRight />}>
-            Nu betalen
-          </Button>
-        )}
       </div>
     );
   }
@@ -97,7 +97,7 @@ export function AkkoordFormulier({
         required
         maxLength={200}
         defaultValue={email}
-        helperText="Hierheen sturen we de betaallink."
+        helperText="Hierheen sturen we de bevestiging en de betaallink."
       />
       {fout && (
         <p className={styles.fout} role="alert">
@@ -105,7 +105,7 @@ export function AkkoordFormulier({
         </p>
       )}
       <Button type="submit" size="lg" loading={bezig} icon={<ArrowRight />}>
-        {handwerk ? "Offerte accepteren" : "Accepteren en betaallink ontvangen"}
+        {handwerk ? "Offerte accepteren" : "Accepteren en betalen"}
       </Button>
       <p className={styles.noot}>
         Met je akkoord ga je akkoord met de{" "}

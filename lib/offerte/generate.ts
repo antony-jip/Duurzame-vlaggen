@@ -269,7 +269,7 @@ export async function generateOfferte(input: {
     "Levering binnen 5 werkdagen na akkoord op de offerte en het ontwerp, door heel Nederland.",
     `Op deze offerte zijn de algemene voorwaarden van ${BEDRIJF.handelsnaam} van toepassing (${BEDRIJF.website}/algemene-voorwaarden).`,
   ];
-  const akkoord = `Akkoord? Klik op "Offerte accepteren" in de mail bij deze offerte (${nummer}). Je ontvangt dan direct een betaallink. Vragen? Bel ${BEDRIJF.telefoon}.`;
+  const akkoord = `Akkoord? Klik op "Offerte accepteren" in de mail bij deze offerte (${nummer}). Daarna betaal je direct online. Vragen? Bel ${BEDRIJF.telefoon}.`;
 
   const voorwaardenRegels = voorwaarden.flatMap((v) => wrap(v, font, 9, CONTENT_W - 12));
   const akkoordRegels = wrap(akkoord, font, 9.5, CONTENT_W - 24);
