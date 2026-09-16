@@ -61,7 +61,7 @@ export async function sendMateriaalpaspoortEmail(
           voor je eigen duurzaamheidsrapportage kunt gebruiken.
         </p>
         <p style="margin:0 0 12px;color:#6b6f6b;font-size:13px;">
-          De cijfers zijn indicatief. Vragen? Mail ons gerust op hello@duurzame-vlaggen.nl.
+          De cijfers zijn indicatief. Vragen? Mail ons gerust op antony@signcompany.nl.
         </p>
         <p style="margin:16px 0 0;">Met groene groet,<br/>Duurzame Vlaggen</p>
       </div>

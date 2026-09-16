@@ -63,8 +63,8 @@ export default function AlgemeneVoorwaardenPage() {
                 (maandag t/m vrijdag, 9:00 tot 17:00 uur)
                 <br />
                 E-mail:{" "}
-                <a href="mailto:info@duurzame-vlaggen.nl">
-                  info@duurzame-vlaggen.nl
+                <a href="mailto:antony@signcompany.nl">
+                  antony@signcompany.nl
                 </a>
                 <br />
                 KvK-nummer: 36011150 · BTW-nummer: NL006284267B01
@@ -204,8 +204,8 @@ export default function AlgemeneVoorwaardenPage() {
               Wil je de overeenkomst herroepen? Stuur dan onderstaande gegevens
               aan Sign Company VOF (Duurzame Vlaggen), De Drie Kronen 115,
               1601 MT Enkhuizen, of per e-mail aan{" "}
-              <a href="mailto:info@duurzame-vlaggen.nl">
-                info@duurzame-vlaggen.nl
+              <a href="mailto:antony@signcompany.nl">
+                antony@signcompany.nl
               </a>
               :
             </p>

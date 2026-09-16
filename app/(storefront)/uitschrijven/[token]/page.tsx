@@ -35,7 +35,7 @@ export default async function UnsubscribePage({
         <h1>Deze link is niet geldig</h1>
         <p className="text-sm">
           Gebruik de uitschrijflink onderaan de e-mail, of mail ons via{" "}
-          <a href="mailto:hello@duurzame-vlaggen.nl">hello@duurzame-vlaggen.nl</a>.
+          <a href="mailto:antony@signcompany.nl">antony@signcompany.nl</a>.
         </p>
       </Container>
     );

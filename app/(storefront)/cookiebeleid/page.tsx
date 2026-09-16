@@ -111,8 +111,8 @@ export default function CookiebeleidPage() {
             <h2>5. Vragen?</h2>
             <p>
               Vragen over dit cookiebeleid? Mail naar{" "}
-              <a href="mailto:info@duurzame-vlaggen.nl">
-                info@duurzame-vlaggen.nl
+              <a href="mailto:antony@signcompany.nl">
+                antony@signcompany.nl
               </a>{" "}
               of bel <a href="tel:+31850608963">085 060 8963</a>. Hoe we
               omgaan met je persoonsgegevens lees je in onze{" "}

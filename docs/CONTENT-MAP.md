@@ -147,7 +147,7 @@ Kennisbank heeft child-pagina's (parent = 965): `flag-ciclo-technologie`, `vlagg
 - Kernclaims: *"Onze vlaggen lossen op. 96% verdwijnt volledig. Geen microplastics om te rapporteren."* · levert *"ESRS E2-5 documentatie"* en *"certificaten voor je rapport"*.
 
 ### Contact (`/contact/`)
-- **E-mail:** info@duurzame-vlaggen.nl · **Telefoon:** 085 060 8963 · **Locatie:** Enkhuizen (magazijn/HQ genoemd).
+- **E-mail:** antony@signcompany.nl · **Telefoon:** 085 060 8963 · **Locatie:** Enkhuizen (magazijn/HQ genoemd).
 - **Formuliervelden:** Naam* · E-mail* · Bedrijf · Telefoon · Onderwerp* (dropdown: offerte / CSRD & compliance / producten & prijzen / eigen ontwerp / overig) · Bericht*.
 - **Belofte:** *"Reactie binnen 24 uur, meestal sneller"*; levering 3–4 dagen door heel NL.
 - **Ontbreekt hier:** straatadres, KvK, BTW, openingstijden (zoek in footer/AV bij rebuild).
@@ -214,7 +214,7 @@ mediabibliotheek aanwezig; deze moeten apart worden aangeleverd/geproduceerd voo
 |---|---|
 | Handelsnaam | Duurzame-Vlaggen.nl |
 | Achterliggend bedrijf | Sign Company B.V. (per opdracht; **niet expliciet op contactpagina vermeld** — verifiëren in AV/footer) |
-| E-mail | info@duurzame-vlaggen.nl |
+| E-mail | antony@signcompany.nl |
 | Telefoon | 085 060 8963 |
 | Locatie | Enkhuizen (NL) |
 | KvK / BTW | **niet gevonden** op contactpagina (mogelijk in Algemene Voorwaarden `/algemene-voorwaarden/`) |

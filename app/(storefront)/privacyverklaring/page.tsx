@@ -61,8 +61,8 @@ export default function PrivacyverklaringPage() {
                 Telefoon: <a href="tel:+31850608963">085 060 8963</a>
                 <br />
                 E-mail:{" "}
-                <a href="mailto:info@duurzame-vlaggen.nl">
-                  info@duurzame-vlaggen.nl
+                <a href="mailto:antony@signcompany.nl">
+                  antony@signcompany.nl
                 </a>
                 <br />
                 KvK-nummer: 36011150
@@ -207,8 +207,8 @@ export default function PrivacyverklaringPage() {
             </ul>
             <p>
               Wil je een van deze rechten gebruiken? Mail naar{" "}
-              <a href="mailto:info@duurzame-vlaggen.nl">
-                info@duurzame-vlaggen.nl
+              <a href="mailto:antony@signcompany.nl">
+                antony@signcompany.nl
               </a>
               . We reageren binnen 30 dagen. Om je privacy te beschermen kunnen
               we je vragen je te identificeren.

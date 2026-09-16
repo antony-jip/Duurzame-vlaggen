@@ -48,7 +48,7 @@ export const BEDRIJF = {
   iban: "NL71 RABO 0148 1208 81",
   bank: "Rabobank",
 
-  email: "info@duurzame-vlaggen.nl",
+  email: "antony@signcompany.nl",
   telefoon: "085 060 8963",
   website: "duurzame-vlaggen.nl",
 

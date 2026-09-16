@@ -44,7 +44,7 @@ export default async function ReorderPage({
           <p className="text-sm">
             Bestellen kan altijd via <Link href="/collectie">de collectie</Link>, of mail
             ons via{" "}
-            <a href="mailto:hello@duurzame-vlaggen.nl">hello@duurzame-vlaggen.nl</a>.
+            <a href="mailto:antony@signcompany.nl">antony@signcompany.nl</a>.
           </p>
         </div>
       </Container>

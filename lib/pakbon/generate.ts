@@ -328,7 +328,7 @@ export async function generatePakbon(
   // --- Voet ----------------------------------------------------------------
   const voet = [
     "Geen prijzen op deze pakbon. De factuur ontvang je apart per e-mail.",
-    "Vragen over je bestelling? Mail hello@duurzame-vlaggen.nl met je ordernummer.",
+    "Vragen over je bestelling? Mail antony@signcompany.nl met je ordernummer.",
   ];
   let yVoet = MARGIN + 24;
   for (const regel of voet) {

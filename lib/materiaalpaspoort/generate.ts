@@ -554,7 +554,7 @@ export async function generateMateriaalpaspoort(
       "Alle cijfers zijn indicatief en kunnen per productiecharge verschillen.",
       { x: MARGIN, y: footY + 14, size: 8, font, color: MUTED },
     );
-    p.drawText("Vragen? Mail hello@duurzame-vlaggen.nl · Duurzame Vlaggen", {
+    p.drawText("Vragen? Mail antony@signcompany.nl · Duurzame Vlaggen", {
       x: MARGIN,
       y: footY + 3,
       size: 8,

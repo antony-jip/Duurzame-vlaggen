@@ -49,7 +49,7 @@ function DeadEnd({ title, body }: { title: string; body: string }) {
         <p className="text-sm">{body}</p>
         <p className="text-sm">
           Hulp nodig? Mail ons via{" "}
-          <a href="mailto:hello@duurzame-vlaggen.nl">hello@duurzame-vlaggen.nl</a> met je
+          <a href="mailto:antony@signcompany.nl">antony@signcompany.nl</a> met je
           bestelnummer.
         </p>
       </div>
