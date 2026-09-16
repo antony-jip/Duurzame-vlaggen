@@ -22,10 +22,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { serverEnv } from "@/lib/env";
+import { publicEnv, serverEnv } from "@/lib/env";
 import { isEmailConfigured } from "@/lib/email/client";
 import { sendMailInhoud } from "@/lib/email/send";
-import { alinea, blok, fijn, mailLayout, platteTekst } from "@/lib/email/layout";
+import { alinea, blok, mailLayout, platteTekst } from "@/lib/email/layout";
 import { BEDRIJF } from "@/lib/bedrijf";
 import {
   OFFERTE_GELDIG_DAGEN,
@@ -35,11 +35,11 @@ import {
   type OfferteBerekening,
 } from "@/lib/offerte/bereken";
 import { generateOfferte } from "@/lib/offerte/generate";
+import { signOfferteToken } from "@/lib/offerte/token";
+import { OFFERTE_MELDING_AAN } from "@/lib/offerte/adressen";
 
 export const runtime = "nodejs";
 
-/** Elke offerte gaat als BCC naar Antony: dezelfde mail en PDF als de klant. */
-const OFFERTE_BCC = "antony@signcompany.nl";
 
 // --- Rate limiting -----------------------------------------------------------
 // Best-effort in-memory, per serverless-instantie (zelfde aanpak als
@@ -196,6 +196,32 @@ export async function POST(request: Request) {
   }
 
   const bijlage = [{ filename: `offerte-${nummer}.pdf`, content: Buffer.from(pdf) }];
+
+  // Akkoordknop: ondertekende link met nummer, bedrag en geldigheid, zodat de
+  // akkoordpagina zonder database weet wat er geaccepteerd wordt.
+  const geldigTot = new Date(datum.getTime() + OFFERTE_GELDIG_DAGEN * 86_400_000);
+  // Ontbreekt het secret, dan gaat de offerte zonder knop de deur uit: de
+  // offerte zelf is belangrijker dan de knop.
+  let akkoordUrl: string | null = null;
+  try {
+    const token = signOfferteToken(
+      {
+        n: nummer,
+        s: offerte.onderwerp,
+        t: offerte.totaal,
+        g: geldigTot.toISOString().slice(0, 10),
+        o: data.organisatie,
+        nm: data.naam,
+        e: data.email,
+        ...(data.referentie ? { r: data.referentie } : {}),
+        ...(offerte.handwerk ? { h: true } : {}),
+      },
+      serverEnv.emailLinkSecret,
+    );
+    akkoordUrl = `${publicEnv.appUrl}/offerte/akkoord?t=${encodeURIComponent(token)}`;
+  } catch (err) {
+    console.error(`[offerte] Akkoordlink ${nummer} NIET gemaakt:`, err);
+  }
   const voornaam = escape(data.naam.split(" ")[0]);
   const totaalRegel = `Totaal ${euro(offerte.totaal)} incl. ${offerte.btwPct}% btw (${euro(
     offerte.subtotaal + offerte.verzending,
@@ -214,11 +240,13 @@ export async function POST(request: Request) {
       offerte.handwerk
         ? alinea("Niet alle regels zijn online te prijzen. Die prijs sturen we je binnen één werkdag.")
         : "",
-      alinea(
-        `Akkoord? Beantwoord deze mail met offertenummer <strong>${nummer}</strong> en je inkoopnummer als je dat gebruikt. Dan zetten wij de order klaar en sturen we de factuur.`,
-      ),
-      fijn(`Vragen over de offerte? Bel ${BEDRIJF.telefoon}.`),
+      akkoordUrl
+        ? alinea(
+            "Akkoord? Klik op de knop hieronder en bevestig je naam en e-mailadres. Je ontvangt dan direct een betaallink.",
+          )
+        : alinea(`Akkoord? Bel ons op ${BEDRIJF.telefoon}, dan sturen we je de betaallink.`),
     ].join(""),
+    ...(akkoordUrl ? { knop: { label: "Offerte accepteren", url: akkoordUrl } } : {}),
   });
   const klantTekst = platteTekst([
     `Beste ${data.naam.split(" ")[0]},`,
@@ -230,7 +258,8 @@ export async function POST(request: Request) {
     ),
     totaalRegel,
     "",
-    `Akkoord? Beantwoord deze mail met offertenummer ${nummer}.`,
+    akkoordUrl ? `Akkoord? Accepteer de offerte via ${akkoordUrl}` : "",
+    `Vragen? Bel ${BEDRIJF.telefoon}.`,
   ]);
 
   const klant = await sendMailInhoud(
@@ -239,7 +268,7 @@ export async function POST(request: Request) {
     // Antwoorden van de klant komen bij ons binnen, niet bij de afzender.
     { "Reply-To": serverEnv.contactInbox },
     bijlage,
-    OFFERTE_BCC,
+    OFFERTE_MELDING_AAN,
   );
   if (!klant.sent) {
     console.error(`[offerte] Klantmail ${nummer} mislukt (${klant.reason}) voor ${data.email}.`);

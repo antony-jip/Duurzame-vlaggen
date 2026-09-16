@@ -1,0 +1,58 @@
+/* Offerte accepteren en na betalen. */
+.page {
+  padding-block: var(--space-2xl, 64px);
+  max-width: 600px;
+}
+.page h1 {
+  margin: 0 0 var(--space-sm);
+  font-size: clamp(28px, 4vw, 40px);
+  color: var(--color-forest);
+}
+.lead {
+  margin: 0 0 var(--space-lg);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-charcoal);
+}
+.samenvatting {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px var(--space-md);
+  margin: 0 0 var(--space-lg);
+  padding: var(--space-md);
+  border-left: 3px solid var(--color-forest);
+  border-radius: var(--radius-md);
+  background: var(--forest-3, rgba(44, 95, 79, 0.06));
+  font-size: 15px;
+}
+.samenvatting dt {
+  color: var(--color-stone);
+}
+.samenvatting dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  overflow-wrap: anywhere;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.noot {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+.fout {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-terracotta);
+}
+.gelukt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}

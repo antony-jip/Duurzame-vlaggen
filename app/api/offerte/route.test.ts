@@ -10,6 +10,9 @@ const verstuurd: Array<{
 }> = [];
 let mailLukt = true;
 
+process.env.EMAIL_LINK_SECRET ??= "test-secret-offerte";
+process.env.NEXT_PUBLIC_APP_URL ??= "https://duurzame-vlaggen.nl";
+
 vi.mock("@/lib/email/client", () => ({ isEmailConfigured: () => true }));
 vi.mock("@/lib/email/send", () => ({
   sendMailInhoud: vi.fn(
@@ -93,6 +96,9 @@ describe("POST /api/offerte", () => {
       r.offerte.totaal,
     );
     expect(klant.html).toContain(totaal);
+    // Akkoordknop met ondertekende link.
+    expect(klant.html).toContain("Offerte accepteren");
+    expect(klant.html).toContain("/offerte/akkoord?t=");
   });
 
   it("zegt het eerlijk als de klantmail niet aankomt", async () => {
