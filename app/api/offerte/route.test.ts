@@ -6,6 +6,7 @@ const verstuurd: Array<{
   html: string;
   headers?: Record<string, string>;
   bijlagen?: Array<{ filename: string; content: Buffer }>;
+  bcc?: string | string[];
 }> = [];
 let mailLukt = true;
 
@@ -17,8 +18,9 @@ vi.mock("@/lib/email/send", () => ({
       mail: { onderwerp: string; html: string },
       headers?: Record<string, string>,
       bijlagen?: Array<{ filename: string; content: Buffer }>,
+      bcc?: string | string[],
     ) => {
-      verstuurd.push({ to, onderwerp: mail.onderwerp, html: mail.html, headers, bijlagen });
+      verstuurd.push({ to, onderwerp: mail.onderwerp, html: mail.html, headers, bijlagen, bcc });
       return mailLukt ? { sent: true } : { sent: false, reason: "provider_error" };
     },
   ),
@@ -66,25 +68,23 @@ beforeEach(() => {
 });
 
 describe("POST /api/offerte", () => {
-  it("mailt de PDF naar de klant en een kopie naar ons, met het mandbedrag", async () => {
+  it("mailt de PDF naar de klant met BCC naar Antony, met het mandbedrag", async () => {
     const body = geldig("sanne@gemeente.example");
     const res = await POST(verzoek(body));
     const json = await res.json();
 
     expect(res.status).toBe(200);
     expect(json.nummer).toMatch(/^OF-\d{6}-[A-Z2-9]{4}$/);
-    expect(verstuurd).toHaveLength(2);
+    // Eén mail: naar de klant, Antony onzichtbaar in BCC.
+    expect(verstuurd).toHaveLength(1);
 
-    const [klant, intern] = verstuurd;
+    const [klant] = verstuurd;
     expect(klant.to).toBe("sanne@gemeente.example");
+    expect(klant.bcc).toBe("antony@signcompany.nl");
     expect(klant.headers?.["Reply-To"]).toBe(serverEnv.contactInbox);
     expect(klant.onderwerp).toContain(json.nummer);
     expect(klant.bijlagen?.[0].filename).toBe(`offerte-${json.nummer}.pdf`);
     expect(klant.bijlagen?.[0].content.subarray(0, 5).toString()).toBe("%PDF-");
-
-    expect(intern.to).toBe(serverEnv.contactInbox);
-    expect(intern.headers?.["Reply-To"]).toBe("sanne@gemeente.example");
-    expect(intern.onderwerp).toContain("Gemeente Enkhuizen");
 
     // Bedrag in de mail = server-berekening, niet iets uit de browser.
     const r = berekenOfferte([regel]);
@@ -93,7 +93,6 @@ describe("POST /api/offerte", () => {
       r.offerte.totaal,
     );
     expect(klant.html).toContain(totaal);
-    expect(intern.onderwerp).toContain(totaal);
   });
 
   it("zegt het eerlijk als de klantmail niet aankomt", async () => {

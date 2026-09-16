@@ -8,12 +8,10 @@
  *  2. rekent de regels opnieuw uit met het prijsmodel van de checkout
  *     (`berekenOfferte`), nooit met bedragen uit de browser,
  *  3. maakt de PDF op het briefpapier van Duurzame Vlaggen,
- *  4. mailt die naar de klant, en een kopie naar de contactinbox met Reply-To
- *     op de klant.
+ *  4. mailt die naar de klant, met een BCC naar Antony (zelfde mail en PDF).
  *
  * De klantmail IS het product van deze route. Lukt die niet, dan zeggen we dat
- * ook (zelfde houding als /api/contact); de kopie naar ons is best-effort maar
- * wordt gelogd.
+ * ook (zelfde houding als /api/contact).
  *
  * Misbruik: deze route mailt een PDF naar een adres dat de bezoeker opgeeft.
  * Om te voorkomen dat hij als spamkanon dient, staat er geen vrije tekst van de
@@ -39,6 +37,9 @@ import {
 import { generateOfferte } from "@/lib/offerte/generate";
 
 export const runtime = "nodejs";
+
+/** Elke offerte gaat als BCC naar Antony: dezelfde mail en PDF als de klant. */
+const OFFERTE_BCC = "antony@signcompany.nl";
 
 // --- Rate limiting -----------------------------------------------------------
 // Best-effort in-memory, per serverless-instantie (zelfde aanpak als
@@ -238,6 +239,7 @@ export async function POST(request: Request) {
     // Antwoorden van de klant komen bij ons binnen, niet bij de afzender.
     { "Reply-To": serverEnv.contactInbox },
     bijlage,
+    OFFERTE_BCC,
   );
   if (!klant.sent) {
     console.error(`[offerte] Klantmail ${nummer} mislukt (${klant.reason}) voor ${data.email}.`);
@@ -245,51 +247,6 @@ export async function POST(request: Request) {
       { error: `Versturen lukte niet. Controleer je e-mailadres of bel ${BEDRIJF.telefoon}.` },
       { status: 502 },
     );
-  }
-
-  // --- Kopie naar ons, met alle gegevens en Reply-To op de klant.
-  const gegevens: Array<[string, string]> = [
-    ["Organisatie", data.organisatie],
-    ["Naam", data.naam],
-    ["E-mail", data.email],
-    ["Telefoon", data.telefoon || "-"],
-    ["Referentie", data.referentie || "-"],
-  ];
-  const interneHtml = `
-    <div style="font-family:Arial,Helvetica,sans-serif;color:#212421;line-height:1.55;max-width:600px;">
-      <h1 style="color:#2c5f4f;font-size:20px;margin:0 0 16px;">Offerte ${nummer} verstuurd</h1>
-      <table style="border-collapse:collapse;margin:0 0 16px;">
-        ${gegevens
-          .map(
-            ([l, w]) =>
-              `<tr><td style="padding:4px 16px 4px 0;color:#6b6f6b;">${l}</td><td><strong>${escape(w)}</strong></td></tr>`,
-          )
-          .join("")}
-      </table>
-      <p>${regelsHtml(offerte)}</p>
-      <p><strong>${escape(totaalRegel)}</strong></p>
-      ${offerte.handwerk ? `<p style="color:#c66b4e;"><strong>Let op:</strong> er staan regels op met "prijs volgt". Stuur die prijs binnen één werkdag.</p>` : ""}
-      ${data.opmerking ? `<div style="border-left:3px solid #2c5f4f;padding:4px 0 4px 12px;white-space:pre-wrap;">${escape(data.opmerking)}</div>` : ""}
-    </div>`;
-  const intern = await sendMailInhoud(
-    serverEnv.contactInbox,
-    {
-      onderwerp: `Offerte ${nummer} · ${data.organisatie} · ${euro(offerte.totaal)}`,
-      html: interneHtml,
-      tekst: [
-        `Offerte ${nummer}`,
-        ...gegevens.map(([l, w]) => `${l}: ${w}`),
-        "",
-        totaalRegel,
-        data.opmerking,
-      ].join("\n"),
-    },
-    { "Reply-To": data.email },
-    bijlage,
-  );
-  if (!intern.sent) {
-    // Klant heeft zijn offerte; wij missen alleen de kopie. Luid loggen.
-    console.error(`[offerte] Interne kopie ${nummer} mislukt (${intern.reason}).`);
   }
 
   return NextResponse.json({ ok: true, nummer });

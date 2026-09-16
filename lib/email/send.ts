@@ -147,6 +147,8 @@ export async function sendMailInhoud(
   mail: { onderwerp: string; html: string; tekst: string },
   headers?: Record<string, string>,
   bijlagen?: Array<{ filename: string; content: Buffer }>,
+  /** Onzichtbare kopie, bv. de offerte die ook naar ons moet. */
+  bcc?: string | string[],
 ): Promise<SendResult> {
   const resend = getResendClient();
   if (!resend) {
@@ -162,6 +164,7 @@ export async function sendMailInhoud(
       text: mail.tekst,
       ...(headers ? { headers } : {}),
       ...(bijlagen && bijlagen.length ? { attachments: bijlagen } : {}),
+      ...(bcc ? { bcc } : {}),
     });
     if (error) {
       console.error(`[email] Resend-fout bij "${mail.onderwerp}" naar ${to}:`, error);
