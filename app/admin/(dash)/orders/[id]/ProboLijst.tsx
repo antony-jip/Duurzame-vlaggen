@@ -1,6 +1,7 @@
 import styles from "../../admin.module.css";
 import { beschrijfProboOptie, type ProboOption } from "@/lib/catalog/probo-mapping";
 import type { Json } from "@/lib/db/types";
+import { optiesZonderDubbel } from "@/lib/orders/probo-lijst";
 
 /**
  * Het inkooplijstje per orderregel: wát je bij Probo moet aanklikken.
@@ -67,6 +68,8 @@ export function ProboLijst({
   aantal: number;
 }) {
   const u = lees(configuration);
+  // Staat een onderwerp ook bij Zelf regelen (oude orders: Samenstelling), dan geldt de keuze van de klant.
+  const opties = optiesZonderDubbel(u.opties, u.unmapped);
 
   if (!u.code && u.opties.length === 0) {
     return <span className={styles.muted}>Geen configuratie op deze regel.</span>;
@@ -91,7 +94,7 @@ export function ProboLijst({
 
       <span className={styles.proboLabel}>Deze opties aanzetten</span>
       <ul className={styles.proboOpties}>
-        {u.opties.map((o, i) => (
+        {opties.map((o, i) => (
           <li key={`${o.code}-${i}`} className={styles.proboOptie}>
             <span className={styles.proboOptieTekst}>{beschrijfProboOptie(o)}</span>
             <code className={styles.proboOptieCode}>
